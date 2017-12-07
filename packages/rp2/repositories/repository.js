@@ -18,17 +18,13 @@ class Repository {
       })
     }
     
-    // find(query, cb) {
-    //   this.mongoInstance.find(this.collection, query, cb);
-    // }
-
     findAll(cb) {
       this.mongoInstance.find(this.collection, {}, cb);
     }
 
-    // insert(object, cb) {
-    //   this.mongoInstance.insert(this.collection, object, cb);
-    // }
+    getExtendedMethodNames() {
+      return extendedMethods;
+    }
 }
 
 module.exports = Repository;

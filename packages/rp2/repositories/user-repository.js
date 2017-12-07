@@ -7,19 +7,8 @@ class UserRepository extends Repository {
         super(api, collection);
     }
 
-    getAll(req, res) {
-        // this.find(this.collection, {}, (err, data) => {
-        //     if (err) throw err;
-        //     res.send(data);
-        // })
-    }
-
-    createUser(req, res) {
-        const user = req.body;
-        this.mongoInstance.find(this.collection, user, (err, data) => {
-            if (err) throw err;
-            res.send(data);
-        })
+    createUser(user, cb) {
+        this.mongoInstance.insert(this.collection, user, cb)
     }
 }
 

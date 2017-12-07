@@ -10,23 +10,23 @@ class UserRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         setImmediate(() => {
-            this.router.get('/getAll', this.getAll.bind(this));  
+            this.router.get('/retrieveAll', this.retrieveAll.bind(this));  
             this.router.post('/createUser', this.createUser.bind(this));
           }) 
     }
 
-    getAll(req, res) {
+    retrieveAll(req, res) {
         this.repository.findAll((err, data) => {
             res.send(data);
         });
     }
 
     createUser(req, res) {
-        // const user = req.body;
-        // this.mongoInstance.find(this.collection, user, (err, data) => {
-        //     if (err) throw err;
-        //     res.send(data);
-        // })
+        const newUser = req.body;
+        this.repository.createUser(newUser, (err, data)=> {
+            if (err) throw err;
+            res.send(data);
+        });
     }
 }
 

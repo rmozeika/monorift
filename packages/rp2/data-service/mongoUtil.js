@@ -21,9 +21,8 @@ class MongoService {
         return this._db
     }
 
-
     find(collection, query, cb) {
-        this._db.collection(collection).find({}).toArray(function(err, result) {
+        this._db.collection(collection).find(query).toArray((err, result) => {
             cb(err, result);
         });
     }

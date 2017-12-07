@@ -17,6 +17,7 @@ class Route {
     }
     
     makeRoute(method) {
+        //protect these by system-admin
         return (req, res) => {
             const query = req.body;
             this.repository[method](query, (err, data)=> { 

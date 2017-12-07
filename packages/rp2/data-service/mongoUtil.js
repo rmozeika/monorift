@@ -1,7 +1,32 @@
 const MongoClient = require('mongodb').MongoClient;
 const uri = require('../config.json').mongoConnectionString;
-
-const extendMethods = ['insertOne', 'deleteOne'];
+//TODO: create special attach functions
+// Mongodb methods to be extended to repository
+//
+// Options:
+//  - combine:  if method is "one or many" (insertOne, insertMany),
+//              create one repository function 'insert'
+const extendMethods = [
+    {
+      name: 'find',
+      suffixes: [
+        '',
+        'One'
+      ],
+      attach: {
+          indexes: [0],
+          runAfter: 'toArray' 
+      }
+    },
+    {
+      name: 'insert',
+      combine: true
+    },
+    {
+      name: 'delete',
+      combine: true
+    },
+];
 
 class MongoService {
     constructor() {
@@ -29,35 +54,38 @@ class MongoService {
 
     createMethods(extendMethods) {
         extendMethods.forEach(method => {
-            const oneIdx = method.indexOf('One');
-            if ( oneIdx > -1) {
-                method = method.substr(0, oneIdx);
-                this._createOneManyMethod(method);
+            if (method.combine) {
+                method = method.name;
+                this._createOneManyMethod(method.name);
+            } else if (method.suffixes && method.suffixes.length) {
+                this._createMethods(method.name, method.suffixes)
             } else {
-                this._createMethod(method)
+                this._createMethods(method.name, [''])
             }    
         });
     }
 
-    _createMethod(method) {
-        this[method] = (collection, obj, cb) => {
-            this._db.collection(collection)[method](obj, function(err, res) {
-                console.log(obj + ' inserted');
-                cb(err, res)
-            });
-        }
+    _createMethods(method, suffixes) {
+        suffixes.forEach(suffix=> {
+            this[method + suffix] = (collection, obj, cb) => {
+                this._db.collection(collection)[method + suffix](obj, function(err, res) {
+                    console.log(`Mongodb Operation - ${method + suffix}: ${res} `);
+                    cb(err, res)
+                });
+            }
+        });
     }
 
     _createOneManyMethod(method) {
         this[method] = (collection, obj, cb) => {
             if (Array.isArray(obj)) {
                 this._db.collection(collection)[method + 'Many'](obj, function(err, res) {
-                    console.log(obj + ' inserted multiple');
+                    console.log(`Mongodb Operation - ${method} - many: ${resj} `);
                     cb(err, res)
                 });
             } else {
                 this._db.collection(collection)[method + 'One'](obj, function(err, res) {
-                    console.log(obj + ' inserted');
+                    console.log(`Mongodb Operation - ${method} - one: ${res} `);
                     cb(err, res)
                 });
             }   

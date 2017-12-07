@@ -1,4 +1,4 @@
-const extendedMethods = ['find', 'insert', 'delete'];
+const extendedMethods = ['find', 'findOne', 'insert', 'delete'];
 
 class Repository {
     constructor(api, collection) {

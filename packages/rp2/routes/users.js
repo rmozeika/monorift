@@ -10,10 +10,18 @@ class UserRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         setImmediate(() => {
-            this.router.get('/retrieveAll', this.retrieveAll.bind(this));  
+            this.router.post('/login', this.login.bind(this));            
+            this.router.get('/', this.retrieveAll.bind(this));  
             this.router.post('/createUser', this.createUser.bind(this));
           }) 
     }
+
+    // login(req, res) {
+    //     passport.authenticate('local', { failureRedirect: '/login' }),
+    //     function(req, res) {
+    //       res.redirect('/');
+    //     }
+    // }
 
     retrieveAll(req, res) {
         this.repository.findAll((err, data) => {

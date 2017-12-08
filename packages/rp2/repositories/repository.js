@@ -22,6 +22,12 @@ class Repository {
       this.mongoInstance.find(this.collection, {}, cb);
     }
 
+    findById(_id, cb) {
+      const {ObjectId} = require('mongodb'); // or ObjectID 
+      const safeObjectId = s => ObjectId.isValid(s) ? new ObjectId(s) : null;
+      this.mongoInstance.findOne(this.collection, {_id: safeObjectId(_id)}, cb)
+    }
+
     getExtendedMethodNames() {
       return extendedMethods;
     }

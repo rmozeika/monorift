@@ -10,13 +10,12 @@ const extendMethods = [
     {
       name: 'find',
       suffixes: [
-        '',
-        'One'
-      ],
-      attach: {
-          indexes: [0],
-          runAfter: 'toArray' 
-      }
+        'One',
+      ]
+    },
+    {
+        name: 'find',
+        attach: 'toArray'
     },
     {
       name: 'insert',
@@ -55,24 +54,30 @@ class MongoService {
     createMethods(extendMethods) {
         extendMethods.forEach(method => {
             if (method.combine) {
-                method = method.name;
                 this._createOneManyMethod(method.name);
             } else if (method.suffixes && method.suffixes.length) {
                 this._createMethods(method.name, method.suffixes)
             } else {
-                this._createMethods(method.name, [''])
+                this._createMethods(method.name, [''], method.attach)
             }    
         });
     }
 
-    _createMethods(method, suffixes) {
-        suffixes.forEach(suffix=> {
+    _createMethods(method, suffixes, attach) {
+        suffixes.forEach((suffix, suffixIndex)=> {
             this[method + suffix] = (collection, obj, cb) => {
-                this._db.collection(collection)[method + suffix](obj, function(err, res) {
+                var logCallback = (err, res) => {
                     console.log(`Mongodb Operation - ${method + suffix}: ${res} `);
                     cb(err, res)
-                });
-            }
+                };
+
+                if (attach) {
+                    this._db.collection(collection)[method + suffix](obj)[attach](logCallback);                    
+                } else {
+                    this._db.collection(collection)[method + suffix](obj, logCallback);
+                }
+
+            } 
         });
     }
 

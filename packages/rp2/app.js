@@ -31,32 +31,32 @@ app.use(passport.session());
 
 var api = require('./api.js');
 
-api.init(app);
-
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    User.findOne({ username: username }, function (err, user) {
+    api.repositories.user.findOne({ username: username }, function (err, user) {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
-      if (!user.verifyPassword(password)) { return done(null, false); }
+      if (user.password != password) { return done(null, false); }
       return done(null, user);
     });
   }
 ));
 
 passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
+  cb(null, user._id);
 });
 
-passport.deserializeUser(function(id, cb) {
-  db.users.findById(id, function (err, user) {
+passport.deserializeUser(function(_id, cb) {
+  api.repositories.user.findById(_id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
   });
 });
 
+api.init(app);
+
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
-    res.redirect('/');
+    res.redirect('/users');
 });
 
 // catch 404 and forward to error handler
@@ -71,7 +71,7 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  console.log(err)
   // render the error page
   res.status(err.status || 500);
   res.render('error');

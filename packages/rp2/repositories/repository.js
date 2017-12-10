@@ -9,7 +9,7 @@ class Repository {
 
       this.extendMethods();
     }
-    // automatically add all these routes before proceeding
+
     extendMethods() {
       extendedMethods.forEach(method => {
         this[method] = (object, cb) => {

@@ -17,16 +17,17 @@ class Route {
     }
     
     makeRoute(method) {
-        //protect these by system-admin
         return (req, res) => {
+            //Only system admin has access to mongodb methods
             if (req.user && req.user.privledges === 'sysadmin') {
                 const query = req.body;
                 this.repository[method](query, (err, data)=> { 
                     if (err) throw err;
-                    res.json(data);
+                    res.send(data);
                 });
             } else {
-                res.redirect('/login');
+                // res.redirect('/login');
+                res.send('No sysadmin privledges');
             }
         }
     }

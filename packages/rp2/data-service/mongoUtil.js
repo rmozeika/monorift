@@ -1,12 +1,22 @@
 const MongoClient = require('mongodb').MongoClient;
 const uri = require('../config.json').mongoConnectionString;
-//TODO: create special attach functions
+
+function LogCallback(method, suffix, cb) {
+    return fn = (err, res) => {
+        console.log(`Mongodb Operation - ${method + suffix}: ${res} `);
+        cb(err, res)
+    };
+}
 // Mongodb methods to be extended to repository
 //
 // Options:
-//  - combine:  if method is "one or many" (insertOne, insertMany),
-//              create one repository function 'insert'
+//  - combine:  create "one or many" methods (e.g. insertOne, insertMany)
+//  - attach:   run function after
 const extendMethods = [
+    {
+        name: 'update',
+        combine: true,
+    },
     {
       name: 'find',
       suffixes: [
@@ -45,55 +55,41 @@ class MongoService {
         return this._db
     }
 
-    find(collection, query, cb) {
-        this._db.collection(collection).find(query).toArray((err, result) => {
-            cb(err, result);
-        });
-    }
-
     createMethods(extendMethods) {
         extendMethods.forEach(method => {
             if (method.combine) {
-                this._createOneManyMethod(method.name);
-            } else if (method.suffixes && method.suffixes.length) {
-                this._createMethods(method.name, method.suffixes)
-            } else {
-                this._createMethods(method.name, [''], method.attach)
-            }    
+                method.suffixes = ['One', 'Many'];
+            } 
+            if (!method.suffixes) {
+                method.suffixes = [''];
+            }
+            
+            this._createMethods(method.name, method.suffixes, method.attach)  
         });
     }
 
     _createMethods(method, suffixes, attach) {
         suffixes.forEach((suffix, suffixIndex)=> {
-            this[method + suffix] = (collection, obj, cb) => {
-                var logCallback = (err, res) => {
-                    console.log(`Mongodb Operation - ${method + suffix}: ${res} `);
-                    cb(err, res)
-                };
-
+            this[method + suffix] = (collection, obj = {}, cb) => {
+                let args = [obj];
+                if (arguments.length > 3) {
+                    args = Array.prototype.slice.call(arguments, 1, arguments.length - 2);
+                    obj = arguments.length - 2;
+                    cb = arguments.length - 1;
+                }
+                var func = LogCallback(method, suffix, cb)
+                var collection = this._db.collection(collection);
+                
                 if (attach) {
-                    this._db.collection(collection)[method + suffix](obj)[attach](logCallback);                    
+                    const applier = collection[method + suffix].apply(collection, args);
+                    applier[attach](func);                    
                 } else {
-                    this._db.collection(collection)[method + suffix](obj, logCallback);
+                    args.push(func);                    
+                    collection[method + suffix].apply(collection, args);
                 }
 
             } 
         });
-    }
-
-    _createOneManyMethod(method) {
-        this[method + 'One'] = (collection, obj, cb) => {
-            this._db.collection(collection)[method + 'One'](obj, function(err, res) {
-                console.log(`Mongodb Operation - ${method} - one: ${res} `);
-                cb(err, res)
-            });
-        }
-        this[method + 'Many'] = (collection, obj, cb) => {
-            this._db.collection(collection)[method + 'Many'](obj, function(err, res) {
-                console.log(`Mongodb Operation - ${method} - many: ${res} `);
-                cb(err, res)
-            })
-        } 
     }
 }
 

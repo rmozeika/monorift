@@ -41,12 +41,13 @@ class Api {
     _createRootUser() {
         var rootUser = {
             username: config.rootuser,
-            password: config.rootpassword
+            password: config.rootpassword,
+            privledges: 'sysadmin'
         }
         this.repositories.users.findByUsername(rootUser.username, (err, user) => {
             if (!user) {
                 this.repositories.users.createUser(rootUser, (err, res) => {
-                    console.log('created new root user')
+                    console.log('created new root user: ' + rootUser.username)
                 })
             }
         });

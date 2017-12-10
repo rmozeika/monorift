@@ -82,19 +82,18 @@ class MongoService {
     }
 
     _createOneManyMethod(method) {
-        this[method] = (collection, obj, cb) => {
-            if (Array.isArray(obj)) {
-                this._db.collection(collection)[method + 'Many'](obj, function(err, res) {
-                    console.log(`Mongodb Operation - ${method} - many: ${resj} `);
-                    cb(err, res)
-                });
-            } else {
-                this._db.collection(collection)[method + 'One'](obj, function(err, res) {
-                    console.log(`Mongodb Operation - ${method} - one: ${res} `);
-                    cb(err, res)
-                });
-            }   
+        this[method + 'One'] = (collection, obj, cb) => {
+            this._db.collection(collection)[method + 'One'](obj, function(err, res) {
+                console.log(`Mongodb Operation - ${method} - one: ${res} `);
+                cb(err, res)
+            });
         }
+        this[method + 'Many'] = (collection, obj, cb) => {
+            this._db.collection(collection)[method + 'Many'](obj, function(err, res) {
+                console.log(`Mongodb Operation - ${method} - many: ${res} `);
+                cb(err, res)
+            })
+        } 
     }
 }
 

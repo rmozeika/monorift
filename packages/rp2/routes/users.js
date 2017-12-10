@@ -16,14 +16,6 @@ class UserRoute extends Route {
           }) 
     }
 
-    // login(req, res) {
-    //     passport.authenticate('local', { failureRedirect: '/login' }),
-    //     function(req, res) {
-    //       res.redirect('/');
-    //     }
-    // }
-    
-
     retrieveAll(req, res) {
         this.repository.findAll((err, data) => {
             res.send(data);

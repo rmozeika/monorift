@@ -56,8 +56,14 @@ passport.deserializeUser(function(_id, cb) {
 api.init(app);
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
-    res.redirect('/users');
+    res.send(true);
 });
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(function (err) {
+    res.redirect('/users');
+  });
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

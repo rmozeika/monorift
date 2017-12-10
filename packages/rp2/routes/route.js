@@ -19,11 +19,15 @@ class Route {
     makeRoute(method) {
         //protect these by system-admin
         return (req, res) => {
-            const query = req.body;
-            this.repository[method](query, (err, data)=> { 
-                if (err) throw err;
-                res.json(data);
-            });
+            if (req.user && req.user.privledges === 'sysadmin') {
+                const query = req.body;
+                this.repository[method](query, (err, data)=> { 
+                    if (err) throw err;
+                    res.json(data);
+                });
+            } else {
+                res.redirect('/login');
+            }
         }
     }
 

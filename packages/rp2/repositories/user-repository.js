@@ -8,7 +8,7 @@ class UserRepository extends Repository {
     }
 
     createUser(user, cb) {
-        this.mongoInstance.insert(this.collection, user, cb)
+        this.mongoInstance.insertOne(this.collection, user, cb)
     }
 }
 

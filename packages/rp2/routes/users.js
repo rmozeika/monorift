@@ -4,13 +4,12 @@ var router = express.Router();
 var Route = require('./route.js');
 
 const routeName = '/users';
-const repoName = 'user';
+const repoName = 'users';
 
 class UserRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         setImmediate(() => {
-            // this.router.post('/login', this.login.bind(this));            
             this.router.get('/', this.retrieveAll.bind(this));  
             this.router.post('/createUser', this.createUser.bind(this));            
           }) 

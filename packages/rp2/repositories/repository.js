@@ -1,4 +1,4 @@
-const extendedMethods = ['find', 'findOne', 'insertOne', 'insertMany', 'deleteOne', 'deleteMany'];
+const extendedMethods = ['find', 'findOne', 'insertOne', 'insertMany', 'deleteOne', 'deleteMany', 'updateOne', 'updateMany'];
 
 class Repository {
     constructor(api, collection) {
@@ -11,7 +11,7 @@ class Repository {
     }
 
     extendMethods() {
-      extendedMethods.forEach(method => {
+      this.mongoInstance.getMethodNames().forEach(method => {
         this[method] = (object, cb) => {
           this.mongoInstance[method](this.collection, object, cb)
         }        
@@ -29,7 +29,7 @@ class Repository {
     }
 
     getExtendedMethodNames() {
-      return extendedMethods;
+      return this.mongoInstance.getMethodNames();
     }
 }
 

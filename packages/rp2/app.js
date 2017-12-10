@@ -33,7 +33,7 @@ var api = require('./api.js');
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    api.repositories.user.findOne({ username: username }, function (err, user) {
+    api.repositories.users.findOne({ username: username }, function (err, user) {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
       if (user.password != password) { return done(null, false); }
@@ -47,7 +47,7 @@ passport.serializeUser(function(user, cb) {
 });
 
 passport.deserializeUser(function(_id, cb) {
-  api.repositories.user.findById(_id, function (err, user) {
+  api.repositories.users.findById(_id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
   });

@@ -1,4 +1,5 @@
 const express = require('express');
+var config = require('../config.js')
 
 
 class Route {

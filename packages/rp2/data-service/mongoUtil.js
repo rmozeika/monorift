@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-const uri = require('../config.json').mongoConnectionString;
+const uri = require('../config.js').mongoConnectionString;
 
 function LogCallback(method, suffix, cb) {
     return fn = (err, res) => {
@@ -39,20 +39,30 @@ const extendMethods = [
 
 class MongoService {
     constructor() {
-        this.connectToServer();
+        // this.connectToServer();
         this.createMethods(extendMethods);
     }
 
-    connectToServer() {
+    connectToServer(cb) {
         MongoClient.connect(uri, function(err, db) {
             if (err) { throw (err); }
             this._db = db
-            return;
+            return cb(err, db);
         }.bind(this));
     }
 
     getDb() {
-        return this._db
+        return this._db;
+    }
+
+    getMethodNames() {
+        let methodNames = [];
+        extendMethods.forEach(method=>{
+            if (!method.suffixes) method.suffixes = [''];
+            methodNames = methodNames.concat(method.suffixes.map(suffix=> method.name + suffix));
+        });
+
+        return methodNames;
     }
 
     createMethods(extendMethods) {

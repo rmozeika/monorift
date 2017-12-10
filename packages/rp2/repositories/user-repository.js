@@ -10,6 +10,10 @@ class UserRepository extends Repository {
     createUser(user, cb) {
         this.mongoInstance.insertOne(this.collection, user, cb)
     }
+
+    findByUsername(username, cb) {
+        this.findOne({username}, cb);
+    }
 }
 
 module.exports = UserRepository;

@@ -33,6 +33,20 @@ class Route {
         }
     }
 
+    checkPermission({ req, res }, privledges) {
+        if (!Array.isArray(privledges)) {
+            privledges = [privledges];
+        }
+        const user = req.user;
+        if (user && user.privledges) {
+            return privledges.some(privledge => {
+                return privledge === user.privledges;
+            })
+        }
+        res.send('Permission denied');
+        return false;
+    }
+
     getRouter() { return this.router; }
 }
 

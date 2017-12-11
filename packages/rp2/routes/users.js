@@ -10,20 +10,27 @@ class UserRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         setImmediate(() => {
-            this.router.get('/', this.retrieveAll.bind(this));  
+            this.router.get('/', this.retrieveAll.bind(this));
+            this.router.post('/', this.retrieveAll.bind(this));              
             this.router.post('/createUser', this.createUser.bind(this));            
           }) 
     }
 
     retrieveAll(req, res) {
-        this.repository.findAll((err, data) => {
-            res.send(data);
-        });
+        var accessGroups = 'sysadmin';
+        if (this.checkPermission({ req, res }, accessGroups)) {
+            this.repository.findAll((err, data) => {
+                res.send(data);
+            });        
+        } else {
+            return;
+        }
     }
 
     createUser(req, res) {
-        const newUser = req.body;
-        this.repository.createUser(newUser, (err, data)=> {
+        const { username, password, privledges } = req.body;
+        const user = Object.assign({}, { username, password, privledges });
+        this.repository.createUser(user, (err, data)=> {
             if (err) throw err;
             res.send(data);
         });

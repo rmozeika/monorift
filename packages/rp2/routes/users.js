@@ -18,16 +18,17 @@ class UserRoute extends Route {
 
     retrieveAll(req, res) {
         var accessGroups = 'sysadmin';
-        if (this.checkPermission({ req, res }, accessGroups)) {
-            this.repository.findAll((err, data) => {
-                res.send(data);
-            });        
-        } else {
-            return;
-        }
+        if (!this.checkPermission({ req, res }, accessGroups)) return;
+        
+        this.repository.findAll((err, data) => {
+            res.send(data);
+        });        
     }
 
     createUser(req, res) {
+        var accessGroups = 'sysadmin';
+        if (!this.checkPermission({ req, res }, accessGroups)) return;
+
         const { username, password, privledges } = req.body;
         const user = Object.assign({}, { username, password, privledges });
         this.repository.createUser(user, (err, data)=> {

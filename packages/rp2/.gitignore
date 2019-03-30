@@ -1,1 +1,6 @@
 /node_modules
+/webscraper
+yarn.lock
+client
+client1
+data

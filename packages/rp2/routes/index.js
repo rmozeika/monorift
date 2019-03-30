@@ -1,5 +1,6 @@
-var users = require('./users.js');
+// var users = require('./users.js');
+// const auth = require('./auth.js');
 
-module.exports = {
-    users
-};
+exports.auth = require("./auth.js");
+exports.users =  require('./users.js');
+// exports.store =  require('./store.js');

@@ -25,7 +25,14 @@ class Repository {
     findById(_id, cb) {
       const {ObjectId} = require('mongodb'); // or ObjectID 
       const safeObjectId = s => ObjectId.isValid(s) ? new ObjectId(s) : null;
-      this.mongoInstance.findOne(this.collection, {_id: safeObjectId(_id)}, cb)
+      if (cb) {
+        this.mongoInstance.findOne(this.collection, {_id: safeObjectId(_id)}, cb);
+      }
+      return this.mongoInstance.findOne(this.collection, {_id: safeObjectId(_id)})
+    }
+
+    update(_id, obj, cb) {
+      return this.mongoInstance.update(this.collection, {_id: safeObjectId(_id)}, obj);
     }
 
     getExtendedMethodNames() {

@@ -19,11 +19,25 @@ class Route {
     
     makeRoute(method) {
         return (req, res) => {
+            const util = require('util');    
+            console.log(
+`
+#Start Request#
+
+${util.inspect(req.user, false, null)}
+`
+            );
+            
             //Only system admin has access to mongodb methods
             if (req.user && req.user.privledges === 'sysadmin') {
                 const query = req.body;
                 this.repository[method](query, (err, data)=> { 
                     if (err) throw err;
+                    console.log(
+`
+#End Request#
+`
+                    );
                     res.send(data);
                 });
             } else {

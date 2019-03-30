@@ -14,6 +14,16 @@ class UserRepository extends Repository {
     findByUsername(username, cb) {
         this.findOne({username}, cb);
     }
+
+    importProfile(profile, cb) {
+        const { email, username, nickname } = profile;
+        const obj = {
+            email,
+            username: nickname,
+            src: profile
+        };
+        return this.createUser(obj, cb);
+    }
 }
 
 module.exports = UserRepository;

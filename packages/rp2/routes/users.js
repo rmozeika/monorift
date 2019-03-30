@@ -12,13 +12,15 @@ class UserRoute extends Route {
         setImmediate(() => {
             this.router.get('/', this.retrieveAll.bind(this));
             this.router.post('/', this.retrieveAll.bind(this));              
-            this.router.post('/createUser', this.createUser.bind(this));            
+            this.router.post('/createUser', this.createUser.bind(this));
+            this.router.get('/username', this.getUser.bind(this));
+
           }) 
     }
 
     retrieveAll(req, res) {
-        var accessGroups = 'sysadmin';
-        if (!this.checkPermission({ req, res }, accessGroups)) return;
+        // var accessGroups = 'sysadmin';
+        // if (!this.checkPermission({ req, res }, accessGroups)) return;
         
         this.repository.findAll((err, data) => {
             res.send(data);
@@ -35,6 +37,10 @@ class UserRoute extends Route {
             if (err) throw err;
             res.send(data);
         });
+    }
+    getUser(req, res) {
+        const { user} = req;
+        return res.send(user);
     }
 }
 

@@ -2,8 +2,13 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = require('../config.js').mongoConnectionString;
 
 function LogCallback(method, suffix, cb) {
+    const util = require('util')
+    
     return fn = (err, res) => {
-        console.log(`Mongodb Operation - ${method + suffix}: ${res} `);
+        console.log(`Mongodb Operation - ${method + suffix}:
+Result:
+${util.inspect(res, false, null)}
+`   );
         cb(err, res)
     };
 }

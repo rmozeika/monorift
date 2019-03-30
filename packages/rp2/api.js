@@ -1,5 +1,5 @@
 var MongoUtil = require('./data-service/mongoUtil.js');
-var routes = require('./routes');
+var routes = require('./routes/index.js');
 var repositories = require('./repositories');
 var config = require('./config.js')
 

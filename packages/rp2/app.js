@@ -36,7 +36,8 @@ app.use(session({
 var api = require('./api.js');
 
 api.init(app);
-
+const staticResource='/extra';
+app.use('/profiles', express.static(path.join(staticResource, 'site')));
 // app.get('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
 //     res.send(true);
 // });

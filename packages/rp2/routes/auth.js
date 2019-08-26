@@ -12,6 +12,9 @@ class AuthRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         const run = () => {
+            this.router.get('/', (req, res) => {
+              res.send('success');
+            });
             this.router.get('/client', this.app.bind(this));
             this.router.get('/callback', this.auth0Callback.bind(this));
             this.router.get('/login',

@@ -50,7 +50,7 @@ class MongoService {
 
     connectToServer(cb) {
         MongoClient.connect(uri, function(err, db) {
-            if (err) { throw (err); }
+            if (err) { console.log(err); }
             this._db = db
             return cb(err, db);
         }.bind(this));

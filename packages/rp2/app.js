@@ -31,13 +31,13 @@ app.use(session({
   
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(express.static(path.join(__dirname, '/client/build')));
+  // app.use(express.static(path.join(__dirname, '/client/build')));
 
 var api = require('./api.js');
 
 api.init(app);
-const staticResource='/extra';
-app.use('/profiles', express.static(path.join(staticResource, 'site')));
+
+app.use('/profile', express.static(path.join(__dirname, 'site')));
 // app.get('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
 //     res.send(true);
 // });

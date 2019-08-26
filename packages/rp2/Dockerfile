@@ -16,5 +16,9 @@ RUN npm install
 # Bundle app source
 COPY . .
 EXPOSE 8080
-CMD [ "npm", "start" ]
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+RUN chmod +x /wait
+
+## Launch the wait tool and then your application
+CMD /wait && npm start
 # replace this with your application's default port

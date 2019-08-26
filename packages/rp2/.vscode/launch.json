@@ -16,6 +16,15 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}/bin/www",
             "smartStep": true
-        }
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Docker: Attach to Node",
+            "port": 9229,
+            "address": "0.0.0.0",
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/home/node/app",
+          }
     ]
 }

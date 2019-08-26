@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon --inspect=0.0.0.0 ./bin/www",
+    "debug": "nodemon  ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -17,6 +18,7 @@
     "mongodb": "^2.2.33",
     "morgan": "~1.9.0",
     "node-env-file": "^0.1.8",
+    "nodemon": "^1.19.1",
     "passport": "^0.4.0",
     "passport-auth0": "^1.1.0",
     "passport-local": "^1.0.0",

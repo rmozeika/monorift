@@ -35,7 +35,9 @@ app.use(session({
 
 var api = require('./api.js');
 
-api.init(app);
+api.init(app).then(() => {
+  console.log('api ready');
+});
 
 app.use('/profile', express.static(path.join(__dirname, 'site')));
 // app.get('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {

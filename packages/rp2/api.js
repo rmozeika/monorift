@@ -8,22 +8,30 @@ class Api {
         this.repositories = {};
     }
 
-    init(app) {
+    async init(app) {
         this.app = app;
-        this._connectMongo();
+        await this._connectMongo();
         this._registerRoutes();
         // this._createRootUser();
     }
 
     _connectMongo() {
-        this.mongoInstance = new MongoUtil();
-        this.mongoInstance.connectToServer(this._createRootUser.bind(this));
+        return new Promise((resolve, reject) => {
+            this.mongoInstance = new MongoUtil();
+            this.mongoInstance.connectToServer((err, db) => {
+                if (err) reject(err);
+                this._createRootUser.bind(this);
+                return resolve();
+            });
+        });
+        
     }
 
     _registerRoutes() {
         this._createRepositories();
 
         Object.keys(routes).forEach(route=> {
+            if (!this.app.use) return;
             var Route = routes[route];
             var newRoute = new Route(this);
             this.app.use(newRoute.routeName, newRoute.getRouter())

@@ -12,7 +12,7 @@ class Api {
         this.app = app;
         await this._connectMongo();
         this._registerRoutes();
-        // this._createRootUser();
+        this._createRootUser();
     }
 
     _connectMongo() {
@@ -48,7 +48,7 @@ class Api {
         })
     }
 
-    _createRootUser() {
+    async _createRootUser() {
         var rootUser = {
             username: config.rootuser,
             password: config.rootpassword,
@@ -58,6 +58,7 @@ class Api {
             if (!user) {
                 this.repositories.users.createUser(rootUser, (err, res) => {
                     console.log('created new root user: ' + rootUser.username)
+                    return;
                 })
             }
         });

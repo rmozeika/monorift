@@ -49,11 +49,11 @@ class MongoService {
     }
 
     connectToServer(cb) {
-        MongoClient.connect(uri, function(err, db) {
-            if (err) { console.log(err); }
-            this._db = db
-            return cb(err, db);
-        }.bind(this));
+        MongoClient.connect(uri).then((client) => {
+            this._db = client.db('data');
+            return cb(null, client.db)
+        })
+
     }
 
     getDb() {
@@ -86,24 +86,37 @@ class MongoService {
     _createMethods(method, suffixes, attach) {
         suffixes.forEach((suffix, suffixIndex)=> {
             this[method + suffix] = (collection, obj = {}, cb) => {
-                let args = [obj];
-                if (arguments.length > 3) {
-                    args = Array.prototype.slice.call(arguments, 1, arguments.length - 2);
-                    obj = arguments.length - 2;
-                    cb = arguments.length - 1;
-                }
-                var func = LogCallback(method, suffix, cb)
-                var collection = this._db.collection(collection);
-                
-                if (attach) {
-                    const applier = collection[method + suffix].apply(collection, args);
-                    applier[attach](func);                    
-                } else {
-                    args.push(func);                    
-                    collection[method + suffix].apply(collection, args);
-                }
+                // new Promise((resolve, reject) => {
+                    // const collection1 = obj.collection;
+                    // delete obj.collection;
+                    let args = [obj];
+                    if (arguments.length > 3) {
+                        args = Array.prototype.slice.call(arguments, 1, arguments.length - 2);
+                        obj = arguments.length - 2;
+                        cb = arguments.length - 1;
+                    }
+                    var func = LogCallback(method, suffix, cb)
+                    var collection = this._db.collection(collection);
+                    
+                    if (attach) {
+                        const applier = collection[method + suffix].apply(collection, args);
+                        applier[attach](func);                    
+                    } else {
+                        if (!cb) {
+                            return collection[method + suffix](obj)
+                            // .then(result => {
+                            //     console.log(result);
+                            //     resolve(result);
+                            // })
+                        } else {
+                            args.push(func);                    
+                            collection[method + suffix].apply(collection, args);
+                        }
+                        
+                    }
+            // })
 
-            } 
+            }
         });
     }
 }

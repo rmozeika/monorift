@@ -12,7 +12,7 @@ class Api {
         this.app = app;
         await this._connectMongo();
         this._registerRoutes();
-        this._createRootUser();
+        // this._createRootUser();
     }
 
     _connectMongo() {

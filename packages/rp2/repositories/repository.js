@@ -13,8 +13,21 @@ class Repository {
     extendMethods() {
       this.mongoInstance.getMethodNames().forEach(method => {
         this[method] = (object, cb) => {
-          this.mongoInstance[method](this.collection, object, cb)
-        }        
+          return new Promise((resolve, reject) => {
+
+           if (cb) {
+            this.mongoInstance[method](this.collection, object, cb)
+
+          } else {
+            return this.mongoInstance[method](this.collection, object)//{collection: this.collection, ...object})
+            .then(result =>{
+              resolve(result);
+            });
+                
+            
+          }
+        })
+        }
       })
     }
     

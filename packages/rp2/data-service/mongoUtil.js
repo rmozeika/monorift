@@ -104,10 +104,9 @@ class MongoService {
                             applier[attach](func);   
                         } else {
                             const attachAsync = async () => {
-                                const res = await applier;
-                                const resParsed = res[attach];
-                                const test = await resParsed();
-                                return test;
+                                const res = await collection[method + suffix](obj);
+                                
+                                return res[attach]();
 
                             }
                             return attachAsync(); //[attach];

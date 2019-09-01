@@ -36,12 +36,6 @@ class Repository {
         if (cb) {
           this.mongoInstance.find(this.collection, {}, cb);
         } else {
-          const findAllAsync = async () => {
-            const findAllRes = await this.mongoInstance.find(this.collection, {});
-            const result = await findAllRes.toArray();
-            resolve(result);
-          }
-         // findAllAsync();
           this.mongoInstance.find(this.collection, {}).then(result => {
             resolve(result);
           })

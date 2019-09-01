@@ -26,6 +26,7 @@
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-router": "^2.6.1",
+    "redux-devtools": "^3.5.0",
     "serve-favicon": "~2.4.5",
     "underscore": "^1.8.3"
   },

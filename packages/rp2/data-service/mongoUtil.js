@@ -100,14 +100,22 @@ class MongoService {
                     
                     if (attach) {
                         const applier = collection[method + suffix].apply(collection, args);
-                        applier[attach](func);                    
+                        if (cb) {
+                            applier[attach](func);   
+                        } else {
+                            const attachAsync = async () => {
+                                const res = await applier;
+                                const resParsed = res[attach];
+                                const test = await resParsed();
+                                return test;
+
+                            }
+                            return attachAsync(); //[attach];
+                        }
+                                         
                     } else {
                         if (!cb) {
                             return collection[method + suffix](obj)
-                            // .then(result => {
-                            //     console.log(result);
-                            //     resolve(result);
-                            // })
                         } else {
                             args.push(func);                    
                             collection[method + suffix].apply(collection, args);

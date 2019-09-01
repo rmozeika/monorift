@@ -21,10 +21,15 @@ class UserRoute extends Route {
     retrieveAll(req, res) {
         // var accessGroups = 'sysadmin';
         // if (!this.checkPermission({ req, res }, accessGroups)) return;
-        
-        this.repository.findAll((err, data) => {
-            res.send(data);
-        });        
+        const test = async () => {
+            // const user = await this.repository.findByUsername('darkness94');
+            const users = await this.repository.findAll();
+            res.send(users);
+        }
+        test();
+        // this.repository.findAll((err, data) => {
+        //     res.send(data);
+        // });        
     }
 
     createUser(req, res) {

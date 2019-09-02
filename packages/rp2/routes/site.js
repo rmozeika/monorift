@@ -15,7 +15,7 @@ class ProfileRoute extends Route {
             // this.router.post('/createUser', this.createUser.bind(this));
             // this.router.get('/username', this.getUser.bind(this));
 
-          }) 
+          }); 
     }
 
     getProfile(req, res) {

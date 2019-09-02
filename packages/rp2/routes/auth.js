@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const path = require('path')
+const path = require('path');
 var Route = require('./route.js');
-const passport = require('../auth0.js')
+const passport = require('../auth0.js');
 
-const routeName = '/';
-const repoName = 'users';
+const routeName = '/auth';
+const repoName = 'auth';
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();;
 
 class AuthRoute extends Route {
@@ -19,7 +19,7 @@ class AuthRoute extends Route {
             this.router.get('/callback', this.auth0Callback.bind(this));
             this.router.get('/login',
                 passport.authenticate('auth0', {scope: 'openid email profile'}), function (req, res) {
-                res.redirect("/");
+                res.redirect("/auth");
             });
             this.router.get('/logout');
             this.router.get('/callback', function (req, res, next) {
@@ -35,7 +35,7 @@ class AuthRoute extends Route {
               })(req, res, next);
             });
             this.router.get('/failed', this.failed.bind(this));
-        }
+        };
         run();
     }
     app(req, res) {

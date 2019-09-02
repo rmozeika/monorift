@@ -15,7 +15,7 @@ class UserRoute extends Route {
             this.router.post('/createUser', this.createUser.bind(this));
             this.router.get('/username', this.getUser.bind(this));
 
-          }) 
+          }); 
     }
 
     retrieveAll(req, res) {
@@ -25,7 +25,7 @@ class UserRoute extends Route {
             // const user = await this.repository.findByUsername('darkness94');
             const users = await this.repository.findAll();
             res.send(users);
-        }
+        };
         test();
         // this.repository.findAll((err, data) => {
         //     res.send(data);

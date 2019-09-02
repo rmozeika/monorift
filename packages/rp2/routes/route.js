@@ -1,5 +1,5 @@
 const express = require('express');
-var config = require('../config.js')
+var config = require('../config.js');
 
 
 class Route {
@@ -14,7 +14,7 @@ class Route {
                 const route = this.makeRoute(method);
                 this.router.post(`/${method}`, route.bind(this));
             });
-        })
+        });
     }
     
     makeRoute(method) {
@@ -44,7 +44,7 @@ ${util.inspect(req.user, false, null)}
                 // res.redirect('/login');
                 res.send('No sysadmin privledges');
             }
-        }
+        };
     }
 
     checkPermission({ req, res }, privledges) {
@@ -55,7 +55,7 @@ ${util.inspect(req.user, false, null)}
         if (user && user.privledges) {
             return privledges.some(privledge => {
                 return privledge === user.privledges;
-            })
+            });
         }
         res.send('Permission denied');
         return false;

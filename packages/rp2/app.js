@@ -38,7 +38,6 @@ var api = require('./api.js');
 api.init(app).then(() => {
   console.log('api ready');
 });
-
 app.use('/profile', express.static(path.join(__dirname, 'site')));
 // app.get('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
 //     res.send(true);
@@ -68,7 +67,7 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.render('error');
 // });
 
-console.log('App ready!')
+console.log('App ready!');
 
 app.api = api;
 module.exports = app;

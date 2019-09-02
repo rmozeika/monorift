@@ -2,14 +2,14 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = require('../config.js').mongoConnectionString;
 
 function LogCallback(method, suffix, cb) {
-    const util = require('util')
+    const util = require('util');
     
     return fn = (err, res) => {
         console.log(`Mongodb Operation - ${method + suffix}:
 Result:
 ${util.inspect(res, false, null)}
 `   );
-        cb(err, res)
+        cb(err, res);
     };
 }
 // Mongodb methods to be extended to repository
@@ -51,8 +51,8 @@ class MongoService {
     connectToServer(cb) {
         MongoClient.connect(uri).then((client) => {
             this._db = client.db('data');
-            return cb(null, client.db)
-        })
+            return cb(null, client.db);
+        });
 
     }
 
@@ -79,7 +79,7 @@ class MongoService {
                 method.suffixes = [''];
             }
             
-            this._createMethods(method.name, method.suffixes, method.attach)  
+            this._createMethods(method.name, method.suffixes, method.attach);  
         });
     }
 
@@ -95,7 +95,7 @@ class MongoService {
                         obj = arguments.length - 2;
                         cb = arguments.length - 1;
                     }
-                    var func = LogCallback(method, suffix, cb)
+                    var func = LogCallback(method, suffix, cb);
                     var collection = this._db.collection(collection);
                     
                     if (attach) {
@@ -108,13 +108,13 @@ class MongoService {
                                 
                                 return res[attach]();
 
-                            }
+                            };
                             return attachAsync(); //[attach];
                         }
                                          
                     } else {
                         if (!cb) {
-                            return collection[method + suffix](obj)
+                            return collection[method + suffix](obj);
                         } else {
                             args.push(func);                    
                             collection[method + suffix].apply(collection, args);
@@ -123,7 +123,7 @@ class MongoService {
                     }
             // })
 
-            }
+            };
         });
     }
 }

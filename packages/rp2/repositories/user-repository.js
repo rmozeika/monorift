@@ -1,6 +1,6 @@
 var Repository = require('./repository.js');
 
-const collection = 'user-repository'
+const collection = 'user-repository';
 
 class UserRepository extends Repository {
     constructor(api) {
@@ -9,7 +9,7 @@ class UserRepository extends Repository {
     }
 
     createUser(user, cb) {
-        this.mongoInstance.insertOne(this.collection, user, cb)
+        this.mongoInstance.insertOne(this.collection, user, cb);
     }
 
     async findByUsername(username, cb) {

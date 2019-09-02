@@ -4,3 +4,5 @@ yarn.lock
 client
 client1
 data
+conf.js
+local.conf

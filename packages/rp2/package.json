@@ -1,7 +1,7 @@
 {
-  "name": "RP2",
+  "name": "rp2",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "nodemon --inspect=0.0.0.0 ./bin/www",
     "debug": "nodemon  ./bin/www"

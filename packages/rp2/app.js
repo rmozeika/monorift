@@ -8,9 +8,26 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 const passport = require('./auth0');
 const session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
+ 
+var store = new MongoDBStore({
+  uri: 'mongodb://localhost:27017/data',
+  collection: 'mySessions'
+});
 
 var app = express();
-
+app.use(require('express-session')({
+  secret: 'This is a secret',
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  },
+  store: store,
+  // Boilerplate options, see:
+  // * https://www.npmjs.com/package/express-session#resave
+  // * https://www.npmjs.com/package/express-session#saveuninitialized
+  resave: true,
+  saveUninitialized: true
+}));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -23,11 +40,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-app.use(session({
-    secret: 'shhhhhhhhh',
-    resave: true,
-    saveUninitialized: true
-  }));
+// app.use(session({
+//     secret: 'shhhhhhhhh',
+//     resave: true,
+//     saveUninitialized: true
+//   }));
   
   app.use(passport.initialize());
   app.use(passport.session());

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+const secured = require('../middleware/secured');
 var Route = require('./route.js');
 
 const routeName = '/users';
@@ -10,7 +10,7 @@ class UserRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         setImmediate(() => {
-            this.router.get('/', this.retrieveAll.bind(this));
+            this.router.get('/', secured(), this.retrieveAll.bind(this));
             this.router.post('/', this.retrieveAll.bind(this));              
             this.router.post('/createUser', this.createUser.bind(this));
             this.router.get('/username', this.getUser.bind(this));

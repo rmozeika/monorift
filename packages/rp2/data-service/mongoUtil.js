@@ -51,7 +51,7 @@ class MongoService {
     connectToServer(cb) {
         MongoClient.connect(uri).then((client) => {
             this._db = client.db('data');
-            return cb(null, client.db);
+            return cb(null, client);
         });
 
     }

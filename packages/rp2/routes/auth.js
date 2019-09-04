@@ -30,7 +30,7 @@ class AuthRoute extends Route {
                   if (err) { return next(err); }
                   const returnTo = req.session.returnTo;
                   delete req.session.returnTo;
-                  res.redirect(returnTo || '/user');
+                  res.redirect(returnTo || '/users');
                 });
               })(req, res, next);
             });

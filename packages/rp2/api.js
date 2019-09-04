@@ -1,7 +1,9 @@
 var MongoUtil = require('./data-service/mongoUtil.js');
 var routes = require('./routes/index.js');
 var repositories = require('./repositories');
-var config = require('./config.js')
+var config = require('./config.js');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 class Api {
     constructor() {
@@ -21,6 +23,10 @@ class Api {
             this.mongoInstance.connectToServer((err, db) => {
                 if (err) reject(err);
                 this._createRootUser.bind(this);
+                // this.app.use(session({
+                //     secret: 'foo',
+                //     store: new MongoStore({ client: db })
+                // }));
                 return resolve();
             });
         });

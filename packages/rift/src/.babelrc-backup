@@ -1,0 +1,12 @@
+{
+    "presets": ["next/babel", ["module:metro-react-native-babel-preset"], ['react-app']],
+    "plugins": [
+        "@babel/plugin-proposal-do-expressions",
+        ["react-native-web", { "commonjs": true }],
+        ["module-resolver", {
+            "alias": {
+              "^react-native$": "react-native-web"
+            }
+          }] 
+      ]
+  }

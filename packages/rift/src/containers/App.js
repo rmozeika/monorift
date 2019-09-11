@@ -2,21 +2,10 @@ import React from "react";
 import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
-
 import { AppRegistry, StyleSheet, Text, View } from "react-native";
-import {
-  Container,
-  Header,
-  Body,
-  Title,
-  Content,
-  Button,
-  Icon,
-  Left,
-  Right,
-  Footer,
-  FooterTab
-} from "native-base";
+import { Button } from '@bootstrap-styled/v4';
+
+import "babel-polyfill";
 
 import createStore from "../store";
 import Nav from "../components/Nav";
@@ -28,15 +17,9 @@ export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <Container>
-          <Header>
-            <Left />
-            <Body>
-              <Title>Header</Title>
-            </Body>
-            <Right />
-          </Header>
-         </Container>
+        <div>
+          <Button color="primary">Hello</Button>
+        </div>
       </Provider>
     );
   }

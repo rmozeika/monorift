@@ -11,7 +11,7 @@ module.exports = function(api) {
             "alias": {
               "^react-native$": "react-native-web"
             }
-          }] 
+          }]
       ]
   }
 }

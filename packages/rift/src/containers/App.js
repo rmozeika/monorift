@@ -4,7 +4,19 @@ import { applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 
 import { AppRegistry, StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-elements";
+import {
+  Container,
+  Header,
+  Body,
+  Title,
+  Content,
+  Button,
+  Icon,
+  Left,
+  Right,
+  Footer,
+  FooterTab
+} from "native-base";
 
 import createStore from "../store";
 import Nav from "../components/Nav";
@@ -16,9 +28,15 @@ export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <div className="App">
-          <Nav />
-        </div>
+        <Container>
+          <Header>
+            <Left />
+            <Body>
+              <Title>Header</Title>
+            </Body>
+            <Right />
+          </Header>
+         </Container>
       </Provider>
     );
   }

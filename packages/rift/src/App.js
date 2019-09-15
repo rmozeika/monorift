@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { AppRegistry, StyleSheet, Text, View } from "react-native";
-import { Button } from '@bootstrap-styled/v4';
+import { Container, Header, Content, Button } from 'native-base';
 
 import "babel-polyfill";
 
@@ -18,8 +18,8 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <View>
-          <Text>Hello</Text>
-            <Button color="primary">Hello</Button>
+          <Text >Hello</Text>
+            <Button title="Hello"></Button>
         </View>
       </Provider>
     );

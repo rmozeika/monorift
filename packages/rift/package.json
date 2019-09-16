@@ -7,7 +7,8 @@
     "android": "./node_modules/.bin/react-native run-android",
     "ios": "./node_modules/.bin/react-native run-ios",
     "web": "node scripts/start.js",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "storybook": "start-storybook"
   },
   "dependencies": {
     "@babel/plugin-proposal-do-expressions": "^7.6.0",
@@ -17,6 +18,8 @@
     "@bootstrap-styled/v4": "^3.1.4",
     "@emotion/core": "^10.0.17",
     "@emotion/native": "^10.0.14",
+    "@eva-design/eva": "^1.0.1",
+    "@storybook/react": "^5.2.0",
     "babel": "^6.23.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-module-resolver": "^3.2.0",
@@ -32,6 +35,7 @@
     "react-dom": "^16.9.0",
     "react-native": "^0.60.5",
     "react-native-elements": "^1.2.0",
+    "react-native-ui-kitten": "^4.1.1",
     "react-native-vector-icons": "^6.6.0",
     "react-native-web": "^0.11.7",
     "react-redux": "^7.1.1",

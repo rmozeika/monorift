@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { connect } from 'react-redux'
 import { StyleSheet, Text, View } from 'react-native'
 // import { Button } from 'react-native-elements'

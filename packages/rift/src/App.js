@@ -3,10 +3,10 @@ import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { AppRegistry, StyleSheet, Text, View } from "react-native";
-import { Container, Header, Content, Button } from 'native-base';
-
+import Homescreen from './containers/Home';
 import "babel-polyfill";
-
+import { mapping, light as lightTheme } from '@eva-design/eva';
+import { ApplicationProvider } from 'react-native-ui-kitten';
 import createStore from "./store";
 import Nav from "./components/Nav";
 
@@ -17,10 +17,15 @@ export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <View>
-          <Text >Hello</Text>
-            <Button title="Hello"></Button>
-        </View>
+      <ApplicationProvider
+        mapping={mapping}
+        theme={lightTheme}
+      >
+        {/* <View> */}
+          {/* <Text >Hello</Text> */}
+          <Homescreen />
+        {/* </View> */}
+        </ApplicationProvider>
       </Provider>
     );
   }

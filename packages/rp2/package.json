@@ -15,12 +15,15 @@
     "cross-env": "^3.1.4",
     "debug": "~2.6.9",
     "ejs": "^2.6.1",
+    "esprima": "^4.0.1",
     "express": "~4.15.5",
     "express-session": "^1.15.6",
+    "git-clone": "^0.1.0",
     "mongodb": "^3.3.2",
     "morgan": "~1.9.0",
     "node-env-file": "^0.1.8",
     "nodemon": "^1.19.1",
+    "parse-function": "^5.2.11",
     "passport": "^0.4.0",
     "passport-auth0": "^1.1.0",
     "passport-local": "^1.0.0",
@@ -30,6 +33,7 @@
     "react-router": "^2.6.1",
     "redux-devtools": "^3.5.0",
     "serve-favicon": "~2.4.5",
+    "textract": "^2.5.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

@@ -21,10 +21,7 @@ export default class App extends React.Component {
         mapping={mapping}
         theme={lightTheme}
       >
-        {/* <View> */}
-          {/* <Text >Hello</Text> */}
           <Homescreen />
-        {/* </View> */}
         </ApplicationProvider>
       </Provider>
     );

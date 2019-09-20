@@ -15,18 +15,18 @@ const readdir = util.promisify(fs.readdir);
 class CodeRepository extends Repository {
     constructor(api) {
         const subcollections = 'code.class';
-        super(api, collection) //, subcollections);
+        super(api, collection); //, subcollections);
         
         const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
-            console.log(res)
+            console.log(res);
         });
     }
 
     async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {
         try {
-            const repo = await this.clone(user, repoName)
+            const repo = await this.clone(user, repoName);
             console.log(repo);
-            const src = path.join(repo.path, srcPath)
+            const src = path.join(repo.path, srcPath);
             const files = await this.separateByFile(src);
             console.log(files);
             const parsePromises = files.map(({ name }) => {
@@ -35,13 +35,13 @@ class CodeRepository extends Repository {
                 }
             }).filter(parsePromise => parsePromise);
             const fileText = await Promise.all(parsePromises);
-            console.log(result)
+            console.log(result);
         } catch (e) {
-            console.log('failed');
+            console.log(e);
         };
     }
     async clone(user, repo, srcDir = './') {
-        const downloadPath = path.join(path.join(__dirname, 'tmp', user, repo))
+        const downloadPath = path.join(path.join(__dirname, 'tmp', user, repo));
         const repository = await git.Clone(`https://github.com/${user}/${repo}`, downloadPath).catch(e => {
             return git.Repository.open(downloadPath);
         });
@@ -61,41 +61,6 @@ class CodeRepository extends Repository {
                 resolve({ filename, text });
             });
         });
-
-        //         console.log(text);
-        //         try {
-        //             const parsed = esprima.parseModule(text, { range: true, jsx: true });
-        //             // const tokenized = esprima.tokenize(text);
-        //             const app = parser({
-        //                 parse: acorn.parse,
-        //                 ecmaVersion: 2017
-        //             });
-        //             const mappedFunctions = parsed.body.map(({ type, range }) => {
-        //                 if (type !== "FunctionDeclaration") {
-        //                     return null
-        //                 }
-        //                 return text.substr(range[0], range[1]);
-        //             });
-        //             const mappedAll = parsed.body.map(({ type, range }) => {
-        //                 return text.substr(range[0], range[1]);
-        //             });
-        //             // const result = mappedFunctions.map(str => {
-        //             //     return {
-        //             //         parsed: app.parse(str),
-        //             //         raw: str
-        //             //     }
-        //             // });
-        //             const app2 = parser();
-        //             const str = mappedAll[13].substr(15);
-        //             const opts = { parse: acorn.parse, ecmaVersion: 2017}
-        //             const result = app.parse(mappedAll[13].substr(15))
-        //             resolve(result);
-        //         } catch(e) {
-        //             console.log(e);
-        //             reject(e);
-        //         }
-        //     });
-        // });
     }
     async updateFile(_id, updated, opts = { upsert: true }) {
         return this.updateSubclass('code.file', _id, updated, opts);
@@ -110,7 +75,7 @@ class CodeRepository extends Repository {
     }
     errorHandler(e) {
         console.log(e);
-        return { isError: true, error: e }
+        return { isError: true, error: e };
     }
 }
 

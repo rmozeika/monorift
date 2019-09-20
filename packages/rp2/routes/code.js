@@ -10,16 +10,17 @@ class CodeRoute extends Route {
     constructor(api) {
         super(api, routeName, repoName);
         setImmediate(() => {
-            // this.router.get('/', secured(), this.retrieveAll.bind(this));
-            this.router.post('/', this.retrieveAll.bind(this));              
+            // this.router.get('/', secured(), this.clone.bind(this));
+            this.router.post('/', this.clone.bind(this));              
             // this.router.post('/createUser', this.createUser.bind(this));
             // this.router.get('/username', this.getUser.bind(this));
 
           }); 
     }
 
-    retrieveAll(req, res) {
-        this.repository.clone();
+    clone(req, res) {
+        const { repo } = req.data;
+        this.repository.clone(repo);
     }
 
     // createUser(req, res) {

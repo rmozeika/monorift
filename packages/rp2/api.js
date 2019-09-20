@@ -23,10 +23,6 @@ class Api {
             this.mongoInstance.connectToServer((err, db) => {
                 if (err) reject(err);
                 this._createRootUser.bind(this);
-                // this.app.use(session({
-                //     secret: 'foo',
-                //     store: new MongoStore({ client: db })
-                // }));
                 return resolve();
             });
         });
@@ -41,9 +37,7 @@ class Api {
             var Route = routes[route];
             var newRoute = new Route(this);
             this.app.use(newRoute.routeName, newRoute.getRouter())
-            // const staticResource='C:/Users/Bobby/Development';
-            // this.app.use('profiles', express.static(path.join(staticResource, 'site')));
-        })
+        });
     }
 
     _createRepositories() {

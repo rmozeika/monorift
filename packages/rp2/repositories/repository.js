@@ -1,7 +1,7 @@
-const extendedMethods = ['find', 'findOne', 'insertOne', 'insertMany', 'deleteOne', 'deleteMany', 'updateOne', 'updateMany'];
+const extendedMethods = ['find', 'findOne', 'insertOne', 'insertMany', 'deleteOne', 'deleteMany', 'updateOne', 'updateMany', 'findOneAndUpdate'];
 
 class Repository {
-    constructor(api, collection) {
+    constructor(api, collection, subcollections) {
       this.api = api;
       this.collection = collection;
 
@@ -12,25 +12,26 @@ class Repository {
 
     extendMethods() {
       this.mongoInstance.getMethodNames().forEach(method => {
-        this[method] = (object, cb) => {
+        this[method] = (object, subcollection, opts, cb) => {
           return new Promise((resolve, reject) => {
-
-           if (cb) {
-            this.mongoInstance[method](this.collection, object, cb)
-
-          } else {
-            return this.mongoInstance[method](this.collection, object)//{collection: this.collection, ...object})
-            .then(result =>{
-              resolve(result);
-            });
-                
-            
-          }
-        })
-        }
+            return this.mongoInstance[method](subcollection || this.collection, object)//{collection: this.collection, ...object})
+              .then(result =>{
+                if (cb) return cb(result);
+                resolve(result);
+              });
+          });
+        };
+      });
+    }
+    createMethod(object, collection, method, cb) {
+      return new Promise((resolve, reject) => {
+        return this.mongoInstance[method](collection, object)//{collection: this.collection, ...object})
+          .then(result =>{
+            if (cb) return cb(result);
+            resolve(result);
+          });
       })
     }
-    
     findAll(cb) {
       return new Promise((resolve, reject) => {
         if (cb) {

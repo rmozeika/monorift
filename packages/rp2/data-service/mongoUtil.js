@@ -1,14 +1,17 @@
-const MongoClient = require('mongodb').MongoClient;
+const {
+    ObjectId,
+    MongoClient
+} = require('mongodb');
 const uri = require('../config.js').mongoConnectionString;
 
 function LogCallback(method, suffix, cb) {
     const util = require('util');
-    
+
     return fn = (err, res) => {
         console.log(`Mongodb Operation - ${method + suffix}:
 Result:
 ${util.inspect(res, false, null)}
-`   );
+`);
         cb(err, res);
     };
 }
@@ -17,29 +20,31 @@ ${util.inspect(res, false, null)}
 // Options:
 //  - combine:  create "one or many" methods (e.g. insertOne, insertMany)
 //  - attach:   run function after
-const extendMethods = [
-    {
+const extendMethods = [{
         name: 'update',
         combine: true,
     },
     {
-      name: 'find',
-      suffixes: [
-        'One',
-      ]
+        name: 'find',
+        suffixes: [
+            'One',
+        ]
     },
     {
         name: 'find',
         attach: 'toArray'
     },
     {
-      name: 'insert',
-      combine: true
+        name: 'insert',
+        combine: true
     },
     {
-      name: 'delete',
-      combine: true
+        name: 'delete',
+        combine: true
     },
+    {
+        name: 'findOneAndUpdate'
+    }
 ];
 
 class MongoService {
@@ -62,9 +67,9 @@ class MongoService {
 
     getMethodNames() {
         let methodNames = [];
-        extendMethods.forEach(method=>{
+        extendMethods.forEach(method => {
             if (!method.suffixes) method.suffixes = [''];
-            methodNames = methodNames.concat(method.suffixes.map(suffix=> method.name + suffix));
+            methodNames = methodNames.concat(method.suffixes.map(suffix => method.name + suffix));
         });
 
         return methodNames;
@@ -74,57 +79,62 @@ class MongoService {
         extendMethods.forEach(method => {
             if (method.combine) {
                 method.suffixes = ['One', 'Many'];
-            } 
+            }
             if (!method.suffixes) {
                 method.suffixes = [''];
             }
-            
-            this._createMethods(method.name, method.suffixes, method.attach);  
+
+            this._createMethods(method.name, method.suffixes, method.attach);
         });
     }
 
     _createMethods(method, suffixes, attach) {
-        suffixes.forEach((suffix, suffixIndex)=> {
+        suffixes.forEach((suffix, suffixIndex) => {
             this[method + suffix] = (collection, obj = {}, cb) => {
-                // new Promise((resolve, reject) => {
-                    // const collection1 = obj.collection;
-                    // delete obj.collection;
-                    let args = [obj];
-                    if (arguments.length > 3) {
-                        args = Array.prototype.slice.call(arguments, 1, arguments.length - 2);
-                        obj = arguments.length - 2;
-                        cb = arguments.length - 1;
-                    }
-                    var func = LogCallback(method, suffix, cb);
-                    var collection = this._db.collection(collection);
-                    
-                    if (attach) {
-                        const applier = collection[method + suffix].apply(collection, args);
-                        if (cb) {
-                            applier[attach](func);   
-                        } else {
-                            const attachAsync = async () => {
-                                const res = await collection[method + suffix](obj);
-                                
-                                return res[attach]();
+                const args = this.parseArguments(obj);
+                var func = LogCallback(method, suffix, cb);
+                var collection = this._db.collection(collection);
 
-                            };
-                            return attachAsync(); //[attach];
-                        }
-                                         
+                if (attach) {
+                    const applier = collection[method + suffix].apply(collection, args);
+                    if (cb) {
+                        applier[attach](func);
                     } else {
-                        if (!cb) {
-                            return collection[method + suffix](obj);
-                        } else {
-                            args.push(func);                    
-                            collection[method + suffix].apply(collection, args);
-                        }
-                        
-                    }
-            // })
+                        const attachAsync = async () => {
+                            const res = await collection[method + suffix].apply(collection, args);
 
+                            return res[attach]();
+
+                        };
+                        return attachAsync(); //[attach];
+                    }
+
+                } else {
+                    if (!cb) {
+                        return collection[method + suffix].apply(collection, args);
+                    } else {
+                        args.push(func);
+                        collection[method + suffix].apply(collection, args);
+                    }
+
+                }
             };
         });
+    }
+    parseArguments(obj) {
+        const {
+            filter,
+            doc,
+            opts
+        } = obj;
+        if (!doc) return [obj];
+        const filterId = filter && filter._id && ObjectId(filter._id);
+        const filterWithId = (filterId) ? {
+            ...filter,
+            _id: filterId
+        } : filter
+        const args = [filterWithId, doc, opts];
+        return args.filter(o => o);
     }
 }
 

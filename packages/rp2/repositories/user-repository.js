@@ -13,17 +13,8 @@ class UserRepository extends Repository {
     }
 
     async findByUsername(username, cb) {
-        // if (!cb) {
-        //     // const user = await this.findOne({ username });
-        //     const user = await this.findOne({username});
-        //     return user;
-        // } else {
-            return this.findOne({username}, cb);
-        // }
+        return this.findOne({username}, cb);
     }
-    async findByUsernameAsync(username) {
-        const user = await this.findOne({username});
-        return user;    }
     importProfile(profile, cb) {
         const { email, username, nickname } = profile;
         const obj = {

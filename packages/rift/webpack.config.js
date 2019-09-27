@@ -10,7 +10,16 @@ module.exports = {
         path.join(src, 'index.js')
     ],
     module: {
-        rules: [
+            rules: [
+              {
+                test: /\.ts(x?)$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: "ts-loader"
+                    }
+                ]
+            },
             {
                 use: {
                     loader: 'babel-loader',
@@ -77,12 +86,13 @@ module.exports = {
         ]
         
     },
-    resolve: {
+    resolve: {        
         alias: {
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
             'react-native': 'react-native-web',
           },
+          extensions: [".ts", ".tsx", ".js"]
     },
     plugins: [
         new HtmlWebPackPlugin({

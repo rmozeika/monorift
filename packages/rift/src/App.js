@@ -8,8 +8,8 @@ import "babel-polyfill";
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider } from 'react-native-ui-kitten';
 import createStore from "./store";
-import Nav from "./components/Nav";
-
+// import Nav from "./components/Nav";
+import { Main }  from './components/tScri';
 const middleware = createSagaMiddleware();
 const store = createStore({});
 
@@ -21,6 +21,7 @@ export default class App extends React.Component {
         mapping={mapping}
         theme={lightTheme}
       >
+          <Main />
           <Homescreen />
         </ApplicationProvider>
       </Provider>

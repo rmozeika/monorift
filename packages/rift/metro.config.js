@@ -15,6 +15,11 @@ module.exports = {
     }),
   },
   resolver: {
-    blacklistRE: /dist.web\/.*/
+    blacklistRE: /dist.web\/.*/,
+    sourceExts: [
+      'js',
+      'ts',
+      'tsx'
+    ],
   }
 };

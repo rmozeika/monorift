@@ -8,6 +8,7 @@
     "module": "esnext",
     "incremental": true,
     "esModuleInterop": true,
+    "sourceMap": true,
     // "isolatedModules": true,
     "resolveJsonModule": true,
     "allowJs": true,
@@ -16,7 +17,7 @@
     "skipLibCheck": true,
     // "strict": true,
     // "noImplicitAny": true,
-    "strictNullChecks": true,
+    // "strictNullChecks": true,
     // "noImplicitThis": true,
     // "alwaysStrict": true,
     // "noUnusedLocals": true,
@@ -97,7 +98,6 @@
     ]
   },
   "include": [
-    // "./src/**/*"
-    "src"
+    "./src/**/*"
   ]
 }

@@ -4,8 +4,9 @@ const Config = require('./config');
 module.exports = function(api) {
     api.cache(true);
     const moduleResolverConfig = {
-      // root: path.resolve('./'),
+      root: path.resolve('./'),
       alias: {
+        // '@src/*': path.resolve(__dirname, 'src'),
         '@kitten/theme': path.resolve(Config.KITTEN_PATH, 'theme'),
         '@kitten/ui': path.resolve(Config.KITTEN_PATH, 'ui'),
         '@eva-design/eva': path.resolve(Config.MAPPING_PATH),

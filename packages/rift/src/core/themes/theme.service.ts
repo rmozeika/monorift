@@ -1,4 +1,4 @@
-import { ThemeKey } from '@src/core/themes';
+import { ThemeKey } from './index.js';
 
 export class ThemeService {
 

@@ -54,8 +54,8 @@ class Repository {
       return this.mongoInstance.findOne(this.collection, {_id: safeObjectId(_id)})
     }
 
-    update(_id, obj, cb) {
-      return this.mongoInstance.update(this.collection, {_id: safeObjectId(_id)}, obj);
+    update(_id, obj, subcollection, cb) {
+      return this.mongoInstance.update(subcollection || this.collection, {_id: safeObjectId(_id)}, obj);
     }
 
     getExtendedMethodNames() {

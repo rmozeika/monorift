@@ -9,7 +9,12 @@ var users = require('./routes/users');
 const passport = require('./auth0');
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
- 
+const webpackConfig = require('rift/webpack.config.js');
+const middleware = require('webpack-dev-middleware');
+const webpack = require('webpack');
+
+const compiler = webpack(webpackConfig);
+
 var store = new MongoDBStore({
   uri: 'mongodb://localhost:27017/data',
   collection: 'mySessions'
@@ -51,7 +56,9 @@ app.use(cookieParser());
   // app.use(express.static(path.join(__dirname, '/client/build')));
 
 var api = require('./api.js');
-
+// app.use(middleware(compiler, {
+//   publicPath: webpackConfig.output.publicPath
+// }));
 api.init(app).then(() => {
   console.log('api ready');
 });

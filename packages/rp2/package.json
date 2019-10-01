@@ -40,7 +40,9 @@
     "redux-devtools": "^3.5.0",
     "serve-favicon": "~2.4.5",
     "textract": "^2.5.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "webpack": "^4.41.0",
+    "webpack-dev-middleware": "^3.7.2"
   },
   "devDependencies": {
     "eslint": "^6.4.0"

@@ -10,6 +10,7 @@ const parseFile = ({ text, name, _id }, project, user, emitter) => {
             project: 'rift'
         };
         try {
+            if (!/\.js$/.test(name)) return resolve({ status: 'done', filename: name });
             const fileParsed = parseText(text);
             // const found = await codeRepo.findOne(meta, 'code.file');
             // console.log(found)
@@ -34,7 +35,8 @@ const parseFile = ({ text, name, _id }, project, user, emitter) => {
             console.log('done')
         } catch (e) {
             console.log(name);
-            console.log(e)
+            console.log(e);
+            reject(e);
         }
     })
 }

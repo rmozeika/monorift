@@ -7,7 +7,9 @@
     "debug": "nodemon  ./bin/www"
   },
   "dependencies": {
+    "@babel/core": "^7.6.2",
     "@babel/parser": "^7.6.0",
+    "@babel/preset-env": "^7.6.2",
     "acorn": "^7.0.0",
     "body-parser": "~1.18.2",
     "connect-ensure-login": "^0.1.1",

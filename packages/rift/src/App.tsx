@@ -22,7 +22,13 @@ import {
 const middleware = createSagaMiddleware();
 const store = createStore({});
 
-
+const styles = StyleSheet.create({
+  parentView: {
+    display: "flex",
+    height: "100%"
+  }, 
+  innerViews: { flex: 1 }
+})
 interface State {
   theme: ThemeKey;
 }
@@ -47,8 +53,14 @@ export default class App extends React.Component<{}, State> {
           <ApplicationProvider
             mapping={mapping}
             theme={themes[this.state.theme]}> 
-              <Main />
-              <Homescreen />
+            {/* <View style={styles.parentView}> */}
+                {/* <View style={styles.innerViews}> */}
+                  <Main />
+                {/* </View> */}
+                {/* <View style={styles.innerViews}> */}
+                 <Homescreen />
+                {/* </View> */}
+            {/* </View> */}
           </ApplicationProvider>
         </ThemeContext.Provider>
       </Provider>

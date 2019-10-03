@@ -6,6 +6,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 var src = path.join(__dirname, './src');
 
 module.exports = {
+    context: path.resolve(__dirname),
     entry: [
         path.join(src, 'index.js')
     ],
@@ -103,6 +104,7 @@ module.exports = {
       ],
     output: {
         path: path.join(__dirname, 'dist.web'),
+        publicPath: '/',
         filename: '[name].bundle.js'
     },
     devtool: 'source-map',

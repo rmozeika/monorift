@@ -8,6 +8,7 @@ const fs = require('fs');
 const util = require('util');
 const acorn = require('acorn');
 const parser = require('code-parser');
+// const rift = require('rift');
 const { ObjectId } = require('mongodb');
 const EventEmitter = require('events');
 class CodeEmitter extends EventEmitter {}
@@ -18,11 +19,11 @@ class CodeRepository extends Repository {
         const subcollections = 'code.class';
         super(api, collection); //, subcollections);
         
-        const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
-            console.log(res);
-        }).catch(err => {
-            console.log(err);
-        });
+        // const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
+        //     console.log(res);
+        // }).catch(err => {
+        //     console.log(err);
+        // });
     }
 
     async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {

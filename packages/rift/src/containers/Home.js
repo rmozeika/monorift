@@ -20,18 +20,20 @@ const styles = StyleSheet.create({
   }
 
 });
-export const HomeScreen = () => (
-  <Layout style={styles.container}>
-    <Layout style={styles.row}>
-      <Text category="h4">Welcome to UI Kitten</Text>
-    </Layout>
-    <Layout style={[styles.row, styles.bigBlue]}>
-      <Button>BUTTON</Button>
-    </Layout>
-    <Layout style={styles.row}>
-      <Button>BUTTON</Button>
-    </Layout>
-  </Layout>
-);
+export const HomeScreen = () => {
+  return (
+    <Layout style={styles.container}>
+        <Layout style={styles.row}>
+          <Text category="h4">Welcome to UI Kitten</Text>
+        </Layout>
+        <Layout style={[styles.row, styles.bigBlue]}>
+          <Button>BUTTON</Button>
+        </Layout>
+        <Layout style={styles.row}>
+          <Button>BUTTON</Button>
+        </Layout>
+      </Layout>
+  );
+};
 
 export default connect(state => state)(HomeScreen);

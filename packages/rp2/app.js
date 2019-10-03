@@ -10,11 +10,11 @@ const passport = require('./auth0');
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 // const rift = require('rift');
-const webpackConfig = require('rift/webpack.config.js');
-const middleware = require('webpack-dev-middleware');
+const webpackConfig = require('../../webpack.config.js');
+// const middleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 
-const compiler = webpack(webpackConfig);
+// const compiler = webpack(webpackConfig);
 
 var store = new MongoDBStore({
   uri: 'mongodb://localhost:27017/data',
@@ -57,9 +57,9 @@ app.use(cookieParser());
   // app.use(express.static(path.join(__dirname, '/client/build')));
 
 var api = require('./api.js');
-app.use(middleware(compiler, {
-  publicPath: webpackConfig.output.publicPath
-}));
+// app.use(middleware(compiler, {
+//   publicPath: webpackConfig.output.publicPath
+// }));
 api.init(app).then(() => {
   console.log('api ready');
 });
@@ -93,6 +93,7 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
+app.use('/', express.static(path.join(webpackConfig.output.path)));
 app.get('*', (req, res) => {
     res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
 });

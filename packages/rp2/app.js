@@ -94,9 +94,9 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.render('error');
 // });
 app.use('/', express.static(path.join(webpackConfig.output.path)));
-app.get('*', (req, res) => {
-    res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
-});
+// app.get('*', (req, res) => {
+//     res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
+// });
 console.log('App ready!');
 
 app.api = api;

@@ -7,10 +7,10 @@ const iterateClass = (classObj, parent, emitter) => {
     return;
 }
 
-const ClassGenerator = (name, parent, start, end) => {
+const ClassGenerator = (name, { _id }, start, end) => {
     return {
         name,
-        parent,
+        parent: _id,
         position: {
             start,
             end

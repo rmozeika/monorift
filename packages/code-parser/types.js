@@ -1,5 +1,6 @@
 module.exports = {
     Class: 'ClassDeclaration',
     program: "program",
-    Export: 'ExportDefaultDeclaration'
+    Export: 'ExportDefaultDeclaration',
+    Variable: 'VariableDeclaration'
 }

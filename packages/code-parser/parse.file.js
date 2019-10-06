@@ -10,7 +10,7 @@ const parseFile = ({ text, name, _id }, project, user, emitter) => {
             project: 'rift'
         };
         try {
-            if (!/\.js$/.test(name)) return resolve({ status: 'done', filename: name });
+            if (!(/\.js$/.test(name) || /\.tsx$/.test(name))) return resolve({ status: 'done', filename: name });
             const fileParsed = parseText(text);
             // const found = await codeRepo.findOne(meta, 'code.file');
             // console.log(found)
@@ -28,7 +28,7 @@ const parseFile = ({ text, name, _id }, project, user, emitter) => {
             emitter.emit('file', fileE)
             Object.keys(fileParsed).forEach(key => {
                 if (key == types.program) {
-                    iterateProgram(fileParsed[key].body, _id, emitter);
+                    iterateProgram(fileParsed[key].body, { _id, text }, emitter);
                 }
             })
             resolve({ status: 'done', filename: name })
@@ -49,7 +49,8 @@ const parseText = (text) => {
         plugins: [
             // enable jsx and flow syntax
             "jsx",
-            "flow"
+            "typescript",
+            "classProperties"
         ]
     });
     return obj;

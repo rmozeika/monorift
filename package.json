@@ -6,7 +6,8 @@
   },
   "scripts": {
     "run:server": "cd ./packages/rp2 && node ./bin/www",
-    "build:wp": "cd ./packages/rift && webpack --mode development --config webpack.config.js"
+    "build:wp": "cd ./packages/rift && webpack --mode development --config webpack.config.js",
+    "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js"
   },
   "workspaces": {
     "packages": ["packages/*"]

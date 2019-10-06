@@ -19,11 +19,11 @@ class CodeRepository extends Repository {
         const subcollections = 'code.class';
         super(api, collection); //, subcollections);
         
-        // const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
-        //     console.log(res);
-        // }).catch(err => {
-        //     console.log(err);
-        // });
+        const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+        });
     }
 
     async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {
@@ -34,7 +34,7 @@ class CodeRepository extends Repository {
             const fileNames = await this.separateByFile(src);
             console.log(fileNames);
             const parsePromises = fileNames.map(({ name }) => {
-                if (/\.js$/.test(name)) {
+                if (/\.tsx$/.test(name) || /\.js$/.test(name)) {
                     return this.parseCodeFromFile(src, name);
                 }
             }).filter(parsePromise => parsePromise);
@@ -42,28 +42,7 @@ class CodeRepository extends Repository {
             const { _id, fileMap } = await this.createProject(user, repoName, files);
             console.log(files);
             const codeEmitter = this.createListeners(_id);
-            // codeEmitter.on('file', (f) => {
-            //     console.log(f, this);
-            //     this.updateFile(f._id, { ...f ,project: _id }).then(res => {
-            //         console.log(res);
-            //     }).catch(e => {
-            //         console.log(f.name, e)
-            //     });
-            // });
-            // codeEmitter.on('class', (c) => {
-            //     console.log(c, this);
-            //     const { parent, name } = c;
-            //     this.findOne({ project: _id, parent, name }, 'code.class').then((res) => {
-            //         if (!res) {
-            //             return this.insertClass({ ...c, project: _id });
-            //         }
-            //         return this.updateClass(res._id, c);
-            //     }).then((res) => {
-            //         console.log(res);
-            //     }).catch((e) => {
-            //         console.log(e);
-            //     })
-            // });
+
             const parseFiles = () => {
                 const resultFiles = [];
                 fileMap.forEach((value, key) => {
@@ -100,8 +79,32 @@ class CodeRepository extends Repository {
         return { repository, path: downloadPath };
     }
     async separateByFile(repository) {
-        const files = await readdir(repository, { withFileTypes: true });
-        return files;
+        let fileList = [];
+
+        const readFiles = async (dir) => {
+            const files = await readdir(dir, { withFileTypes: true });
+            if (files) {
+                const fz = await Promise.all(files.map(async file => {
+                    if (file.isDirectory()) {
+                        const recurs = await readFiles(`${dir}/${file.name}`);
+                        return `finished ${file.name}`;
+                    }
+                    const readFile = util.promisify(fs.readFile);
+
+                    const read = await readFile(path.join(dir, file.name), { encoding: 'utf-8'}).then(res => {
+                        fileList.push({ text: res, name: file.name, dir, _id: ObjectId() });
+                    }).catch(e => {
+                        console.log(e);
+                    })
+                })).catch(e => {
+                    console.log(e);
+                });
+                console.log(fz);
+            }
+            return fileList;
+        };
+        const resultOfRead = await readFiles(repository);
+        return resultOfRead;
     }
     parseCode(input) {
         return input;
@@ -119,19 +122,12 @@ class CodeRepository extends Repository {
             // });
         });
     }
-    async findExisting(user, repo) {
-
-    }
     async createProject(user, repo, files) {
         const existing = await this.findOne({ repo, user });
         const fileMap = new Map(files.map(({ name, _id, text }) => {
             return [ name, { _id, text }];
         }));
         if (!existing) {
-            // const fileIds = files.reduce(( acc, { _id, name }) => { 
-            //     acc[name] = _id;
-            //     return acc;
-            // }, {});
             const fileIds = this.convertFileMapToDbArr(fileMap);
             const { insertedId } = await this.insertOne({ user, repo, fileIds });
             return { _id: insertedId, fileMap };
@@ -174,6 +170,19 @@ class CodeRepository extends Repository {
                 console.log(e);
             })
         });
+        codeEmitter.on('variable', (v) => {
+            const { parent, name } = v;
+            this.findOne({ project: _id, parent, name }, 'code.variable').then((res) => {
+                if (!res) {
+                    return this.insertVariable({ ...v, project: _id})
+                }
+                return this.updateVariable(res._id, v);
+            }).then((res) => {
+                console.log(res);
+            }).catch((e) => {
+                console.log(e);
+            })
+        })
         codeEmitter.on('file', (f) => {
             console.log(f, this);
             this.updateFile(f._id, { ...f ,project: _id }).then(res => {
@@ -182,11 +191,15 @@ class CodeRepository extends Repository {
                 console.log(f.name, e)
             });
         });
+
         return codeEmitter;
 
     }
-    async updateFile(_id, updated, opts = { upsert: true }) {
-        return this.updateSubclass('code.file', { filter: { _id }, opts, doc: updated }, opts);
+    async updateVariable(_id, updated, opts = { upsert: true }) {
+        return this.updateSubclass('code.variable', { filter: { _id }, doc: updated }, opts );
+    }
+    async insertVariable(insert, opts = {}) {
+        return this.insertSubclass('code.variable', insert, opts);
     }
 
     async updateClass(_id, updated, opts = { upsert: true }) {
@@ -195,9 +208,15 @@ class CodeRepository extends Repository {
     async insertClass(insert, opts = {}) {
         return this.insertSubclass('code.class', insert, opts);
     }
+
     async insertFile(insert, opts = {}) {
         return this.insertSubclass('code.file', insert, opts);
     }
+    async updateFile(_id, updated, opts = { upsert: true }) {
+        return this.updateSubclass('code.file', { filter: { _id }, opts, doc: updated }, opts);
+    }
+
+
     async insertSubclass(type, insert, opts = {}) {
         return this.insertOne({ doc: insert, opts }, type);
     }

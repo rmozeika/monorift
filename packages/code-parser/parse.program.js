@@ -5,16 +5,14 @@ module.exports = (program, parent, emitter) => {
     // scaffold.programs.push({
     //     name: fileName
     // })
-    const classes = [];
-    const iterator = (node) => {
+    const iterator = (node, exported) => {
         console.log(program);
         if (node.type == types.Class) {
             const parsedClass = iterateClass(node, parent, emitter);
-            classes.push(parsedClass);
             return;
         }
-        if (node.type == types.Export) {
-            iterator(node.declaration);
+        if (node.type == types.Export || node.type == types.ExportNamed) {
+            iterator(node.declaration, true);
         }
         if (node.type == types.Variable) {
             const { start, end } = node;

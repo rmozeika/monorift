@@ -7,14 +7,15 @@ const iterateClass = (classObj, parent, emitter) => {
     return;
 }
 
-const ClassGenerator = (name, { _id }, start, end) => {
+const ClassGenerator = (name, { _id, text }, start, end) => {
     return {
         name,
         parent: _id,
         position: {
             start,
             end
-        }
+        },
+        text: text.substring(start, end)
     }
 }
 

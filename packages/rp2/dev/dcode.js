@@ -11,5 +11,6 @@ function del(repo) {
 }
 
 del('code');
-del('code.file')
-del('code.class')
+del('code.file');
+del('code.class');
+del('code.variable');

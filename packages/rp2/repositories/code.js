@@ -31,14 +31,14 @@ class CodeRepository extends Repository {
             const repo = await this.clone(user, repoName);
             console.log(repo);
             const src = path.join(repo.path, srcPath);
-            const fileNames = await this.separateByFile(src);
-            console.log(fileNames);
-            const parsePromises = fileNames.map(({ name }) => {
-                if (/\.tsx$/.test(name) || /\.js$/.test(name)) {
-                    return this.parseCodeFromFile(src, name);
-                }
-            }).filter(parsePromise => parsePromise);
-            const files = await Promise.all(parsePromises);
+            const files = await this.separateByFile(src);
+            // console.log(fileNames);
+            // const parsePromises = fileNames.map(({ name }) => {
+            //     if (/\.tsx$/.test(name) || /\.js$/.test(name)) {
+            //         return this.parseCodeFromFile(src, name);
+            //     }
+            // }).filter(parsePromise => parsePromise);
+            // const files = await Promise.all(parsePromises);
             const { _id, fileMap } = await this.createProject(user, repoName, files);
             console.log(files);
             const codeEmitter = this.createListeners(_id);
@@ -82,6 +82,8 @@ class CodeRepository extends Repository {
         let fileList = [];
 
         const readFiles = async (dir) => {
+            const readFile = util.promisify(fs.readFile);
+
             const files = await readdir(dir, { withFileTypes: true });
             if (files) {
                 const fz = await Promise.all(files.map(async file => {
@@ -89,10 +91,15 @@ class CodeRepository extends Repository {
                         const recurs = await readFiles(`${dir}/${file.name}`);
                         return `finished ${file.name}`;
                     }
-                    const readFile = util.promisify(fs.readFile);
-
+                    const regexFilter = /.js$|.tsx/;
+                    const customFilter = /App\.tsx/; ///ActionTypes\.js/;
+                    const filter = customFilter ? customFilter : regexFilter;
+                    if (!filter.test(file.name)) {
+                        return `not parsed ${file.name}`;
+                    }
                     const read = await readFile(path.join(dir, file.name), { encoding: 'utf-8'}).then(res => {
                         fileList.push({ text: res, name: file.name, dir, _id: ObjectId() });
+                        return `finished ${file.name}`;
                     }).catch(e => {
                         console.log(e);
                     })
@@ -117,15 +124,12 @@ class CodeRepository extends Repository {
                     resolve({ name: filename, text: data, _id: ObjectId()});
                 })
             }
-            // textract.fromFileWithPath(file, { preserveLineBreaks: true }, function( error, text ) {
-            //     resolve({ name: filename, text, _id: ObjectId() });
-            // });
         });
     }
     async createProject(user, repo, files) {
         const existing = await this.findOne({ repo, user });
-        const fileMap = new Map(files.map(({ name, _id, text }) => {
-            return [ name, { _id, text }];
+        const fileMap = new Map(files.map(({ name, _id, text, dir }) => {
+            return [ name, { _id, text, dir }];
         }));
         if (!existing) {
             const fileIds = this.convertFileMapToDbArr(fileMap);

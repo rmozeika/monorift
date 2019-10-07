@@ -1,13 +1,14 @@
 const iterateProgram = require('./parse.program');
 const babel = require('@babel/parser');
 const types = require('./types');
-const parseFile = ({ text, name, _id }, project, user, emitter) => {
+const parseFile = ({ text, name, _id, dir }, project, user, emitter) => {
     return new Promise((resolve, reject) => {
         const meta = {
             _id,
             name,
             user: 'rmozeika',
-            project: 'rift'
+            project: 'rift',
+            dir
         };
         try {
             if (!(/\.js$/.test(name) || /\.tsx$/.test(name))) return resolve({ status: 'done', filename: name });
@@ -43,11 +44,8 @@ const parseFile = ({ text, name, _id }, project, user, emitter) => {
 
 const parseText = (text) => {
     const obj = babel.parse(text, {
-        // parse in strict mode and allow module declarations
         sourceType: "module",
-
         plugins: [
-            // enable jsx and flow syntax
             "jsx",
             "typescript",
             "classProperties"

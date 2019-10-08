@@ -3,5 +3,6 @@ module.exports = {
     program: "program",
     Export: 'ExportDefaultDeclaration',
     ExportNamed: 'ExportNamedDeclaration',
-    Variable: 'VariableDeclaration'
+    Variable: 'VariableDeclaration',
+    Function: 'FunctionDeclaration'
 }

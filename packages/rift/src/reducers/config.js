@@ -11,6 +11,9 @@ const setConfig = (state = {}, action) => {
       return state
   }
 }
+function test() {
+  console.log(test);
+}
 export const byName = (state = [], action = {}) => {
   switch (action.type) {
     // check this!

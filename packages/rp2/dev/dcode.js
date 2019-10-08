@@ -14,3 +14,4 @@ del('code');
 del('code.file');
 del('code.class');
 del('code.variable');
+del('code.function');

@@ -92,7 +92,7 @@ class CodeRepository extends Repository {
                         return `finished ${file.name}`;
                     }
                     const regexFilter = /.js$|.tsx/;
-                    const customFilter = /App\.tsx/; ///ActionTypes\.js/;
+                    const customFilter = /paths\.js/; ///ActionTypes\.js/;
                     const filter = customFilter ? customFilter : regexFilter;
                     if (!filter.test(file.name)) {
                         return `not parsed ${file.name}`;
@@ -187,6 +187,19 @@ class CodeRepository extends Repository {
                 console.log(e);
             })
         })
+        codeEmitter.on('function', (func) => {
+            const { parent, name } = func;
+            this.findOne({ project: _id, parent, name }, 'code.variable').then((res) => {
+                if (!res) {
+                    return this.insertVariable({ ...func, project: _id})
+                }
+                return this.updateVariable(res._id, func);
+            }).then((res) => {
+                console.log(res);
+            }).catch((e) => {
+                console.log(e);
+            })
+        });
         codeEmitter.on('file', (f) => {
             console.log(f, this);
             this.updateFile(f._id, { ...f ,project: _id }).then(res => {
@@ -195,6 +208,7 @@ class CodeRepository extends Repository {
                 console.log(f.name, e)
             });
         });
+
 
         return codeEmitter;
 
@@ -211,6 +225,13 @@ class CodeRepository extends Repository {
     }
     async insertClass(insert, opts = {}) {
         return this.insertSubclass('code.class', insert, opts);
+    }
+
+    async updateFunction(_id, updated, opts = { upsert: true }) {
+        return this.updateSubclass('code.function', { filter: { _id }, doc: updated }, opts );
+    }
+    async insertFunction(insert, opts = {}) {
+        return this.insertSubclass('code.function', insert, opts);
     }
 
     async insertFile(insert, opts = {}) {

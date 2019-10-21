@@ -13,7 +13,9 @@ var MongoDBStore = require('connect-mongodb-session')(session);
 const webpackConfig = require('../../webpack.config.js');
 // const middleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
-
+var io = require('socket.io');
+const passportSocketIo = require("passport.socketio");
+ 
 // const compiler = webpack(webpackConfig);
 
 var store = new MongoDBStore({
@@ -22,8 +24,9 @@ var store = new MongoDBStore({
 });
 
 var app = express();
-app.use(require('express-session')({
+const sessionMiddleware = require('express-session')({
   secret: 'This is a secret',
+  key: 'express.sid',
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
   },
@@ -33,7 +36,9 @@ app.use(require('express-session')({
   // * https://www.npmjs.com/package/express-session#saveuninitialized
   resave: true,
   saveUninitialized: true
-}));
+});
+
+app.use(sessionMiddleware);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -100,6 +105,62 @@ app.use('/', express.static(path.join(webpackConfig.output.path)));
 console.log('App ready!');
 
 app.api = api;
+const socketIO = io();
+app.io = socketIO;
+// app.io.use(passportSocketIo.authorize({
+//   cookieParser: cookieParser,       // the same middleware you registrer in express
+//   key:          'express.sid',       // the name of the cookie where express/connect stores its session_id
+//   secret:       'This is a secret',    // the session_secret to parse the cookie
+//   store:        store,        // we NEED to use a sessionstore. no memorystore please
+//   success:      onAuthorizeSuccess,  // *optional* callback on success - read more below
+//   fail:         onAuthorizeFail,     // *optional* callback on fail/error - read more below
+// }));
+app.io.use(function(socket, next){
+  // Wrap the express middleware
+  sessionMiddleware(socket.request, {}, next);
+});
+function onAuthorizeSuccess(data, accept){
+  console.log('successful connection to socket.io');
+ 
+  // The accept-callback still allows us to decide whether to
+  // accept the connection or not.
+  accept(null, true);
+ 
+  // // OR
+ 
+  // // If you use socket.io@1.X the callback looks different
+  // accept();
+}
+function onAuthorizeFail(data, message, error, accept){
+  if(error)
+    throw new Error(message);
+  console.log('failed connection to socket.io:', message);
+ 
+  // We use this callback to log all of our failed connections.
+  accept(null, false);
+}
+app.io.on('connection', (socket) => {
+  const { user } = socket.request.session.passport;
+  console.log(socket);
+
+  socket.on('check_auth', (ack) => {
+    if (user) {
+      ack(user);
+      return;
+    }
+    ack(null);
+    
+    // socket.emit('login', user);
+  });
+  // setTimeout(() => {
+  //   socket.emit('login', user);
+  // }, 3000);
+});
+app.io.on('message', function (msg) {
+  console.log(msg);
+  // my msg
+});
+
 module.exports = app;
 
 

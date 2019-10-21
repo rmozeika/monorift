@@ -1,6 +1,6 @@
 {
     "parserOptions": {
-        "ecmaVersion": 2017,
+        "ecmaVersion": 2018,
         "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true
@@ -8,6 +8,6 @@
     },
     "rules": {
         "semi": "error",
-        "quotes": ["error", "double", { "allowTemplateLiterals": true }]
+        "quotes": ["error", "single", { "allowTemplateLiterals": true }]
     }
 }

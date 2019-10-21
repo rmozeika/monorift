@@ -17,7 +17,7 @@ module.exports = {
 
 //     const codeRepo = rp2.repositories.code;
 //     // const insert = await codeRepo.insertOne({ name: 'test'}, null, 'code.class')
-//     console.log(users);
+//     // console.log(users);
 
 
 //     let uid = 0;
@@ -41,7 +41,7 @@ module.exports = {
 //             ]
 //         });
 
-//         console.log(obj);
+//         // console.log(obj);
 //         const parseFile = async (file) => {
 //             const meta = {
 //                 name: fileName,
@@ -49,7 +49,7 @@ module.exports = {
 //                 project: 'rift'
 //             };
 //             // const found = await codeRepo.findOne(meta, 'code.file');
-//             // console.log(found)
+//             // // console.log(found)
 //             // const insert = await codeRepo.insertOne(meta, 'code.file');
 //             const foundUpdate = await codeRepo.findOneAndUpdate({
 //                 filter: { name: fileName },
@@ -83,7 +83,7 @@ module.exports = {
 //             methods: [],
 //         };
 //         const iterateClass = (classObj, parent) => {
-//             console.log(rawSrc)
+//             // console.log(rawSrc)
 //             const mClass = ClassGenerator(classObj.id.name, parent, start, end)
 //             return;
 //         }

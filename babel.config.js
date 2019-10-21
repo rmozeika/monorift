@@ -14,7 +14,7 @@ module.exports = function(api) {
       },
     };
     const plugins = [
-      ['module-resolver', moduleResolverConfig],
+      ['module-resolver', moduleResolverConfig, "@babel/plugin-proposal-object-rest-spread"],
     ];
     if (true) return {
       plugins,

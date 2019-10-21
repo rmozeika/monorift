@@ -11,7 +11,6 @@ const parser = require('code-parser');
 // const rift = require('rift');
 const { ObjectId } = require('mongodb');
 const EventEmitter = require('events');
-class CodeEmitter extends EventEmitter {}
 
 const readdir = util.promisify(fs.readdir);
 class CodeRepository extends Repository {
@@ -29,10 +28,10 @@ class CodeRepository extends Repository {
     async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {
         try {
             const repo = await this.clone(user, repoName);
-            console.log(repo);
+            // console.log(repo);
             const src = path.join(repo.path, srcPath);
             const files = await this.separateByFile(src);
-            // console.log(fileNames);
+            // // console.log(fileNames);
             // const parsePromises = fileNames.map(({ name }) => {
             //     if (/\.tsx$/.test(name) || /\.js$/.test(name)) {
             //         return this.parseCodeFromFile(src, name);
@@ -48,7 +47,7 @@ class CodeRepository extends Repository {
                 fileMap.forEach((value, key) => {
                     const file = {
                         ...value,
-                        name: key
+                        key
                     };
                     const func =  async() => {
                         const result = await parser.File(file, repoName, user, codeEmitter).catch(e => {
@@ -64,6 +63,7 @@ class CodeRepository extends Repository {
 
             const proms = parseFiles()
             const resu = await Promise.all(proms);
+            const ended = await codeEmitter.isEnded();
             return resu;
 
         } catch (e) {
@@ -88,30 +88,33 @@ class CodeRepository extends Repository {
             if (files) {
                 const fz = await Promise.all(files.map(async file => {
                     if (file.isDirectory()) {
+                        // return await readFiles(`${dir}/${file.name}`);
                         const recurs = await readFiles(`${dir}/${file.name}`);
                         return `finished ${file.name}`;
                     }
-                    const regexFilter = /.js$|.tsx/;
-                    const customFilter = /paths\.js/; ///ActionTypes\.js/;
+                    const regexFilter = /.js$|.tsx$|ts$/;
+                    const customFilter = /paths\.js/;
                     const filter = customFilter ? customFilter : regexFilter;
                     if (!filter.test(file.name)) {
                         return `not parsed ${file.name}`;
+                    } else {
+                        // console.log(`started ${file.name}`)
                     }
-                    const read = await readFile(path.join(dir, file.name), { encoding: 'utf-8'}).then(res => {
-                        fileList.push({ text: res, name: file.name, dir, _id: ObjectId() });
-                        return `finished ${file.name}`;
-                    }).catch(e => {
-                        console.log(e);
-                    })
+                    const read = await readFile(path.join(dir, file.name), { encoding: 'utf-8'});
+                    const relativePath = (dir === repository) ? '/' : dir.replace(repository, '') + '/'
+                    fileList.push({ text: read, name: file.name, dir: { absolute: dir, relative: relativePath }, _id: ObjectId() });
+                    return `finished ${file.name}`;
                 })).catch(e => {
-                    console.log(e);
+                    // console.log(e);
                 });
-                console.log(fz);
+                // console.log(fz);
             }
-            return fileList;
+            return `${dir} finished`;
         };
         const resultOfRead = await readFiles(repository);
-        return resultOfRead;
+        // codeEmitter.on
+        // const 
+        return fileList;
     }
     parseCode(input) {
         return input;
@@ -128,19 +131,24 @@ class CodeRepository extends Repository {
     }
     async createProject(user, repo, files) {
         const existing = await this.findOne({ repo, user });
-        const fileMap = new Map(files.map(({ name, _id, text, dir }) => {
-            return [ name, { _id, text, dir }];
+        const fileMap = new Map(files.map(({ name, _id, text, dir }, index) => {
+            // console.log(index, name);
+            if (name == 'index.js') {
+                // console.log(name)
+            }
+            // const fileKey = (dir.relative) ?
+            return [ `${dir.relative}${name}`, { _id, text, dir: dir.relative, index, name  }];
         }));
         if (!existing) {
             const fileIds = this.convertFileMapToDbArr(fileMap);
             const { insertedId } = await this.insertOne({ user, repo, fileIds });
             return { _id: insertedId, fileMap };
         }
-        existing.fileIds.forEach(({ _id, name }) => {
+        existing.fileIds.forEach(({ _id, name }, index) => {
             if (fileMap.has(name)) {
                 const mapVal = fileMap.get(name);
                 if (_id == null) _id = ObjectId();
-                fileMap.set(name, { ...mapVal, _id });
+                fileMap.set(name, { ...mapVal, _id, index });
             };
         });
         const fileIds = this.convertFileMapToDbArr(fileMap);
@@ -158,58 +166,112 @@ class CodeRepository extends Repository {
         return dbArr;
     }
     createListeners(_id) {
+        class CodeEmitter extends EventEmitter {
+            constructor() {
+                super();
+                this.onTaskEnded.bind(this)
+                this.allStarted = new Map();
+                this.importResult = new Map();
+                this.ended = false;
+                this.thenable = {
+                    then: (fn) => {
+                      fn('jup')
+                    }
+                  };
+            }
+            emit(type, ...args) {
+                this.allStarted.set(args[0], type);
+                super.emit(type, ...args)
+            }
+            endProcess() {
+                this.ended = true;
+
+            }
+            isEnded() {
+                return new Promise((resolve, reject) => {
+                    this.resolver = () => {
+                        resolve(this.importResult);
+                    }
+                    if (this.ended === true) resolve(this.importResult);
+                });
+            }
+            on(event, fn) {
+                const newFn = async (...args) => {
+                    let error = null;
+                    const result = await fn(...args).catch(e => {
+                        error = e;
+                    });
+                    this.onTaskEnded(event, ...args, error, result);
+                }
+                // if (event === 'file') {
+                    super.on(event, newFn);
+                // } else {
+                //     super.on(event, fn)
+                // }
+
+            }
+            allStarted = new Map()
+            onTaskEnded(type, object, error, result) {
+                this.allStarted.delete(object);
+                this.importResult.set({ type, name: object.name }, { result, error, object })
+
+                if (this.ended || this.allStarted.size == 0) {
+                    this.endProcess();
+                    if (this.resolver) this.resolver();
+                }
+
+            }
+        }
+
         const codeEmitter = new CodeEmitter();
 
-        codeEmitter.on('class', (c) => {
-            console.log(c, this);
+        // codeEmitter.on('end', () => {
+        //     codeEmitter.status
+        // })
+        // const handleFinish = (type, object) => {
+        //     codeEmitter.
+        // }
+        const handleError = (type, object) => {
+
+        }
+        codeEmitter.on('class', async (c) => {
+            // console.log(c, this);
             const { parent, name } = c;
-            this.findOne({ project: _id, parent, name }, 'code.class').then((res) => {
-                if (!res) {
-                    return this.insertClass({ ...c, project: _id });
-                }
-                return this.updateClass(res._id, c);
-            }).then((res) => {
-                console.log(res);
-            }).catch((e) => {
-                console.log(e);
-            })
+            const found = await this.findOne({ project: _id, parent, name }, 'code.class')
+            if (!found) {
+                const inserted = await this.insertClass({ ...c, project: _id });
+                return inserted;
+            }
+            const updated = await this.updateClass(found._id, c);
+            return updated;
         });
-        codeEmitter.on('variable', (v) => {
+        codeEmitter.on('variable', async (v) => {
             const { parent, name } = v;
-            this.findOne({ project: _id, parent, name }, 'code.variable').then((res) => {
-                if (!res) {
-                    return this.insertVariable({ ...v, project: _id})
-                }
-                return this.updateVariable(res._id, v);
-            }).then((res) => {
-                console.log(res);
-            }).catch((e) => {
-                console.log(e);
-            })
+            const found = await this.findOne({ project: _id, parent, name }, 'code.variable')
+            if (!found) {
+                const inserted = await this.insertVariable({ ...v, project: _id});
+                return inserted;
+            }
+            const updated = this.updateVariable(found._id, v);
+            return updated;
         })
-        codeEmitter.on('function', (func) => {
+        codeEmitter.on('function', async (func) => {
             const { parent, name } = func;
-            this.findOne({ project: _id, parent, name }, 'code.variable').then((res) => {
-                if (!res) {
-                    return this.insertVariable({ ...func, project: _id})
-                }
-                return this.updateVariable(res._id, func);
-            }).then((res) => {
-                console.log(res);
-            }).catch((e) => {
-                console.log(e);
-            })
+            const found = await this.findOne({ project: _id, parent, name }, 'code.variable');
+            if (!found) {
+                const inserted = await this.insertVariable({ ...func, project: _id})
+                return inserted;
+            }
+            const updated = await this.updateVariable(found._id, func);
+            return updated;
         });
-        codeEmitter.on('file', (f) => {
-            console.log(f, this);
-            this.updateFile(f._id, { ...f ,project: _id }).then(res => {
-                console.log(res);
-            }).catch(e => {
-                console.log(f.name, e)
-            });
+        codeEmitter.on('file', async (f) => {
+            console.log('started ' + f.key)//, this);
+            const updatedFile = await this.updateFile(f._id, { ...f ,project: _id });
+            return updatedFile;
         });
-
-
+        codeEmitter.setMaxListeners(30)
+        console.log(codeEmitter.getMaxListeners())
         return codeEmitter;
 
     }
@@ -249,7 +311,7 @@ class CodeRepository extends Repository {
         return this.updateOne({ filter, doc: { $set: doc }, opts }, type);
     }
     errorHandler(e) {
-        console.log(e);
+        // console.log(e);
         return { isError: true, error: e };
     }
 }

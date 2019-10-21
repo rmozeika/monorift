@@ -1,7 +1,9 @@
-import * as React from "react";
-import { Layout, Text, Button, styled } from "react-native-ui-kitten";
-import { connect } from "react-redux";
-import { StyleSheet } from "react-native";
+import * as React from 'react';
+import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
+import { connect } from 'react-redux';
+import { StyleSheet, Linking } from 'react-native';
+import { useAuth0 } from './auth0';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -21,19 +23,35 @@ const styles = StyleSheet.create({
 
 });
 export const HomeScreen = () => {
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   return (
     <Layout style={styles.container}>
         <Layout style={styles.row}>
-          <Text category="h4">Welcome to UI Kitten</Text>
+          {!isAuthenticated && (
+            <button
+              onClick={() =>
+                Linking.openURL(window.location.origin + '/auth/login').catch((err) => console.error('An error occurred', err))
+                //loginWithRedirect({})
+              }
+            >
+              Log in
+            </button>
+          )}
+
+      {isAuthenticated && <button onClick={() => logout()}>Log out</button>}
         </Layout>
-        <Layout style={[styles.row, styles.bigBlue]}>
+        {/* <Layout style={[styles.row, styles.bigBlue]}>
           <Button>BUTTON</Button>
         </Layout>
         <Layout style={styles.row}>
           <Button>BUTTON</Button>
-        </Layout>
+        </Layout> */}
       </Layout>
   );
 };
-
-export default connect(state => state)(HomeScreen);
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    
+  };
+};
+export default connect(state => state, mapDispatchToProps)(HomeScreen);

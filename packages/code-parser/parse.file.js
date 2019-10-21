@@ -1,20 +1,24 @@
 const iterateProgram = require('./parse.program');
 const babel = require('@babel/parser');
 const types = require('./types');
-const parseFile = ({ text, name, _id, dir }, project, user, emitter) => {
+const parseFile = ({ text, name, _id, dir, key, index }, project, user, emitter) => {
     return new Promise((resolve, reject) => {
-        const meta = {
-            _id,
-            name,
-            user: 'rmozeika',
-            project: 'rift',
-            dir
-        };
         try {
-            if (!(/\.js$/.test(name) || /\.tsx$/.test(name))) return resolve({ status: 'done', filename: name });
+            const meta = {
+                _id,
+                name,
+                user: 'rmozeika',
+                project: 'rift',
+                dir,
+                key,
+                index
+            };
+
+
+            if (!(/\.js$/.test(name) || /\.tsx$/.test(name)) || /\.tsx$/.test(name)) return resolve({ status: 'done', filename: name });
             const fileParsed = parseText(text);
             // const found = await codeRepo.findOne(meta, 'code.file');
-            // console.log(found)
+            // // console.log(found)
             // const insert = await codeRepo.insertOne(meta, 'code.file');
             // const foundUpdate = await codeRepo.findOneAndUpdate({
             //     filter: { name: fileName },
@@ -33,10 +37,10 @@ const parseFile = ({ text, name, _id, dir }, project, user, emitter) => {
                 }
             })
             resolve({ status: 'done', filename: name })
-            console.log('done')
+            // console.log('done')
         } catch (e) {
-            console.log(name);
-            console.log(e);
+            // console.log(name);
+            // console.log(e);
             reject(e);
         }
     })

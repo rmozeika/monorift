@@ -6,7 +6,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 var src = path.join(__dirname, './packages/rift/src');
 
 module.exports = {
-    // context: path.resolve(__dirname),
+    context: path.resolve(__dirname),
     entry: [
         path.join(src, 'index.js')
     ],
@@ -78,7 +78,7 @@ module.exports = {
                       // presets: ['react-native'],
       
                       // Re-write paths to import only the modules needed by the app
-                      plugins: ['react-native-web', "@babel/plugin-syntax-dynamic-import"],
+                      plugins: ['react-native-web', "@babel/plugin-syntax-dynamic-import", "@babel/plugin-proposal-object-rest-spread"],
                       // This is a feature of `babel-loader` for webpack (not Babel itself).
                       // It enables caching results in ./node_modules/.cache/babel-loader/
                       // directory for faster rebuilds.
@@ -110,8 +110,9 @@ module.exports = {
     },
     devtool: 'source-map',
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        compress: true,
-        port: 9000
+        contentBase: path.join(__dirname, 'dist.web'),
+        // compress: true,
+        port: 9000,
+        writeToDisk: true
     }
 }

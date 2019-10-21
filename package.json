@@ -5,7 +5,7 @@
     "lerna": "^3.16.4"
   },
   "scripts": {
-    "run:server": "cd ./packages/rp2 && node ./bin/www",
+    "start": "cd ./packages/rp2 && node ./bin/www",
     "build:wp": "cd ./packages/rift && webpack --mode development --config webpack.config.js",
     "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js"
   },

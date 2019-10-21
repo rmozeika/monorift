@@ -11,7 +11,8 @@ class CodeRoute extends Route {
         super(api, routeName, repoName);
         setImmediate(() => {
             // this.router.get('/', secured(), this.clone.bind(this));
-            this.router.post('/', this.clone.bind(this));              
+            this.router.post('/', this.clone.bind(this));
+            this.router.get('/repo', this.repo.bind(this));        
             // this.router.post('/createUser', this.createUser.bind(this));
             // this.router.get('/username', this.getUser.bind(this));
 
@@ -21,6 +22,9 @@ class CodeRoute extends Route {
     clone(req, res) {
         const { repo } = req.data;
         this.repository.clone(repo);
+    }
+    repo(req, res) {
+        
     }
 
     // createUser(req, res) {

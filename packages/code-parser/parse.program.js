@@ -8,7 +8,7 @@ module.exports = (program, parent, emitter) => {
     //     name: fileName
     // })
     const iterator = (node, exported) => {
-        console.log(program);
+        // console.log(program);
         if (node.type == types.Class) {
             const parsedClass = parseClass(node, parent, emitter);
             return;
@@ -26,8 +26,8 @@ module.exports = (program, parent, emitter) => {
         }
     }
     const forRef = program.map(node => { if (!node.declarations) return ''; return node.declarations[0].id.name });
-    console.log(forRef);
+    // console.log(forRef);
     program.forEach(iterator);
-    return { classes };
+    return;
 };
 

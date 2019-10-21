@@ -4,8 +4,8 @@ const setConfig = (state = {}, action) => {
   switch (action.type) {
     case ActionTypes.setConfig:
       return {
-          config: action.config,
-          ...state
+          ...state,
+          config: action.config
       }
     default:
       return state

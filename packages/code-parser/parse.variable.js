@@ -17,6 +17,6 @@ module.exports = (node, parent, emitter) => {
         exported,
         func
     };
-    console.log(toEmit);
+    // console.log(toEmit);
     emitter.emit('variable', toEmit);
 }

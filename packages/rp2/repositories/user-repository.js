@@ -9,7 +9,7 @@ class UserRepository extends Repository {
     }
 
     createUser(user, cb) {
-        this.mongoInstance.insertOne(this.collection, user, cb);
+        return this.mongoInstance.insertOne(this.collection, user, cb);
     }
 
     async findByUsername(username, cb) {

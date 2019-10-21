@@ -6,11 +6,11 @@ const setConfig = (state = {}, action) => {
       return {
           ...state,
           config: action.config
-      }
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 function test() {
   console.log(test);
 }
@@ -18,16 +18,16 @@ export const byName = (state = [], action = {}) => {
   switch (action.type) {
     // check this!
     case ActionTypes.setConfig:
-      return action.config
+      return action.config;
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default combineReducers({
   setConfig,
   byName
-})
+});
 
 export const getConfig = state => state.byName;
 

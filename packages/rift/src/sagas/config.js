@@ -1,7 +1,4 @@
-/* global fetch */
-
 import { all, call, delay, put, take, takeLatest, actionChannel } from 'redux-saga/effects';
-// import es6promise from 'es6-promise'
 import 'isomorphic-unfetch';
 
 import * as Actions from '../actions';

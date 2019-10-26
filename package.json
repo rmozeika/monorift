@@ -7,7 +7,9 @@
   "scripts": {
     "start": "cd ./packages/rp2 && node ./bin/www",
     "build:wp": "cd ./packages/rift && webpack --mode development --config webpack.config.js",
-    "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js"
+    "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
+    "android1": "cd ./packages/rift && react-native run-android",
+    "android": "yarn workspace rift run android"
   },
   "workspaces": {
     "packages": ["packages/*"]

@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
   row: {
      // flex: 1
-    // backgroundColor: 'red',
+    backgroundColor: 'red',
      padding: 15
   },
   bigBlue: {

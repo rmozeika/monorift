@@ -10,6 +10,7 @@ import { Auth0Provider } from './containers/auth0';
 
 import createStore from "./store";
 import config from './auth0_config.json';
+import ErrorBoundary from './core/ErrorBoundary';
 import {
   ThemeContext,
   ThemeContextType,
@@ -35,16 +36,18 @@ const onRedirectCallback = function(appState: any): void {
 export default class Root extends React.Component<{}, {}> {
     public render(): React.ReactNode {
         return (
-            <Provider store={store}>
-                <Auth0Provider
-                    domain={config.domain}
-                    client_id={config.clientId}
-                    redirect_uri={window.location.origin + '/auth/callback'}
-                    // onRedirectCallback={onRedirectCallback}
-                >
-                    <App />
-                </Auth0Provider>
-            </Provider>
+            <ErrorBoundary>
+                <Provider store={store}>
+                    <Auth0Provider
+                        domain={config.domain}
+                        client_id={config.clientId}
+                        redirect_uri={window.location.origin + '/auth/callback'}
+                        // onRedirectCallback={onRedirectCallback}
+                    >
+                        <App />
+                    </Auth0Provider>
+                </Provider>
+            </ErrorBoundary>
         )
     }
 }

@@ -1,14 +1,17 @@
 import React from "react";
 import "babel-polyfill";
+// import "react-native-svg";
 import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { AppRegistry, StyleSheet, Text, View } from "react-native";
 import { connect } from 'react-redux'
 import { mapping, light as lightTheme } from '@eva-design/eva';
-import { ApplicationProvider, Button } from 'react-native-ui-kitten';
+import { ApplicationProvider, Button, IconRegistry } from 'react-native-ui-kitten';
+import { AwesomeIconsPack } from './core/icons'
 
 import Homescreen from './containers/Home';
+import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
 import { setCode } from './actions';
 import { Main }  from './components/tScri';
@@ -58,16 +61,16 @@ class App extends React.Component<Props, State> {
     // });
     return (
         <ThemeContext.Provider value={contextValue}>
+          <IconRegistry icons={[AwesomeIconsPack]} />
           <ApplicationProvider
             mapping={mapping}
             theme={themes[this.state.theme]}> 
             {/* <View style={styles.parentView}> */}
                 {/* <View style={styles.innerViews}> */}
-                  <Main />
+                  {/* <Main /> */}
                 {/* </View> */}
-                {/* <View style={styles.innerViews}> */}
-                 <Homescreen />
-                 <Editor />
+                <NavBar />
+                <Editor />
                 {/* </View> */}
             {/* </View> */}
           </ApplicationProvider>

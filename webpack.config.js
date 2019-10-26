@@ -40,6 +40,16 @@ module.exports = {
                   }
                 ]
             },
+            // {
+            //   test: /\.css$/,
+            //   loader: require.resolve('url-loader'), // or directly file-loader
+            //   include: path.resolve(__dirname, "node_modules/react-native-vector-icons"),
+            // },
+            {
+              test: /\.ttf$/,
+              loader: require.resolve('url-loader'), // or directly file-loader
+              include: path.resolve(__dirname, "node_modules/react-native-vector-icons"),
+            },
             {
                 test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                 loader: require.resolve('url-loader'),
@@ -68,11 +78,10 @@ module.exports = {
                   path.resolve(__dirname, 'node_modules/react-native-tab-view'),
                   path.resolve(__dirname, 'node_modules/static-container'),
                   path.resolve(__dirname, 'node_modules/react-native-ui-kitten'),
-
-      
+                  path.resolve(__dirname, 'node_modules/@ui-kitten/eva-icons')
+                  // path.resolve(__dirname, 'node_modules/react-native-svg')
                 ],
-                loader: require.resolve('babel-loader'),
-                    
+                loader: require.resolve('babel-loader'),  
                     options: {
                       presets: ["module:metro-react-native-babel-preset", "@babel/react"],
                       // presets: ['react-native'],

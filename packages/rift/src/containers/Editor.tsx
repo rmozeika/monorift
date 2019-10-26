@@ -1,28 +1,36 @@
 import React from "react";
-import { Input } from 'react-native-ui-kitten';
+import { View } from 'react-native'
+import { Input, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
 import { setCode } from '../actions';
+import { ThemedComponentProps, ThemeType } from 'react-native-ui-kitten/theme'
 
 interface State {
    inputValue: string
 }
 interface Code {
-    code: string,
-    name: string
+    text: string,
+    // name: string
 }
+interface EditorComponentProps { code: Code };
+type EditorProps =  EditorComponentProps & ThemedComponentProps;
   // ThemeService.select({'Eva Light': null}, "Eva Light")
-class Editor extends React.Component<{ code: Code }, {}> {
+class Editor extends React.Component<EditorProps, {}> {
     private onInputValueChange = (inputValue: string) => {
         // this.setState({ inputValue });
     };
     public render(): React.ReactNode {
+        const { themedStyle } = this.props
         return (
-          <Input
-            size='large'
-            status='danger'
-            value={this.props.code.code}
-            onChangeText={this.onInputValueChange}
-          />
+          <View style={themedStyle.container}>
+            <Input
+              size='large'
+              status='danger'
+              value={this.props.code.text}
+              onChangeText={this.onInputValueChange}
+            />
+          </View>
+          
         );
     }
 }
@@ -32,7 +40,8 @@ const getCode = (code) => {
 }
 const mapStateToProps = state => {
     return {
-      code: getCode(state.code)
+      code: getCode(state.code),
+      visibility: state.visibility
     }
 }
 
@@ -43,4 +52,7 @@ const mapStateToProps = state => {
 //       }
 //     };
 //   };
-export default connect(mapStateToProps, {})(Editor);
+const EditorWithStyles = withStyles(Editor, (theme: ThemeType) => ({
+  container: { backgroundColor: theme['color-basic-300'], flex: 1 }
+}));
+export default connect(mapStateToProps, {})(EditorWithStyles);

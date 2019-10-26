@@ -140,8 +140,9 @@ function onAuthorizeFail(data, message, error, accept){
   accept(null, false);
 }
 app.io.on('connection', (socket) => {
-  const { user } = socket.request.session.passport;
-  console.log(socket);
+  const { session = {} } = socket.request;
+  const { passport = {} } = session;
+  const { user = false } = passport;
 
   socket.on('check_auth', (ack) => {
     if (user) {
@@ -149,12 +150,8 @@ app.io.on('connection', (socket) => {
       return;
     }
     ack(null);
-    
-    // socket.emit('login', user);
   });
-  // setTimeout(() => {
-  //   socket.emit('login', user);
-  // }, 3000);
+
 });
 app.io.on('message', function (msg) {
   console.log(msg);

@@ -21,5 +21,7 @@ module.exports = {
       'ts',
       'tsx'
     ],
+    // extraNodeModules: { ['@react-native-community': '../.../node_modules/@react-native-community'}
+
   }
 };

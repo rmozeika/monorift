@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
-import { StyleSheet, Linking } from 'react-native';
-import { useAuth0 } from './auth0';
+import { StyleSheet, Linking, Platform } from 'react-native';
 
+// const origin = (Platform.OS == 'web') ? window.location.origin : 'https://robertmozeika.com';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -27,18 +27,7 @@ export const HomeScreen = () => {
   return (
     <Layout style={styles.container}>
         <Layout style={styles.row}>
-          {!isAuthenticated && (
-            <button
-              onClick={() =>
-                Linking.openURL(window.location.origin + '/auth/login').catch((err) => console.error('An error occurred', err))
-                //loginWithRedirect({})
-              }
-            >
-              Log in
-            </button>
-          )}
-
-      {isAuthenticated && <button onClick={() => logout()}>Log out</button>}
+          
         </Layout>
         {/* <Layout style={[styles.row, styles.bigBlue]}>
           <Button>BUTTON</Button>

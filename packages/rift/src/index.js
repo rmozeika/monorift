@@ -1,8 +1,9 @@
-import { AppRegistry } from "react-native";
-import App from "./root";
+import { AppRegistry } from 'react-native';
+import App from './root';
+// import {name as appName} from '../app.json';
 
-AppRegistry.registerComponent("App", () => App);
+AppRegistry.registerComponent('rift', () => App);
 
-AppRegistry.runApplication("App", {
-  rootTag: document.getElementById("root")
+AppRegistry.runApplication('rift', {
+  rootTag: document.getElementById('root')
 });

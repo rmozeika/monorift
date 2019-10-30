@@ -1,15 +1,25 @@
 {
-  "name": "root",
+  "name": "monorift",
   "private": true,
+  "dependencies": {
+    "react-native": "0.61.2"
+  },
   "devDependencies": {
-    "lerna": "^3.16.4"
+    "lerna": "^3.16.4",
+    "@types/react": "16.9.2",
+    "@types/react-native": "0.60.8",
+    "concurrently": "4.1.2",
+    "typescript": "3.6.2",
+    "ts-loader": "^6.1.2"
   },
   "scripts": {
     "start": "cd ./packages/rp2 && node ./bin/www",
     "build:wp": "cd ./packages/rift && webpack --mode development --config webpack.config.js",
     "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
-    "android1": "cd ./packages/rift && react-native run-android",
-    "android": "yarn workspace rift run android"
+    "studio": "yarn workspace rift run studio",
+    "native:android": "cd packages/rift && react-native run-android",
+    "android": "yarn workspace rift android",
+    "compile": "tsc -b --incremental"
   },
   "workspaces": {
     "packages": ["packages/*"]

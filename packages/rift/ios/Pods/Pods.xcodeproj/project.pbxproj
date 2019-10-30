@@ -2115,7 +2115,7 @@
 				D65F4A1E24A7393CD12825D5A56368D2 /* Support Files */,
 			);
 			name = "React-RCTSettings";
-			path = "../../node_modules/react-native/Libraries/Settings";
+			path = "../../../../node_modules/react-native/Libraries/Settings";
 			sourceTree = "<group>";
 		};
 		1186799B2A3A8CB989AD9042D7826BA8 /* React-DevSupport */ = {
@@ -2127,7 +2127,7 @@
 				615E68D4805A891BB16AFBDB4E7F1071 /* Support Files */,
 			);
 			name = "React-DevSupport";
-			path = "../../node_modules/react-native/React";
+			path = "../../../../node_modules/react-native/React";
 			sourceTree = "<group>";
 		};
 		130AC93895DB8A7E8F43A7DED7D81702 /* React-RCTActionSheet */ = {
@@ -2139,7 +2139,7 @@
 				A56071180A799788E068B48C49745442 /* Support Files */,
 			);
 			name = "React-RCTActionSheet";
-			path = "../../node_modules/react-native/Libraries/ActionSheetIOS";
+			path = "../../../../node_modules/react-native/Libraries/ActionSheetIOS";
 			sourceTree = "<group>";
 		};
 		15F1CC6E5CA24C0CE1D368C458691992 /* Nodes */ = {
@@ -2251,7 +2251,7 @@
 				583CF9256FAC731CE77B37016BC0BF01 /* Support Files */,
 			);
 			name = "React-RCTVibration";
-			path = "../../node_modules/react-native/Libraries/Vibration";
+			path = "../../../../node_modules/react-native/Libraries/Vibration";
 			sourceTree = "<group>";
 		};
 		1DE131898EC8FFE6A2933CBA33C9A7BB /* Pods-rift-tvOS */ = {
@@ -2295,7 +2295,7 @@
 				DCE336093BD6C4D6D66C71FA9F7B2F9B /* Support Files */,
 			);
 			name = "React-RCTAnimation";
-			path = "../../node_modules/react-native/Libraries/NativeAnimation";
+			path = "../../../../node_modules/react-native/Libraries/NativeAnimation";
 			sourceTree = "<group>";
 		};
 		201CA4E283FBA49C95F9F73F4312B6FC /* Development Pods */ = {
@@ -2390,7 +2390,7 @@
 				02840E36F8399B68DF7C946D43ECFE5F /* Support Files */,
 			);
 			name = "React-jsi";
-			path = "../../node_modules/react-native/ReactCommon/jsi";
+			path = "../../../../node_modules/react-native/ReactCommon/jsi";
 			sourceTree = "<group>";
 		};
 		2E098AB3A872329F234DE6644BABBC36 /* React-RCTNetwork */ = {
@@ -2412,7 +2412,7 @@
 				B15AAC081596673D1709D5E44C4592FE /* Support Files */,
 			);
 			name = "React-RCTNetwork";
-			path = "../../node_modules/react-native/Libraries/Network";
+			path = "../../../../node_modules/react-native/Libraries/Network";
 			sourceTree = "<group>";
 		};
 		2EAAF131FED5EE60598B1A02E26E1552 /* Support Files */ = {
@@ -2443,7 +2443,7 @@
 				499B9DF8313AC4CAB5C417B4A4A6E8E4 /* Support Files */,
 			);
 			name = "React-jsinspector";
-			path = "../../node_modules/react-native/ReactCommon/jsinspector";
+			path = "../../../../node_modules/react-native/ReactCommon/jsinspector";
 			sourceTree = "<group>";
 		};
 		34A25B6400CCAFED61BED6C8DA702A6B /* Pods-riftTests */ = {
@@ -2513,7 +2513,7 @@
 				F39F9C4975DD14127DEA937126A996C5 /* Support Files */,
 			);
 			name = "React-RCTBlob";
-			path = "../../node_modules/react-native/Libraries/Blob";
+			path = "../../../../node_modules/react-native/Libraries/Blob";
 			sourceTree = "<group>";
 		};
 		40FF0B796D9438DD2DC9650BD77F09CC /* Pod */ = {
@@ -2555,7 +2555,7 @@
 				7A409414D960110002CBEC048D556A69 /* Support Files */,
 			);
 			name = "React-RCTImage";
-			path = "../../node_modules/react-native/Libraries/Image";
+			path = "../../../../node_modules/react-native/Libraries/Image";
 			sourceTree = "<group>";
 		};
 		499B9DF8313AC4CAB5C417B4A4A6E8E4 /* Support Files */ = {
@@ -2594,7 +2594,7 @@
 				6748FC67D433672402B5120015B81026 /* VirtualText */,
 			);
 			name = "React-RCTText";
-			path = "../../node_modules/react-native/Libraries/Text";
+			path = "../../../../node_modules/react-native/Libraries/Text";
 			sourceTree = "<group>";
 		};
 		4F10D996C87072124CEE39A2B5FD0296 /* Support Files */ = {
@@ -2617,7 +2617,7 @@
 				3BE8B1332F796F54908E6703A99C766D /* Support Files */,
 			);
 			name = "React-RCTLinking";
-			path = "../../node_modules/react-native/Libraries/LinkingIOS";
+			path = "../../../../node_modules/react-native/Libraries/LinkingIOS";
 			sourceTree = "<group>";
 		};
 		55DE903F418B074CA65C269E4580D357 /* Support Files */ = {
@@ -2868,7 +2868,7 @@
 				6FF6D85F1C08809AB13C417D809DAB85 /* Support Files */,
 			);
 			name = yoga;
-			path = "../../node_modules/react-native/ReactCommon/yoga";
+			path = "../../../../node_modules/react-native/ReactCommon/yoga";
 			sourceTree = "<group>";
 		};
 		798FDCDDE44FC05F592E0AE5B9E606C9 /* Inspector */ = {
@@ -3050,7 +3050,7 @@
 				55DE903F418B074CA65C269E4580D357 /* Support Files */,
 			);
 			name = "React-cxxreact";
-			path = "../../node_modules/react-native/ReactCommon/cxxreact";
+			path = "../../../../node_modules/react-native/ReactCommon/cxxreact";
 			sourceTree = "<group>";
 		};
 		8E8DAA23BF0FB762C42F35C37C8944F5 /* Pod */ = {
@@ -3082,7 +3082,7 @@
 				BD39DD3C1F01D375BE1217FAE8F00D4D /* Support Files */,
 			);
 			name = "React-jsiexecutor";
-			path = "../../node_modules/react-native/ReactCommon/jsiexecutor";
+			path = "../../../../node_modules/react-native/ReactCommon/jsiexecutor";
 			sourceTree = "<group>";
 		};
 		97071ADCC014F8500D6029DB0634186B /* Singleline */ = {
@@ -3437,7 +3437,7 @@
 				7EE4773250B7AECC08BDF84EB29D968C /* Views */,
 			);
 			name = "React-Core";
-			path = "../../node_modules/react-native/React";
+			path = "../../../../node_modules/react-native/React";
 			sourceTree = "<group>";
 		};
 		ED6AFEEC89E5C603484CEB87C7B0125D /* Support Files */ = {
@@ -3466,7 +3466,7 @@
 				2EAAF131FED5EE60598B1A02E26E1552 /* Support Files */,
 			);
 			name = "React-RCTWebSocket";
-			path = "../../node_modules/react-native/Libraries/WebSocket";
+			path = "../../../../node_modules/react-native/Libraries/WebSocket";
 			sourceTree = "<group>";
 		};
 		F39F9C4975DD14127DEA937126A996C5 /* Support Files */ = {

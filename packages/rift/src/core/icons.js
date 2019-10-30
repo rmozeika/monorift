@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 
@@ -18,17 +18,21 @@ const iconFontStyles = `@font-face {
   font-family: FontAwesome5_Solid;
 }`;
 // #WEB ONLY
-const style = document.createElement('style');
-style.type = 'text/css';
-if (style.styleSheet) {
-  style.styleSheet.cssText = iconFontStyles;
-} else {
-  style.appendChild(document.createTextNode(iconFontStyles));
-}
+if (Platform.OS == 'web') {
+  const style = document.createElement('style');
+  style.type = 'text/css';
+  if (style.styleSheet) {
+    style.styleSheet.cssText = iconFontStyles;
+  } else {
+    style.appendChild(document.createTextNode(iconFontStyles));
+  }
+
+
  
 // Inject stylesheet
 document.head.appendChild(style);
 console.log(Icon);
+}
 // #ENDWEB
 
 function IconProvider(name) {

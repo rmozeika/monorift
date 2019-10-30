@@ -5,6 +5,7 @@ module.exports = function(api) {
     api.cache(true);
     const moduleResolverConfig = {
       root: path.resolve('./'),
+      extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
       alias: {
         // '@src/*': path.resolve(__dirname, 'src'),
         '@kitten/theme': path.resolve(Config.KITTEN_PATH, 'theme'),

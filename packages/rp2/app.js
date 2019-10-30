@@ -149,7 +149,7 @@ app.io.on('connection', (socket) => {
       ack(user);
       return;
     }
-    ack(null);
+    ack({ user: false });
   });
 
 });

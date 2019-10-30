@@ -10,6 +10,7 @@ import {
   ThemeStore,
   ThemeService,
 } from '../core/themes';
+import { originLink } from '../core/utils';
 import { 
   withStyles,
   ThemedComponentProps,
@@ -62,13 +63,13 @@ class NavBar extends React.Component<NavProps, {}> {
     }
 
     private onSignin(): void {
-      Linking.openURL(window.location.origin + '/auth/login').catch((err) => console.error('An error occurred', err))
+      Linking.openURL(originLink() + '/auth/login').catch((err) => console.error('An error occurred', err))
     }
     private onSignout(): void {
-      Linking.openURL(window.location.origin + '/auth/login').catch((err) => console.error('An error occurred', err))
+      Linking.openURL(originLink() + '/auth/logout').catch((err) => console.error('An error occurred', err))
     }
     private openMenu(): void {
-      Linking.openURL(window.location.origin + '/auth/logout').catch((err) => console.error('An error occurred', err))
+      // Linking.openURL(window.location.origin + '/auth/logout').catch((err) => console.error('An error occurred', err))
     }
     private renderLeftControls(): React.ReactElement<TopNavigationActionProps> {
       const { themedStyle, auth } = this.props;

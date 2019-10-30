@@ -10,7 +10,7 @@ import {
     actionChannel
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-
+import { originLink } from '../core/utils';
 // import es6promise from 'es6-promise'
 import 'isomorphic-unfetch';
 
@@ -21,7 +21,7 @@ const {
 } = Actions;
 import io from 'socket.io-client';
 
-const socketServerURL = window.location.origin;
+const socketServerURL = originLink();
 let socket;
 
 const connect = () => {
@@ -52,13 +52,18 @@ function* initAuthSaga() {
     const socketChannel = yield call(createSocketChannel, socket);
     while (true) {
         const payload = yield take(socketChannel);
+       
         try {
-            yield put({ type: AUTH.LOGIN.SUCCESS,  payload });
+            if (payload.user !== false) {
+                debugger;
+                yield put({ type: AUTH.LOGIN.SUCCESS,  payload });
+            } else {
+                debugger;
+                yield put({ type: AUTH.LOGIN.REQUEST }, payload);
+            }
         } catch(e) {
-            console.log(e);
+            yield put({ type: AUTH.LOGIN.FAILURE,  payload });
         }
-        
-        console.log(AUTH.LOGIN.SUCCESS);
     }
 }
 

@@ -55,10 +55,6 @@ class App extends React.Component<Props, State> {
     };
     this.props.setCode({ name: 'test', text: 'fun'});
 
-    // const socket = io(window.location.origin);
-    // socket.on('auth', function(user){
-    //   console.log('message: ' + user);
-    // });
     return (
         <ThemeContext.Provider value={contextValue}>
           <IconRegistry icons={[AwesomeIconsPack]} />

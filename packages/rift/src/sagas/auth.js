@@ -55,10 +55,8 @@ function* initAuthSaga() {
        
         try {
             if (payload.user !== false) {
-                debugger;
                 yield put({ type: AUTH.LOGIN.SUCCESS,  payload });
             } else {
-                debugger;
                 yield put({ type: AUTH.LOGIN.REQUEST }, payload);
             }
         } catch(e) {

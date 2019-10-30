@@ -63,10 +63,15 @@ class NavBar extends React.Component<NavProps, {}> {
     }
 
     private onSignin(): void {
-      Linking.openURL(originLink() + '/auth/login').catch((err) => console.error('An error occurred', err))
+      Linking.openURL(originLink('login')).catch((err) => {
+        debugger;
+        console.error('An error occurred', err))
     }
     private onSignout(): void {
-      Linking.openURL(originLink() + '/auth/logout').catch((err) => console.error('An error occurred', err))
+      Linking.openURL(originLink('logout')).catch((err) => {
+        debugger
+        console.error('An error occurred', err));
+      }
     }
     private openMenu(): void {
       // Linking.openURL(window.location.origin + '/auth/logout').catch((err) => console.error('An error occurred', err))

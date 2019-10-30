@@ -45,7 +45,6 @@ function AwesomeIcon({ name, style, children, buttonProps }, props) {
   console.log(props);
   const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 
-  debugger;
   if (children || buttonProps) {
     // const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 

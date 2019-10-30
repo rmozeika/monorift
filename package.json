@@ -22,7 +22,6 @@
     "compile": "tsc -b --incremental"
   },
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/react-native", "**/react-native/**", "**/react-native*"]
+    "packages": ["packages/*"]
   }
 }

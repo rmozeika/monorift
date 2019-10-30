@@ -1,0 +1,1 @@
+ watchman watch-del-all && rm -rf $TMPDIR/react-* 

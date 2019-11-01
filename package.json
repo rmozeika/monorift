@@ -18,6 +18,7 @@
     "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
     "studio": "yarn workspace rift run studio",
     "android": "yarn workspace rift android",
+    "ios": "yarn workspace rift ios",
     "compile": "tsc -b --incremental"
   },
   "workspaces": {

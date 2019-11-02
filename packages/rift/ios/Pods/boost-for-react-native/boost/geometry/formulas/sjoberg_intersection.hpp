@@ -225,7 +225,7 @@ public:
             beta = new_beta;*/
 
             // [Sjoberg02] - it converges faster
-            // Newtonï¿½Raphson method
+            // Newton–Raphson method
             asin_t_t01 = asin(t / t01);
             asin_t_t02 = asin(t / t02);
             CT const R1 = asin_t_t01 + dL1;

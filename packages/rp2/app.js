@@ -9,17 +9,18 @@ var users = require('./routes/users');
 const passport = require('./auth0');
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
-// const rift = require('rift');
-const webpackConfig = require('../../webpack.config.js');
-// const middleware = require('webpack-dev-middleware');
+const uri = require('../config.js').mongoConnectionString;
+
+// const webpackConfig = require('../../webpack.config.js');
+// const distWeb = require('./dist.web');
 const webpack = require('webpack');
 var io = require('socket.io');
-const passportSocketIo = require("passport.socketio");
+const passportSocketIo = require('passport.socketio');
  
 // const compiler = webpack(webpackConfig);
 
 var store = new MongoDBStore({
-  uri: 'mongodb://localhost:27017/data',
+  uri,
   collection: 'mySessions'
 });
 
@@ -98,7 +99,7 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
-app.use('/', express.static(path.join(webpackConfig.output.path)));
+app.use('/', express.static(path.resolve('./dist.web')));
 // app.get('*', (req, res) => {
 //     res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
 // });

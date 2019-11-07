@@ -14,12 +14,16 @@
   },
   "scripts": {
     "start": "cd ./packages/rp2 && node ./bin/www",
-    "build:web": "cd ./packages/rift && webpack --mode development --config webpack.config.js",
+    "server": "yarn workspace rp2 start",
+    "build": "webpack --mode development --config webpack.config.js",
+    "android": "yarn workspace rift android",
+    "build:mobile": "react-native start",
     "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
     "studio": "yarn workspace rift run studio",
-    "android": "yarn workspace rift android",
     "ios": "yarn workspace rift ios",
-    "compile": "tsc -b --incremental"
+    "compile": "tsc -b --incremental",
+    "transfer": "./dev.sh/transfer.sh",
+    "copy": "./dev.sh/copy.sh"
   },
   "workspaces": {
     "packages": ["packages/*"]

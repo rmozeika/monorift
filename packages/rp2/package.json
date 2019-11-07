@@ -4,7 +4,9 @@
   "private": false,
   "scripts": {
     "start": "nodemon --inspect=0.0.0.0 ./bin/www",
-    "debug": "nodemon  ./bin/www"
+    "init": "node ./bin/www",
+    "debug": "nodemon  ./bin/www",
+    "docker": "docker build -f ../devops/Dockerfile ."
   },
   "dependencies": {
     "@babel/core": "^7.6.2",
@@ -43,7 +45,6 @@
     "react-native-ui-kitten": "^4.3.0-beta.1",
     "react-router": "^2.6.1",
     "redux-devtools": "^3.5.0",
-    "rift": "^1.0.0",
     "serve-favicon": "~2.4.5",
     "socket.io": "^2.3.0",
     "textract": "^2.5.0",

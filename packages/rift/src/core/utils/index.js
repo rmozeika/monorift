@@ -7,7 +7,8 @@ export const originLink = (type) => {
     };
     let path = paths[type];
     let host = 'robertmozeika.com';
-    return `${host}${path}`;
+    return path;
+    // return `${host}${path}`;
     // if (Platform.OS == 'web') {
     // }
 

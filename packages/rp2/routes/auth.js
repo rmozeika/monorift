@@ -6,7 +6,7 @@ const passport = require('../auth0.js');
 
 const routeName = '/auth';
 const repoName = 'auth';
-const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();;
+  const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();;
 
 class AuthRoute extends Route {
     constructor(api) {
@@ -19,7 +19,7 @@ class AuthRoute extends Route {
             this.router.get('/callback', this.auth0Callback.bind(this));
             this.router.get('/login',
                 passport.authenticate('auth0', {scope: 'openid email profile'}), function (req, res) {
-                res.redirect("/auth");
+                res.redirect('/auth');
             });
             this.router.get('/logout');
             this.router.get('/callback', function (req, res, next) {

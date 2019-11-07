@@ -18,11 +18,11 @@ class CodeRepository extends Repository {
         const subcollections = 'code.class';
         super(api, collection); //, subcollections);
         
-        const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
-            console.log(res);
-        }).catch(err => {
-            console.log(err);
-        });
+        // const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
+        //     console.log(res);
+        // }).catch(err => {
+        //     console.log(err);
+        // });
     }
 
     async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {
@@ -210,7 +210,6 @@ class CodeRepository extends Repository {
                 // }
 
             }
-            allStarted = new Map()
             onTaskEnded(type, object, error, result) {
                 this.allStarted.delete(object);
                 this.importResult.set({ type, name: object.name }, { result, error, object })

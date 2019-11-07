@@ -1,1 +1,0 @@
- watchman watch-del-all && rm -rf $TMPDIR/react-* && rm -fr $TMPDIR/metro*

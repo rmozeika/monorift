@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node
+spec:
+  replicas: 1
+   selector:
+    matchLabels:
+      app: node
+  strategy:
+    type: Recreate
+  template:
+    labels:
+        app: node
+    spec:
+      containers:
+      - args:
+        - ./wait-for-it.sh
+        - db:27017
+        - --
+        - npm
+        - start
+        env:
+        - name: NODE_ENV
+          value: development
+        image: node:10
+        name: node
+        ports:
+        - containerPort: 8080
+        - containerPort: 9229
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/node/app
+          name: node-claim0
+        workingDir: /home/node/app
+      restartPolicy: Always
+      volumes:
+      - name: node-claim0
+        persistentVolumeClaim:
+          claimName: node-claim0
+status: {}

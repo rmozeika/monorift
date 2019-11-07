@@ -14,7 +14,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-svc
+  name: db-svc5
 spec:
   selector:
     app: monorift
@@ -41,10 +41,13 @@ spec:
       containers:
       - name: mongo
         image: "mongo:latest"
+        command: ['sh', '-c', 'until nslookup db-svc; do echo waiting for mydb; sleep 2; done;']
         ports:
         - containerPort: 27017
+
       - name: rp2
         image: "robertmozeika/rp2:latest"
+        command: ['sh', '-c', 'until nslookup db-svc; do echo waiting for mydb; sleep 2; done;']
         ports:
         - containerPort: 8080
       

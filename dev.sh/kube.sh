@@ -4,8 +4,12 @@ minikube service my-service.yaml
 
 kubectl apply -f ./rp2-container/service.yaml
 
-kubectl apply -f ./rp2-container/mongo-deployment.yaml
 
 kubectl expose deployment my-db --type=LoadBalancer --name db-svc --port 27017
 
-kubectl apply -f ./rp2-container/deployment.yaml
+# deployment
+kubectl apply -f ./rp2-container/mongo-deployment.yaml
+
+ kubectl expose deployment my-db --type=LoadBalancer --name db-svc --port 27017
+# Pod 
+kubectl expose pod rppod --type LoadBalancer --port 8080

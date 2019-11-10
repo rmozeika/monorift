@@ -11,5 +11,5 @@ spec:
       paths:
       - path: /testpath
         backend:
-          serviceName: mynginx
-          servicePort: 80
+          serviceName: web-svc
+          servicePort: 8080

@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: rmoz
+  labels:
+    app: webserver
+spec:
+  backend:
+    serviceName: web-svc
+    servicePort: 8080

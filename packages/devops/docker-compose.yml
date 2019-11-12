@@ -21,11 +21,10 @@ services:
     #network_mode: host
     image: "robertmozeika/rp2:latest"
     restart: unless-stopped
-
     ports:
       - "8080:8080"
     # command: ["./wait-for-it.sh", "db-svc:27017", "--", "npm", "start"]
-    command: "npm start"
+    # command: "npm start"
     depends_on: 
       - db-svc
     links: 

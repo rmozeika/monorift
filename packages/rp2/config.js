@@ -12,5 +12,5 @@ var env = process.env;
 
 exports.rootuser = env.rootuser;
 exports.rootpassword = env.rootpassword;
-
+exports.remote = env.remote || true;
 exports.mongoConnectionString = env.mongoConnectionString;

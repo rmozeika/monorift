@@ -1,6 +1,7 @@
 {
   "name": "monorift",
   "private": false,
+  "version": "0.0.2",
   "dependencies": {
     "react-native": "0.61.2"
   },
@@ -15,7 +16,8 @@
   "scripts": {
     "start": "cd ./packages/rp2 && node ./bin/www",
     "server": "yarn workspace rp2 start",
-    "build": "webpack --mode development --config webpack.config.js",
+    "build": "webpack --mode development --config webpack.config.js --watch",
+    "build:nowatch": "webpack --mode development --config webpack.config.js",
     "android": "yarn workspace rift android",
     "build:mobile": "react-native start",
     "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",

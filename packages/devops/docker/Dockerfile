@@ -18,7 +18,7 @@ RUN npm install
 COPY ./packages/rp2/. .
 # Overwrite conf for kubernetes
 # COPY ./packages/devops/docker.conf ./local.conf
-COPY ./packages/devops/rp2-container/kube.conf ./local.conf
+COPY ./packages/devops/docker/kube.conf ./local.conf
 EXPOSE 8080
 
 ## Launch the wait tool and then your application

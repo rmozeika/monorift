@@ -10,8 +10,8 @@ const passport = require('./auth0');
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 const uri = require('./config.js').mongoConnectionString;
+const remote = require('./config.js').remote;
 
-// const webpackConfig = require('../../webpack.config.js');
 // const distWeb = require('./dist.web');
 const webpack = require('webpack');
 var io = require('socket.io');
@@ -99,10 +99,20 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
-app.use('/', express.static(path.resolve('./dist.web')));
-// app.get('*', (req, res) => {
-//     res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
-// });
+if (remote === false) {
+  const webpackConfig = require('../../webpack.config.js');
+  app.use('/', (req, res) => {
+    express.static(path.resolve(webpackConfig.output.path));
+  });
+  // app.get('*', (req, res) => {
+  //     res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
+  // });
+} else {
+  // build dir in transported to root of this folder for docker image
+  app.use('/', express.static(path.resolve('./dist.web')));
+}
+
+
 console.log('App ready!');
 
 app.api = api;

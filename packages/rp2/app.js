@@ -9,7 +9,7 @@ var users = require('./routes/users');
 const passport = require('./auth0');
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
-const uri = require('../config.js').mongoConnectionString;
+const uri = require('./config.js').mongoConnectionString;
 
 // const webpackConfig = require('../../webpack.config.js');
 // const distWeb = require('./dist.web');

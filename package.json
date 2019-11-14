@@ -1,6 +1,6 @@
 {
   "name": "monorift",
-  "private": true,
+  "private": false,
   "dependencies": {
     "react-native": "0.61.2"
   },
@@ -23,7 +23,8 @@
     "ios": "yarn workspace rift ios",
     "compile": "tsc -b --incremental",
     "transfer": "./dev.sh/transfer.sh",
-    "copy": "./dev.sh/copy.sh"
+    "copy": "./dev.sh/copy.sh",
+    "cm": "./.bin/mr.sh cm"
   },
   "workspaces": {
     "packages": ["packages/*"]

@@ -9,7 +9,7 @@ services:
       - "443:443"
     expose:
       - "80"
-      - "443:443"
+      - "443"
     volumes:
       - '../../../private:/private'
       - ../nginx/remote.conf:/etc/nginx/nginx.conf

@@ -40,6 +40,10 @@ services:
       - ../data/db:/data/db
     ports:
         - 27017:27017
+#Docker Networks
+# networks:
+#   app-network:
+#     driver: bridge
 
 
     

@@ -99,11 +99,9 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
-if (remote === false) {
+if (remote !== 'true' || remote !== true) {
   const webpackConfig = require('../../webpack.config.js');
-  app.use('/', (req, res) => {
-    express.static(path.resolve(webpackConfig.output.path));
-  });
+  app.use('/', express.static(path.resolve(webpackConfig.output.path)));
   // app.get('*', (req, res) => {
   //     res.send('index.html', { root: path.resolve(webpackConfig.output.path) });
   // });

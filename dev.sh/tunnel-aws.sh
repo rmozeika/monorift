@@ -1,0 +1,1 @@
+ssh -N -L 8080:localhost:8080 ec2-3-17-13-33.us-east-2.compute.amazonaws.com

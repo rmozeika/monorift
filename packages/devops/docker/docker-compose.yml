@@ -3,7 +3,7 @@ services:
   webserver:
     image: nginx:mainline-alpine
     container_name: webserver
-    restart: unless-stopped
+    # restart: unless-stopped
     ports:
       - "80:80"
     expose:

@@ -9,7 +9,7 @@ services:
     expose:
       - "80"
     volumes:
-      - '../../../private/.:/private/.'
+      - '../../../private:/private'
       - ../nginx/remote.conf:/etc/nginx/nginx.conf
       # - certbot-etc:/etc/letsencrypt
       # - certbot-var:/var/lib/letsencrypt

@@ -30,7 +30,7 @@ services:
     ports:
       - "8080:8080"
     # command: ["./wait-for-it.sh", "db-svc:27017", "--", "npm", "start"]
-    # command: "npm start"
+    # command: "tail -f /dev/null"
     volumes: 
       - ../data/logs:/logs
       - ../data/logs/node/app.log:/app.log

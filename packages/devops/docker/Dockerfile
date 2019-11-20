@@ -22,5 +22,5 @@ COPY ./packages/devops/docker/kube.conf ./local.conf
 EXPOSE 8080
 
 ## Launch the wait tool and then your application
-CMD npm run init
+CMD npm run init:std
 # replace this with your application's default port

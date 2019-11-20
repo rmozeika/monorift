@@ -23,7 +23,17 @@ var store = new MongoDBStore({
   uri,
   collection: 'mySessions'
 });
+var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
 
+var spawn = require('child_process').spawn,
+    ls    = spawn('ls', ['-lh', '/usr']);
+
+ls.stdout.pipe(logStream);
+ls.stderr.pipe(logStream);
+
+ls.on('close', function (code) {
+  console.log('child process exited with code ' + code);
+});
 var app = express();
 const sessionMiddleware = require('express-session')({
   secret: 'This is a secret',

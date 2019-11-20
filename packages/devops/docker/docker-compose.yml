@@ -12,9 +12,10 @@ services:
       - "443"
     # build: ../nginx/.
     volumes:
-      - '../../../private:/private'
       -  ../data/logs/nginx:/home/logs
+      - ../data/keys:/private
       - ../nginx/remote.conf:/etc/nginx/nginx.conf
+      - ../data/etc/letsencrypt:/etc/letsencrypt
       # - certbot-etc:/etc/letsencrypt
       # - certbot-var:/var/lib/letsencrypt
     depends_on:

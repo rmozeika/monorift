@@ -27,7 +27,9 @@
     "transfer": "./dev.sh/transfer.sh",
     "copy": "./dev.sh/copy.sh",
     "cm": "./.bin/mr.sh cm",
-    "build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest"
+    "backup": "./dev.sh/backup-cloud.sh",
+    "build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
+    "up": "cd ./packages/devops/docker && docker-compose up"
   },
   "workspaces": {
     "packages": ["packages/*"]

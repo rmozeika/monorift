@@ -4,7 +4,8 @@
   "private": false,
   "scripts": {
     "start": "nodemon --inspect=0.0.0.0 ./bin/www",
-    "init": "node ./bin/www",
+    "init": "node ./bin/www > app.log",
+    "init:std": "node ./bin/www",
     "debug": "nodemon  ./bin/www",
     "docker": "docker build -f ../devops/Dockerfile ."
   },
@@ -47,6 +48,7 @@
     "redux-devtools": "^3.5.0",
     "serve-favicon": "~2.4.5",
     "socket.io": "^2.3.0",
+    "tail": "^2.0.3",
     "textract": "^2.5.0",
     "underscore": "^1.8.3",
     "webpack": "^4.41.0",

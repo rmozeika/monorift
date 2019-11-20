@@ -2,3 +2,11 @@ node_modules
 yarn.lock
 dist.web
 private
+**/private
+**/data
+**/backup
+packages/devops/nginx/backup.sh
+packages/devops/nginx/letsencrypt-nginx.conf
+packages/devops/nginx/old-ec2/
+packages/rp2/app.log
+packages/devops/data/**

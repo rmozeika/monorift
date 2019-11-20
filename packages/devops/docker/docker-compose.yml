@@ -10,8 +10,10 @@ services:
     expose:
       - "80"
       - "443"
+    # build: ../nginx/.
     volumes:
       - '../../../private:/private'
+      -  ../data/logs/nginx:/home/logs
       - ../nginx/remote.conf:/etc/nginx/nginx.conf
       # - certbot-etc:/etc/letsencrypt
       # - certbot-var:/var/lib/letsencrypt
@@ -22,11 +24,15 @@ services:
   node:
     #network_mode: host
     image: "robertmozeika/rp2:latest"
+    container_name: rp2
     restart: unless-stopped
     ports:
       - "8080:8080"
     # command: ["./wait-for-it.sh", "db-svc:27017", "--", "npm", "start"]
     # command: "npm start"
+    volumes: 
+      - ../data/logs:/logs
+      - ../data/logs/node/app.log:/app.log
     depends_on: 
       - db-svc
     links: 
@@ -37,11 +43,15 @@ services:
     container_name: "mongo"
     environment:
       - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
+      - MONGO_LOG_DIR=/data/logs
     volumes:
       - ../data/db:/data/db
+      - ../data/logs/mongo:/data/logs
+
     ports:
         - 27017:27017
+# volumes: 
+#   data-volume:
 #Docker Networks
 # networks:
 #   app-network:

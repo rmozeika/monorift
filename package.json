@@ -14,7 +14,7 @@
     "ts-loader": "^6.1.2"
   },
   "scripts": {
-    "start": "cd ./packages/rp2 && node ./bin/www",
+    "start": "node ./packages/rp2/bin/www > app.log",
     "server": "yarn workspace rp2 start",
     "build": "webpack --mode development --config webpack.config.js --watch",
     "build:nowatch": "webpack --mode development --config webpack.config.js",
@@ -26,7 +26,8 @@
     "compile": "tsc -b --incremental",
     "transfer": "./dev.sh/transfer.sh",
     "copy": "./dev.sh/copy.sh",
-    "cm": "./.bin/mr.sh cm"
+    "cm": "./.bin/mr.sh cm",
+    "build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest"
   },
   "workspaces": {
     "packages": ["packages/*"]

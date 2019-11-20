@@ -99,7 +99,7 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
-if (remote !== 'true' || remote !== true) {
+if (remote == 'false') {
   const webpackConfig = require('../../webpack.config.js');
   app.use('/', express.static(path.resolve(webpackConfig.output.path)));
   // app.get('*', (req, res) => {

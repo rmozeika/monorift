@@ -6,7 +6,7 @@
     "react-native": "0.61.2"
   },
   "bin": { 
-    "monorift" : "./cli.js" 
+    "monorift" : "./cli" 
   },
   "devDependencies": {
     "lerna": "^3.16.4",

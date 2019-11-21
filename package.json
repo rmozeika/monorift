@@ -5,8 +5,8 @@
   "dependencies": {
     "react-native": "0.61.2"
   },
-  "bin": {
-    "cm": "./dev.sh/demo-global.js"
+  "bin": { 
+    "monorift" : "./cli.js" 
   },
   "devDependencies": {
     "lerna": "^3.16.4",

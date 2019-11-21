@@ -11,7 +11,7 @@ const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 const uri = require('./config.js').mongoConnectionString;
 const remote = require('./config.js').remote;
-
+const fs = require('fs');
 // const distWeb = require('./dist.web');
 const webpack = require('webpack');
 var io = require('socket.io');

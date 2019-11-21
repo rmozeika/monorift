@@ -21,10 +21,10 @@
             "request": "launch",
             "name": "cli",
             "program": "${workspaceFolder}/cli.js",
-            "runtimeArgs": [
-                "cm"
-                // "start"
-            ],
+            // "runtimeArgs": [
+            //     "cm"
+            //     // "start"
+            // ],
         },
         {
             "type": "node",

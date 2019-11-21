@@ -5,6 +5,9 @@
   "dependencies": {
     "react-native": "0.61.2"
   },
+  "bin": {
+    "cm": "./dev.sh/demo-global.js"
+  },
   "devDependencies": {
     "lerna": "^3.16.4",
     "@types/react": "16.9.2",
@@ -29,7 +32,8 @@
     "cm": "./.bin/mr.sh cm",
     "backup": "./dev.sh/backup-cloud.sh",
     "build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
-    "up": "cd ./packages/devops/docker && docker-compose up"
+    "up": "cd ./packages/devops/docker && docker-compose up",
+    "up:log": "cd ./packages/devops/docker && docker-compose up >>  docker.log"
   },
   "workspaces": {
     "packages": ["packages/*"]

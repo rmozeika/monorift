@@ -5,3 +5,5 @@ cp -R ./backup/bobby/letsencrypt ./packages/devops/data/etc/
 cp -R ./backup/bobby/nginx ./packages/devops/data/etc/
 cp ./backup/bobby/privkey.pem ./packages/devops/data/keys/privkey.pem
 cp ./backup/bobby/fullchain.pem ./packages/devops/data/keys/fullchain.pem
+
+rsync --recursive -v -e ssh ec2-user@aws:/home/ec2-user ./backup/.

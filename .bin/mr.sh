@@ -1,6 +1,6 @@
 #!/bin/bash
 CMD=$1
-
+echo "$1"
 function provision() {
     cd ../packages/devops/1a/opts && ./provision.sh
 }

@@ -22,6 +22,8 @@ services:
       - node
     links:
       - node
+    labels:
+      com.monorift.app: monorift
   node:
     #network_mode: host
     image: "robertmozeika/rp2:latest"
@@ -38,6 +40,8 @@ services:
       - db-svc
     links: 
       - db-svc
+    labels:
+      com.monorift.app: monorift
   db-svc:
     #network_mode: host
     image: mongo:latest
@@ -51,6 +55,8 @@ services:
 
     ports:
         - 27017:27017
+    labels:
+      com.monorift.app: monorift
 # volumes: 
 #   data-volume:
 #Docker Networks

@@ -1,5 +1,5 @@
 # specify the node base image with your desired version node:<version>
-FROM node:10
+FROM node:13
 # Create app directory
 WORKDIR /
 

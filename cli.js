@@ -6,8 +6,10 @@
 const util = require('util');
 const path = require('path');
 const fs = require('fs');
-const { exec, execFile } = require('child_process');
+const { exec, execFile, spawn } = require('child_process');
 const execa = util.promisify(require('child_process').exec);
+//const ls = spawn('docker-compose up', [], {
+
 // exec('ls | grep js', (err, stdout, stderr) => {
 //   if (err) {
 //     //some err occurred
@@ -34,24 +36,81 @@ const isDockerContainersRunning = async () => {
     if (runningContainers.length == 3) {
         return true
     }
-    if (runningContainers.length > 1) {
+    if (runningContainers.length > 0) {
         return true 
         //  not all running though, need to change this
     }
     return false;
 }
-const composeUp = async () => {
-    await goToPath();
-    process.chdir('./packages/devops/docker/');
-    // async function lsExample() {
-    //     const { stdout, stderr } = await execa('ls');
-    //     console.log('stdout:', stdout);
-    //     console.error('stderr:', stderr);
-    //   }
-    const prcs = await execa('docker-compose up', ["-d"]);
-    const { error, stdout, stderr } = prcs
-     console.log(stdout);
+const runCmd = (cmd, args, dir = false) => {
+    return new Promise((resolve, reject) => {
+        let opts = dir ? { cw: dir } : {}
+        var stream = fs.createWriteStream("./logs/compose", {flags:'a'});
+
+        const ls = spawn(cmd, args, opts);
+        ls.stdout.on('data', (data) => {
+            const outData = data.toString();
+            stream.write(outData)
+            console.log(outData);
+        });
+        
+        ls.stderr.on('data', (data) => {
+            const outData = data.toString();
+            stream.write(outData)
+            console.log(outData);
+        });
+        
+        ls.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+            stream.end();
+            resolve();
+        });
+    })
 }
+const composeUp = () => {
+    return new Promise((res, rej) => {
+        const ls = spawn('docker-compose', ["up"], {
+
+            cwd: './packages/devops/docker',
+            env: process.env
+        });
+        var stream = fs.createWriteStream("./logs/compose", {flags:'a'});
+
+        ls.stdout.on('data', (data) => {
+            const outData = data.toString();
+            console.log(outData);
+            stream.write(outData)
+
+        });
+        
+        ls.stderr.on('data', (data) => {
+            const outData = data.toString();
+            stream.write(outData)
+
+            console.log(outData);
+        });
+        
+        ls.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+            stream.end();
+
+            res();
+        });
+    });
+    
+    // await goToPath();
+    // process.chdir('./packages/devops/docker/');
+    // // async function lsExample() {
+    // //     const { stdout, stderr } = await execa('ls');
+    // //     console.log('stdout:', stdout);
+    // //     console.error('stderr:', stderr);
+    // //   }
+    // const prcs = await execa('docker-compose up', ["-d"]);
+    // const { error, stdout, stderr } = prcs
+    //  console.log(stdout);
+}
+
+
 const composeDown = async () => {
     await goToPath();
     process.chdir('./packages/devops/docker/');
@@ -100,17 +159,20 @@ const argInterface = {
             func: async () => { 
                 const isRunning = await isDockerContainersRunning();
                 if (isRunning) {
-                    console.log('Run \n$ monorift stop\n')
+                    console.log('Stopping monorift and restarting ')
                     const compose = await composeDown();
+                    const up = await composeUp();
+                    return;
                 } else {
                     const compose = await composeUp();
+                    return;
                 }                
             }
         },
         stop: {
             name: 'stop',
             val: 'stop',
-            func: async () => { 
+            func: async (...args) => { 
                 const isRunning = await isDockerContainersRunning();
                 if (isRunning) {
                     console.log('Killing containers\n')
@@ -130,8 +192,28 @@ const argInterface = {
         },
         logs: {
             val: 'logs',
-            func: async ([]) => {
+            func: async ([ roll ]) => {
+                if (roll == 'roll') {
+                    const rolled = await util.promisify(fs.rename('./logs/compose', './logs/compose'));
+                    return;
+                }
+            }
+        },
+        kill: {
+            val: 'kill',
+            func: async(args) => {
 
+            }
+        },
+        build: {
+            val: 'build',
+            func: async([ buildType, ...args]) => {
+                if (buildType === 'docker') {
+                    isMonorift();
+                    const buildDocker = spawn('docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest');
+
+                    spawn.close()
+                }
             }
         }
     }
@@ -143,9 +225,12 @@ if (!cmd) {
     console.log( `no known argument: ${mainArg}`)
     return
 }
-const { func } = cmd
-func([ ...args]);
-console.log('done')
+async function run() {
+    const { func } = cmd
+    const asynctask = await func([ ...args]);
+    console.log('done');
+}
+run();
 // const child = execFile('./.bin/mr.sh', ['cm'], (error, stdout, stderr) => {
 //     if (error) {
 //       throw error;

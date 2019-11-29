@@ -19,12 +19,22 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "cli",
+            "name": "cli start",
             "program": "${workspaceFolder}/cli.js",
-            // "runtimeArgs": [
-            //     "cm"
-            //     // "start"
-            // ],
+            "args": [
+                "start",
+                "--quiet"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "cli build",
+            "program": "${workspaceFolder}/cli.js",
+            "args": [
+                "build",
+                "docker"
+            ]
         },
         {
             "type": "node",

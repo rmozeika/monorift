@@ -14,3 +14,5 @@ exports.rootuser = env.rootuser;
 exports.rootpassword = env.rootpassword;
 exports.remote = env.remote || true;
 exports.mongoConnectionString = env.mongoConnectionString;
+exports.sessionSecret = env.sessionSecret;
+exports.env = env;

@@ -1,6 +1,6 @@
 {
   "name": "monorift",
-  "private": false,
+  "private": true,
   "version": "0.0.91",
   "dependencies": {
     "react-native": "0.61.2"

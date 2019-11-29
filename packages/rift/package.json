@@ -56,7 +56,8 @@
     "tail": "^2.0.3",
     "url-loader": "^2.1.0",
     "webpack": "^4.39.3",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.8.0",
+    "webrtc-adapter": "^7.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",

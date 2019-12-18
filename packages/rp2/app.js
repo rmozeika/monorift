@@ -11,7 +11,7 @@ const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
 const config = require('./config.js');
-const { uri: mongoConnectionString, remote, sessionSecret } = config;
+const { mongoConnectionString: uri, remote, sessionSecret } = config;
 const fs = require('fs');
 const webpack = require('webpack');
 var io = require('socket.io');
@@ -21,17 +21,18 @@ var store = new MongoDBStore({
   uri,
   collection: 'mySessions'
 });
-var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
+// LOGGING
+// var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
 
-var spawn = require('child_process').spawn,
-    ls    = spawn('ls', ['-lh', '/usr']);
+// var spawn = require('child_process').spawn,
+//     ls    = spawn('ls', ['-lh', '/usr']);
 
-ls.stdout.pipe(logStream);
-ls.stderr.pipe(logStream);
+// ls.stdout.pipe(logStream);
+// ls.stderr.pipe(logStream);
 
-ls.on('close', function (code) {
-  console.log('child process exited with code ' + code);
-});
+// ls.on('close', function (code) {
+//   console.log('child process exited with code ' + code);
+// });
 var app = express();
 const sessionMiddleware = require('express-session')({
   secret: sessionSecret,

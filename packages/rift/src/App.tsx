@@ -10,9 +10,10 @@ import { mapping, light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider, Button, IconRegistry } from 'react-native-ui-kitten';
 import { AwesomeIconsPack } from './core/icons'
 
-import Homescreen from './containers/Home';
+// import Homescreen from './containers/Home';
 import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
+import Rtc from './containers/RTC';
 import { setCode } from './actions';
 import { Main }  from './components/tScri';
 
@@ -66,6 +67,7 @@ class App extends React.Component<Props, State> {
                   {/* <Main /> */}
                 {/* </View> */}
                 <NavBar />
+                <Rtc />
                 <Editor />
                 {/* </View> */}
             {/* </View> */}

@@ -17,7 +17,10 @@
     "ts-loader": "^6.1.2"
   },
   "scripts": {
-    "start": "node ./packages/rp2/bin/www > app.log",
+    "start": "node ./packages/rp2/bin/www",
+    "ndm": "nodemon ./packages/rp2/bin/www",
+    "dev": "concurrently --kill-others \"yarn run start\" \"yarn run build\"",
+    "start:log": "node ./packages/rp2/bin/www > app.log",
     "server": "yarn workspace rp2 start",
     "build": "webpack --mode development --config webpack.config.js --watch",
     "build:nowatch": "webpack --mode development --config webpack.config.js",

@@ -1,0 +1,10 @@
+total 0
+lrwxr-xr-x     1 root  wheel    25B Nov 17 14:50 X11 -> ../private/var/select/X11
+lrwxr-xr-x     1 root  wheel    25B Nov 17 14:50 X11R6 -> ../private/var/select/X11
+drwxr-xr-x  1013 root  wheel    32K Nov 17 14:56 bin
+drwxr-xr-x   311 root  wheel   9.7K Nov 17 15:11 lib
+drwxr-xr-x   262 root  wheel   8.2K Nov 17 14:56 libexec
+drwxr-xr-x    19 root  wheel   608B Nov 17 15:09 local
+drwxr-xr-x   234 root  wheel   7.3K Nov 17 14:56 sbin
+drwxr-xr-x    46 root  wheel   1.4K Nov 17 14:56 share
+drwxr-xr-x     5 root  wheel   160B Oct 23 20:37 standalone

@@ -6,17 +6,16 @@ class Audio extends React.Component {
     constructor(props) {
         debugger;
         super(props);
-        // this.audioRef = React.createRef();
+        this.audioRef = React.createRef();
         // this.audioRef2 = React.createRef();
 
     }
     render() {
-        const { props, audioRef, audioRef2 } = this;
-        const { connName, connName2 } = props;
+        const { props, audioRef } = this;
+        const { connName } = props;
         return (
             <Layout>
                 <audio id={`audio-${connName}`} controls autoplay ref={audioRef}></audio>
-                <audio id={`audio-${connName2}`} controls autoplay ref={audioRef2}></audio>
             </Layout>
         );
     }

@@ -16,7 +16,8 @@ const fs = require('fs');
 const webpack = require('webpack');
 var io = require('socket.io');
 const passportSocketIo = require('passport.socketio');
- 
+const Socket = require('./socket');
+const Call = require('./socket/call');
 var store = new MongoDBStore({
   uri,
   collection: 'mySessions'
@@ -133,5 +134,5 @@ app.io.on('connection', (socket) => {
 app.io.on('message', function (msg) {
   console.log(msg);
 });
-
+const call = new Call(app.io);
 module.exports = app;

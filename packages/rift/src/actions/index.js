@@ -52,7 +52,7 @@ function createRequestTypes(base) {
 }
 
 export const LOGIN = createRequestTypes('LOGIN');
-export const AUTH = { LOGIN: { ...LOGIN }}
+export const AUTH = { LOGIN: { ...LOGIN } };
 export const CODE = { ...createRequestTypes('CODE'), ...types.code };
 export const REPO = createRequestTypes('REPO');
 export const code = {
@@ -63,4 +63,33 @@ export const code = {
 // export const REPO = createRequestTypes('REPO');
 // export const STARRED = createRequestTypes('STARRED');
 // export const STARGAZERS = createRequestTypes('STARGAZERS');
+export const SEND_CANDIDATE = 'SEND_CANDIDATE';
+export const sendCandidate = (candidate) => ({
+  type: SEND_CANDIDATE,
+  payload: candidate
+});
+export const ADD_CANDIDATE = 'ADD_CANDIDATE';
+export const CREATE_PEER_CONN = 'CREATE_PEER_CONN';
+export const SET_PEER_CONN = 'SET_PEER_CONN';
+export const createPeerConn = (config = {}) => ({
+  type: CREATE_PEER_CONN,
+  config
+});
 
+export const setPeerConn = (conn) => ({
+  type: SET_PEER_CONN,
+  conn,
+});
+
+export const SEND_OFFER = 'SEND_OFFER';
+export const sendOffer = (message) => ({
+  type: SEND_OFFER,
+  offer: message
+});
+export const GOT_MESSAGE = 'GOT_MESSAGE';
+
+export const SET_CONSTRAINTS = 'SET_CONSTRAINTS';
+export const setConstraints = ({ mediaStream }) => ({
+  type: SET_CONSTRAINTS,
+  constraints: { mediaStream }
+});

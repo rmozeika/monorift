@@ -1,19 +1,31 @@
 import config, * as fromConfig from './config';
 import code, * as fromCode from './code';
 import auth, * as fromAuth from './auth';
+import callReducer, * as fromCall from './call';
+
 
 import { combineReducers } from 'redux';
 
 export const initialState = {
     config: {},
     code: { file1: 'beforeafter' },
-    auth: { loggedIn: false, user: {}}
+    auth: { loggedIn: false, user: {}},
+    call: { 
+      peerConn: { 
+        conn: null, created: false, config: {} 
+      }, 
+      candidate: {},
+      constraints: { 
+        mediaStream: { audio: true, video: false }
+      }
+    }
 };
 
 export default combineReducers({
   config,
   code,
-  auth
+  auth,
+  call: callReducer
 });
 
 export const createReducer = (initialState, handlers) => {

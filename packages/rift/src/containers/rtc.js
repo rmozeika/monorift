@@ -3,12 +3,13 @@ import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
-
+import * as Actions from '../actions';
 const trace = msg => {
 	console.log(msg);
 };
-const mediaStreamConstraints = {
-	audio: true
+let mediaStreamConstraints = {
+	audio: true,
+	video: false
 };
 
 // Set up to exchange only video.
@@ -16,12 +17,175 @@ const offerOptions = {
 	// offerToReceiveVideo: 1,
 };
 
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		// padding: 16,
+		// flexDirection: 'row',
+		alignItems: 'center'
+	},
+	row: {
+		// flex: 1
+		//backgroundColor: 'red',
+		padding: 15
+	},
+	bigBlue: {
+		//backgroundColor: 'blue',
+		flexGrow: 5
+	},
+	video: {
+		backgroundColor: 'blue',
+		width: 200,
+		height: 200
+	}
+});
+let peerConn;
+
+function getPeerName(peerConnection) {
+	return 'localConn';
+}
+
+let connName = 'peerConn';
+// let connName2 = 'conn2';
+let audioRef = React.createRef();
+let videoRef = React.createRef();
+let selfRef = React.createRef();
+
+class Adapter extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	componentDidMount() {
+		//this.peerConn = new RTCPeerConnection();
+		this.props.createPeerConn({});
+	}
+	componentDidUpdate() {
+		const { peerConn, peerConnStatus } = this.props;
+		function onTrack(e) {
+			console.log('ONTRACK: ADDED TRACK');
+			if (audioRef.current.srcObject) return;
+			debugger;
+			//videoRef.current.srcObject = e.streams[0];
+			if (e.track.kind == 'audio') {
+				debugger;
+				audioRef.current.srcObject = e.streams[0];
+			}
+			let audio = audioRef.current;
+			// // localAudio.audioRef.srcObject = track;
+			// if (audio.srcObject !== e.streams[0]) {
+			// 	srcObject = e.streams[0];
+			// }
+			// console.log(audioRef.current.srcObject);
+			audio.play();
+		}
+		if (peerConnStatus === true) {
+			peerConn.ontrack = onTrack;
+		}
+	}
+	setMediaStreamConstraints(audio, video) {
+		const { setConstraints } = this.props;
+		// let mediaStreamConstraints = constraints.mediaStream;
+		mediaStreamConstraints = { audio, video };
+		setConstraints({ mediaStream: mediaStreamConstraints });
+	}
+	async getMedia(constraints, alternateConn) {
+		debugger;
+		let stream = null;
+		const { peerConn, mediaStreamConstraints } = this.props;
+		const conn = alternateConn || peerConn;
+		try {
+			stream = await navigator.mediaDevices.getUserMedia(constraints);
+			const audioTracks = stream.getAudioTracks();
+			console.log('Got stream with constraints:', constraints);
+			console.log('Using audio device: ' + audioTracks[0].label);
+			stream.oninactive = function() {
+				console.log('Stream ended');
+			};
+			stream.getTracks(track => {
+				debugger;
+				peerConn.addTrack(track);
+			});
+			//stream.addTrack(stream)
+			//selfRef.current.srcObject = stream;
+			// audioRef.current.srcObject = stream;
+			window.stream = stream; // make variable available to browser console
+		} catch (err) {
+			console.log(err);
+			/* handle the error */
+		}
+	}
+	call() {
+		const { peerConn } = this.props;
+		this.setMediaStreamConstraints(true, false).bind(this);
+		console.log(peerConn);
+		debugger;
+
+		const attachHandlers = async (conn, other) => {
+			//conn.other = other;
+			conn.addEventListener('icecandidate', this.handleConnection);
+		};
+		const run = async () => {
+			await this.getMedia({ audio: true, video: false });
+			// await getMedia({ audio: true, video: false }, conn2, peerConn);
+			peerConn
+				.createOffer(offerOptions)
+				.then(desc => {
+					return createdOffer(desc, peerConn);
+				})
+				.then(this.props.sendOffer)
+				.catch(setSessionDescriptionError);
+		};
+		run();
+	}
+	handleConnection(event) {
+		debugger;
+		const peerConnection = event.target;
+		const iceCandidate = event.candidate;
+
+		if (iceCandidate) {
+			const newIceCandidate = new RTCIceCandidate(iceCandidate);
+			this.props.sendCandidate(newIceCandidate);
+		}
+	}
+	render() {
+		const { peerConn, peerConnStatus } = this.props;
+		const peerCreated = (
+			<Layout style={styles.row}>
+				<Button onPress={this.call.bind(this)}>Call</Button>
+				<audio id={`audio-${connName}`} controls autoPlay ref={audioRef}></audio>
+				<video
+					styles={styles.video}
+					autoPlay
+					muted
+					playsInline
+					ref={selfRef}
+				></video>
+				<video
+					styles={styles.video}
+					autoPlay
+					muted
+					playsInline
+					ref={videoRef}
+				></video>
+			</Layout>
+		);
+		const loading = (
+			<Layout style={styles.row}>
+				<Text>Loading...</Text>
+			</Layout>
+		);
+		const toDisplay = peerConnStatus === true ? peerCreated : loading;
+		return <Layout style={styles.container}>{toDisplay}</Layout>;
+	}
+}
+
+// unused
 function handleConnection(event) {
 	const peerConnection = event.target;
 	const iceCandidate = event.candidate;
-
 	if (iceCandidate) {
 		const newIceCandidate = new RTCIceCandidate(iceCandidate);
+		if (true) return;
 		const otherPeer = getOtherPeer(peerConnection);
 
 		otherPeer
@@ -41,7 +205,7 @@ function handleConnection(event) {
 }
 
 // Logs offer creation and sets peer connection session descriptions.
-function createdOffer(description, localPeerConnection, remotePeerConnection) {
+function createdOffer(description, localPeerConnection) {
 	trace(`Offer from localPeerConnection:\n${description.sdp}`);
 
 	trace('localPeerConnection setLocalDescription start.');
@@ -51,22 +215,22 @@ function createdOffer(description, localPeerConnection, remotePeerConnection) {
 			setLocalDescriptionSuccess(localPeerConnection);
 		})
 		.catch(setSessionDescriptionError);
-
+	return description;
 	trace('remotePeerConnection setRemoteDescription start.');
-	remotePeerConnection
-		.setRemoteDescription(description)
-		.then(() => {
-			setRemoteDescriptionSuccess(remotePeerConnection);
-		})
-		.catch(setSessionDescriptionError);
+	// remotePeerConnection
+	// 	.setRemoteDescription(description)
+	// 	.then(() => {
+	// 		setRemoteDescriptionSuccess(remotePeerConnection);
+	// 	})
+	// 	.catch(setSessionDescriptionError);
 
 	trace('remotePeerConnection createAnswer start.');
-	remotePeerConnection
-		.createAnswer()
-		.then(desc => {
-			createdAnswer(desc, localPeerConnection, remotePeerConnection);
-		})
-		.catch(setSessionDescriptionError);
+	// remotePeerConnection
+	// 	.createAnswer()
+	// 	.then(desc => {
+	// 		createdAnswer(desc, localPeerConnection, remotePeerConnection);
+	// 	})
+	// 	.catch(setSessionDescriptionError);
 }
 
 // Logs answer to offer creation and sets peer connection session descriptions.
@@ -111,157 +275,22 @@ function setLocalDescriptionSuccess(peerConnection) {
 function setRemoteDescriptionSuccess(peerConnection) {
 	setDescriptionSuccess(peerConnection, 'setRemoteDescription');
 }
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		// padding: 16,
-		// flexDirection: 'row',
-		alignItems: 'center'
-	},
-	row: {
-		// flex: 1
-		//backgroundColor: 'red',
-		padding: 15
-	},
-	bigBlue: {
-		//backgroundColor: 'blue',
-		flexGrow: 5
-	}
-});
-let conn1;
-let conn2;
-// const FancyAudio = React.forwardRef((props, ref) => (
-// 	<Audio ref={ref} className="FancyButton">
-// 		{props.children}
-// 	</Audio>
-// ));
-
-// // You can now get a ref directly to the DOM button:
-// const ref = React.createRef();
-// <FancyButton ref={ref}>
-// 	<Audio></Audio>
-// </FancyButton>;
-
-// function logProps(Component) {
-// 	class LogProps extends Audio {
-// 		// ...
-// 	}
-
-// 	function forwardRef(props, ref) {
-// 		return <LogProps {...props} forwardedRef={ref} />;
-// 	}
-
-// 	// Give this component a more helpful display name in DevTools.
-// 	// e.g. "ForwardRef(logProps(MyComponent))"
-// 	const name = Component.displayName || Component.name;
-// 	forwardRef.displayName = `logProps(${name})`;
-
-// 	return React.forwardRef(forwardRef);
-// }
-
-function getPeerName(peerConnection) {
-	return peerConnection === conn1 ? 'conn1' : 'conn2';
-}
-
-let connName = 'conn1';
-let connName2 = 'conn2';
-let audioRef = React.createRef();
-let audioRef2 = React.createRef();
-
-class Adapter extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-	call() {
-		const conn1 = new RTCPeerConnection();
-		const conn2 = new RTCPeerConnection();
-		// const localAudio = document.querySelector('audio');
-		// const localAudio2 = document.querySelector('audio');
-		conn1.ontrack = onTrack;
-		conn2.ontrack = onTrack2;
-
-		function onTrack(e) {
-			debugger;
-			let audio = audioRef.current;
-			// localAudio.audioRef.srcObject = track;
-			if (audio.srcObject !== e.streams[0]) {
-				srcObject = e.streams[0];
-			}
-			console.log(audioRef.current.srcObject);
-			audio.play();
-		};
-		
-		function onTrack2(e) {
-			debugger;
-			let audio = audioRef2.current;
-
-			if (audio.srcObject !== e.streams[0]) {
-				srcObject = e.streams[0];
-			}
-			console.log(audioRef.current.srcObject);
-
-		};
-		// const signaling = new SignalingChannel();
-		// conn1.onicecandidate = ({ candidate }) => {
-		// 	signaling.send({ candidate });
-		// };
-		console.log(conn1);
-
-		async function getMedia(constraints, conn) {
-			let stream = null;
-
-			try {
-				stream = await navigator.mediaDevices.getUserMedia(constraints);
-				const audioTracks = stream.getAudioTracks();
-				console.log('Got stream with constraints:', constraints);
-				console.log('Using audio device: ' + audioTracks[0].label);
-				stream.oninactive = function() {
-				  console.log('Stream ended');
-				};
-				audioRef.current.srcObject = stream;
-				window.stream = stream; // make variable available to browser console
-				// for (const track of stream.getTracks()) {
-				// 	conn.addTrack(track, stream);
-				// }
-				//conn.addStream(stream);
-				/* use the stream */
-			} catch (err) {
-				debugger;
-				console.log(err);
-				/* handle the error */
-			}
-		}
-		async function attachHandlers(conn, other) {
-			conn.other = other;
-			conn.addEventListener('icecandidate', handleConnection);
-		}
-		const run = async () => {
-			await getMedia({ audio: true, video: false }, conn1, conn2);
-			// await getMedia({ audio: true, video: false }, conn2, conn1);
-
-			conn1
-				.createOffer(offerOptions)
-				.then(desc => {
-					return createdOffer(desc, conn1, conn2);
-				})
-				.catch(setSessionDescriptionError);
-		};
-		run();
-	}
-	render() {
-		return (
-			<Layout style={styles.container}>
-				<Layout style={styles.row}>
-					<Button onPress={this.call}>Call</Button>
-					<audio id={`audio-${connName}`} controls autoplay ref={audioRef}></audio>
-                	<audio id={`audio-${connName2}`} controls autoplay ref={audioRef2}></audio>	
-				</Layout>
-			</Layout>
-		);
-	}
-}
 const mapDispatchToProps = (dispatch, ownProps) => {
-	return {};
+	return {
+		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),
+		createPeerConn: config => dispatch(Actions.createPeerConn(config)),
+		sendOffer: message => dispatch(Actions.sendOffer(message)),
+		setConstraints: ({ mediaStream }) =>
+			dispatch(Actions.setConstraints({ mediaStream }))
+	};
 };
-
-export default connect(state => state, mapDispatchToProps)(Adapter);
+const mapStateToProps = (state, ownProps) => {
+	const { call } = state;
+	const { peerConn, constraints } = call;
+	return {
+		peerConn: peerConn.conn,
+		peerConnStatus: peerConn.created,
+		mediaStreamConstraints: constraints.mediaStream
+	};
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Adapter);

@@ -1,11 +1,15 @@
 0 silly argv {
 0 silly argv   _: [ 'add' ],
-0 silly argv   globs: [ 'packages/rift' ],
-0 silly argv   lernaVersion: '3.16.4',
+0 silly argv   globs: [ 'react-native-dom' ],
+0 silly argv   lernaVersion: '3.19.0',
 0 silly argv   '$0': '/Users/Bobby/.config/yarn/global/node_modules/.bin/lerna',
-0 silly argv   pkg: 'socket-io-client'
+0 silly argv   pkg: 'packages/rift'
 0 silly argv }
-1 notice cli v3.16.4
-2 verbose rootPath /Users/Bobby/Development/mono
-3 error Error: 404 Not Found - GET https://registry.npmjs.org/socket-io-client - Not found
-3 error     at /Users/Bobby/Development/mono/node_modules/@evocateur/npm-registry-fetch/check-response.js:104:15
+1 notice cli v3.19.0
+2 verbose rootPath /Users/Bobby/Development/monorift
+3 error Error: exited with error code: 128
+3 error     at ChildProcess.<anonymous> (/Users/Bobby/Development/monorift/node_modules/@evocateur/pacote/lib/util/finished.js:12:19)
+3 error     at ChildProcess.emit (events.js:210:5)
+3 error     at maybeClose (internal/child_process.js:1028:16)
+3 error     at Socket.<anonymous> (internal/child_process.js:430:11)
+3 error     at Socket.emit (events.js:210:5)

@@ -87,6 +87,7 @@ export const sendOffer = (message) => ({
   offer: message
 });
 export const GOT_MESSAGE = 'GOT_MESSAGE';
+export const HANDLERS_SET = 'HANDLERS_SET';
 
 export const SET_CONSTRAINTS = 'SET_CONSTRAINTS';
 export const setConstraints = ({ mediaStream }) => ({

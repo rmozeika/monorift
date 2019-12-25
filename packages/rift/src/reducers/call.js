@@ -3,7 +3,8 @@ import {
 	ADD_CANDIDATE,
 	CREATE_PEER_CONN,
 	SET_PEER_CONN,
-	SET_CONSTRAINTS
+  SET_CONSTRAINTS,
+  HANDLERS_SET
 } from '../actions';
 
 const createReducer = (initialState, handlers) => {
@@ -32,7 +33,9 @@ export const peerConn = (state = [], action = {}) => {
 		case CREATE_PEER_CONN:
 			return { ...state, created: 0.5, config: action.config || {} };
 		case SET_PEER_CONN:
-			return { ...state, created: true, conn: action.conn };
+      return { ...state, created: true, conn: action.conn };
+    case HANDLERS_SET:
+      return { ...state, handlersAttached: true };
 		default:
 			return state;
 	}

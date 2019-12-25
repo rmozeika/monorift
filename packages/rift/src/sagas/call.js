@@ -17,7 +17,7 @@ import { originLink } from '../core/utils';
 import 'isomorphic-unfetch';
 
 import * as Actions from '../actions';
-const mediaStreamConstraints = {
+let mediaStreamConstraints = {
 	audio: true,
 	video: false
 };
@@ -119,10 +119,14 @@ function* gotOfferSaga({ offer }) {}
 const selectConn = state => {
 	return state.call.peerConn.conn;
 };
+const selectConstraints = state => {
+	return state.call.constraints.mediaStream;
+};
 
 function* gotMessageSaga({ message }) {
 	//while (true) {
-	const conn = yield select(selectConn);
+    const conn = yield select(selectConn);
+    mediaStreamConstraints = yield select(selectConstraints);
 	//const message = message.offer;
 	console.log(message);
 	if (message.type == 'offer') {

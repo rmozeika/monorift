@@ -25,7 +25,7 @@ import {
     TopNavigationProps,
     IconProps
 } from 'react-native-ui-kitten';
-
+// his
 interface Auth {
   loggedIn: boolean,
   user: User
@@ -42,7 +42,10 @@ interface NavBarProps {
   
 type NavProps = NavBarProps & ThemedComponentProps;
   // ThemeService.select({'Eva Light': null}, "Eva Light")
+  // const history = useHistory();
+
 class NavBar extends React.Component<NavProps, {}> {
+
     private renderSigninIcon = (style): React.ReactElement<ImageProps> => {
       const { themedStyle } = this.props;
       // const { signinButton } = themedStyle;
@@ -68,6 +71,13 @@ class NavBar extends React.Component<NavProps, {}> {
         console.error('An error occurred', err);
       })
     }
+    // private onTiffany(): void {
+    //   // Linking.openURL(originLink('login')).catch((err) => {
+    //   //   debugger;
+    //   //   console.error('An error occurred', err);
+    //   // })
+    //   // history.push('/tiffany');
+    // }
     private onSignout(): void {
       Linking.openURL(originLink('logout')).catch((err) => {
         debugger
@@ -93,7 +103,7 @@ class NavBar extends React.Component<NavProps, {}> {
           />
       )
       
-    }  
+    } 
     private renderRightControls(): React.ReactElement<TopNavigationActionProps> {
       const { themedStyle, auth } = this.props;
       // if (!auth.loggedIn) return;

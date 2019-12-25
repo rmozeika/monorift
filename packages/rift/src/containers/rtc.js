@@ -78,8 +78,9 @@ class Adapter extends React.Component {
 			// console.log(audioRef.current.srcObject);
 			audio.play();
 		}
-		if (peerConnStatus === true) {
+		if (peerConnStatus.created === true && peerConnStatus.handlersAttached == false) {
 			peerConn.ontrack = onTrack;
+			peerConn.addEventListener('icecandidate', this.handleConnection);
 		}
 	}
 	setMediaStreamConstraints(audio, video) {
@@ -114,18 +115,9 @@ class Adapter extends React.Component {
 			/* handle the error */
 		}
 	}
-	call() {
+	async startCall() {
 		const { peerConn } = this.props;
-		this.setMediaStreamConstraints(true, false).bind(this);
-		console.log(peerConn);
-		debugger;
-
-		const attachHandlers = async (conn, other) => {
-			//conn.other = other;
-			conn.addEventListener('icecandidate', this.handleConnection);
-		};
-		const run = async () => {
-			await this.getMedia({ audio: true, video: false });
+		await this.getMedia(mediaStreamConstraints);
 			// await getMedia({ audio: true, video: false }, conn2, peerConn);
 			peerConn
 				.createOffer(offerOptions)
@@ -134,8 +126,16 @@ class Adapter extends React.Component {
 				})
 				.then(this.props.sendOffer)
 				.catch(setSessionDescriptionError);
-		};
-		run();
+	}
+	videoCall() {
+		const { peerConn } = this.props;
+		this.setMediaStreamConstraints(true, true);
+		this.startCall();
+	}
+	call() {
+		const { peerConn } = this.props;
+		this.setMediaStreamConstraints(true, false);
+		this.startCall();
 	}
 	handleConnection(event) {
 		debugger;
@@ -149,33 +149,47 @@ class Adapter extends React.Component {
 	}
 	render() {
 		const { peerConn, peerConnStatus } = this.props;
-		const peerCreated = (
+		const audio = (ref, onPress) => (
 			<Layout style={styles.row}>
-				<Button onPress={this.call.bind(this)}>Call</Button>
-				<audio id={`audio-${connName}`} controls autoPlay ref={audioRef}></audio>
-				<video
-					styles={styles.video}
-					autoPlay
-					muted
-					playsInline
-					ref={selfRef}
-				></video>
-				<video
-					styles={styles.video}
-					autoPlay
-					muted
-					playsInline
-					ref={videoRef}
-				></video>
+				{onPress ? <Button onPress={onPress}>Call</Button> : ''}
+				<audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio>
 			</Layout>
 		);
+		const video = (ref, onPress) => (
+			<Layout styles={styles.row}>
+				{onPress ? <Button onPress={onPress}>Call</Button> : ''}
+					<video
+						styles={styles.video}
+						autoPlay
+						muted
+						playsInline
+						ref={ref}
+					/>
+			</Layout>
+		);
+		const elements = [
+			{ type: 'audio', handler: this.call, ref: audioRef },
+			{ type: 'video', handler: this.videoCall, ref: videoRef },
+			{ type: 'video', handler: false, ref: selfRef }
+		];
+		
 		const loading = (
 			<Layout style={styles.row}>
 				<Text>Loading...</Text>
 			</Layout>
 		);
-		const toDisplay = peerConnStatus === true ? peerCreated : loading;
-		return <Layout style={styles.container}>{toDisplay}</Layout>;
+		const toDisplay = () => {
+			// if (peerConnStatus.created !== true) {
+			if (true)	return loading;
+			// } 
+			const avComponentMap = { audio: audio, video: video };
+			const audioVideo = elements.map(({ type, handler, ref}) => {
+				const AVComponent = avComponentMap[type];
+				return (<AVComponent handler={handler} ref={ref} />)
+			});
+			return audioVideo;
+		};
+		return <Layout style={styles.container}>{toDisplay()}</Layout>;
 	}
 }
 
@@ -287,9 +301,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = (state, ownProps) => {
 	const { call } = state;
 	const { peerConn, constraints } = call;
+	const { created, handlersAttached, conn } = peerConn;
 	return {
-		peerConn: peerConn.conn,
-		peerConnStatus: peerConn.created,
+		peerConn: conn,
+		peerConnStatus: { created, handlersAttached },
 		mediaStreamConstraints: constraints.mediaStream
 	};
 };

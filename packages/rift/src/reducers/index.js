@@ -12,7 +12,7 @@ export const initialState = {
     auth: { loggedIn: false, user: {}},
     call: { 
       peerConn: { 
-        conn: null, created: false, config: {} 
+        conn: null, created: false, config: {}, handlersAttached: false 
       }, 
       candidate: {},
       constraints: { 

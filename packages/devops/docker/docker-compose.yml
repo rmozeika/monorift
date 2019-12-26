@@ -19,15 +19,15 @@ services:
       # - certbot-etc:/etc/letsencrypt
       # - certbot-var:/var/lib/letsencrypt
     depends_on:
-      - monorift
+      - mrapp
     links:
-      - monorift
+      - mrapp
     labels:
       com.monorift.app: monorift
-  monorift:
+  mrapp:
     #network_mode: host
     image: "robertmozeika/rp2:latest"
-    container_name: monorift
+    container_name: mrapp
     restart: unless-stopped
     ports:
       - "8080:8080"

@@ -61,9 +61,9 @@ services:
 # volumes: 
 #   data-volume:
 # Docker Networks
-networks:
-  app-network:
-    driver: bridge
+# networks:
+#   app-network:
+#     driver: bridge
 
 
     

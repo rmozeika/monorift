@@ -94,3 +94,7 @@ export const setConstraints = ({ mediaStream }) => ({
   type: SET_CONSTRAINTS,
   constraints: { mediaStream }
 });
+
+
+import { TiffanyActions } from '../reducers/tiffany';
+export const tiffany = TiffanyActions;

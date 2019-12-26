@@ -73,13 +73,26 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //     res.redirect('/users');
 //   });
 // })
+const webpackConfig = require('../../webpack.config.js');
 
+const buildpath = path.resolve(webpackConfig.output.path);
+app.use(express.static(buildpath));
 if (remote == 'false') {
-  const webpackConfig = require('../../webpack.config.js');
-  app.use('/', express.static(path.resolve(webpackConfig.output.path)));
+  // app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
+  // app.get('*', (req, res) => {
+  //   //res.
+  //   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
+  //   res.sendFile(indexPath);
+  // });
+  // app.use(express.static(path.resolve(webpackConfig.output.path)))
+  app.use('*', express.static(path.resolve(webpackConfig.output.path)));
+  // app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
+
 
 } else {
+  // app.use('*', express.static(path.resolve('./dist.web')));
   app.use('/', express.static(path.resolve('./dist.web')));
+
 }
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

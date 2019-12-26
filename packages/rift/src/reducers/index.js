@@ -2,6 +2,7 @@ import config, * as fromConfig from './config';
 import code, * as fromCode from './code';
 import auth, * as fromAuth from './auth';
 import callReducer, * as fromCall from './call';
+import tiffany from './tiffany';
 
 
 import { combineReducers } from 'redux';
@@ -18,6 +19,9 @@ export const initialState = {
       constraints: { 
         mediaStream: { audio: true, video: false }
       }
+    },
+    tiffany: { 
+      answers: { ['1']: { value: { ['1']: null, ['2']: null}, correct: false } , ['2']:  { value: null, correct: false }, ['3']:  { value: null, correct: false } }
     }
 };
 
@@ -25,7 +29,8 @@ export default combineReducers({
   config,
   code,
   auth,
-  call: callReducer
+  call: callReducer,
+  tiffany
 });
 
 export const createReducer = (initialState, handlers) => {

@@ -3,4 +3,7 @@ node_modules
 npm-debug.log
 packages/rp2/node_modules
 packages/rift/node_modules
+packages/rift/android
+packages/rift/ios
+
 packages/code-parse/node_modules

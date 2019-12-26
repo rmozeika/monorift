@@ -73,11 +73,15 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 //     res.redirect('/users');
 //   });
 // })
-const webpackConfig = require('../../webpack.config.js');
 
-const buildpath = path.resolve(webpackConfig.output.path);
-app.use(express.static(buildpath));
+let buildpath;
+// if (remote == 'false') {
 if (remote == 'false') {
+
+  const webpackConfig = require('../../webpack.config.js');
+
+   builpath = path.resolve(webpackConfig.output.path);
+  app.use(express.static(buildpath));
   // app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
   // app.get('*', (req, res) => {
   //   //res.
@@ -91,7 +95,9 @@ if (remote == 'false') {
 
 } else {
   // app.use('*', express.static(path.resolve('./dist.web')));
-  app.use('/', express.static(path.resolve('./dist.web')));
+  builpath = path.resolve(__dirname, './dist.web');
+  app.use(express.static(__dirname + './dist.web'));
+  app.use('*', express.static(path.resolve(__dirname, './dist.web')));
 
 }
 app.use(function(req, res, next) {

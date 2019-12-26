@@ -24,7 +24,7 @@ services:
       - node
     labels:
       com.monorift.app: monorift
-  node:
+  rp2:
     #network_mode: host
     image: "robertmozeika/rp2:latest"
     container_name: rp2

@@ -60,10 +60,10 @@ services:
       com.monorift.app: monorift
 # volumes: 
 #   data-volume:
-#Docker Networks
-# networks:
-#   app-network:
-#     driver: bridge
+# Docker Networks
+networks:
+  app-network:
+    driver: bridge
 
 
     

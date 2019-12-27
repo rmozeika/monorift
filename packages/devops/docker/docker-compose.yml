@@ -1,29 +1,29 @@
 version: "3"
 services:
-  webserver:
-    image: nginx:mainline-alpine
-    container_name: webserver
-    # restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    expose:
-      - "80"
-      - "443"
-    # build: ../nginx/.
-    volumes:
-      -  ../data/logs/nginx:/home/logs
-      - ../data/keys:/private
-      - ../nginx/remote.conf:/etc/nginx/nginx.conf
-      - ../data/etc/letsencrypt:/etc/letsencrypt
-      # - certbot-etc:/etc/letsencrypt
-      # - certbot-var:/var/lib/letsencrypt
-    depends_on:
-      - mrapp
-    links:
-      - mrapp
-    labels:
-      com.monorift.app: monorift
+  # webserver:
+  #   image: nginx:mainline-alpine
+  #   container_name: webserver
+  #   # restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   expose:
+  #     - "80"
+  #     - "443"
+  #   # build: ../nginx/.
+  #   volumes:
+  #     -  ../data/logs/nginx:/home/logs
+  #     - ../data/keys:/private
+  #     - ../nginx/remote.conf:/etc/nginx/nginx.conf
+  #     - ../data/etc/letsencrypt:/etc/letsencrypt
+  #     # - certbot-etc:/etc/letsencrypt
+  #     # - certbot-var:/var/lib/letsencrypt
+  #   depends_on:
+  #     - mrapp
+  #   links:
+  #     - mrapp
+  #   labels:
+  #     com.monorift.app: monorift
   mrapp:
     #network_mode: host
     image: "robertmozeika/rp2:latest"

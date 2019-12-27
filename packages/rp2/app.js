@@ -75,13 +75,15 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 // })
 
 let buildpath;
-// if (remote == 'false') {
+// if (false) {
 if (remote == 'false') {
 
   const webpackConfig = require('../../webpack.config.js');
-
-   builpath = path.resolve(webpackConfig.output.path);
+  const buildpath = path.resolve(webpackConfig.output.path);
   app.use(express.static(buildpath));
+  //  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
+  // buildpath = path.resolve(webpackConfig.output.path);
+  // app.use(express.static(buildpath));
   // app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
   // app.get('*', (req, res) => {
   //   //res.

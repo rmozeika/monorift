@@ -47,8 +47,9 @@ const connect = () => {
 
 const createSocketChannel = socket =>
 	eventChannel(emit => {
-		const handler = data => {
-			emit(data);
+		const handler = (data, secondArg) => {
+			debugger;
+			emit({ message: data, peerConstraints: secondArg });
 		};
 		const onCandidateHandler = candidate => {
 			put({ type: ADD_CANDIDATE, candidate });
@@ -58,12 +59,12 @@ const createSocketChannel = socket =>
 			console.log('disconnected');
 			socket.connect();
 		});
-		const oldOnMsg = msg => {
+		const oldOnMsg = (msg, secondArg) => {
 			if (msg.type == 'candidate') {
 				onCandidateHandler(msg.candidate);
 			}
 			if (msg.type == 'offer') {
-				put({ type: GOT_MESSAGE, msg });
+				put({ type: GOT_MESSAGE, msg }, peerConstraints);
 			}
 		};
 
@@ -77,10 +78,10 @@ function* initCallSaga() {
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
-		const message = yield take(socketChannel);
-
+		const { message, peerConstraints } = yield take(socketChannel);
+		// const msgEvery = yield takeEvery(socketChannel, gotMessageSaga, )
 		try {
-			yield put({ type: GOT_MESSAGE, message });
+			yield put({ type: GOT_MESSAGE, message, peerConstraints });
 			//console.log(payload);
 			// if (payload.user !== false) {
 			//     yield put({ type: AUTH.LOGIN.SUCCESS,  payload });
@@ -93,8 +94,8 @@ function* initCallSaga() {
 	}
 }
 function* sendCandidateSaga(action) {
-	const { candidate } = action;
-	socket.emit('message', { type: 'candidate', candidate });
+	const { payload } = action;
+	socket.emit('message', { type: 'candidate', candidate: payload });
 }
 function* createPeerConnSaga({ config = {} }) {
 	const conn = new RTCPeerConnection(config);
@@ -111,9 +112,9 @@ function* createPeerConnSaga({ config = {} }) {
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
-function* sendOfferSaga({ offer }) {
+function* sendOfferSaga({ offer, constraints }) {
 	// socket.emit('message', { type: offer, offer });
-	socket.emit('message', offer);
+	socket.emit('message', offer, constraints);
 }
 function* gotOfferSaga({ offer }) {}
 const selectConn = state => {
@@ -123,17 +124,18 @@ const selectConstraints = state => {
 	return state.call.constraints.mediaStream;
 };
 
-function* gotMessageSaga({ message }) {
+function* gotMessageSaga({ message, peerConstraints }) {
 	//while (true) {
-    const conn = yield select(selectConn);
-    mediaStreamConstraints = yield select(selectConstraints);
+	const conn = yield select(selectConn);
+	mediaStreamConstraints = yield select(selectConstraints);
 	//const message = message.offer;
 	console.log(message);
 	if (message.type == 'offer') {
+		if (!isInitiator && !isStarted) {
+			maybeStart();
+		}
 		yield conn.setRemoteDescription(message);
-		const stream = yield navigator.mediaDevices.getUserMedia(
-			mediaStreamConstraints
-		);
+		const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
 		stream.getTracks().forEach(track => {
 			conn.addTrack(track, stream);
 		});
@@ -148,7 +150,7 @@ function* gotMessageSaga({ message }) {
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {
 		//socket.emit('message', )
-		conn.addIceCandidate(message);
+		conn.addIceCandidate(message.candidate);
 	}
 	//}
 }

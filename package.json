@@ -1,45 +1,54 @@
 {
-  "name": "monorift",
-  "private": true,
-  "version": "0.0.91",
-  "dependencies": {
-    "react-native": "0.61.2"
-  },
-  "bin": { 
-    "monorift" : "./cli" 
-  },
-  "devDependencies": {
-    "lerna": "^3.16.4",
-    "@types/react": "16.9.2",
-    "@types/react-native": "0.60.8",
-    "concurrently": "4.1.2",
-    "typescript": "3.6.2",
-    "ts-loader": "^6.1.2",
-    "nodemon": "^2.0.2"
-  },
-  "scripts": {
-    "start": "node ./packages/rp2/bin/www",
-    "ndm": "nodemon ./packages/rp2/bin/www",
-    "dev": "concurrently --kill-others \"yarn run start\" \"yarn run build\"",
-    "start:log": "node ./packages/rp2/bin/www > app.log",
-    "server": "yarn workspace rp2 start",
-    "build": "webpack --mode development --config webpack.config.js --watch",
-    "build:nowatch": "webpack --mode development --config webpack.config.js",
-    "android": "yarn workspace rift android",
-    "build:mobile": "react-native start",
-    "clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
-    "studio": "yarn workspace rift run studio",
-    "ios": "yarn workspace rift ios",
-    "compile": "tsc -b --incremental",
-    "transfer": "./dev.sh/transfer.sh",
-    "copy": "./dev.sh/copy.sh",
-    "cm": "./.bin/mr.sh cm",
-    "backup": "./dev.sh/backup-cloud.sh",
-    "build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
-    "up": "cd ./packages/devops/docker && docker-compose up",
-    "up:log": "cd ./packages/devops/docker && docker-compose up >>  docker.log"
-  },
-  "workspaces": {
-    "packages": ["packages/*"]
-  }
+	"name": "monorift",
+	"private": true,
+	"version": "0.0.91",
+	"dependencies": {
+		"react-native": "0.61.2"
+	},
+	"bin": {
+		"monorift": "./cli"
+	},
+	"devDependencies": {
+		"@types/react": "16.9.2",
+		"@types/react-native": "0.60.8",
+		"concurrently": "4.1.2",
+		"husky": "^3.1.0",
+		"lerna": "^3.16.4",
+		"nodemon": "^2.0.2",
+		"pretty-quick": "^2.0.1",
+		"ts-loader": "^6.1.2",
+		"typescript": "3.6.2"
+	},
+	"scripts": {
+		"start": "node ./packages/rp2/bin/www",
+		"ndm": "nodemon ./packages/rp2/bin/www",
+		"dev": "concurrently --kill-others \"yarn run start\" \"yarn run build\"",
+		"start:log": "node ./packages/rp2/bin/www > app.log",
+		"server": "yarn workspace rp2 start",
+		"build": "webpack --mode development --config webpack.config.js --watch",
+		"build:nowatch": "webpack --mode development --config webpack.config.js",
+		"android": "yarn workspace rift android",
+		"build:mobile": "react-native start",
+		"clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
+		"studio": "yarn workspace rift run studio",
+		"ios": "yarn workspace rift ios",
+		"compile": "tsc -b --incremental",
+		"transfer": "./dev.sh/transfer.sh",
+		"copy": "./dev.sh/copy.sh",
+		"cm": "./.bin/mr.sh cm",
+		"backup": "./dev.sh/backup-cloud.sh",
+		"build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
+		"up": "cd ./packages/devops/docker && docker-compose up",
+		"up:log": "cd ./packages/devops/docker && docker-compose up >>  docker.log"
+	},
+	"workspaces": {
+		"packages": [
+			"packages/*"
+		]
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged"
+		}
+	}
 }

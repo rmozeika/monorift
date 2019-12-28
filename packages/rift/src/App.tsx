@@ -10,7 +10,8 @@ import { mapping, light as lightTheme } from '@eva-design/eva';
 import {
 	ApplicationProvider,
 	Button,
-	IconRegistry
+	IconRegistry,
+	Layout
 } from 'react-native-ui-kitten';
 import { AwesomeIconsPack } from './core/icons';
 
@@ -61,20 +62,16 @@ class App extends React.Component<Props, State> {
 			toggleTheme: this.onSwitchTheme
 		};
 		this.props.setCode({ name: 'test', text: 'fun' });
-
 		return (
 			<ThemeContext.Provider value={contextValue}>
 				<IconRegistry icons={[AwesomeIconsPack]} />
 				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
 					<Router>
-          <NavBar />
+						<NavBar />
 						<Switch>
-							<Route path="/tiffany">
-								<Tiffany />
-							</Route>
 							<Route path="/">
 								<Rtc />
-								<Editor />
+								{/* <Editor /> */}
 							</Route>
 						</Switch>
 					</Router>

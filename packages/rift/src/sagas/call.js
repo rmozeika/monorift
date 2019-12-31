@@ -31,7 +31,16 @@ const {
 } = Actions;
 
 import io from 'socket.io-client';
-
+const onError = e => {
+	console.log(e);
+	debugger;
+};
+const selectPeerStore = state => {
+	return state.call.peerStore;
+};
+const selectConstraints = state => {
+	return state.call.constraints.mediaStream;
+};
 const nsp = 'call';
 const socketServerURL = `https://monorift.com/${nsp}`;
 let socket;
@@ -48,7 +57,7 @@ const connect = () => {
 const createSocketChannel = socket =>
 	eventChannel(emit => {
 		const handler = (data, secondArg) => {
-			debugger;
+			console.log('emitting message from socketchannel');
 			emit({ message: data, peerConstraints: secondArg });
 		};
 		const onCandidateHandler = candidate => {
@@ -79,28 +88,32 @@ function* initCallSaga() {
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
 		const { message, peerConstraints } = yield take(socketChannel);
-		// const msgEvery = yield takeEvery(socketChannel, gotMessageSaga, )
 		try {
 			yield put({ type: GOT_MESSAGE, message, peerConstraints });
-			//console.log(payload);
-			// if (payload.user !== false) {
-			//     yield put({ type: AUTH.LOGIN.SUCCESS,  payload });
-			// } else {
-			//     yield put({ type: AUTH.LOGIN.REQUEST }, payload);
-			// }
 		} catch (e) {
+			console.log('Call Saga Error', e);
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 		}
 	}
 }
 function* sendCandidateSaga(action) {
+	console.log('sending candidate');
 	const { payload } = action;
 	socket.emit('message', { type: 'candidate', candidate: payload });
 }
 function* createPeerConnSaga({ config = {} }) {
 	const conn = new RTCPeerConnection(config);
-	conn.onnegotiationneeded = async () => {
+	conn.onnegotiationneeded = async e => {
+		console.log('On negition needed called');
+		if (true) return;
 		try {
+			debugger;
+			const desc = await conn.createOffer();
+			conn.setLocalDescription(desc).catch(e => {
+				console.log(e);
+				debugger;
+			});
+			socket.emit('message', desc, { audio: true, video: true });
 			await conn.setLocalDescription(await conn.createOffer());
 			// send the offer to the other peer
 			//signaling.send({desc: conn.localDescription});
@@ -112,45 +125,91 @@ function* createPeerConnSaga({ config = {} }) {
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
-function* sendOfferSaga({ offer, constraints }) {
+function* sendOfferSaga({ constraints }) {
 	// socket.emit('message', { type: offer, offer });
+	console.log('Sending offer');
+	const offerOptions = {
+		// offerToReceiveVideo: 1,
+	};
+	const { conn } = yield select(selectPeerStore);
+	const offer = yield conn.createOffer().catch(e => {
+		debugger;
+	});
+	conn.setLocalDescription(offer);
+	put(Actions.setPeerInitiator(true));
+	debugger;
 	socket.emit('message', offer, constraints);
 }
 function* gotOfferSaga({ offer }) {}
-const selectConn = state => {
-	return state.call.peerConn.conn;
-};
-const selectConstraints = state => {
-	return state.call.constraints.mediaStream;
+
+const start = async (conn, peerConstraints) => {
+	put(Actions.setPeerStarted(true));
+	console.log('START', 'getting usermedia');
+	const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
+	debugger;
+	stream.getTracks().forEach(track => {
+		console.log('adding track', 'from message start func');
+		conn.addTrack(track, stream);
+	});
+	// conn.addStream(stream);
+	return;
 };
 
 function* gotMessageSaga({ message, peerConstraints }) {
 	//while (true) {
-	const conn = yield select(selectConn);
+	const peerStore = yield select(selectPeerStore);
+	const { conn, isStarted, isInitiator } = peerStore;
 	mediaStreamConstraints = yield select(selectConstraints);
 	//const message = message.offer;
-	console.log(message);
+	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {
 		if (!isInitiator && !isStarted) {
-			maybeStart();
+			debugger;
+			const starter = yield call(start, conn, peerConstraints);
+			// return;
+			//put(Actions.setPeerStarted(true));
 		}
-		yield conn.setRemoteDescription(message);
-		const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
-		stream.getTracks().forEach(track => {
-			conn.addTrack(track, stream);
+		console.log('GOT_MESSAGE', 'setting remote desc');
+		yield conn.setRemoteDescription(new RTCSessionDescription(message));
+		// const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
+		// stream.getTracks().forEach(track => {
+		// 	conn.addTrack(track, stream);
+		// });
+		// console.log('ADDED TRACK');
+		console.log('GOT_MESSAGE', 'creating answer');
+		const answer = yield conn.createAnswer().catch(e => {
+			debugger;
 		});
-		console.log('ADDED TRACK');
-		const answer = yield conn.createAnswer();
+		debugger;
+		console.log('GOT_MESSAGE', 'setting local desc');
+
 		yield conn.setLocalDescription(answer);
-		socket.emit('message', conn.localDescription);
-		console.log('set local desc');
+		// socket.emit('message', conn.localDescription);
+		console.log('GOT_MESSAGE', 'sending answer');
+		socket.emit('message', answer);
+		// console.log('set local desc');
 		//signaling.send({message: conn.localDescription});
 	} else if (message.type === 'answer') {
-		yield conn.setRemoteDescription(message);
+		debugger;
+		console.log('GOT_MESSAGE', 'answer: setting remote desc');
+		yield conn
+			.setRemoteDescription(new RTCSessionDescription(message))
+			.catch(e => {
+				debugger;
+				console.log(e);
+			});
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {
 		//socket.emit('message', )
-		conn.addIceCandidate(message.candidate);
+		debugger;
+		console.log('GOT_MESSAGE', 'candidate');
+		const altCandid = new RTCIceCandidate({
+			sdpMLineIndex: message.label,
+			candidate: message.candidate
+		});
+		debugger;
+		// conn.addIceCandidate(message.candidate);
+		conn.addIceCandidate(altCandid);
 	}
 	//}
 }

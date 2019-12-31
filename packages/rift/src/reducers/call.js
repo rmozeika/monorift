@@ -4,14 +4,18 @@ import {
 	CREATE_PEER_CONN,
 	SET_PEER_CONN,
 	SET_CONSTRAINTS,
-	HANDLERS_SET
+	HANDLERS_SET,
+	SET_PEER_STARTED,
+	SET_PEER_INITIATOR
 } from '../actions';
 export const initialState = {
-	peerConn: {
+	peerStore: {
 		conn: null,
 		created: false,
 		config: {},
-		handlersAttached: false
+		handlersAttached: false,
+		isStarted: false,
+		isInitiator: false
 	},
 	candidate: {},
 	constraints: {
@@ -31,7 +35,7 @@ export const candidate = (state = {}, action = {}) => {
 	}
 };
 
-export const peerConn = (state = [], action = {}) => {
+export const peerStore = (state = [], action = {}) => {
 	switch (action.type) {
 		case CREATE_PEER_CONN:
 			return { ...state, created: 0.5, config: action.config || {} };
@@ -39,6 +43,10 @@ export const peerConn = (state = [], action = {}) => {
 			return { ...state, created: true, conn: action.conn };
 		case HANDLERS_SET:
 			return { ...state, handlersAttached: true };
+		case SET_PEER_STARTED:
+			return { ...state, isStarted: action.started };
+		case SET_PEER_INITIATOR:
+			return { ...state, isInitiator: action.initiator };
 		default:
 			return state;
 	}
@@ -55,7 +63,7 @@ export const constraints = (state = {}, action) => {
 };
 const callReducer = combineReducers({
 	candidate,
-	peerConn,
+	peerStore,
 	constraints
 });
 export default callReducer;

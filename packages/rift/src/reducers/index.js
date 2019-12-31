@@ -10,7 +10,7 @@ export const initialState = {
 	code: { file1: 'beforeafter' },
 	auth: { loggedIn: false, user: {} },
 	// call: {
-	//   peerConn: {
+	//   peerStore: {
 	//     conn: null, created: false, config: {}, handlersAttached: false
 	//   },
 	//   candidate: {},

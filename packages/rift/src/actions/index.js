@@ -71,6 +71,8 @@ export const sendCandidate = candidate => ({
 export const ADD_CANDIDATE = 'ADD_CANDIDATE';
 export const CREATE_PEER_CONN = 'CREATE_PEER_CONN';
 export const SET_PEER_CONN = 'SET_PEER_CONN';
+export const SET_PEER_STARTED = 'SET_PEER_STARTED';
+export const SET_PEER_INITIATOR = 'SET_PEER_INITIATOR';
 export const createPeerConn = (config = {}) => ({
 	type: CREATE_PEER_CONN,
 	config
@@ -80,12 +82,19 @@ export const setPeerConn = conn => ({
 	type: SET_PEER_CONN,
 	conn
 });
-
+export const setPeerStarted = started => ({
+	type: SET_PEER_STARTED,
+	started
+});
+export const setPeerInitiator = initiator => ({
+	type: SET_PEER_STARTED,
+	initiator
+});
 export const SEND_OFFER = 'SEND_OFFER';
 export const sendOffer = message => ({
 	type: SEND_OFFER,
 	offer: message.desc,
-	constraints: message.mediaStreamConstraints
+	constraints: message.constraints
 });
 export const GOT_MESSAGE = 'GOT_MESSAGE';
 export const HANDLERS_SET = 'HANDLERS_SET';

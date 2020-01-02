@@ -1,69 +1,68 @@
-version: "3"
+version: '3'
 services:
-  # webserver:
-  #   image: nginx:mainline-alpine
-  #   container_name: webserver
-  #   # restart: unless-stopped
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   expose:
-  #     - "80"
-  #     - "443"
-  #   # build: ../nginx/.
-  #   volumes:
-  #     -  ../data/logs/nginx:/home/logs
-  #     - ../data/keys:/private
-  #     - ../nginx/remote.conf:/etc/nginx/nginx.conf
-  #     - ../data/etc/letsencrypt:/etc/letsencrypt
-  #     # - certbot-etc:/etc/letsencrypt
-  #     # - certbot-var:/var/lib/letsencrypt
-  #   depends_on:
-  #     - mrapp
-  #   links:
-  #     - mrapp
-  #   labels:
-  #     com.monorift.app: monorift
-  mrapp:
-    #network_mode: host
-    image: "robertmozeika/rp2:1.2"
-    container_name: mrapp
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    # command: ["./wait-for-it.sh", "db-svc:27017", "--", "npm", "start"]
-    # command: "tail -f /dev/null"
-    volumes: 
-      - ../data/logs:/logs
-      - ../data/logs/node/app.log:/app.log
-    depends_on: 
-      - db-svc
-    links: 
-      - db-svc
-    labels:
-      com.monorift.app: monorift
-  db-svc:
-    #network_mode: host
-    image: mongo:4.2.2
-    container_name: "mongo"
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/data/logs
-    volumes:
-      - ../data/db:/data/db
-      - ../data/logs/mongo:/data/logs
-    expose:
-      - 27017
-    ports:
-        - 27017:27017
-    labels:
-      com.monorift.app: monorift
-# volumes: 
+ # webserver:
+ #   image: nginx:mainline-alpine
+ #   container_name: webserver
+ #   # restart: unless-stopped
+ #   ports:
+ #     - "80:80"
+ #     - "443:443"
+ #   expose:
+ #     - "80"
+ #     - "443"
+ #   # build: ../nginx/.
+ #   volumes:
+ #     -  ../data/logs/nginx:/home/logs
+ #     - ../data/keys:/private
+ #     - ../nginx/remote.conf:/etc/nginx/nginx.conf
+ #     - ../data/etc/letsencrypt:/etc/letsencrypt
+ #     # - certbot-etc:/etc/letsencrypt
+ #     # - certbot-var:/var/lib/letsencrypt
+ #   depends_on:
+ #     - mrapp
+ #   links:
+ #     - mrapp
+ #   labels:
+ #     com.monorift.app: monorift
+ mrapp:
+  #network_mode: host
+  image: 'robertmozeika/rp2:1.2'
+  container_name: mrapp
+  restart: unless-stopped
+  ports:
+   - '8080:8080'
+  # command: ["./wait-for-it.sh", "db-svc:27017", "--", "npm", "start"]
+  # command: "tail -f /dev/null"
+  volumes:
+   - ../data/logs:/logs
+   - ../data/logs/node/app.log:/app.log
+   - ../../../dist.web:/dist.web
+  depends_on:
+   - db-svc
+  links:
+   - db-svc
+  labels:
+   com.monorift.app: monorift
+ db-svc:
+  #network_mode: host
+  image: mongo:4.2.2
+  container_name: 'mongo'
+  environment:
+   - MONGO_DATA_DIR=/data/db
+   - MONGO_LOG_DIR=/data/logs
+  volumes:
+   - ../data/db:/data/db
+   - ../data/logs/mongo:/data/logs
+  expose:
+   - 27017
+  ports:
+   - 27017:27017
+  labels:
+   com.monorift.app: monorift
+# volumes:
 #   data-volume:
 # Docker Networks
 # networks:
 #   app-network:
 #     driver: bridge
 
-
-    

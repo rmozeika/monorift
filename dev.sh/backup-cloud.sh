@@ -11,4 +11,3 @@ rsync --recursive -v -e ssh ec2-user@aws:/home/ec2-user ./backup/.
 # rsync --recursive -v -e ssh bobby@awsbob:/home/bobby ./backup/.
 
  
-rsync --recursive -v -e ssh  ./dist.web/. ec2-user@aws:/home/ec2-user/monorift/dist.web/.

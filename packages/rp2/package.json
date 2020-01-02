@@ -5,7 +5,7 @@
 	"scripts": {
 		"start": "nodemon --inspect=0.0.0.0 ./bin/www",
 		"init": "node ./bin/www > app.log",
-		"init:std": "node ./bin/www",
+		"init:std": "nodemon ./bin/www",
 		"debug": "nodemon  ./bin/www",
 		"docker": "docker build -f ../devops/Dockerfile ."
 	},

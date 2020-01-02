@@ -38,10 +38,12 @@
 		"copy": "./dev.sh/copy.sh",
 		"cm": "./.bin/mr.sh cm",
 		"backup": "./dev.sh/backup-cloud.sh",
+		"build:buildkit": "DOCKER_BUILDKIT=1 docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
 		"build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
 		"up": "cd ./packages/devops/docker && docker-compose up",
 		"up:log": "cd ./packages/devops/docker && docker-compose up >>  docker.log",
-		"redo:docker": "docker-compose up --force-recreate -V -d"
+		"redo:docker": "docker-compose up --force-recreate -V -d",
+		"update:server": "./dev.sh/send-dist-server.sh"
 	},
 	"workspaces": {
 		"packages": [

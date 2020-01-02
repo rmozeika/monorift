@@ -26,7 +26,7 @@ services:
  #     com.monorift.app: monorift
  mrapp:
   #network_mode: host
-  image: 'robertmozeika/rp2:1.2'
+  image: 'robertmozeika/rp2-live:latest'
   container_name: mrapp
   restart: unless-stopped
   ports:

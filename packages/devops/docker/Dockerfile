@@ -10,7 +10,7 @@ COPY packages/rp2/package.json ./package.json
 
 COPY dist.web/. ./dist.web/.
 
-RUN npm install
+RUN yarn install
 # If you are building your code for production
 # RUN npm install --only=production
 
@@ -22,5 +22,5 @@ COPY ./packages/devops/docker/kube.conf ./local.conf
 EXPOSE 8080
 
 ## Launch the wait tool and then your application
-CMD npm run init:std
+CMD yarn run init:std
 # replace this with your application's default port

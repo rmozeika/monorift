@@ -27,7 +27,9 @@ const {
 	CREATE_PEER_CONN,
 	SEND_CANDIDATE,
 	SEND_OFFER,
-	GOT_MESSAGE
+	GOT_MESSAGE,
+	SET_REMOTE,
+	setRemote
 } = Actions;
 
 import io from 'socket.io-client';
@@ -42,7 +44,9 @@ const selectConstraints = state => {
 	return state.call.constraints.mediaStream;
 };
 const nsp = 'call';
-const socketServerURL = `https://monorift.com/${nsp}`;
+// const socketServerURL = `https://monorift.com/${nsp}`;
+const socketServerURL = `http://localhost:8080/${nsp}`;
+
 let socket;
 
 const connect = () => {
@@ -99,45 +103,52 @@ function* initCallSaga() {
 function* sendCandidateSaga(action) {
 	console.log('sending candidate');
 	const { payload } = action;
-	socket.emit('message', { type: 'candidate', candidate: payload });
+	const candidateToSend = { type: 'candidate', candidate: payload };
+	console.log(candidateToSend);
+	socket.emit('message', candidateToSend);
 }
 function* createPeerConnSaga({ config = {} }) {
 	const conn = new RTCPeerConnection(config);
+	window.conn = conn;
 	conn.onnegotiationneeded = async e => {
 		console.log('On negition needed called');
-		if (true) return;
-		try {
-			debugger;
-			const desc = await conn.createOffer();
-			conn.setLocalDescription(desc).catch(e => {
-				console.log(e);
-				debugger;
-			});
-			socket.emit('message', desc, { audio: true, video: true });
-			await conn.setLocalDescription(await conn.createOffer());
-			// send the offer to the other peer
-			//signaling.send({desc: conn.localDescription});
-			socket.emit('message', conn.localDescription);
-		} catch (err) {
-			console.error(err);
-		}
+		// // if (true) return;
+		// try {
+
+		// 	debugger;
+		// 	const desc = await conn.createOffer();
+		// 	conn.setLocalDescription(desc).catch(e => {
+		// 		console.log(e);
+		// 	});
+		// 	socket.emit('message', desc, { audio: true, video: true });
+		// 	await conn.setLocalDescription(await conn.createOffer());
+		// 	// send the offer to the other peer
+		// 	//signaling.send({desc: conn.localDescription});
+		// 	socket.emit('message', conn.localDescription);
+		// } catch (err) {
+		// 	console.error(err);
+		// }
 	};
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
 function* sendOfferSaga({ constraints }) {
 	// socket.emit('message', { type: offer, offer });
+	// if (true) {
+	// 	return;
+	// }
 	console.log('Sending offer');
 	const offerOptions = {
 		// offerToReceiveVideo: 1,
 	};
 	const { conn } = yield select(selectPeerStore);
-	const offer = yield conn.createOffer().catch(e => {
-		debugger;
-	});
+	const offer = yield conn
+		.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
+		.catch(e => {
+			debugger;
+		});
 	conn.setLocalDescription(offer);
-	put(Actions.setPeerInitiator(true));
-	debugger;
+	yield put(Actions.setPeerInitiator(true));
 	socket.emit('message', offer, constraints);
 }
 function* gotOfferSaga({ offer }) {}
@@ -146,15 +157,15 @@ const start = async (conn, peerConstraints) => {
 	put(Actions.setPeerStarted(true));
 	console.log('START', 'getting usermedia');
 	const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
-	debugger;
 	stream.getTracks().forEach(track => {
 		console.log('adding track', 'from message start func');
 		conn.addTrack(track, stream);
 	});
 	// conn.addStream(stream);
+	console.log('finished adding tracks');
 	return;
 };
-
+function addCandidate(candidate) {}
 function* gotMessageSaga({ message, peerConstraints }) {
 	//while (true) {
 	const peerStore = yield select(selectPeerStore);
@@ -163,14 +174,24 @@ function* gotMessageSaga({ message, peerConstraints }) {
 	//const message = message.offer;
 	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {
+		yield conn.setRemoteDescription(new RTCSessionDescription(message));
+
 		if (!isInitiator && !isStarted) {
-			debugger;
 			const starter = yield call(start, conn, peerConstraints);
 			// return;
 			//put(Actions.setPeerStarted(true));
+		} else {
+			const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
+			stream.getTracks().forEach(track => {
+				console.log('adding track', 'from message start func');
+				conn.addTrack(track, stream);
+			});
 		}
 		console.log('GOT_MESSAGE', 'setting remote desc');
-		yield conn.setRemoteDescription(new RTCSessionDescription(message));
+		// yield conn.setRemoteDescription(new RTCSessionDescription(message));
+		debugger;
+		yield put(setRemote(true));
+		console.log('put setting remote');
 		// const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
 		// stream.getTracks().forEach(track => {
 		// 	conn.addTrack(track, stream);
@@ -178,19 +199,19 @@ function* gotMessageSaga({ message, peerConstraints }) {
 		// console.log('ADDED TRACK');
 		console.log('GOT_MESSAGE', 'creating answer');
 		const answer = yield conn.createAnswer().catch(e => {
+			console.log(e);
 			debugger;
 		});
-		debugger;
 		console.log('GOT_MESSAGE', 'setting local desc');
 
 		yield conn.setLocalDescription(answer);
 		// socket.emit('message', conn.localDescription);
 		console.log('GOT_MESSAGE', 'sending answer');
-		socket.emit('message', answer);
+		const desc = conn.localDescription;
+		socket.emit('message', desc);
 		// console.log('set local desc');
 		//signaling.send({message: conn.localDescription});
 	} else if (message.type === 'answer') {
-		debugger;
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
 		yield conn
 			.setRemoteDescription(new RTCSessionDescription(message))
@@ -198,18 +219,33 @@ function* gotMessageSaga({ message, peerConstraints }) {
 				debugger;
 				console.log(e);
 			});
+		yield put(setRemote(true));
+		const stream = yield navigator.mediaDevices.getUserMedia({
+			audio: true,
+			video: true
+		});
+		stream.getTracks().forEach(track => {
+			conn.addTrack(track, stream);
+		});
+		console.log('ADDED TRACK');
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {
+		// const { remoteSet } = yield select(selectPeerStore);
+		// while (true) {
+		const action = yield take(SET_REMOTE);
 		//socket.emit('message', )
-		debugger;
 		console.log('GOT_MESSAGE', 'candidate');
 		const altCandid = new RTCIceCandidate({
-			sdpMLineIndex: message.label,
-			candidate: message.candidate
+			// sdpMLineIndex: message.label,
+			...message.candidate
 		});
-		debugger;
 		// conn.addIceCandidate(message.candidate);
-		conn.addIceCandidate(altCandid);
+		conn.addIceCandidate(altCandid).catch(e => {
+			console.log(e);
+			debugger;
+		});
+		// conn.addIceCandidate({candidate: ''});
+		// }
 	}
 	//}
 }

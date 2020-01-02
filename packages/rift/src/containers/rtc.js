@@ -67,13 +67,14 @@ class Adapter extends React.Component {
 		this.audioRef = audioRef;
 		this.videoRef = videoRef;
 		this.selfRef = selfRef;
+		window.videoRef = this.videoRef;
 	}
 	componentDidMount() {
 		//this.peerStore = new RTCPeerConnection();
 		this.props.createPeerConn({
 			iceServers: [
 				{
-					urls: 'stun.l.google.com:19302'
+					urls: 'stun:stun.l.google.com:19302'
 				}
 			]
 		});
@@ -83,10 +84,17 @@ class Adapter extends React.Component {
 		const { audioRef, videoRef } = this;
 		const { conn } = peerStore;
 		function onTrack(e) {
+			let mediaStreamConstraintsCHANGETHIS = { audio: true, video: true };
+			debugger;
 			console.log('ONTRACK called', e);
-			if (mediaStreamConstraints.video) {
-				if (!(videoRef && videoRef.current)) return;
-				if (videoRef.current.srcObject) return;
+			// if (mediaStreamConstraints.video) {
+			if (mediaStreamConstraintsCHANGETHIS.video) {
+				if (!(videoRef && videoRef.current)) {
+					return;
+				}
+				if (videoRef.current.srcObject !== null) {
+					return;
+				}
 				videoRef.current.srcObject = e.streams[0];
 			}
 			if (!(audioRef && audioRef.current)) {
@@ -105,12 +113,13 @@ class Adapter extends React.Component {
 			// console.log(audioRef.current.srcObject);
 			audio.play();
 		}
-		const handleRemoteStreamAdded = e => {
-			debugger;
-		};
+
 		if (peerConnStatus.created === true && conn.ontrack == null) {
 			console.log('handlers added: ontrack and onice');
 			conn.ontrack = onTrack;
+			conn.addEventListener('track', e => {
+				console.log('on EVENT track');
+			});
 			// conn.onaddstream = handleRemoteStreamAdded;
 			conn.addEventListener('icecandidate', this.handleConnection.bind(this));
 		}
@@ -133,12 +142,12 @@ class Adapter extends React.Component {
 			stream.oninactive = function() {
 				console.log('Stream ended');
 			};
-			stream.getTracks(track => {
+			stream.getTracks().forEach(track => {
 				console.log('adding track', 'from getMedia after call');
 				conn.addTrack(track, stream);
 			});
 			if (mediaStreamConstraints.video) {
-				this.selfRef.current.srcObject = stream;
+				// this.selfRef.current.srcObject = stream;
 			}
 			//stream.addTrack(stream)
 			//selfRef.current.srcObject = stream;
@@ -154,7 +163,6 @@ class Adapter extends React.Component {
 		await this.getMedia(mediaStreamConstraints);
 		// await getMedia({ audio: true, video: false }, conn2, peerStore);
 		setPeerInitiator(true);
-		debugger;
 		this.props.sendOffer({ constraints: mediaStreamConstraints });
 		// peerStore
 		// 	.createOffer(offerOptions)
@@ -172,15 +180,18 @@ class Adapter extends React.Component {
 	call() {
 		const { peerStore } = this.props;
 		this.setMediaStreamConstraints(true, false);
+		// peerStore.conn.addEventListener('icecandidate', this.handleConnection.bind(this));
+		peerStore.onicecandidate = e => {};
 		this.startCall();
 	}
 	handleConnection(event) {
-		debugger;
+		console.log('got candidate onicecandidate event');
 		const peerConnection = event.target;
 		const iceCandidate = event.candidate;
 
 		if (iceCandidate) {
 			const newIceCandidate = new RTCIceCandidate(iceCandidate);
+			console.log('sending candidate');
 			this.props.sendCandidate(newIceCandidate);
 		}
 	}
@@ -236,71 +247,6 @@ class Adapter extends React.Component {
 	}
 }
 
-// // Logs offer creation and sets peer connection session descriptions.
-// function createdOffer(description, localPeerConnection) {
-// 	trace(`Offer from localPeerConnection:\n${description.sdp}`);
-
-// 	trace('localPeerConnection setLocalDescription start.');
-// 	return { desc: description, mediaStreamConstraints };
-// 	trace('remotePeerConnection setRemoteDescription start.');
-// 	// remotePeerConnection
-// 	// 	.setRemoteDescription(description)
-// 	// 	.then(() => {
-// 	// 		setRemoteDescriptionSuccess(remotePeerConnection);
-// 	// 	})
-// 	// 	.catch(setSessionDescriptionError);
-
-// 	trace('remotePeerConnection createAnswer start.');
-// 	// remotePeerConnection
-// 	// 	.createAnswer()
-// 	// 	.then(desc => {
-// 	// 		createdAnswer(desc, localPeerConnection, remotePeerConnection);
-// 	// 	})
-// 	// 	.catch(setSessionDescriptionError);
-// }
-
-// Logs answer to offer creation and sets peer connection session descriptions.
-function createdAnswer(description, localPeerConnection, remotePeerConnection) {
-	trace(`Answer from remotePeerConnection:\n${description.sdp}.`);
-
-	trace('remotePeerConnection setLocalDescription start.');
-	remotePeerConnection
-		.setLocalDescription(description)
-		.then(() => {
-			setLocalDescriptionSuccess(remotePeerConnection);
-		})
-		.catch(setSessionDescriptionError);
-
-	trace('localPeerConnection setRemoteDescription start.');
-	localPeerConnection
-		.setRemoteDescription(description)
-		.then(() => {
-			setRemoteDescriptionSuccess(localPeerConnection);
-		})
-		// .catch(setSessionDescriptionError);
-		.catch(trace);
-}
-
-// Logs error when setting session description fails.
-function setSessionDescriptionError(error) {
-	trace(`Failed to create session description: ${error.toString()}.`);
-}
-
-// Logs success when setting session description.
-function setDescriptionSuccess(peerConnection, functionName) {
-	const peerName = getPeerName(peerConnection);
-	trace(`${peerName} ${functionName} complete.`);
-}
-
-// Logs success when localDescription is set.
-function setLocalDescriptionSuccess(peerConnection) {
-	setDescriptionSuccess(peerConnection, 'setLocalDescription');
-}
-
-// Logs success when remoteDescription is set.
-function setRemoteDescriptionSuccess(peerConnection) {
-	setDescriptionSuccess(peerConnection, 'setRemoteDescription');
-}
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),

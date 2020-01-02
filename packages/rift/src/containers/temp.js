@@ -45,3 +45,46 @@ function handleConnection(event) {
 		);
 	}
 }
+
+// Logs answer to offer creation and sets peer connection session descriptions.
+function createdAnswer(description, localPeerConnection, remotePeerConnection) {
+	trace(`Answer from remotePeerConnection:\n${description.sdp}.`);
+
+	trace('remotePeerConnection setLocalDescription start.');
+	remotePeerConnection
+		.setLocalDescription(description)
+		.then(() => {
+			setLocalDescriptionSuccess(remotePeerConnection);
+		})
+		.catch(setSessionDescriptionError);
+
+	trace('localPeerConnection setRemoteDescription start.');
+	localPeerConnection
+		.setRemoteDescription(description)
+		.then(() => {
+			setRemoteDescriptionSuccess(localPeerConnection);
+		})
+		// .catch(setSessionDescriptionError);
+		.catch(trace);
+}
+
+// Logs error when setting session description fails.
+function setSessionDescriptionError(error) {
+	trace(`Failed to create session description: ${error.toString()}.`);
+}
+
+// Logs success when localDescription is set.
+function setLocalDescriptionSuccess(peerConnection) {
+	setDescriptionSuccess(peerConnection, 'setLocalDescription');
+}
+
+// Logs success when remoteDescription is set.
+function setRemoteDescriptionSuccess(peerConnection) {
+	setDescriptionSuccess(peerConnection, 'setRemoteDescription');
+}
+
+// Logs success when setting session description.
+function setDescriptionSuccess(peerConnection, functionName) {
+	const peerName = getPeerName(peerConnection);
+	trace(`${peerName} ${functionName} complete.`);
+}

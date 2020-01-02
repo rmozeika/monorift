@@ -18,7 +18,7 @@ export const initialState = {
 	//     mediaStream: { audio: true, video: false }
 	//   }
 	// },
-	...fromCall.initialState
+	call: { ...fromCall.initialState }
 };
 
 export default combineReducers({

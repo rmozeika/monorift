@@ -105,5 +105,10 @@ export const setConstraints = ({ mediaStream }) => ({
 	constraints: { mediaStream }
 });
 
+export const SET_REMOTE = 'SET_REMOTE';
+export const setRemote = (remoteIsSet = true) => ({
+	type: SET_REMOTE,
+	remoteSet: remoteIsSet
+});
 // import { TiffanyActions } from '../reducers/tiffany';
 // export const tiffany = TiffanyActions;

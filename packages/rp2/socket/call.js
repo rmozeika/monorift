@@ -1,5 +1,7 @@
 const Socket = require('./index');
 const nameSpace = 'call';
+const util = require('util');
+
 class Call extends Socket {
 	listeners = [
 		{
@@ -19,6 +21,7 @@ class Call extends Socket {
 		//socket.on('message1', )
 	}
 	onMessage(msg, secondArg) {
+		console.log('GOT_MESSAGE', util.inspect(msg));
 		this.broadcast.emit('message', msg, secondArg);
 	}
 	onMessage1(msg) {

@@ -26,6 +26,7 @@
 		"start:log": "node ./packages/rp2/bin/www > app.log",
 		"server": "yarn workspace rp2 start",
 		"build": "webpack --mode development --config webpack.config.js --watch",
+		"build:prod": "webpack --mode production --config webpack.config.prod.js",
 		"build:nowatch": "webpack --mode development --config webpack.config.js",
 		"android": "yarn workspace rift android",
 		"build:mobile": "react-native start",
@@ -39,7 +40,8 @@
 		"backup": "./dev.sh/backup-cloud.sh",
 		"build:docker": "docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest",
 		"up": "cd ./packages/devops/docker && docker-compose up",
-		"up:log": "cd ./packages/devops/docker && docker-compose up >>  docker.log"
+		"up:log": "cd ./packages/devops/docker && docker-compose up >>  docker.log",
+		"redo:docker": "docker-compose up --force-recreate -V -d"
 	},
 	"workspaces": {
 		"packages": [

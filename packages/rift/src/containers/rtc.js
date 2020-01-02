@@ -85,7 +85,7 @@ class Adapter extends React.Component {
 		const { conn } = peerStore;
 		function onTrack(e) {
 			let mediaStreamConstraintsCHANGETHIS = { audio: true, video: true };
-			debugger;
+			// debugger;
 			console.log('ONTRACK called', e);
 			// if (mediaStreamConstraints.video) {
 			if (mediaStreamConstraintsCHANGETHIS.video) {

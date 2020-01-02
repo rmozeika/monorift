@@ -44,8 +44,9 @@ const selectConstraints = state => {
 	return state.call.constraints.mediaStream;
 };
 const nsp = 'call';
+
 // const socketServerURL = `https://monorift.com/${nsp}`;
-const socketServerURL = `http://localhost:8080/${nsp}`;
+const socketServerURL = originLink(nsp); //`http://localhost:8080/${nsp}`;
 
 let socket;
 
@@ -115,7 +116,6 @@ function* createPeerConnSaga({ config = {} }) {
 		// // if (true) return;
 		// try {
 
-		// 	debugger;
 		// 	const desc = await conn.createOffer();
 		// 	conn.setLocalDescription(desc).catch(e => {
 		// 		console.log(e);
@@ -145,7 +145,9 @@ function* sendOfferSaga({ constraints }) {
 	const offer = yield conn
 		.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
 		.catch(e => {
-			debugger;
+			console.log(e);
+			å;
+			debugger; //error
 		});
 	conn.setLocalDescription(offer);
 	yield put(Actions.setPeerInitiator(true));
@@ -189,7 +191,6 @@ function* gotMessageSaga({ message, peerConstraints }) {
 		}
 		console.log('GOT_MESSAGE', 'setting remote desc');
 		// yield conn.setRemoteDescription(new RTCSessionDescription(message));
-		debugger;
 		yield put(setRemote(true));
 		console.log('put setting remote');
 		// const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
@@ -216,8 +217,8 @@ function* gotMessageSaga({ message, peerConstraints }) {
 		yield conn
 			.setRemoteDescription(new RTCSessionDescription(message))
 			.catch(e => {
-				debugger;
 				console.log(e);
+				debugger; //error
 			});
 		yield put(setRemote(true));
 		const stream = yield navigator.mediaDevices.getUserMedia({
@@ -242,7 +243,7 @@ function* gotMessageSaga({ message, peerConstraints }) {
 		// conn.addIceCandidate(message.candidate);
 		conn.addIceCandidate(altCandid).catch(e => {
 			console.log(e);
-			debugger;
+			debugger; //error
 		});
 		// conn.addIceCandidate({candidate: ''});
 		// }

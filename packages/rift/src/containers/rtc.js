@@ -158,31 +158,26 @@ class Adapter extends React.Component {
 			/* handle the error */
 		}
 	}
-	async startCall() {
+	async startCall(constraints) {
 		const { peerStore, setPeerInitiator } = this.props;
-		await this.getMedia(mediaStreamConstraints);
-		// await getMedia({ audio: true, video: false }, conn2, peerStore);
+		await this.getMedia(constraints);
 		setPeerInitiator(true);
-		this.props.sendOffer({ constraints: mediaStreamConstraints });
-		// peerStore
-		// 	.createOffer(offerOptions)
-		// 	// .then(desc => {
-		// 	// 	return createdOffer(desc, peerStore);
-		// 	// })
-		// 	.then(this.props.sendOffer)
-		// 	.catch(setSessionDescriptionError);
+		this.props.sendOffer({ constraints }); //mediaStreamConstraints });
 	}
 	videoCall() {
 		const { peerStore } = this.props;
+		const videoConstraints = { audio: true, video: true };
 		this.setMediaStreamConstraints(true, true);
-		this.startCall();
+		this.startCall(videoConstraints);
 	}
 	call() {
+		const audioConstraints = { audio: true, video: false };
+
 		const { peerStore } = this.props;
 		this.setMediaStreamConstraints(true, false);
 		// peerStore.conn.addEventListener('icecandidate', this.handleConnection.bind(this));
 		peerStore.onicecandidate = e => {};
-		this.startCall();
+		this.startCall(audioConstraints);
 	}
 	handleConnection(event) {
 		console.log('got candidate onicecandidate event');

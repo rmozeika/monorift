@@ -100,10 +100,20 @@ export const GOT_MESSAGE = 'GOT_MESSAGE';
 export const HANDLERS_SET = 'HANDLERS_SET';
 
 export const SET_CONSTRAINTS = 'SET_CONSTRAINTS';
-export const setConstraints = ({ mediaStream }) => ({
-	type: SET_CONSTRAINTS,
-	constraints: { mediaStream }
-});
+export const setConstraints = ({ mediaStream, optionalOfferOptions = {} }) => {
+	const offerVideo = { offerToReceiveVideo: true, offerToReceiveAudio: true };
+	const offerAudio = { offerToReceiveVideo: false, offerToReceiveAudio: true };
+	const videoEnabled = mediaStream.video;
+	const offerOptions = {
+		...offerAudio,
+		...(videoEnabled && offerVideo),
+		...optionalOfferOptions
+	};
+	return {
+		type: SET_CONSTRAINTS,
+		constraints: { mediaStream, offerOptions }
+	};
+};
 
 export const SET_REMOTE = 'SET_REMOTE';
 export const setRemote = (remoteIsSet = true) => ({

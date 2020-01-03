@@ -21,7 +21,8 @@ export const initialState = {
 	},
 	candidate: {},
 	constraints: {
-		mediaStream: { audio: true, video: false }
+		mediaStream: { audio: true, video: false },
+		offerOptions: { offerToReceiveVideo: true, offerToReceiveAudio: true }
 	}
 };
 
@@ -58,9 +59,8 @@ export const peerStore = (state = [], action = {}) => {
 export const constraints = (state = {}, action) => {
 	switch (action.type) {
 		case SET_CONSTRAINTS:
-			return { ...state, mediaStream: action.mediaStream };
-		// case GET_CONSTRAINTS:
-		//     return { ...state, created: true, conn: action.conn };
+			const { mediaStream, offerOptions } = action.constraints;
+			return { ...state, mediaStream, offerOptions };
 		default:
 			return state;
 	}

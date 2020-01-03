@@ -41,7 +41,8 @@ const selectPeerStore = state => {
 	return state.call.peerStore;
 };
 const selectConstraints = state => {
-	return state.call.constraints.mediaStream;
+	const { mediaStream, offerOptions } = state.call.constraints;
+	return { mediaStream, offerOptions };
 };
 const nsp = 'call';
 
@@ -141,12 +142,14 @@ function* sendOfferSaga({ constraints }) {
 	const offerOptions = {
 		// offerToReceiveVideo: 1,
 	};
+	const selectedConstraints = yield select(selectConstraints);
+	console.log(selectedConstraints);
+	debugger;
 	const { conn } = yield select(selectPeerStore);
 	const offer = yield conn
 		.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
 		.catch(e => {
 			console.log(e);
-			å;
 			debugger; //error
 		});
 	conn.setLocalDescription(offer);
@@ -172,7 +175,7 @@ function* gotMessageSaga({ message, peerConstraints }) {
 	//while (true) {
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator } = peerStore;
-	mediaStreamConstraints = yield select(selectConstraints);
+	// mediaStreamConstraints = yield select(selectConstraints);
 	//const message = message.offer;
 	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {

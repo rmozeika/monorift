@@ -12,3 +12,4 @@ packages/rp2/app.log
 packages/devops/data/**
 **/docker.log
 packages/cli/**
+**.conf

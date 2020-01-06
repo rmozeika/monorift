@@ -45,7 +45,8 @@
 		"update:server": "./dev.sh/send-dist-server.sh",
 		"clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
 		"transfer": "./dev.sh/transfer.sh",
-		"copy": "./dev.sh/copy.sh"
+		"copy": "./dev.sh/copy.sh",
+		"nginx:conf": "./packages/devops/nginx/conf-update.sh"
 	},
 	"workspaces": {
 		"packages": [

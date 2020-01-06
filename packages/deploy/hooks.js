@@ -1,7 +1,7 @@
 const secret = 'test_secret_here';
 const repo = '/home/ec2-user/monorift';
 const path = require('path');
-const http = require('http');
+const https = require('http');
 const net = require('net');
 const { URL } = require('url');
 const { exec } = require('child_process');
@@ -14,7 +14,7 @@ var currentPath = process.cwd();
 console.log(currentPath);
 
 // Create an HTTP tunneling proxy
-const proxy = http.createServer((req, res) => {
+const proxy = https.createServer((req, res) => {
 	res.writeHead(200, { 'Content-Type': 'text/plain' });
 	res.end('okay');
 });

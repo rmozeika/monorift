@@ -1,0 +1,1 @@
+cp /home/ec2-user/monorift/packages/devops/nginx/ec2.conf /etc/nginx/nginx.conf

@@ -67,6 +67,8 @@ class Adapter extends React.Component {
 		this.audioRef = audioRef;
 		this.videoRef = videoRef;
 		this.selfRef = selfRef;
+		this.audioFileRef = React.createRef();
+		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
 	}
 	componentDidMount() {
@@ -83,12 +85,12 @@ class Adapter extends React.Component {
 		const { peerStore, peerConnStatus } = this.props;
 		const { audioRef, videoRef } = this;
 		const { conn } = peerStore;
-		function onTrack(e) {
-			let mediaStreamConstraintsCHANGETHIS = { audio: true, video: true };
-			// debugger;
+		const onTrack = e => {
+			const { mediaStreamConstraints } = this.props;
+			debugger; //REMOVE
 			console.log('ONTRACK called', e);
 			// if (mediaStreamConstraints.video) {
-			if (mediaStreamConstraintsCHANGETHIS.video) {
+			if (mediaStreamConstraints.video) {
 				if (!(videoRef && videoRef.current)) {
 					return;
 				}
@@ -96,6 +98,7 @@ class Adapter extends React.Component {
 					return;
 				}
 				videoRef.current.srcObject = e.streams[0];
+				return;
 			}
 			if (!(audioRef && audioRef.current)) {
 				return;
@@ -112,7 +115,7 @@ class Adapter extends React.Component {
 			// }
 			// console.log(audioRef.current.srcObject);
 			audio.play();
-		}
+		};
 
 		if (peerConnStatus.created === true && conn.ontrack == null) {
 			console.log('handlers added: ontrack and onice');
@@ -131,6 +134,7 @@ class Adapter extends React.Component {
 		setConstraints({ mediaStream: mediaStreamConstraints });
 	}
 	async getMedia(constraints, alternateConn) {
+		debugger; //REMOVE
 		let stream = null;
 		const { peerStore } = this.props;
 		const { conn } = peerStore;
@@ -162,7 +166,7 @@ class Adapter extends React.Component {
 		const { peerStore, setPeerInitiator } = this.props;
 		await this.getMedia(constraints);
 		setPeerInitiator(true);
-		this.props.sendOffer({ constraints }); //mediaStreamConstraints });
+		this.props.sendOffer({}); //{ constraints }); //mediaStreamConstraints });
 	}
 	videoCall() {
 		const { peerStore } = this.props;
@@ -238,7 +242,32 @@ class Adapter extends React.Component {
 			});
 			return audioVideo;
 		};
-		return <Layout style={styles.container}>{toDisplay()}</Layout>;
+		const AudioFileFunc = () => (
+			<Layout style={styles.row}>
+				<audio src="example.mp3"></audio>
+			</Layout>
+		);
+		const AudioFile = (
+			<Layout style={styles.row}>
+				<audio src="example.mp3"></audio>
+			</Layout>
+		);
+		const audioElem = <audio src="example.mp3"></audio>;
+		return (
+			<Layout style={styles.container}>
+				{toDisplay()}
+				<Layout style={styles.row}>
+					<audio
+						ref={this.audioFileRef}
+						src={`/example.mp3?${Math.random()
+							.toString()
+							.substr(2)}`}
+						type="audio/mpeg"
+						controls
+					></audio>
+				</Layout>
+			</Layout>
+		);
 	}
 }
 

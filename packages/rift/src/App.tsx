@@ -20,7 +20,7 @@ import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
 import Tiffany from './containers/Tiffany';
 
-import Rtc from './containers/RTC';
+import Talk from './containers/Talk';
 import { setCode } from './actions';
 import { Main } from './components/tScri';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
@@ -70,8 +70,7 @@ class App extends React.Component<Props, State> {
 						<NavBar />
 						<Switch>
 							<Route path="/">
-								<Rtc />
-								{/* <Editor /> */}
+								<Talk />
 							</Route>
 						</Switch>
 					</Router>

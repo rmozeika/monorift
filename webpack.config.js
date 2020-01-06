@@ -118,7 +118,7 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'dist.web'),
 		publicPath: '/',
-		filename: '[name].bundle.js'
+		filename: '[name].bundle.js?ver[hash:6]'
 	},
 	devtool: 'source-map',
 	devServer: {

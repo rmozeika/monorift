@@ -1,0 +1,11 @@
+{
+	"name": "monorift-deploy",
+	"private": true,
+	"version": "0.0.91",
+	"scripts": {
+		"start": "node ./packages/rp2/bin/www"
+	},
+	"dependencies": {
+		"moment": "^2.24.0"
+	}
+}

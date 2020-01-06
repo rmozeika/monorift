@@ -29,7 +29,8 @@ const {
 	SEND_OFFER,
 	GOT_MESSAGE,
 	SET_REMOTE,
-	setRemote
+	setRemote,
+	setConstraints
 } = Actions;
 
 import io from 'socket.io-client';
@@ -133,25 +134,19 @@ function* createPeerConnSaga({ config = {} }) {
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
-function* sendOfferSaga({ constraints }) {
-	// socket.emit('message', { type: offer, offer });
-	// if (true) {
-	// 	return;
-	// }
+function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	console.log('Sending offer');
-	const offerOptions = {
-		// offerToReceiveVideo: 1,
-	};
-	const selectedConstraints = yield select(selectConstraints);
-	console.log(selectedConstraints);
-	debugger;
+
+	const { mediaStream, offerOptions } = yield select(selectConstraints);
+	const constraints = { ...mediaStream, ...altConstraints };
+	const offerOpts = { ...offerOptions, ...altOfferOptions };
+
+	debugger; //REMOVE
 	const { conn } = yield select(selectPeerStore);
-	const offer = yield conn
-		.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
-		.catch(e => {
-			console.log(e);
-			debugger; //error
-		});
+	const offer = yield conn.createOffer(offerOpts).catch(e => {
+		console.log(e);
+		debugger; //error
+	});
 	conn.setLocalDescription(offer);
 	yield put(Actions.setPeerInitiator(true));
 	socket.emit('message', offer, constraints);
@@ -179,6 +174,11 @@ function* gotMessageSaga({ message, peerConstraints }) {
 	//const message = message.offer;
 	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {
+		debugger; //REMOVE
+		if (peerConstraints) {
+			yield put(setConstraints({ mediaStream: peerConstraints }));
+		}
+		debugger; //REMOVE
 		yield conn.setRemoteDescription(new RTCSessionDescription(message));
 
 		if (!isInitiator && !isStarted) {
@@ -224,11 +224,15 @@ function* gotMessageSaga({ message, peerConstraints }) {
 				debugger; //error
 			});
 		yield put(setRemote(true));
-		const stream = yield navigator.mediaDevices.getUserMedia({
-			audio: true,
-			video: true
-		});
+		// const stream = yield navigator.mediaDevices.getUserMedia({
+		// 	audio: true,
+		// 	video: true
+		// });
+		const { mediaStream } = yield select(selectConstraints);
+		debugger; //REMOVE
+		const stream = yield navigator.mediaDevices.getUserMedia(mediaStream);
 		stream.getTracks().forEach(track => {
+			debugger; //REMOVE
 			conn.addTrack(track, stream);
 		});
 		console.log('ADDED TRACK');

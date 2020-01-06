@@ -6,30 +6,12 @@ const net = require('net');
 const { URL } = require('url');
 const { exec } = require('child_process');
 const fs = require('fs').promises;
-const moment = require('moment');
+const utils = require('./utils');
+const qs = require('querystring');
 
+console.log(utils);
 var currentPath = process.cwd();
 console.log(currentPath);
-console.log(writefiledir);
-const writeFile = txt => {
-	const writefiledir = path.join(__dirname, 'history');
-	const time = new moment().format('MMMM Do YYYY, h:mm:ss a');
-	console.log(time);
-	// console.log(time.toTimeString({ hour12: true }))
-	const formattedText = `
-        Started: ${time}
-        ${txt}
-
-    `;
-	fs
-		.appendFile(writefiledir, formattedText, 'utf8')
-		.then(res => {
-			console.log('done writing!');
-		})
-		.catch(e => {
-			console.log('Error writing file', e);
-		});
-};
 
 // Create an HTTP tunneling proxy
 const proxy = http.createServer((req, res) => {
@@ -56,6 +38,31 @@ proxy.listen(9090, '127.0.0.1', () => {
 	console.log('listening');
 	proxy.on('request', (req, res) => {
 		console.log(req);
+		const writePath = path.join(__dirname, 'history');
+		let rawData = '';
+
+		req.on('data', (data, var2) => {
+			console.log(data, var2);
+			rawData += data;
+			const stringData = data.toString();
+			const parsedData = qs.parse(stringData);
+			console.log(parsedData);
+			utils.writeFile(writePath, parsedData);
+		});
+		req.on('end', data => {
+			// qs(data);
+			console.log(rawData);
+			console.log(data);
+		});
+		res.on('data', (var1, var2) => {
+			console.log(var1, var2);
+		});
+		if (req.body) {
+			utils.writeFile(writePath, req.body);
+		}
+		if (req.query) {
+			utils.writeFile(writePath, req.query);
+		}
 	});
 	proxy.on('data', data => {
 		console.log(data);

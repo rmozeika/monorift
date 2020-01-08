@@ -66,6 +66,15 @@
 			"sourceMapPathOverrides": {
 				"webpack:///./packages/rift/src": "${workspaceFolder}/packages/rift/src/*"
 			}
+		},
+		{
+			"type": "node",
+			"request": "attach",
+			"name": "Attach to remote",
+			"address": "ec2-user@aws",
+			"port": "9229",
+			"localRoot": "${workspaceFolder}",
+			"remoteRoot": "C:\\home\\ec2-user\\monorift"
 		}
 	]
 }

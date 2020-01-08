@@ -73,8 +73,8 @@
 			"name": "Attach to remote",
 			"address": "ec2-user@aws",
 			"port": "9229",
-			"localRoot": "${workspaceFolder}",
-			"remoteRoot": "C:\\home\\ec2-user\\monorift"
+			"localRoot": "${workspaceFolder}", //packages/deploy/hooks.js",
+			"remoteRoot": "/home/ec2-user/monorift"
 		}
 	]
 }

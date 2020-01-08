@@ -13,3 +13,4 @@ packages/devops/data/**
 **/docker.log
 packages/cli/**
 **.conf
+.vscode/settings.json

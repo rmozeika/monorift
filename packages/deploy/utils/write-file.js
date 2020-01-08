@@ -10,7 +10,10 @@ const writeFile = (path, data) => {
 	if (typeof data == 'string') {
 		writeData = data;
 	} else {
-		writeData = util.inspect({ ...data }, { depth: null, showHidden: false });
+		writeData = util.inspect(
+			{ ...data },
+			{ depth: null, showHidden: false, colors: true }
+		);
 	}
 	// console.log(time.toTimeString({ hour12: true }))
 	const formattedText = `

@@ -46,7 +46,8 @@
 		"clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
 		"transfer": "./dev.sh/transfer.sh",
 		"copy": "./dev.sh/copy.sh",
-		"nginx:conf": "./packages/devops/nginx/conf-update.sh"
+		"nginx:conf": "./packages/devops/nginx/conf-update.sh",
+		"deploy:server": "node --inspect=0.0.0.0 ./packages/deploy/hooks.js"
 	},
 	"workspaces": {
 		"packages": [

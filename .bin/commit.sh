@@ -1,3 +1,3 @@
 #!/bin/bash
-git commit -am 'default'
-git push origin master
+git commit -am 'default1'
+git push origin trigger

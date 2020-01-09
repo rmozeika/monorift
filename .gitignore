@@ -15,4 +15,3 @@ packages/cli/**
 **.conf
 .vscode/settings.json
 **/history
-sha1

@@ -39,7 +39,7 @@ const hmac = crypto.createHmac('sha1', secret);
 proxy.listen(9090, '127.0.0.1', () => {
 	console.log('listening');
 	proxy.on('request', (req, res) => {
-		crypto.verify(null);
+		// crypto.verify(null);
 		const altshakey = 'sha1=86274eaac703a16fab76ce308e6968a64ef19079';
 		const shakey = req.headers['X-Hub-Signature'];
 		const verify = crypto.createVerify('SHA1');

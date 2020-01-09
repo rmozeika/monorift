@@ -1,4 +1,4 @@
 #!/bin/bash
 git commit -am 'default1'
 git push origin trigger
-echo 'TES1111'
+echo 'TES11111'test

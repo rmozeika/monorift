@@ -40,7 +40,7 @@ proxy.listen(9090, '127.0.0.1', () => {
 		console.log(req);
 		const writePath = path.join(__dirname, 'history');
 		let rawData = '';
-
+		console.log('test');
 		req.on('data', (data, var2) => {
 			console.log(data, var2);
 			rawData += data;

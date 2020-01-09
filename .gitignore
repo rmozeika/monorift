@@ -15,3 +15,4 @@ packages/cli/**
 **.conf
 .vscode/settings.json
 **/history
+ignore this

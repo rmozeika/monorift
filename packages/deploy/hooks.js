@@ -48,7 +48,7 @@ proxy.listen(9090, '127.0.0.1', () => {
 			const parsedData = qs.parse(stringData);
 			console.log(parsedData);
 			const parsed = JSON.parse(parsedData.payload);
-			utils.writeFile(writePath, parsed);
+			utils.writeFile(writePath, parsed); //comment
 		});
 		req.on('end', data => {
 			// qs(data);

@@ -58,7 +58,7 @@ proxy.listen(9090, '127.0.0.1', () => {
 			const payload = JSON.parse(parsedData.payload);
 			// console.log(verify.verify(publicKey, signature));
 			const digest = 'sha1=' + hmac.update(JSON.stringify(payload)).digest('hex');
-			const digestAlt = 'sha1=' + hmac.update(parsedData.payload).digest('hex');
+			// const digestAlt = 'sha1=' + hmac.update(parsedData.payload).digest('hex');
 			const checksum = req.get(sigHeaderName);
 			//crypto.verify(null, parsed, req.headers )
 			utils.writeFile(writePath, parsed); //comment1test

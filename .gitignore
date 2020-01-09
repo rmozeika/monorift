@@ -14,3 +14,4 @@ packages/devops/data/**
 packages/cli/**
 **.conf
 .vscode/settings.json
+**/history

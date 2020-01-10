@@ -75,6 +75,15 @@
 			"port": "9229",
 			"localRoot": "${workspaceFolder}", //packages/deploy/hooks.js",
 			"remoteRoot": "/home/ec2-user/monorift"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "transer-file",
+			"program": "${workspaceFolder}/dev.sh/transfer-files/index.js"
+			// "args": ["--config", "webpack.config.js"],
+			// "autoAttachChildProcesses": true,
+			// "stopOnEntry": true
 		}
 	]
 }

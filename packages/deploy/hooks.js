@@ -4,7 +4,7 @@ const http = require('http');
 const util = require('util');
 const net = require('net');
 const { URL } = require('url');
-const { exec, execFile } = require('child_process');
+const { exec, execFile, spawn } = require('child_process');
 const execAsync = util.promisify(exec);
 const execFileAsync = util.promisify(execFile);
 
@@ -15,7 +15,7 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const { secret, branch } = require('./conf.js');
 console.log(secret);
-var currentPath = process.cwd();
+const currentPath = process.cwd();
 console.log(currentPath);
 
 const express = require('express');
@@ -40,12 +40,26 @@ app.post('*', async (req, res) => {
 	console.log(req);
 	if (ref == branch || debug) {
 		const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
-		const operation = await execFileAsync(updateScript, { cwd: __dirname }).catch(
-			e => {
-				console.log(e);
-			}
-		);
-		console.log(operation);
+		// const operation = await execFileAsync(updateScript, { cwd: __dirname }).catch(
+		// 	e => {
+		// 		console.log(e);
+		// 	}
+		// );
+		const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
+		let output = '';
+		const logChunk = chunk => {
+			let str = chunk.toString();
+			console.log(str);
+			output += str;
+		};
+		updateScr.stdout.on('data', logChunk);
+		updateScr.stderr.on('data', logChunk);
+		updateScr.on('close', code => {
+			console.log('closed ' + code);
+			const logFile = path.resolve(__dirname, 'history');
+			writeFile(logFile, output);
+		});
+		// console.log(operation);
 	}
 });
 

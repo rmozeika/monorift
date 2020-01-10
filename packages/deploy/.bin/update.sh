@@ -13,5 +13,5 @@ DOCKER_BUILDKIT=1 docker build . -f ./packages/devops/docker/DockerfileStage2 -t
 # done
 echo "compose up"
 cd ./packages/devops/docker
-docker-compose up
+docker-compose up -d
 

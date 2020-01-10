@@ -3,9 +3,11 @@
 	"private": true,
 	"version": "0.0.91",
 	"scripts": {
-		"start": "node ./packages/rp2/bin/www"
+		"start": "node ./hooks.js"
 	},
 	"dependencies": {
-		"moment": "^2.24.0"
+		"moment": "^2.24.0",
+		"express": "4.17.1",
+		"node-env-file": "^0.1.8"
 	}
 }

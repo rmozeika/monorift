@@ -80,8 +80,11 @@
 			"type": "node",
 			"request": "launch",
 			"name": "transer-file",
-			"program": "${workspaceFolder}/dev.sh/transfer-files/index.js"
-			// "args": ["--config", "webpack.config.js"],
+			"program": "${workspaceFolder}/dev.sh/transfer-files/index.js",
+			"args": []
+			// "args": ["service"]
+			// "args": ["deployconf"]
+
 			// "autoAttachChildProcesses": true,
 			// "stopOnEntry": true
 		}

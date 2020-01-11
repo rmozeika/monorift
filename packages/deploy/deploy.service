@@ -1,0 +1,16 @@
+[Unit]
+Description=monorift Deploy server
+Documentation=https://monorift.com
+After=network.target
+
+[Service]
+Environment=NODE_PORT=9090
+#Type=simple
+User=root
+ExecStart=/bin/node /home/monorift/monorift/packages/deploy/hooks.js
+#Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=monorift-deploy
+[Install]
+WantedBy=multi-user.target

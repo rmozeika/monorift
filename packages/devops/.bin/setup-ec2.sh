@@ -1,6 +1,8 @@
 # yum install git
 #sudo yum install epel-release -y
 #copy ssh creds
+
+
 rsync -v -e ssh .ssh/rmozeika_github ec2-user@aws:/home/ec2-user/working/rmozeika_github
 rsync  --recursive -v -e ssh /Users/Bobby/Development/monorift/packages/devops/data/ ec2-user@aws:/home/ec2-user/monorift/packages/devops/data/
 rsync  -v -e ssh /Users/Bobby/Development/monorift/packages/devops/.bashrc ec2-user@aws:/home/ec2-user/.bashrc
@@ -8,7 +10,15 @@ yum install -y docker
 yum install -y nginx
 yum install -y node
 
-cp /home/ec2-user/.bashrc /home
+# Add user monorift
+adduser monorift
+usermod -aG root monorift
+usermod -aG root monorift
+
+cp -R /home/ec2-user/.ssh /home/monorift/.ssh
+chown -R monorift:monorift /home/monorift/.ssh
+chown monorift:monorift /home/monorift/.bashrc
+cp /home/ec2-user/.bashrc /home/monorift
 
 # DOCKER
 sudo chmod +x /usr/local/bin/docker-compose

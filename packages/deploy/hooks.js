@@ -21,7 +21,7 @@ console.log(currentPath);
 const express = require('express');
 const app = express();
 const port = 9090;
-const debug = true; //change to false
+const debug = false; //change to false
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('*', (req, res) => {

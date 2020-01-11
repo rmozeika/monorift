@@ -13,7 +13,7 @@ DOCKER_BUILDKIT=1 docker build . -f ./packages/devops/docker/DockerfileStage2 -t
 #     sleep 1
 #     # You can add a timeout here if you want
 # done
-echo "docker compose up"
+echo "docker starting"
 cd ./packages/devops/docker
 docker-compose up -d
 echo "Updating- logs"

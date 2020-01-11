@@ -7,7 +7,7 @@ fi
 
 # User specific environment
 PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-source ./.monoriftrc
+source $HOME/.monoriftrc
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=

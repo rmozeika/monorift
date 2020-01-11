@@ -1,6 +1,6 @@
 export PATH
 export monorift=$HOME/monorift
-
+export deploy=$HOME/monorift/packages/deploy
 alias 2m='cd $monorift'
 alias 2md='cd $monorift/packages/devops'
 alias 2mdd='cd $monorift/packages/devops/docker'

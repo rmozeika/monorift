@@ -17,4 +17,5 @@ echo "compose up"
 cd ./packages/devops/docker
 docker-compose up -d
 echo "Updating- logs"
+echo "Finished"
 

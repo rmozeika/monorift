@@ -1,8 +1,10 @@
 #/bin/bash
+
 cd ../devops/docker
 pwd
 docker-compose down
 cd ../../..
+git pull origin remote
 pwd
 DOCKER_BUILDKIT=1 docker build . -f ./packages/devops/docker/DockerfileStage2 -t robertmozeika/rp2-live:latest
 # BACK_PID=$!

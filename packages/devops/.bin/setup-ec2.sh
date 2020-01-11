@@ -52,4 +52,7 @@ echo "0 0,12 * * * root python -c 'import random; import time; time.sleep(random
 
 #END CERTBOT
 #/home/ec2-user/monorift/packages/devops/nginx/conf-update.sh
-
+npm install --global webpack
+npm install --global webpack-cli
+2m && npm install
+npm run-script build:prod

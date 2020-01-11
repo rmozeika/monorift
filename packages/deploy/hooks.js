@@ -25,7 +25,7 @@ const debug = false; //change to false
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('*', (req, res) => {
-	//console.log(req);
+	console.log('got req (get)');
 });
 app.post('*', async (req, res) => {
 	console.log('Got request!');

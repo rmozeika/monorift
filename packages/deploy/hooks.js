@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('*', (req, res) => {
 	console.log('got req (get)');
-	req.send('success');
+	res.send('success');
 });
 app.post('*', async (req, res) => {
 	console.log('Got request!');
@@ -61,7 +61,7 @@ app.post('*', async (req, res) => {
 			console.log('closed ' + code);
 			const logFile = path.resolve(__dirname, 'history');
 			writeFile(logFile, output);
-			req.send('done');
+			res.send('done');
 		});
 		// console.log(operation);
 	}

@@ -1,4 +1,4 @@
-const hardCodedCommand = 'dist'; // null
+const hardCodedCommand = 'bash'; // null
 
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
@@ -9,6 +9,8 @@ const path = require('path');
 const currentPath = process.cwd();
 const packagesPath = path.resolve(currentPath, 'packages');
 const deployPath = path.resolve(packagesPath, 'deploy');
+const devopsPath = path.resolve(packagesPath, 'devops');
+
 const scriptToRun = hardCodedCommand || process.argv[2];
 
 const transferDeployConf = async () => {
@@ -29,6 +31,12 @@ const transferDistWeb = async () => {
 	console.log(sendingDist.stdout, sendingDist.stderr);
 };
 
+const transferBash = async () => {
+	const sendBash = path.resolve(devopsPath, '.bin', 'send-bashrc.sh');
+	const { stdout, stderr } = await execFile(sendBash, { cwd: deployPath });
+	console.log(stdout, stderr);
+};
+
 switch (scriptToRun) {
 	case 'deployconf':
 		transferDeployConf();
@@ -38,6 +46,9 @@ switch (scriptToRun) {
 		break;
 	case 'dist':
 		transferDistWeb();
+		break;
+	case 'bash':
+		transferBash();
 		break;
 	default:
 		console.log('No known statements, sending all');

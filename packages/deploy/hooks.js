@@ -25,7 +25,7 @@ const debug = false; //change to false
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('*', (req, res) => {
-	console.log(req);
+	//console.log(req);
 });
 app.post('*', async (req, res) => {
 	const { body } = req;
@@ -37,8 +37,9 @@ app.post('*', async (req, res) => {
 	const valid = sig == digest;
 	if (!valid) return;
 	const { ref } = body;
-	console.log(req);
+	//console.log(req);
 	if (ref == branch || debug) {
+		console.log('Updating bash and writing file');
 		const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
 		// const operation = await execFileAsync(updateScript, { cwd: __dirname }).catch(
 		// 	e => {
@@ -49,7 +50,7 @@ app.post('*', async (req, res) => {
 		let output = '';
 		const logChunk = chunk => {
 			let str = chunk.toString();
-			console.log(str);
+			console.log('Chunk', str);
 			output += str;
 		};
 		updateScr.stdout.on('data', logChunk);

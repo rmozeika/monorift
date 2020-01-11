@@ -28,6 +28,7 @@ app.get('*', (req, res) => {
 	//console.log(req);
 });
 app.post('*', async (req, res) => {
+	console.log('Got request!');
 	const { body } = req;
 	const sig = req.headers['x-hub-signature'];
 	if (!sig || !body) return;

@@ -60,7 +60,7 @@ app.post('*', async (req, res) => {
 		updateScr.on('close', code => {
 			console.log('closed ' + code);
 			const logFile = path.resolve(__dirname, 'history');
-			writeFile(logFile, output);
+			utils.writeFile(logFile, output);
 			res.send('done');
 		});
 		// console.log(operation);

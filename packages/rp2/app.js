@@ -99,6 +99,7 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 let buildpath;
 // if (false) {
 if (remote == 'false') {
+	console.log('Not remote');
 	const opts = {};
 	if (debug) {
 		opts.maxAge = 5;
@@ -119,6 +120,8 @@ if (remote == 'false') {
 	app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
 } else {
+	console.log('Is remote');
+
 	// app.use('*', express.static(path.resolve('./dist.web')));
 	builpath = path.resolve(__dirname, './dist.web');
 	app.use(express.static(__dirname + './dist.web'));

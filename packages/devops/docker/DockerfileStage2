@@ -4,7 +4,7 @@ FROM robertmozeika/rp2-stage:latest
 COPY ./packages/rp2/. ./
 # Overwrite conf for kubernetes
 # COPY ./packages/devops/docker.conf ./local.conf
-COPY ./packages/devops/docker/docker.conf ./local.conf
+COPY ./private/docker.conf ./local.conf
 # COPY ./packages/rift ./packages/rift
 
 # COPY ./webpack.config.js ./webpack.config.js

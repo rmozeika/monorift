@@ -1,4 +1,4 @@
-const hardCodedCommand = 'bash'; // null
+const hardCodedCommand = 'private'; // null
 
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
@@ -18,6 +18,20 @@ const transferDeployConf = async () => {
 	const { stdout, stderr } = await execFile(sendConf, { cwd: deployPath });
 	console.log(stdout, stderr);
 };
+const transferDockerConf = async () => {
+	const sendConf = path.resolve(devopsPath, '.bin', 'update-conf.sh');
+	const { stdout, stderr } = await execFile(sendConf, { cwd: devopsPath });
+	console.log(stdout, stderr);
+};
+const transferPrivate = async () => {
+	const sendPrivate = path.resolve(devopsPath, '.bin', 'transfer-private.sh');
+	const { stdout, stderr } = await execFile(sendPrivate, {
+		cwd: currentPath
+	}).catch(e => {
+		console.log(e);
+	});
+	console.log(stdout, stderr);
+};
 const trasnferDeployService = async () => {
 	const sendService = path.resolve(deployPath, '.bin', 'update-service.sh');
 	const { stdout, stderr } = await execFile(sendService, { cwd: deployPath });
@@ -33,7 +47,11 @@ const transferDistWeb = async () => {
 
 const transferBash = async () => {
 	const sendBash = path.resolve(devopsPath, '.bin', 'send-bashrc.sh');
-	const { stdout, stderr } = await execFile(sendBash, { cwd: deployPath });
+	const { stdout, stderr } = await execFile(sendBash, { cwd: deployPath }).catch(
+		e => {
+			console.log(e);
+		}
+	);
 	console.log(stdout, stderr);
 };
 
@@ -41,6 +59,8 @@ switch (scriptToRun) {
 	case 'deployconf':
 		transferDeployConf();
 		break;
+	case 'devopsconf':
+		transferDockerConf();
 	case 'service':
 		trasnferDeployService();
 		break;
@@ -49,6 +69,9 @@ switch (scriptToRun) {
 		break;
 	case 'bash':
 		transferBash();
+		break;
+	case 'private':
+		transferPrivate();
 		break;
 	default:
 		console.log('No known statements, sending all');

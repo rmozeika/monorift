@@ -1,4 +1,4 @@
-const hardCodedCommand = 'private'; // null
+const hardCodedCommand = 'bash'; // null
 
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
@@ -39,7 +39,7 @@ const trasnferDeployService = async () => {
 };
 
 const transferDistWeb = async () => {
-	const cmd = `rsync --recursive -v -e ssh  ./dist.web/. awsmono:/home/monorift/monorift/dist.web/.`;
+	const cmd = `rsync --recursive -v -e ssh  ./dist.web.prod/. awsmono:/home/monorift/monorift/dist.web/.`;
 
 	const sendingDist = await exec(cmd, { cwd: currentPath });
 	console.log(sendingDist.stdout, sendingDist.stderr);

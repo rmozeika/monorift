@@ -43,6 +43,7 @@ services:
    - db-svc
   labels:
    com.monorift.app: monorift
+  command: yarn run init:std
  db-svc:
   #network_mode: host
   image: mongo:4.2.2

@@ -157,7 +157,7 @@
 				return j;
 			}),
 			n.d(t, 'r', function() {
-				return R;
+				return H;
 			}),
 			n.d(t, 's', function() {
 				return P;
@@ -253,7 +253,7 @@
 				return m;
 			}),
 			n.d(t, 'X', function() {
-				return H;
+				return R;
 			}),
 			n.d(t, 'Y', function() {
 				return g;
@@ -460,10 +460,10 @@
 				flush: c
 			};
 		}
-		var H = function() {
+		var R = function() {
 				return S;
 			},
-			R = function(e) {
+			H = function(e) {
 				return k(e, Y);
 			},
 			T = function(e) {
@@ -471,14 +471,14 @@
 			},
 			x = Object.freeze({
 				__proto__: null,
-				none: H,
+				none: R,
 				fixed: function(e) {
 					return k(e, F);
 				},
 				dropping: function(e) {
 					return k(e, 2);
 				},
-				sliding: R,
+				sliding: H,
 				expanding: T
 			}),
 			U = 'TAKE',
@@ -1796,13 +1796,13 @@
 			Object.defineProperty(t, 'StyleSheet', {
 				enumerable: !0,
 				get: function() {
-					return H.default;
+					return R.default;
 				}
 			}),
 			Object.defineProperty(t, 'UIManager', {
 				enumerable: !0,
 				get: function() {
-					return R.default;
+					return H.default;
 				}
 			}),
 			Object.defineProperty(t, 'Vibration', {
@@ -2120,13 +2120,13 @@
 			Object.defineProperty(t, 'AlertIOS', {
 				enumerable: !0,
 				get: function() {
-					return He.default;
+					return Re.default;
 				}
 			}),
 			Object.defineProperty(t, 'CameraRoll', {
 				enumerable: !0,
 				get: function() {
-					return Re.default;
+					return He.default;
 				}
 			}),
 			Object.defineProperty(t, 'DatePickerAndroid', {
@@ -2225,8 +2225,8 @@
 			N = r(n(505)),
 			S = r(n(136)),
 			k = r(n(506)),
-			H = r(n(10)),
-			R = r(n(53)),
+			R = r(n(10)),
+			H = r(n(53)),
 			T = r(n(507)),
 			x = r(n(508)),
 			U = r(n(509)),
@@ -2279,8 +2279,8 @@
 			Ne = r(n(564)),
 			Se = r(n(565)),
 			ke = r(n(566)),
-			He = r(n(567)),
-			Re = r(n(568)),
+			Re = r(n(567)),
+			He = r(n(568)),
 			Te = r(n(569)),
 			xe = r(n(570)),
 			Ue = r(n(571)),
@@ -2786,9 +2786,22 @@
 		t.HANDLERS_SET = 'HANDLERS_SET';
 		t.SET_CONSTRAINTS = 'SET_CONSTRAINTS';
 		t.setConstraints = function(e) {
+			var t = e.mediaStream,
+				n = e.optionalOfferOptions,
+				r = void 0 === n ? {} : n;
 			return {
 				type: 'SET_CONSTRAINTS',
-				constraints: { mediaStream: e.mediaStream }
+				constraints: {
+					mediaStream: t,
+					offerOptions: c(
+						{},
+						{ offerToReceiveVideo: !1, offerToReceiveAudio: !0 },
+						{},
+						t.video && { offerToReceiveVideo: !0, offerToReceiveAudio: !0 },
+						{},
+						r
+					)
+				}
 			};
 		};
 		t.SET_REMOTE = 'SET_REMOTE';
@@ -3742,8 +3755,8 @@
 				N = n(142),
 				S = n(121),
 				k = n(210),
-				H = n(105),
-				R = n(147),
+				R = n(105),
+				H = n(147),
 				T = n(92),
 				x = n(209),
 				U = n(316),
@@ -3863,7 +3876,7 @@
 				ke = function() {
 					return fe.apply(Se ? ue.call(Ie(this)) : Ie(this), arguments);
 				},
-				He = {
+				Re = {
 					copyWithin: function(e, t) {
 						return U.call(
 							Ie(this),
@@ -3936,7 +3949,7 @@
 						);
 					}
 				},
-				Re = function(e, t) {
+				He = function(e, t) {
 					return Me(this, ue.call(Ie(this), e, t));
 				},
 				Te = function(e) {
@@ -3989,11 +4002,11 @@
 					(de = fe = function() {
 						return se.call(this);
 					});
-			var Pe = f({}, He);
+			var Pe = f({}, Re);
 			f(Pe, xe),
 				d(Pe, ge, xe.values),
 				f(Pe, {
-					slice: Re,
+					slice: He,
 					set: Te,
 					constructor: function() {},
 					toString: de,
@@ -4073,7 +4086,7 @@
 								i(function() {
 									new g(-1);
 								}) &&
-								R(function(e) {
+								H(function(e) {
 									new g(), new g(null), new g(1.5), new g(e);
 								}, !0)) ||
 						  ((g = n(function(e, n, r, o) {
@@ -4126,7 +4139,7 @@
 							{ from: Ye, of: Ne }
 						),
 						'BYTES_PER_ELEMENT' in Q || d(Q, 'BYTES_PER_ELEMENT', t),
-						a(a.P, s, He),
+						a(a.P, s, Re),
 						T(s),
 						a(a.P + a.F * Qe, s, { set: Te }),
 						a(a.P + a.F * !F, s, xe),
@@ -4138,7 +4151,7 @@
 										new g(1).slice();
 									}),
 							s,
-							{ slice: Re }
+							{ slice: He }
 						),
 						a(
 							a.P +
@@ -4152,7 +4165,7 @@
 							s,
 							{ toLocaleString: ke }
 						),
-						(H[s] = F ? D : Y),
+						(R[s] = F ? D : Y),
 						r || F || d(Q, ge, Y);
 				});
 		} else e.exports = function() {};
@@ -5087,7 +5100,7 @@
 				'store' === y,
 				"storeKey has been removed and does not do anything. To use a custom Redux store for specific components, create a custom React context with React.createContext(), and pass the context object to React Redux's Provider and specific components like: <Provider context={MyContext}><ConnectedComponent context={MyContext} /></Provider>. You may also pass a {context : MyContext} option to connect"
 			);
-			var H = S;
+			var R = S;
 			return function(t) {
 				var n = t.displayName || t.name || 'Component',
 					i = a(n),
@@ -5125,9 +5138,9 @@
 									c.Consumer &&
 									Object(E.isContextConsumer)(o.a.createElement(c.Consumer, null))
 									? c
-									: H;
+									: R;
 							},
-							[c, H]
+							[c, R]
 						),
 						B = Object(r.useContext)(f),
 						w =
@@ -5170,9 +5183,9 @@
 							[w, B, Y]
 						),
 						k = Object(r.useReducer)(I, Q, b),
-						R = k[0][0],
+						H = k[0][0],
 						T = k[1];
-					if (R && R.error) throw R.error;
+					if (H && H.error) throw H.error;
 					var x = Object(r.useRef)(),
 						U = Object(r.useRef)(u),
 						j = Object(r.useRef)(),
@@ -5181,7 +5194,7 @@
 							function() {
 								return j.current && u === U.current ? j.current : D(M.getState(), u);
 							},
-							[M, R, u]
+							[M, H, u]
 						);
 					C(function() {
 						(U.current = u),
@@ -5275,7 +5288,7 @@
 				? Boolean(e.dependsOnOwnProps)
 				: 1 !== e.length;
 		}
-		function H(e, t) {
+		function R(e, t) {
 			return function(t, n) {
 				n.displayName;
 				var r = function(e, t) {
@@ -5296,9 +5309,9 @@
 				);
 			};
 		}
-		var R = [
+		var H = [
 			function(e) {
-				return 'function' == typeof e ? H(e) : void 0;
+				return 'function' == typeof e ? R(e) : void 0;
 			},
 			function(e) {
 				return e
@@ -5317,7 +5330,7 @@
 		];
 		var T = [
 			function(e) {
-				return 'function' == typeof e ? H(e) : void 0;
+				return 'function' == typeof e ? R(e) : void 0;
 			},
 			function(e) {
 				return e
@@ -5452,7 +5465,7 @@
 				(K = L.mapStateToPropsFactories),
 				(V = void 0 === K ? T : K),
 				(X = L.mapDispatchToPropsFactories),
-				(Z = void 0 === X ? R : X),
+				(Z = void 0 === X ? H : X),
 				(q = L.mergePropsFactories),
 				($ = void 0 === q ? U : q),
 				(ee = L.selectorFactory),
@@ -8248,7 +8261,10 @@
 			(t.originLink = void 0);
 		n(39);
 		t.originLink = function(e) {
-			return { login: '/auth/login', logout: '/auth/logout' }[e];
+			var t =
+					{ login: '/auth/login', logout: '/auth/logout', call: '/call' }[e] || '',
+				n = window.location.origin;
+			return ''.concat(n).concat(t);
 		};
 	},
 	function(e, t, n) {
@@ -12268,10 +12284,10 @@ object-assign
 									for (var N = o ? 1 : 0, S = M - 1; S > y; S--)
 										if (f.has(S + N)) {
 											var k,
-												H,
-												R = this._getFrameMetricsApprox(y),
+												R,
+												H = this._getFrameMetricsApprox(y),
 												T = this._getFrameMetricsApprox(S),
-												x = T.offset - (R.offset + R.length);
+												x = T.offset - (H.offset + H.length);
 											u.push(
 												A.default.createElement(d.default, {
 													key: '$sticky_lead',
@@ -12284,7 +12300,7 @@ object-assign
 											u.push(
 												A.default.createElement(d.default, {
 													key: '$sticky_trail',
-													style: ((H = {}), (H[B] = U), H)
+													style: ((R = {}), (R[B] = U), R)
 												})
 											),
 												(D = !0);
@@ -13244,7 +13260,7 @@ object-assign
 			N = o ? '_b' : 'buffer',
 			S = o ? '_l' : 'byteLength',
 			k = o ? '_o' : 'byteOffset';
-		function H(e, t, n) {
+		function R(e, t, n) {
 			var r,
 				o,
 				i,
@@ -13272,7 +13288,7 @@ object-assign
 			for (r = (r << t) | o, A += t; A > 0; a[u++] = 255 & r, r /= 256, A -= 8);
 			return (a[--u] |= 128 * d), a;
 		}
-		function R(e, t, n) {
+		function H(e, t, n) {
 			var r,
 				o = 8 * n - t - 1,
 				i = (1 << o) - 1,
@@ -13307,10 +13323,10 @@ object-assign
 			return [255 & e, (e >> 8) & 255, (e >> 16) & 255, (e >> 24) & 255];
 		}
 		function O(e) {
-			return H(e, 52, 8);
+			return R(e, 52, 8);
 		}
 		function P(e) {
-			return H(e, 23, 4);
+			return R(e, 23, 4);
 		}
 		function G(e, t, n) {
 			h(e[w], t, {
@@ -13416,10 +13432,10 @@ object-assign
 						return T(J(this, 4, e, arguments[1])) >>> 0;
 					},
 					getFloat32: function(e) {
-						return R(J(this, 4, e, arguments[1]), 23, 4);
+						return H(J(this, 4, e, arguments[1]), 23, 4);
 					},
 					getFloat64: function(e) {
-						return R(J(this, 8, e, arguments[1]), 52, 8);
+						return H(J(this, 8, e, arguments[1]), 52, 8);
 					},
 					setInt8: function(e, t) {
 						_(this, 1, e, x, t);
@@ -15538,12 +15554,12 @@ object-assign
 					throw new RangeError('"value" argument is out of bounds');
 				if (n + r > e.length) throw new RangeError('Index out of range');
 			}
-			function H(e, t, n, r) {
+			function R(e, t, n, r) {
 				t < 0 && (t = 65535 + t + 1);
 				for (var o = 0, i = Math.min(e.length - n, 2); o < i; ++o)
 					e[n + o] = (t & (255 << (8 * (r ? o : 1 - o)))) >>> (8 * (r ? o : 1 - o));
 			}
-			function R(e, t, n, r) {
+			function H(e, t, n, r) {
 				t < 0 && (t = 4294967295 + t + 1);
 				for (var o = 0, i = Math.min(e.length - n, 4); o < i; ++o)
 					e[n + o] = (t >>> (8 * (r ? o : 3 - o))) & 255;
@@ -15699,7 +15715,7 @@ object-assign
 						n || k(this, e, t, 2, 65535, 0),
 						c.TYPED_ARRAY_SUPPORT
 							? ((this[t] = 255 & e), (this[t + 1] = e >>> 8))
-							: H(this, e, t, !0),
+							: R(this, e, t, !0),
 						t + 2
 					);
 				}),
@@ -15710,7 +15726,7 @@ object-assign
 						n || k(this, e, t, 2, 65535, 0),
 						c.TYPED_ARRAY_SUPPORT
 							? ((this[t] = e >>> 8), (this[t + 1] = 255 & e))
-							: H(this, e, t, !1),
+							: R(this, e, t, !1),
 						t + 2
 					);
 				}),
@@ -15724,7 +15740,7 @@ object-assign
 							  (this[t + 2] = e >>> 16),
 							  (this[t + 1] = e >>> 8),
 							  (this[t] = 255 & e))
-							: R(this, e, t, !0),
+							: H(this, e, t, !0),
 						t + 4
 					);
 				}),
@@ -15738,7 +15754,7 @@ object-assign
 							  (this[t + 1] = e >>> 16),
 							  (this[t + 2] = e >>> 8),
 							  (this[t + 3] = 255 & e))
-							: R(this, e, t, !1),
+							: H(this, e, t, !1),
 						t + 4
 					);
 				}),
@@ -15786,7 +15802,7 @@ object-assign
 						n || k(this, e, t, 2, 32767, -32768),
 						c.TYPED_ARRAY_SUPPORT
 							? ((this[t] = 255 & e), (this[t + 1] = e >>> 8))
-							: H(this, e, t, !0),
+							: R(this, e, t, !0),
 						t + 2
 					);
 				}),
@@ -15797,7 +15813,7 @@ object-assign
 						n || k(this, e, t, 2, 32767, -32768),
 						c.TYPED_ARRAY_SUPPORT
 							? ((this[t] = e >>> 8), (this[t + 1] = 255 & e))
-							: H(this, e, t, !1),
+							: R(this, e, t, !1),
 						t + 2
 					);
 				}),
@@ -15811,7 +15827,7 @@ object-assign
 							  (this[t + 1] = e >>> 8),
 							  (this[t + 2] = e >>> 16),
 							  (this[t + 3] = e >>> 24))
-							: R(this, e, t, !0),
+							: H(this, e, t, !0),
 						t + 4
 					);
 				}),
@@ -15826,7 +15842,7 @@ object-assign
 							  (this[t + 1] = e >>> 16),
 							  (this[t + 2] = e >>> 8),
 							  (this[t + 3] = 255 & e))
-							: R(this, e, t, !1),
+							: H(this, e, t, !1),
 						t + 4
 					);
 				}),
@@ -16272,8 +16288,8 @@ object-assign
 		var N = 0,
 			S = 1,
 			k = 2,
-			H = 3;
-		function R(e, t) {
+			R = 3;
+		function H(e, t) {
 			var n = e[r.a];
 			Object(a.d)(n) && (t.cancel = n),
 				e.then(t, function(e) {
@@ -16315,7 +16331,7 @@ object-assign
 					} catch (e) {
 						return void n(e, !0);
 					}
-					i && Object(a.j)(t) ? R(t, n) : n(t);
+					i && Object(a.j)(t) ? H(t, n) : n(t);
 				});
 			}),
 			(T[A.b] = function(e, t, n, r) {
@@ -16363,7 +16379,7 @@ object-assign
 					s = r.task;
 				try {
 					var l = i.apply(o, c);
-					if (Object(a.j)(l)) return void R(l, n);
+					if (Object(a.j)(l)) return void H(l, n);
 					if (Object(a.e)(l))
 						return void X(e, l, s.context, x, Object(A.T)(i), !1, n);
 					n(l);
@@ -16595,7 +16611,7 @@ object-assign
 						W(), e.onError(t, { sagaStack: o });
 					}
 					(d = t), g && g.reject(t);
-				} else t === r.j ? (f = S) : f !== S && (f = H), (u = t), g && g.resolve(t);
+				} else t === r.j ? (f = S) : f !== S && (f = R), (u = t), g && g.resolve(t);
 				y.cont(t, n),
 					y.joiners.forEach(function(e) {
 						e.cb(t, n);
@@ -16643,7 +16659,7 @@ object-assign
 		}
 		function X(e, t, n, o, i, c, s) {
 			var l = e.finalizeRunEffect(function(t, n, o) {
-				if (Object(a.j)(t)) R(t, o);
+				if (Object(a.j)(t)) H(t, o);
 				else if (Object(a.e)(t)) X(e, t, d.context, n, i, !1, o);
 				else if (t && t[r.c]) {
 					(0, O[t.type])(e, t.payload, o, f);
@@ -16675,7 +16691,7 @@ object-assign
 									: { done: !0 }
 								: t.next(e)),
 						i.done
-							? (u.status !== S && (u.status = H), u.cont(i.value))
+							? (u.status !== S && (u.status = R), u.cont(i.value))
 							: h(i.value, o, g);
 				} catch (e) {
 					if (u.status === S) throw e;
@@ -21784,7 +21800,7 @@ object-assign
 			N = 'MMM YYYY',
 			S = 'YYYY',
 			k = 'YYYY',
-			H = (function(e) {
+			R = (function(e) {
 				function t() {
 					var e;
 					return (
@@ -22005,7 +22021,7 @@ object-assign
 							return l.default.createElement(
 								B.CalendarDateContent,
 								{
-									style: [n.container, R.monthCell],
+									style: [n.container, H.monthCell],
 									textStyle: n.text,
 									__source: { fileName: Q, lineNumber: 245 }
 								},
@@ -22016,7 +22032,7 @@ object-assign
 							return l.default.createElement(
 								B.CalendarDateContent,
 								{
-									style: [n.container, R.yearCell],
+									style: [n.container, H.yearCell],
 									textStyle: n.text,
 									__source: { fileName: Q, lineNumber: 250 }
 								},
@@ -22167,7 +22183,7 @@ object-assign
 								return l.default.createElement(
 									d.default,
 									(0, o.default)({}, r, {
-										style: [R.container, i, t],
+										style: [H.container, i, t],
 										__source: { fileName: Q, lineNumber: 320 }
 									}),
 									this.renderCalendarHeader(),
@@ -22203,13 +22219,13 @@ object-assign
 					t
 				);
 			})(l.default.Component);
-		(t.BaseCalendarComponent = H),
-			(H.defaultProps = {
+		(t.BaseCalendarComponent = R),
+			(R.defaultProps = {
 				dateService: new m.NativeDateService(),
 				boundingMonth: !0,
 				startView: w.CalendarViewModes.DATE
 			});
-		var R = u.default.create({
+		var H = u.default.create({
 			container: { overflow: 'hidden' },
 			monthCell: { aspectRatio: 0.25 * y.DateService.DAYS_IN_WEEK },
 			yearCell: { aspectRatio: 0.25 * y.DateService.DAYS_IN_WEEK }
@@ -25012,7 +25028,7 @@ object-assign
 			f = n(100),
 			g = n(39),
 			h = (o(n(986)), o(n(52))),
-			p = '/Users/Bobby/Development/monorift/packages/rift/src/containers/RTC.js',
+			p = '/Users/Bobby/Development/monorift/packages/rift/src/containers/Talk.js',
 			B = { audio: !0, video: !1 },
 			w = g.StyleSheet.create({
 				container: { flex: 1, alignItems: 'center' },
@@ -25033,6 +25049,8 @@ object-assign
 						(n.audioRef = r),
 						(n.videoRef = o),
 						(n.selfRef = i),
+						(n.audioFileRef = u.createRef()),
+						(window.audioFileRef = n.audioFileRef),
 						(window.videoRef = n.videoRef),
 						n
 					);
@@ -25051,31 +25069,33 @@ object-assign
 						{
 							key: 'componentDidUpdate',
 							value: function() {
-								var e = this.props,
-									t = e.peerStore,
-									n = e.peerConnStatus,
-									r = this.audioRef,
-									o = this.videoRef,
-									i = t.conn;
-								!0 === n.created &&
-									null == i.ontrack &&
+								var e = this,
+									t = this.props,
+									n = t.peerStore,
+									r = t.peerConnStatus,
+									o = this.audioRef,
+									i = this.videoRef,
+									a = n.conn;
+								!0 === r.created &&
+									null == a.ontrack &&
 									(console.log('handlers added: ontrack and onice'),
-									(i.ontrack = function(e) {
-										console.log('ONTRACK called', e),
-											o &&
-												o.current &&
-												null === o.current.srcObject &&
-												((o.current.srcObject = e.streams[0]),
-												r &&
-													r.current &&
-													(r.current.srcObject ||
-														('audio' == e.track.kind && (r.current.srcObject = e.streams[0]),
-														r.current.play())));
+									(a.ontrack = function(t) {
+										var n = e.props.mediaStreamConstraints;
+										if ((console.log('ONTRACK called', t), n.video)) {
+											if (!i || !i.current) return;
+											if (null !== i.current.srcObject) return;
+											i.current.srcObject = t.streams[0];
+										} else {
+											if (o && o.current)
+												if (!o.current.srcObject)
+													'audio' == t.track.kind && (o.current.srcObject = t.streams[0]),
+														o.current.play();
+										}
 									}),
-									i.addEventListener('track', function(e) {
+									a.addEventListener('track', function(e) {
 										console.log('on EVENT track');
 									}),
-									i.addEventListener('icecandidate', this.handleConnection.bind(this)));
+									a.addEventListener('icecandidate', this.handleConnection.bind(this)));
 							}
 						},
 						{
@@ -25099,11 +25119,11 @@ object-assign
 														(n = null),
 														(r = this.props.peerStore),
 														(o = r.conn),
-														(t.prev = 3),
-														(t.next = 6),
+														(t.prev = 4),
+														(t.next = 7),
 														i.default.awrap(navigator.mediaDevices.getUserMedia(e))
 													);
-												case 6:
+												case 7:
 													(n = t.sent),
 														(a = n.getAudioTracks()),
 														console.log('Got stream with constraints:', e),
@@ -25117,42 +25137,42 @@ object-assign
 														}),
 														B.video,
 														(window.stream = n),
-														(t.next = 19);
+														(t.next = 20);
 													break;
-												case 16:
-													(t.prev = 16), (t.t0 = t.catch(3)), console.log(t.t0);
-												case 19:
+												case 17:
+													(t.prev = 17), (t.t0 = t.catch(4)), console.log(t.t0);
+												case 20:
 												case 'end':
 													return t.stop();
 											}
 									},
 									null,
 									this,
-									[[3, 16]]
+									[[4, 17]]
 								);
 							}
 						},
 						{
 							key: 'startCall',
-							value: function() {
-								var e, t;
+							value: function(e) {
+								var t, n;
 								return i.default.async(
-									function(n) {
+									function(r) {
 										for (;;)
-											switch ((n.prev = n.next)) {
+											switch ((r.prev = r.next)) {
 												case 0:
 													return (
-														(e = this.props),
-														e.peerStore,
-														(t = e.setPeerInitiator),
-														(n.next = 3),
-														i.default.awrap(this.getMedia(B))
+														(t = this.props),
+														t.peerStore,
+														(n = t.setPeerInitiator),
+														(r.next = 3),
+														i.default.awrap(this.getMedia(e))
 													);
 												case 3:
-													t(!0), this.props.sendOffer({ constraints: B });
+													n(!0), this.props.sendOffer({});
 												case 5:
 												case 'end':
-													return n.stop();
+													return r.stop();
 											}
 									},
 									null,
@@ -25164,7 +25184,8 @@ object-assign
 							key: 'videoCall',
 							value: function() {
 								this.props.peerStore;
-								this.setMediaStreamConstraints(!0, !0), this.startCall();
+								this.setMediaStreamConstraints(!0, !0),
+									this.startCall({ audio: !0, video: !0 });
 							}
 						},
 						{
@@ -25173,7 +25194,7 @@ object-assign
 								var e = this.props.peerStore;
 								this.setMediaStreamConstraints(!0, !1),
 									(e.onicecandidate = function(e) {}),
-									this.startCall();
+									this.startCall({ audio: !0, video: !1 });
 							}
 						},
 						{
@@ -25196,11 +25217,11 @@ object-assign
 									n = function(e, t, n) {
 										return u.createElement(
 											d.Layout,
-											{ key: n, style: w.row, __source: { fileName: p, lineNumber: 201 } },
+											{ key: n, style: w.row, __source: { fileName: p, lineNumber: 200 } },
 											t
 												? u.createElement(
 														d.Button,
-														{ onPress: t, __source: { fileName: p, lineNumber: 202 } },
+														{ onPress: t, __source: { fileName: p, lineNumber: 201 } },
 														'Call'
 												  )
 												: null,
@@ -25209,7 +25230,7 @@ object-assign
 												controls: !0,
 												autoPlay: !0,
 												ref: e,
-												__source: { fileName: p, lineNumber: 203 }
+												__source: { fileName: p, lineNumber: 202 }
 											})
 										);
 									},
@@ -25219,12 +25240,12 @@ object-assign
 											{
 												key: n,
 												styles: w.row2,
-												__source: { fileName: p, lineNumber: 208 }
+												__source: { fileName: p, lineNumber: 207 }
 											},
 											t
 												? u.createElement(
 														d.Button,
-														{ onPress: t, __source: { fileName: p, lineNumber: 209 } },
+														{ onPress: t, __source: { fileName: p, lineNumber: 208 } },
 														'Call'
 												  )
 												: null,
@@ -25234,7 +25255,7 @@ object-assign
 												muted: !0,
 												playsInline: !0,
 												ref: e,
-												__source: { fileName: p, lineNumber: 210 }
+												__source: { fileName: p, lineNumber: 209 }
 											})
 										);
 									},
@@ -25255,16 +25276,28 @@ object-assign
 									],
 									i = u.createElement(
 										d.Layout,
-										{ style: w.row, __source: { fileName: p, lineNumber: 231 } },
+										{ style: w.row, __source: { fileName: p, lineNumber: 230 } },
 										u.createElement(
 											d.Text,
-											{ __source: { fileName: p, lineNumber: 232 } },
+											{ __source: { fileName: p, lineNumber: 231 } },
 											'Loading...'
 										)
 									);
+								u.createElement(
+									d.Layout,
+									{ style: w.row, __source: { fileName: p, lineNumber: 251 } },
+									u.createElement('audio', {
+										src: 'example.mp3',
+										__source: { fileName: p, lineNumber: 252 }
+									})
+								),
+									u.createElement('audio', {
+										src: 'example.mp3',
+										__source: { fileName: p, lineNumber: 255 }
+									});
 								return u.createElement(
 									d.Layout,
-									{ style: w.container, __source: { fileName: p, lineNumber: 246 } },
+									{ style: w.container, __source: { fileName: p, lineNumber: 257 } },
 									(function() {
 										if (!0 !== t.created) return i;
 										var e = { audio: n, video: r };
@@ -25275,7 +25308,22 @@ object-assign
 												i = t.key;
 											return (0, e[n])(o, r, i);
 										});
-									})()
+									})(),
+									u.createElement(
+										d.Layout,
+										{ style: w.row, __source: { fileName: p, lineNumber: 259 } },
+										u.createElement('audio', {
+											ref: this.audioFileRef,
+											src: '/example.mp3?'.concat(
+												Math.random()
+													.toString()
+													.substr(2)
+											),
+											type: 'audio/mpeg',
+											controls: !0,
+											__source: { fileName: p, lineNumber: 260 }
+										})
+									)
 								);
 							}
 						}
@@ -27320,44 +27368,44 @@ object-assign
 				indexOfSingleActiveTouch: -1,
 				mostRecentTimeStamp: 0
 			};
-		function H(e) {
+		function R(e) {
 			return e.timeStamp || e.timestamp;
 		}
-		function R(e) {
+		function H(e) {
 			if (null == (e = e.identifier)) throw Error(i(138));
 			return e;
 		}
 		function T(e) {
-			var t = R(e),
+			var t = H(e),
 				n = S[t];
 			n
 				? ((n.touchActive = !0),
 				  (n.startPageX = e.pageX),
 				  (n.startPageY = e.pageY),
-				  (n.startTimeStamp = H(e)),
+				  (n.startTimeStamp = R(e)),
 				  (n.currentPageX = e.pageX),
 				  (n.currentPageY = e.pageY),
-				  (n.currentTimeStamp = H(e)),
+				  (n.currentTimeStamp = R(e)),
 				  (n.previousPageX = e.pageX),
 				  (n.previousPageY = e.pageY),
-				  (n.previousTimeStamp = H(e)))
+				  (n.previousTimeStamp = R(e)))
 				: ((n = {
 						touchActive: !0,
 						startPageX: e.pageX,
 						startPageY: e.pageY,
-						startTimeStamp: H(e),
+						startTimeStamp: R(e),
 						currentPageX: e.pageX,
 						currentPageY: e.pageY,
-						currentTimeStamp: H(e),
+						currentTimeStamp: R(e),
 						previousPageX: e.pageX,
 						previousPageY: e.pageY,
-						previousTimeStamp: H(e)
+						previousTimeStamp: R(e)
 				  }),
 				  (S[t] = n)),
-				(k.mostRecentTimeStamp = H(e));
+				(k.mostRecentTimeStamp = R(e));
 		}
 		function x(e) {
-			var t = S[R(e)];
+			var t = S[H(e)];
 			t
 				? ((t.touchActive = !0),
 				  (t.previousPageX = t.currentPageX),
@@ -27365,8 +27413,8 @@ object-assign
 				  (t.previousTimeStamp = t.currentTimeStamp),
 				  (t.currentPageX = e.pageX),
 				  (t.currentPageY = e.pageY),
-				  (t.currentTimeStamp = H(e)),
-				  (k.mostRecentTimeStamp = H(e)))
+				  (t.currentTimeStamp = R(e)),
+				  (k.mostRecentTimeStamp = R(e)))
 				: console.warn(
 						'Cannot record touch move without a touch start.\nTouch Move: %s\n',
 						'Touch Bank: %s',
@@ -27375,7 +27423,7 @@ object-assign
 				  );
 		}
 		function U(e) {
-			var t = S[R(e)];
+			var t = S[H(e)];
 			t
 				? ((t.touchActive = !1),
 				  (t.previousPageX = t.currentPageX),
@@ -27383,8 +27431,8 @@ object-assign
 				  (t.previousTimeStamp = t.currentTimeStamp),
 				  (t.currentPageX = e.pageX),
 				  (t.currentPageY = e.pageY),
-				  (t.currentTimeStamp = H(e)),
-				  (k.mostRecentTimeStamp = H(e)))
+				  (t.currentTimeStamp = R(e)),
+				  (k.mostRecentTimeStamp = R(e)))
 				: console.warn(
 						'Cannot record touch end without a touch start.\nTouch End: %s\n',
 						'Touch Bank: %s',
@@ -27397,7 +27445,7 @@ object-assign
 				identifier: e.identifier,
 				pageX: e.pageX,
 				pageY: e.pageY,
-				timestamp: H(e)
+				timestamp: R(e)
 			});
 		}
 		function O() {
@@ -27857,24 +27905,24 @@ object-assign
 			(k.ReactCurrentDispatcher = { current: null }),
 			k.hasOwnProperty('ReactCurrentBatchConfig') ||
 				(k.ReactCurrentBatchConfig = { suspense: null });
-		var H = /^(.*)[\\\/]/,
-			R = 'function' == typeof Symbol && Symbol.for,
-			T = R ? Symbol.for('react.element') : 60103,
-			x = R ? Symbol.for('react.portal') : 60106,
-			U = R ? Symbol.for('react.fragment') : 60107,
-			j = R ? Symbol.for('react.strict_mode') : 60108,
-			O = R ? Symbol.for('react.profiler') : 60114,
-			P = R ? Symbol.for('react.provider') : 60109,
-			G = R ? Symbol.for('react.context') : 60110,
-			J = R ? Symbol.for('react.concurrent_mode') : 60111,
-			_ = R ? Symbol.for('react.forward_ref') : 60112,
-			L = R ? Symbol.for('react.suspense') : 60113,
-			W = R ? Symbol.for('react.suspense_list') : 60120,
-			z = R ? Symbol.for('react.memo') : 60115,
-			K = R ? Symbol.for('react.lazy') : 60116;
-		R && Symbol.for('react.fundamental'),
-			R && Symbol.for('react.responder'),
-			R && Symbol.for('react.scope');
+		var R = /^(.*)[\\\/]/,
+			H = 'function' == typeof Symbol && Symbol.for,
+			T = H ? Symbol.for('react.element') : 60103,
+			x = H ? Symbol.for('react.portal') : 60106,
+			U = H ? Symbol.for('react.fragment') : 60107,
+			j = H ? Symbol.for('react.strict_mode') : 60108,
+			O = H ? Symbol.for('react.profiler') : 60114,
+			P = H ? Symbol.for('react.provider') : 60109,
+			G = H ? Symbol.for('react.context') : 60110,
+			J = H ? Symbol.for('react.concurrent_mode') : 60111,
+			_ = H ? Symbol.for('react.forward_ref') : 60112,
+			L = H ? Symbol.for('react.suspense') : 60113,
+			W = H ? Symbol.for('react.suspense_list') : 60120,
+			z = H ? Symbol.for('react.memo') : 60115,
+			K = H ? Symbol.for('react.lazy') : 60116;
+		H && Symbol.for('react.fundamental'),
+			H && Symbol.for('react.responder'),
+			H && Symbol.for('react.scope');
 		var V = 'function' == typeof Symbol && Symbol.iterator;
 		function X(e) {
 			return null === e || 'object' != typeof e
@@ -27941,7 +27989,7 @@ object-assign
 							(r = i),
 							(i = ''),
 							o
-								? (i = ' (at ' + o.fileName.replace(H, '') + ':' + o.lineNumber + ')')
+								? (i = ' (at ' + o.fileName.replace(R, '') + ':' + o.lineNumber + ')')
 								: n && (i = ' (created by ' + n + ')'),
 							(n = '\n    in ' + (r || 'Unknown') + i);
 				}
@@ -28278,7 +28326,7 @@ object-assign
 				null !== t && (t.selected = !0);
 			}
 		}
-		function He(e, t) {
+		function Re(e, t) {
 			if (null != t.dangerouslySetInnerHTML) throw Error(a(91));
 			return o({}, t, {
 				value: void 0,
@@ -28286,7 +28334,7 @@ object-assign
 				children: '' + e._wrapperState.initialValue
 			});
 		}
-		function Re(e, t) {
+		function He(e, t) {
 			var n = t.value;
 			if (null == n) {
 				if (((n = t.defaultValue), null != (t = t.children))) {
@@ -28713,10 +28761,10 @@ object-assign
 		function kt() {
 			return !0;
 		}
-		function Ht() {
+		function Rt() {
 			return !1;
 		}
-		function Rt(e, t, n, r) {
+		function Ht(e, t, n, r) {
 			for (var o in ((this.dispatchConfig = e),
 			(this._targetInst = t),
 			(this.nativeEvent = n),
@@ -28732,8 +28780,8 @@ object-assign
 				? n.defaultPrevented
 				: !1 === n.returnValue)
 					? kt
-					: Ht),
-				(this.isPropagationStopped = Ht),
+					: Rt),
+				(this.isPropagationStopped = Rt),
 				this
 			);
 		}
@@ -28751,7 +28799,7 @@ object-assign
 		function Ut(e) {
 			(e.eventPool = []), (e.getPooled = Tt), (e.release = xt);
 		}
-		o(Rt.prototype, {
+		o(Ht.prototype, {
 			preventDefault: function() {
 				this.defaultPrevented = !0;
 				var e = this.nativeEvent;
@@ -28772,17 +28820,17 @@ object-assign
 			persist: function() {
 				this.isPersistent = kt;
 			},
-			isPersistent: Ht,
+			isPersistent: Rt,
 			destructor: function() {
 				var e,
 					t = this.constructor.Interface;
 				for (e in t) this[e] = null;
 				(this.nativeEvent = this._targetInst = this.dispatchConfig = null),
-					(this.isPropagationStopped = this.isDefaultPrevented = Ht),
+					(this.isPropagationStopped = this.isDefaultPrevented = Rt),
 					(this._dispatchInstances = this._dispatchListeners = null);
 			}
 		}),
-			(Rt.Interface = {
+			(Ht.Interface = {
 				type: null,
 				target: null,
 				currentTarget: function() {
@@ -28797,7 +28845,7 @@ object-assign
 				defaultPrevented: null,
 				isTrusted: null
 			}),
-			(Rt.extend = function(e) {
+			(Ht.extend = function(e) {
 				function t() {}
 				function n() {
 					return r.apply(this, arguments);
@@ -28815,18 +28863,18 @@ object-assign
 					n
 				);
 			}),
-			Ut(Rt);
-		var jt = Rt.extend({
+			Ut(Ht);
+		var jt = Ht.extend({
 				animationName: null,
 				elapsedTime: null,
 				pseudoElement: null
 			}),
-			Ot = Rt.extend({
+			Ot = Ht.extend({
 				clipboardData: function(e) {
 					return 'clipboardData' in e ? e.clipboardData : window.clipboardData;
 				}
 			}),
-			Pt = Rt.extend({ view: null, detail: null }),
+			Pt = Ht.extend({ view: null, detail: null }),
 			Gt = Pt.extend({ relatedTarget: null });
 		function Jt(e) {
 			var t = e.keyCode;
@@ -29002,7 +29050,7 @@ object-assign
 					shiftKey: null,
 					getModifierState: Kt
 				}),
-				on = Rt.extend({
+				on = Ht.extend({
 					propertyName: null,
 					elapsedTime: null,
 					pseudoElement: null
@@ -29198,7 +29246,7 @@ object-assign
 							e = tn;
 							break;
 						default:
-							e = Rt;
+							e = Ht;
 					}
 					return St((t = e.getPooled(o, t, n, r))), t;
 				}
@@ -29365,11 +29413,11 @@ object-assign
 			);
 		}
 		var kn = new ('function' == typeof WeakMap ? WeakMap : Map)();
-		function Hn(e) {
+		function Rn(e) {
 			var t = kn.get(e);
 			return void 0 === t && ((t = new Set()), kn.set(e, t)), t;
 		}
-		function Rn(e, t, n) {
+		function Hn(e, t, n) {
 			if (!n.has(e)) {
 				switch (e) {
 					case 'scroll':
@@ -29512,11 +29560,11 @@ object-assign
 			}
 		}
 		function Jn(e, t) {
-			var n = Hn(
+			var n = Rn(
 				(e = 9 === e.nodeType || 11 === e.nodeType ? e : e.ownerDocument)
 			);
 			t = g[t];
-			for (var r = 0; r < t.length; r++) Rn(t[r], e, n);
+			for (var r = 0; r < t.length; r++) Hn(t[r], e, n);
 		}
 		function _n() {}
 		function Ln(e) {
@@ -29686,8 +29734,8 @@ object-assign
 			for (t = 1; t <= a && n[r - t] === o[i - t]; t++);
 			return (wr = o.slice(e, 1 < t ? 1 - t : void 0));
 		}
-		var mr = Rt.extend({ data: null }),
-			Er = Rt.extend({ data: null }),
+		var mr = Ht.extend({ data: null }),
+			Er = Ht.extend({ data: null }),
 			Cr = [9, 13, 27, 32],
 			Qr = $ && 'CompositionEvent' in window,
 			vr = null;
@@ -29828,7 +29876,7 @@ object-assign
 					);
 				}
 			},
-			Hr = {
+			Rr = {
 				color: !0,
 				date: !0,
 				datetime: !0,
@@ -29845,9 +29893,9 @@ object-assign
 				url: !0,
 				week: !0
 			};
-		function Rr(e) {
+		function Hr(e) {
 			var t = e && e.nodeName && e.nodeName.toLowerCase();
-			return 'input' === t ? !!Hr[e.type] : 'textarea' === t;
+			return 'input' === t ? !!Rr[e.type] : 'textarea' === t;
 		}
 		var Tr = {
 			change: {
@@ -29862,7 +29910,7 @@ object-assign
 		};
 		function xr(e, t, n) {
 			return (
-				((e = Rt.getPooled(Tr.change, e, t, n)).type = 'change'), oe(n), St(e), e
+				((e = Ht.getPooled(Tr.change, e, t, n)).type = 'change'), oe(n), St(e), e
 			);
 		}
 		var Ur = null,
@@ -29917,7 +29965,7 @@ object-assign
 					var o = t ? gr(t) : window,
 						i = o.nodeName && o.nodeName.toLowerCase();
 					if ('select' === i || ('input' === i && 'file' === o.type)) var a = Gr;
-					else if (Rr(o))
+					else if (Hr(o))
 						if (Jr) a = Vr;
 						else {
 							a = zr;
@@ -30081,7 +30129,7 @@ object-assign
 				  Ao && no(Ao, n)
 						? null
 						: ((Ao = n),
-						  ((e = Rt.getPooled(oo.select, ao, e, t)).type = 'select'),
+						  ((e = Ht.getPooled(oo.select, ao, e, t)).type = 'select'),
 						  (e.target = io),
 						  St(e),
 						  e));
@@ -30093,7 +30141,7 @@ object-assign
 					i = r.window === r ? r.document : 9 === r.nodeType ? r : r.ownerDocument;
 				if (!(o = !i)) {
 					e: {
-						(i = Hn(i)), (o = g.onSelect);
+						(i = Rn(i)), (o = g.onSelect);
 						for (var a = 0; a < o.length; a++)
 							if (!i.has(o[a])) {
 								i = !1;
@@ -30106,7 +30154,7 @@ object-assign
 				if (o) return null;
 				switch (((i = t ? gr(t) : window), e)) {
 					case 'focus':
-						(Rr(i) || 'true' === i.contentEditable) &&
+						(Hr(i) || 'true' === i.contentEditable) &&
 							((io = i), (ao = t), (Ao = null));
 						break;
 					case 'blur':
@@ -30221,8 +30269,8 @@ object-assign
 			No = i.unstable_shouldYield,
 			So = i.unstable_requestPaint,
 			ko = i.unstable_now,
-			Ho = i.unstable_getCurrentPriorityLevel,
-			Ro = i.unstable_ImmediatePriority,
+			Ro = i.unstable_getCurrentPriorityLevel,
+			Ho = i.unstable_ImmediatePriority,
 			To = i.unstable_UserBlockingPriority,
 			xo = i.unstable_NormalPriority,
 			Uo = i.unstable_LowPriority,
@@ -30240,8 +30288,8 @@ object-assign
 							return ko() - Lo;
 					  };
 		function zo() {
-			switch (Ho()) {
-				case Ro:
+			switch (Ro()) {
+				case Ho:
 					return 99;
 				case To:
 					return 98;
@@ -30258,7 +30306,7 @@ object-assign
 		function Ko(e) {
 			switch (e) {
 				case 99:
-					return Ro;
+					return Ho;
 				case 98:
 					return To;
 				case 97:
@@ -30278,7 +30326,7 @@ object-assign
 			return (e = Ko(e)), Fo(e, t, n);
 		}
 		function Zo(e) {
-			return null === Go ? ((Go = [e]), (Jo = Fo(Ro, $o))) : Go.push(e), Oo;
+			return null === Go ? ((Go = [e]), (Jo = Fo(Ho, $o))) : Go.push(e), Oo;
 		}
 		function qo() {
 			if (null !== Jo) {
@@ -30303,7 +30351,7 @@ object-assign
 					}),
 						(Go = null);
 				} catch (t) {
-					throw (null !== Go && (Go = Go.slice(e + 1)), Fo(Ro, qo), t);
+					throw (null !== Go && (Go = Go.slice(e + 1)), Fo(Ho, qo), t);
 				} finally {
 					_o = !1;
 				}
@@ -30631,7 +30679,7 @@ object-assign
 				'function' == typeof o.componentDidMount && (e.effectTag |= 4);
 		}
 		var ki = Array.isArray;
-		function Hi(e, t, n) {
+		function Ri(e, t, n) {
 			if (null !== (e = n.ref) && 'function' != typeof e && 'object' != typeof e) {
 				if (n._owner) {
 					if ((n = n._owner)) {
@@ -30656,7 +30704,7 @@ object-assign
 			}
 			return e;
 		}
-		function Ri(e, t) {
+		function Hi(e, t) {
 			if ('textarea' !== e.type)
 				throw Error(
 					a(
@@ -30714,8 +30762,8 @@ object-assign
 			}
 			function s(e, t, n, r) {
 				return null !== t && t.elementType === n.type
-					? (((r = o(t, n.props)).ref = Hi(e, t, n)), (r.return = e), r)
-					: (((r = Vc(n.type, n.key, n.props, null, e.mode, r)).ref = Hi(e, t, n)),
+					? (((r = o(t, n.props)).ref = Ri(e, t, n)), (r.return = e), r)
+					: (((r = Vc(n.type, n.key, n.props, null, e.mode, r)).ref = Ri(e, t, n)),
 					  (r.return = e),
 					  r);
 			}
@@ -30739,7 +30787,7 @@ object-assign
 					switch (t.$$typeof) {
 						case T:
 							return (
-								((n = Vc(t.type, t.key, t.props, null, e.mode, n)).ref = Hi(
+								((n = Vc(t.type, t.key, t.props, null, e.mode, n)).ref = Ri(
 									e,
 									null,
 									t
@@ -30751,7 +30799,7 @@ object-assign
 							return ((t = qc(t, e.mode, n)).return = e), t;
 					}
 					if (ki(t) || X(t)) return ((t = Xc(t, e.mode, n, null)).return = e), t;
-					Ri(e, t);
+					Hi(e, t);
 				}
 				return null;
 			}
@@ -30771,7 +30819,7 @@ object-assign
 							return n.key === o ? l(e, t, n, r) : null;
 					}
 					if (ki(n) || X(n)) return null !== o ? null : u(e, t, n, r, null);
-					Ri(e, n);
+					Hi(e, n);
 				}
 				return null;
 			}
@@ -30789,7 +30837,7 @@ object-assign
 							return l(t, (e = e.get(null === r.key ? n : r.key) || null), r, o);
 					}
 					if (ki(r) || X(r)) return u(t, (e = e.get(n) || null), r, o, null);
-					Ri(t, r);
+					Hi(t, r);
 				}
 				return null;
 			}
@@ -30887,7 +30935,7 @@ object-assign
 									if (s.key === l) {
 										if (7 === s.tag ? i.type === U : s.elementType === i.type) {
 											n(e, s.sibling),
-												((r = o(s, i.type === U ? i.props.children : i.props)).ref = Hi(
+												((r = o(s, i.type === U ? i.props.children : i.props)).ref = Ri(
 													e,
 													s,
 													i
@@ -30903,7 +30951,7 @@ object-assign
 								}
 								i.type === U
 									? (((r = Xc(i.props.children, e.mode, c, i.key)).return = e), (e = r))
-									: (((c = Vc(i.type, i.key, i.props, null, e.mode, c)).ref = Hi(
+									: (((c = Vc(i.type, i.key, i.props, null, e.mode, c)).ref = Ri(
 											e,
 											r,
 											i
@@ -30943,7 +30991,7 @@ object-assign
 					);
 				if (ki(i)) return h(e, r, i, c);
 				if (X(i)) return p(e, r, i, c);
-				if ((l && Ri(e, i), void 0 === i && !s))
+				if ((l && Hi(e, i), void 0 === i && !s))
 					switch (e.tag) {
 						case 1:
 						case 0:
@@ -31048,7 +31096,7 @@ object-assign
 				(($i = i),
 				(ea = t),
 				(na = null !== e ? e.memoizedState : null),
-				(Zi.current = null === na ? ka : Ha),
+				(Zi.current = null === na ? ka : Ra),
 				(t = n(r, o)),
 				sa)
 			) {
@@ -31058,7 +31106,7 @@ object-assign
 						(na = null !== e ? e.memoizedState : null),
 						(ia = ra),
 						(Aa = oa = ta = null),
-						(Zi.current = Ha),
+						(Zi.current = Ra),
 						(t = n(r, o));
 				} while (sa);
 				(la = null), (ua = 0);
@@ -31405,7 +31453,7 @@ object-assign
 					];
 				}
 			},
-			Ha = {
+			Ra = {
 				readContext: di,
 				useCallback: Ya,
 				useContext: di,
@@ -31479,7 +31527,7 @@ object-assign
 					];
 				}
 			},
-			Ra = null,
+			Ha = null,
 			Ta = null,
 			xa = !1;
 		function Ua(e, t) {
@@ -31522,12 +31570,12 @@ object-assign
 					if (!ja(e, t)) {
 						if (!(t = ar(n.nextSibling)) || !ja(e, t))
 							return (
-								(e.effectTag = (-1025 & e.effectTag) | 2), (xa = !1), void (Ra = e)
+								(e.effectTag = (-1025 & e.effectTag) | 2), (xa = !1), void (Ha = e)
 							);
-						Ua(Ra, n);
+						Ua(Ha, n);
 					}
-					(Ra = e), (Ta = ar(t.firstChild));
-				} else (e.effectTag = (-1025 & e.effectTag) | 2), (xa = !1), (Ra = e);
+					(Ha = e), (Ta = ar(t.firstChild));
+				} else (e.effectTag = (-1025 & e.effectTag) | 2), (xa = !1), (Ha = e);
 			}
 		}
 		function Pa(e) {
@@ -31537,10 +31585,10 @@ object-assign
 
 			)
 				e = e.return;
-			Ra = e;
+			Ha = e;
 		}
 		function Ga(e) {
-			if (e !== Ra) return !1;
+			if (e !== Ha) return !1;
 			if (!xa) return Pa(e), (xa = !0), !1;
 			var t = e.type;
 			if (5 !== e.tag || ('head' !== t && 'body' !== t && !rr(t, e.memoizedProps)))
@@ -31564,11 +31612,11 @@ object-assign
 					}
 					Ta = null;
 				}
-			} else Ta = Ra ? ar(e.stateNode.nextSibling) : null;
+			} else Ta = Ha ? ar(e.stateNode.nextSibling) : null;
 			return !0;
 		}
 		function Ja() {
-			(Ta = Ra = null), (xa = !1);
+			(Ta = Ha = null), (xa = !1);
 		}
 		var _a = k.ReactCurrentOwner,
 			La = !1;
@@ -32049,7 +32097,7 @@ object-assign
 								(e = []);
 							break;
 						case 'textarea':
-							(a = He(s, a)), (r = He(s, r)), (e = []);
+							(a = Re(s, a)), (r = Re(s, r)), (e = []);
 							break;
 						default:
 							'function' != typeof a.onClick &&
@@ -32540,8 +32588,8 @@ object-assign
 			NA = Math.ceil,
 			SA = k.ReactCurrentDispatcher,
 			kA = k.ReactCurrentOwner,
-			HA = 0,
-			RA = 8,
+			RA = 0,
+			HA = 8,
 			TA = 16,
 			xA = 32,
 			UA = 0,
@@ -32550,7 +32598,7 @@ object-assign
 			PA = 3,
 			GA = 4,
 			JA = 5,
-			_A = HA,
+			_A = RA,
 			LA = null,
 			WA = null,
 			zA = 0,
@@ -32575,7 +32623,7 @@ object-assign
 			dc = null,
 			fc = 0;
 		function gc() {
-			return (_A & (TA | xA)) !== HA
+			return (_A & (TA | xA)) !== RA
 				? 1073741821 - ((Wo() / 10) | 0)
 				: 0 !== fc
 				? fc
@@ -32585,7 +32633,7 @@ object-assign
 			if (0 == (2 & (t = t.mode))) return 1073741823;
 			var r = zo();
 			if (0 == (4 & t)) return 99 === r ? 1073741823 : 1073741822;
-			if ((_A & TA) !== HA) return zA;
+			if ((_A & TA) !== RA) return zA;
 			if (null !== n) e = ti(e, 0 | n.timeoutMs || 5e3, 250);
 			else
 				switch (r) {
@@ -32612,11 +32660,11 @@ object-assign
 			if (null !== (e = Bc(e, t))) {
 				var n = zo();
 				1073741823 === t
-					? (_A & RA) !== HA && (_A & (TA | xA)) === HA
+					? (_A & HA) !== RA && (_A & (TA | xA)) === RA
 						? Ec(e)
-						: (yc(e), _A === HA && qo())
+						: (yc(e), _A === RA && qo())
 					: yc(e),
-					(4 & _A) === HA ||
+					(4 & _A) === RA ||
 						(98 !== n && 99 !== n) ||
 						(null === lc
 							? (lc = new Map([[e, t]]))
@@ -32705,7 +32753,7 @@ object-assign
 			if (((fc = 0), t)) return rs(e, (t = gc())), yc(e), null;
 			var n = wc(e);
 			if (0 !== n) {
-				if (((t = e.callbackNode), (_A & (TA | xA)) !== HA)) throw Error(a(327));
+				if (((t = e.callbackNode), (_A & (TA | xA)) !== RA)) throw Error(a(327));
 				if ((xc(), (e === LA && n === zA) || vc(e, n), null !== WA)) {
 					var r = _A;
 					_A |= TA;
@@ -32750,10 +32798,10 @@ object-assign
 										e.lastPingedTime = r;
 										break;
 									}
-									e.timeoutHandle = or(Hc.bind(null, e), o);
+									e.timeoutHandle = or(Rc.bind(null, e), o);
 									break;
 								}
-								Hc(e);
+								Rc(e);
 								break;
 							case GA:
 								if (
@@ -32793,10 +32841,10 @@ object-assign
 														: 1960 * NA(r / 1960)) - r) && (r = n)),
 									10 < r)
 								) {
-									e.timeoutHandle = or(Hc.bind(null, e), r);
+									e.timeoutHandle = or(Rc.bind(null, e), r);
 									break;
 								}
-								Hc(e);
+								Rc(e);
 								break;
 							case JA:
 								if (1073741823 !== XA && null !== qA) {
@@ -32813,11 +32861,11 @@ object-assign
 														: o + r - i)),
 										10 < r)
 									) {
-										ts(e, n), (e.timeoutHandle = or(Hc.bind(null, e), r));
+										ts(e, n), (e.timeoutHandle = or(Rc.bind(null, e), r));
 										break;
 									}
 								}
-								Hc(e);
+								Rc(e);
 								break;
 							default:
 								throw Error(a(329));
@@ -32829,9 +32877,9 @@ object-assign
 		}
 		function Ec(e) {
 			var t = e.lastExpiredTime;
-			if (((t = 0 !== t ? t : 1073741823), e.finishedExpirationTime === t)) Hc(e);
+			if (((t = 0 !== t ? t : 1073741823), e.finishedExpirationTime === t)) Rc(e);
 			else {
-				if ((_A & (TA | xA)) !== HA) throw Error(a(327));
+				if ((_A & (TA | xA)) !== RA) throw Error(a(327));
 				if ((xc(), (e === LA && t === zA) || vc(e, t), null !== WA)) {
 					var n = _A;
 					_A |= TA;
@@ -32848,7 +32896,7 @@ object-assign
 					(e.finishedWork = e.current.alternate),
 						(e.finishedExpirationTime = t),
 						(LA = null),
-						Hc(e),
+						Rc(e),
 						yc(e);
 				}
 			}
@@ -32860,16 +32908,16 @@ object-assign
 			try {
 				return e(t);
 			} finally {
-				(_A = n) === HA && qo();
+				(_A = n) === RA && qo();
 			}
 		}
 		function Qc(e, t) {
 			var n = _A;
-			(_A &= -2), (_A |= RA);
+			(_A &= -2), (_A |= HA);
 			try {
 				return e(t);
 			} finally {
-				(_A = n) === HA && qo();
+				(_A = n) === RA && qo();
 			}
 		}
 		function vc(e, t) {
@@ -33113,7 +33161,7 @@ object-assign
 													Jn(u, 'onChange');
 												break;
 											case 'textarea':
-												Re(r, l), In('invalid', r), Jn(u, 'onChange');
+												He(r, l), In('invalid', r), Jn(u, 'onChange');
 										}
 										for (A in (Pn(n, l), (s = null), l))
 											l.hasOwnProperty(A) &&
@@ -33200,7 +33248,7 @@ object-assign
 													Jn(d, 'onChange');
 												break;
 											case 'textarea':
-												Re(l, n), (r = He(l, n)), In('invalid', l), Jn(d, 'onChange');
+												He(l, n), (r = Re(l, n)), In('invalid', l), Jn(d, 'onChange');
 												break;
 											default:
 												r = n;
@@ -33447,15 +33495,15 @@ object-assign
 			var t = e.expirationTime;
 			return t > (e = e.childExpirationTime) ? t : e;
 		}
-		function Hc(e) {
+		function Rc(e) {
 			var t = zo();
-			return Vo(99, Rc.bind(null, e, t)), null;
+			return Vo(99, Hc.bind(null, e, t)), null;
 		}
-		function Rc(e, t) {
+		function Hc(e, t) {
 			do {
 				xc();
 			} while (null !== cc);
-			if ((_A & (TA | xA)) !== HA) throw Error(a(327));
+			if ((_A & (TA | xA)) !== RA) throw Error(a(327));
 			var n = e.finishedWork,
 				r = e.finishedExpirationTime;
 			if (null === n) return null;
@@ -33724,13 +33772,13 @@ object-assign
 								E = void 0;
 								var k = rc.ref;
 								if (null !== k) {
-									var H = rc.stateNode;
+									var R = rc.stateNode;
 									switch (rc.tag) {
 										case 5:
-											E = H;
+											E = R;
 											break;
 										default:
-											E = H;
+											E = R;
 									}
 									'function' == typeof k ? k(E) : (k.current = E);
 								}
@@ -33756,7 +33804,7 @@ object-assign
 				oc)
 			)
 				throw ((oc = !1), (e = ic), (ic = null), e);
-			return (_A & RA) !== HA ? null : (qo(), null);
+			return (_A & HA) !== RA ? null : (qo(), null);
 		}
 		function Tc() {
 			for (; null !== rc; ) {
@@ -33780,7 +33828,7 @@ object-assign
 		function Uc() {
 			if (null === cc) return !1;
 			var e = cc;
-			if (((cc = null), (_A & (TA | xA)) !== HA)) throw Error(a(331));
+			if (((cc = null), (_A & (TA | xA)) !== RA)) throw Error(a(331));
 			var t = _A;
 			for (_A |= xA, e = e.current.firstEffect; null !== e; ) {
 				try {
@@ -34006,7 +34054,7 @@ object-assign
 						if (
 							((o = t.stateNode.hydrate) &&
 								((Ta = ar(t.stateNode.containerInfo.firstChild)),
-								(Ra = t),
+								(Ha = t),
 								(o = xa = !0)),
 							o)
 						)
@@ -34395,12 +34443,12 @@ object-assign
 				n &&
 					0 !== t &&
 					(function(e) {
-						var t = Hn(e);
+						var t = Rn(e);
 						ht.forEach(function(n) {
-							Rn(n, e, t);
+							Hn(n, e, t);
 						}),
 							pt.forEach(function(n) {
-								Rn(n, e, t);
+								Hn(n, e, t);
 							});
 					})(9 === e.nodeType ? e : e.ownerDocument),
 				(this._internalRoot = r);
@@ -34542,11 +34590,11 @@ object-assign
 				try {
 					return Vo(98, e.bind(null, t, n, r));
 				} finally {
-					(_A = o) === HA && qo();
+					(_A = o) === RA && qo();
 				}
 			}),
 			(ce = function() {
-				(_A & (1 | TA | xA)) === HA &&
+				(_A & (1 | TA | xA)) === RA &&
 					((function() {
 						if (null !== lc) {
 							var e = lc;
@@ -34565,7 +34613,7 @@ object-assign
 				try {
 					return e(t);
 				} finally {
-					(_A = n) === HA && qo();
+					(_A = n) === RA && qo();
 				}
 			});
 		var ds,
@@ -34612,7 +34660,7 @@ object-assign
 				},
 				unstable_batchedUpdates: Cc,
 				flushSync: function(e, t) {
-					if ((_A & (TA | xA)) !== HA) throw Error(a(187));
+					if ((_A & (TA | xA)) !== RA) throw Error(a(187));
 					var n = _A;
 					_A |= 1;
 					try {
@@ -34815,7 +34863,7 @@ object-assign
 				(e.count = 0),
 				10 > N.length && N.push(e);
 		}
-		function H(e, t, n) {
+		function R(e, t, n) {
 			return null == e
 				? 0
 				: (function e(t, n, r, o) {
@@ -34836,10 +34884,10 @@ object-assign
 											c = !0;
 									}
 							}
-						if (c) return r(o, t, '' === n ? '.' + R(t, 0) : n), 1;
+						if (c) return r(o, t, '' === n ? '.' + H(t, 0) : n), 1;
 						if (((c = 0), (n = '' === n ? '.' : n + ':'), Array.isArray(t)))
 							for (var s = 0; s < t.length; s++) {
-								var l = n + R((A = t[s]), s);
+								var l = n + H((A = t[s]), s);
 								c += e(A, l, r, o);
 							}
 						else if (
@@ -34850,7 +34898,7 @@ object-assign
 							'function' == typeof l)
 						)
 							for (t = l.call(t), s = 0; !(A = t.next()).done; )
-								c += e((A = A.value), (l = n + R(A, s++)), r, o);
+								c += e((A = A.value), (l = n + H(A, s++)), r, o);
 						else if ('object' === A)
 							throw ((r = '' + t),
 							Error(
@@ -34865,7 +34913,7 @@ object-assign
 						return c;
 				  })(e, '', t, n);
 		}
-		function R(e, t) {
+		function H(e, t) {
 			return 'object' == typeof e && null !== e && null != e.key
 				? (function(e) {
 						var t = { '=': '=0', ':': '=2' };
@@ -34913,7 +34961,7 @@ object-assign
 		function U(e, t, n, r, o) {
 			var i = '';
 			null != n && (i = ('' + n).replace(Y, '$&/') + '/'),
-				H(e, x, (t = S(t, i, r, o))),
+				R(e, x, (t = S(t, i, r, o))),
 				k(t);
 		}
 		function j() {
@@ -34930,10 +34978,10 @@ object-assign
 					},
 					forEach: function(e, t, n) {
 						if (null == e) return e;
-						H(e, T, (t = S(null, null, t, n))), k(t);
+						R(e, T, (t = S(null, null, t, n))), k(t);
 					},
 					count: function(e) {
-						return H(
+						return R(
 							e,
 							function() {
 								return null;
@@ -35222,8 +35270,8 @@ object-assign
 			N = 1,
 			S = null,
 			k = 3,
-			H = !1,
 			R = !1,
+			H = !1,
 			T = !1;
 		function x(e) {
 			for (var t = b(Y); null !== t; ) {
@@ -35236,15 +35284,15 @@ object-assign
 			}
 		}
 		function U(e) {
-			if (((T = !1), x(e), !R))
-				if (null !== b(F)) (R = !0), r(j);
+			if (((T = !1), x(e), !H))
+				if (null !== b(F)) (H = !0), r(j);
 				else {
 					var t = b(Y);
 					null !== t && o(U, t.startTime - e);
 				}
 		}
 		function j(e, n) {
-			(R = !1), T && ((T = !1), i()), (H = !0);
+			(H = !1), T && ((T = !1), i()), (R = !0);
 			var r = k;
 			try {
 				for (
@@ -35269,7 +35317,7 @@ object-assign
 				}
 				return s;
 			} finally {
-				(S = null), (k = r), (H = !1);
+				(S = null), (k = r), (R = !1);
 			}
 		}
 		function O(e) {
@@ -35349,7 +35397,7 @@ object-assign
 						? ((e.sortIndex = c),
 						  I(Y, e),
 						  null === b(F) && e === b(Y) && (T ? i() : (T = !0), o(U, c - A)))
-						: ((e.sortIndex = a), I(F, e), R || H || ((R = !0), r(j))),
+						: ((e.sortIndex = a), I(F, e), H || R || ((H = !0), r(j))),
 					e
 				);
 			}),
@@ -35387,7 +35435,7 @@ object-assign
 			}),
 			(t.unstable_requestPaint = P),
 			(t.unstable_continueExecution = function() {
-				R || H || ((R = !0), r(j));
+				H || R || ((H = !0), r(j));
 			}),
 			(t.unstable_pauseExecution = function() {}),
 			(t.unstable_getFirstCallbackNode = function() {
@@ -41603,7 +41651,7 @@ object-assign
 								{ backgroundColor: D, height: F, width: Y },
 								o && w.disabledThumb
 							],
-							H = (0, a.default)('input', {
+							R = (0, a.default)('input', {
 								accessibilityLabel: t,
 								checked: f,
 								disabled: o,
@@ -41626,7 +41674,7 @@ object-assign
 									{ marginStart: f ? (0, A.default)(Y, -1) : 0 }
 								]
 							}),
-							H
+							R
 						);
 					}),
 					r
@@ -42560,8 +42608,8 @@ object-assign
 			N = D.f,
 			S = I.f,
 			k = r.Symbol,
-			H = r.JSON,
-			R = H && H.stringify,
+			R = r.JSON,
+			H = R && R.stringify,
 			T = f('_hidden'),
 			x = f('toPrimitive'),
 			U = {}.propertyIsEnumerable,
@@ -42717,7 +42765,7 @@ object-assign
 				return M.f(m(e));
 			}
 		}),
-			H &&
+			R &&
 				a(
 					a.S +
 						a.F *
@@ -42725,7 +42773,7 @@ object-assign
 								s(function() {
 									var e = k();
 									return (
-										'[null]' != R([e]) || '{}' != R({ a: e }) || '{}' != R(Object(e))
+										'[null]' != H([e]) || '{}' != H({ a: e }) || '{}' != H(Object(e))
 									);
 								})),
 					'JSON',
@@ -42741,7 +42789,7 @@ object-assign
 												return t;
 										}),
 									(r[1] = t),
-									R.apply(H, r)
+									H.apply(R, r)
 								);
 						}
 					}
@@ -44420,17 +44468,17 @@ object-assign
 
 						)
 							a(n[i++]);
-						(e._c = []), (e._n = !1), t && !e._h && H(e);
+						(e._c = []), (e._n = !1), t && !e._h && R(e);
 					});
 				}
 			},
-			H = function(e) {
+			R = function(e) {
 				B.call(c, function() {
 					var t,
 						n,
 						r,
 						o = e._v,
-						i = R(e);
+						i = H(e);
 					if (
 						(i &&
 							((t = m(function() {
@@ -44442,14 +44490,14 @@ object-assign
 									  r.error &&
 									  r.error('Unhandled promise rejection', o);
 							})),
-							(e._h = D || R(e) ? 2 : 1)),
+							(e._h = D || H(e) ? 2 : 1)),
 						(e._a = void 0),
 						i && t.e)
 					)
 						throw t.v;
 				});
 			},
-			R = function(e) {
+			H = function(e) {
 				return 1 !== e._h && 0 === (e._a || e._c).length;
 			},
 			T = function(e) {
@@ -46916,14 +46964,14 @@ object-assign
 				N,
 				S = Array.prototype,
 				k = Function.prototype,
-				H = Object.prototype,
-				R = E['__core-js_shared__'],
+				R = Object.prototype,
+				H = E['__core-js_shared__'],
 				T = k.toString,
-				x = H.hasOwnProperty,
-				U = (F = /[^.]+$/.exec((R && R.keys && R.keys.IE_PROTO) || ''))
+				x = R.hasOwnProperty,
+				U = (F = /[^.]+$/.exec((H && H.keys && H.keys.IE_PROTO) || ''))
 					? 'Symbol(src)_1.' + F
 					: '',
-				j = H.toString,
+				j = R.toString,
 				O = T.call(Object),
 				P = RegExp(
 					'^' +
@@ -46946,7 +46994,7 @@ object-assign
 						return Y(N(e));
 					}),
 				z = Object.create,
-				K = H.propertyIsEnumerable,
+				K = R.propertyIsEnumerable,
 				V = S.splice,
 				X = J ? J.toStringTag : void 0,
 				Z = (function() {
@@ -46963,7 +47011,7 @@ object-assign
 				re = (function() {
 					function e() {}
 					return function(t) {
-						if (!He(t)) return {};
+						if (!Re(t)) return {};
 						if (z) return z(t);
 						e.prototype = t;
 						var n = new e();
@@ -47165,12 +47213,12 @@ object-assign
 					  })(e);
 			}
 			function pe(e) {
-				return Re(e) && he(e) == c;
+				return He(e) && he(e) == c;
 			}
 			function Be(e) {
 				return (
 					!(
-						!He(e) ||
+						!Re(e) ||
 						(function(e) {
 							return !!U && U in e;
 						})(e)
@@ -47191,7 +47239,7 @@ object-assign
 				);
 			}
 			function we(e) {
-				if (!He(e))
+				if (!Re(e))
 					return (function(e) {
 						var t = [];
 						if (null != e) for (var n in Object(e)) t.push(n);
@@ -47207,7 +47255,7 @@ object-assign
 					ge(
 						t,
 						function(i, a) {
-							if ((o || (o = new Ae()), He(i)))
+							if ((o || (o = new Ae()), Re(i)))
 								!(function(e, t, n, r, o, i, a) {
 									var A = Ie(e, n),
 										c = Ie(t, n),
@@ -47223,7 +47271,7 @@ object-assign
 											d || g || h
 												? Fe(A)
 													? (l = A)
-													: Re((m = A)) && Ye(m)
+													: He((m = A)) && Ye(m)
 													? (l = (function(e, t) {
 															var n = -1,
 																r = e.length;
@@ -47251,7 +47299,7 @@ object-assign
 													  (l = new p.constructor(B, p.byteOffset, p.length)))
 													: (l = [])
 												: (function(e) {
-														if (!Re(e) || he(e) != f) return !1;
+														if (!He(e) || he(e) != f) return !1;
 														var t = W(e);
 														if (null === t) return !0;
 														var n = x.call(t, 'constructor') && t.constructor;
@@ -47273,7 +47321,7 @@ object-assign
 																	return n;
 																})(e, xe(e));
 														  })(A))
-														: (He(A) && !Se(A)) ||
+														: (Re(A) && !Se(A)) ||
 														  (l = (function(e) {
 																return 'function' != typeof e.constructor || ve(e)
 																	? {}
@@ -47346,7 +47394,7 @@ object-assign
 			}
 			function ve(e) {
 				var t = e && e.constructor;
-				return e === (('function' == typeof t && t.prototype) || H);
+				return e === (('function' == typeof t && t.prototype) || R);
 			}
 			function Ie(e, t) {
 				if (('constructor' !== t || 'function' != typeof e[t]) && '__proto__' != t)
@@ -47390,7 +47438,7 @@ object-assign
 				)
 					? pe
 					: function(e) {
-							return Re(e) && x.call(e, 'callee') && !K.call(e, 'callee');
+							return He(e) && x.call(e, 'callee') && !K.call(e, 'callee');
 					  },
 				Fe = Array.isArray;
 			function Ye(e) {
@@ -47402,18 +47450,18 @@ object-assign
 					return !1;
 				};
 			function Se(e) {
-				if (!He(e)) return !1;
+				if (!Re(e)) return !1;
 				var t = he(e);
 				return t == l || t == u || t == s || t == g;
 			}
 			function ke(e) {
 				return 'number' == typeof e && e > -1 && e % 1 == 0 && e <= A;
 			}
-			function He(e) {
+			function Re(e) {
 				var t = typeof e;
 				return null != e && ('object' == t || 'function' == t);
 			}
-			function Re(e) {
+			function He(e) {
 				return null != e && 'object' == typeof e;
 			}
 			var Te = M
@@ -47423,7 +47471,7 @@ object-assign
 						};
 				  })(M)
 				: function(e) {
-						return Re(e) && ke(e.length) && !!w[he(e)];
+						return He(e) && ke(e.length) && !!w[he(e)];
 				  };
 			function xe(e) {
 				return Ye(e) ? ce(e, !0) : we(e);
@@ -47442,7 +47490,7 @@ object-assign
 							o = Ue.length > 3 && 'function' == typeof o ? (r--, o) : void 0,
 								i &&
 									(function(e, t, n) {
-										if (!He(n)) return !1;
+										if (!Re(n)) return !1;
 										var r = typeof t;
 										return (
 											!!('number' == r
@@ -48217,13 +48265,13 @@ object-assign
 			Object.defineProperty(t, 'TabBar', {
 				enumerable: !0,
 				get: function() {
-					return H.TabBar;
+					return R.TabBar;
 				}
 			}),
 			Object.defineProperty(t, 'Tab', {
 				enumerable: !0,
 				get: function() {
-					return R.Tab;
+					return H.Tab;
 				}
 			}),
 			Object.defineProperty(t, 'Text', {
@@ -48311,8 +48359,8 @@ object-assign
 			N = n(221),
 			S = n(861),
 			k = n(863),
-			H = n(360),
-			R = n(864),
+			R = n(360),
+			H = n(864),
 			T = n(33),
 			x = n(865),
 			U = n(866),
@@ -52727,8 +52775,8 @@ object-assign
 								N = t.captionIconWidth,
 								S = t.captionIconHeight,
 								k = t.captionIconMarginRight,
-								H = t.captionIconTintColor,
-								R = E(t, [
+								R = t.captionIconTintColor,
+								H = E(t, [
 									'textMarginHorizontal',
 									'textFontFamily',
 									'textFontSize',
@@ -52757,7 +52805,7 @@ object-assign
 								]);
 							return {
 								container: a,
-								inputContainer: (0, i.default)((0, i.default)({}, R), o),
+								inputContainer: (0, i.default)((0, i.default)({}, H), o),
 								captionContainer: { marginTop: b },
 								text: {
 									marginHorizontal: A,
@@ -52775,7 +52823,7 @@ object-assign
 									marginBottom: v,
 									fontWeight: I
 								},
-								captionIcon: { width: N, height: S, tintColor: H, marginRight: k },
+								captionIcon: { width: N, height: S, tintColor: R, marginRight: k },
 								captionLabel: { fontSize: D, fontWeight: Y, lineHeight: F, color: M }
 							};
 						}),
@@ -55391,12 +55439,12 @@ object-assign
 			'[object Uint16Array]'
 		] = N['[object Uint32Array]'] = !0),
 			(N['[object Error]'] = N[D] = N['[object WeakMap]'] = !1),
-			(e.exports = function e(t, n, S, k, H, R) {
+			(e.exports = function e(t, n, S, k, R, H) {
 				var T,
 					x = n & v,
 					U = n & I,
 					j = n & b;
-				if ((S && (T = H ? S(t, k, H, R) : S(t)), void 0 !== T)) return T;
+				if ((S && (T = R ? S(t, k, R, H) : S(t)), void 0 !== T)) return T;
 				if (!E(t)) return t;
 				var O = w(t);
 				if (O) {
@@ -55405,31 +55453,31 @@ object-assign
 					var P = g(t),
 						G = P == D || P == F;
 					if (y(t)) return c(t, x);
-					if (P == Y || P == M || (G && !H)) {
+					if (P == Y || P == M || (G && !R)) {
 						if (((T = U || G ? {} : B(t)), !x))
 							return U ? u(t, A(T, t)) : l(t, a(T, t));
 					} else {
-						if (!N[P]) return H ? t : {};
+						if (!N[P]) return R ? t : {};
 						T = p(t, P, x);
 					}
 				}
-				R || (R = new r());
-				var J = R.get(t);
+				H || (H = new r());
+				var J = H.get(t);
 				if (J) return J;
-				R.set(t, T),
+				H.set(t, T),
 					C(t)
 						? t.forEach(function(r) {
-								T.add(e(r, n, S, r, t, R));
+								T.add(e(r, n, S, r, t, H));
 						  })
 						: m(t) &&
 						  t.forEach(function(r, o) {
-								T.set(o, e(r, n, S, o, t, R));
+								T.set(o, e(r, n, S, o, t, H));
 						  });
 				var _ = j ? (U ? f : d) : U ? keysIn : Q,
 					L = O ? void 0 : _(t);
 				return (
 					o(L || t, function(r, o) {
-						L && (r = t[(o = r)]), i(T, o, e(r, n, S, o, t, R));
+						L && (r = t[(o = r)]), i(T, o, e(r, n, S, o, t, H));
 					}),
 					T
 				);
@@ -57982,7 +58030,10 @@ object-assign
 				remoteSet: !1
 			},
 			candidate: {},
-			constraints: { mediaStream: { audio: !0, video: !1 } }
+			constraints: {
+				mediaStream: { audio: !0, video: !1 },
+				offerOptions: { offerToReceiveVideo: !0, offerToReceiveAudio: !0 }
+			}
 		};
 		var l = function() {
 			var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
@@ -58023,7 +58074,10 @@ object-assign
 				t = arguments.length > 1 ? arguments[1] : void 0;
 			switch (t.type) {
 				case A.SET_CONSTRAINTS:
-					return s({}, e, { mediaStream: t.mediaStream });
+					var n = t.constraints,
+						r = n.mediaStream,
+						o = n.offerOptions;
+					return s({}, e, { mediaStream: r, offerOptions: o });
 				default:
 					return e;
 			}
@@ -60562,12 +60616,12 @@ object-assign
 		var i = o(n(38)),
 			a = o(n(75)),
 			A = n(126),
-			c = n(249);
-		n(127);
+			c = n(249),
+			s = n(127);
 		n(166);
-		var s = r(n(52)),
-			l = o(n(385));
-		function u(e, t) {
+		var l = r(n(52)),
+			u = o(n(385));
+		function d(e, t) {
 			var n = Object.keys(e);
 			if (Object.getOwnPropertySymbols) {
 				var r = Object.getOwnPropertySymbols(e);
@@ -60579,27 +60633,27 @@ object-assign
 			}
 			return n;
 		}
-		function d(e) {
+		function f(e) {
 			for (var t = 1; t < arguments.length; t++) {
 				var n = null != arguments[t] ? arguments[t] : {};
 				t % 2
-					? u(Object(n), !0).forEach(function(t) {
+					? d(Object(n), !0).forEach(function(t) {
 							(0, i.default)(e, t, n[t]);
 					  })
 					: Object.getOwnPropertyDescriptors
 					? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-					: u(Object(n)).forEach(function(t) {
+					: d(Object(n)).forEach(function(t) {
 							Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
 					  });
 			}
 			return e;
 		}
-		var f,
-			g = a.default.mark(S),
-			h = a.default.mark(k),
+		var g,
+			h = a.default.mark(R),
 			p = a.default.mark(H),
-			B = a.default.mark(R),
-			w = a.default.mark(function(e) {
+			B = a.default.mark(T),
+			w = a.default.mark(x),
+			y = a.default.mark(function(e) {
 				return a.default.wrap(function(t) {
 					for (;;)
 						switch ((t.prev = t.next)) {
@@ -60609,34 +60663,36 @@ object-assign
 							case 'end':
 								return t.stop();
 						}
-				}, w);
+				}, y);
 			}),
-			y = a.default.mark(x),
-			m = a.default.mark(U),
-			E = (s.AUTH, s.ADD_CANDIDATE, s.CREATE_PEER_CONN),
-			C = s.SEND_CANDIDATE,
-			Q = s.SEND_OFFER,
-			v = s.GOT_MESSAGE,
-			I = s.SET_REMOTE,
-			b = s.setRemote,
-			M = function(e) {
+			m = a.default.mark(j),
+			E = a.default.mark(O),
+			C = (l.AUTH, l.ADD_CANDIDATE, l.CREATE_PEER_CONN),
+			Q = l.SEND_CANDIDATE,
+			v = l.SEND_OFFER,
+			I = l.GOT_MESSAGE,
+			b = l.SET_REMOTE,
+			M = l.setRemote,
+			D = l.setConstraints,
+			F = function(e) {
 				return e.call.peerStore;
 			},
-			D = function(e) {
-				return e.call.constraints.mediaStream;
+			Y = function(e) {
+				var t = e.call.constraints;
+				return { mediaStream: t.mediaStream, offerOptions: t.offerOptions };
 			},
-			F = 'https://monorift.com/'.concat('call'),
-			Y = function() {
+			N = (0, s.originLink)('call'),
+			S = function() {
 				return (
-					(f = (0, l.default)(F)),
+					(g = (0, u.default)(N)),
 					new Promise(function(e) {
-						f.on('connect', function() {
-							e(f);
+						g.on('connect', function() {
+							e(g);
 						});
 					})
 				);
 			},
-			N = function(e) {
+			k = function(e) {
 				return (0, c.eventChannel)(function(t) {
 					e.on('message', function(e, n) {
 						console.log('emitting message from socketchannel'),
@@ -60648,16 +60704,16 @@ object-assign
 					return function() {};
 				});
 			};
-		function S() {
+		function R() {
 			var e, t, n, r, o;
 			return a.default.wrap(
 				function(i) {
 					for (;;)
 						switch ((i.prev = i.next)) {
 							case 0:
-								return (i.next = 2), (0, A.call)(Y);
+								return (i.next = 2), (0, A.call)(S);
 							case 2:
-								return (e = i.sent), (i.next = 5), (0, A.call)(N, e);
+								return (e = i.sent), (i.next = 5), (0, A.call)(k, e);
 							case 5:
 								t = i.sent;
 							case 6:
@@ -60669,7 +60725,7 @@ object-assign
 									(o = n.peerConstraints),
 									(i.prev = 12),
 									(i.next = 15),
-									(0, A.put)({ type: v, message: r, peerConstraints: o })
+									(0, A.put)({ type: I, message: r, peerConstraints: o })
 								);
 							case 15:
 								i.next = 20;
@@ -60686,12 +60742,12 @@ object-assign
 								return i.stop();
 						}
 				},
-				g,
+				h,
 				null,
 				[[12, 17]]
 			);
 		}
-		function k(e) {
+		function H(e) {
 			var t, n;
 			return a.default.wrap(function(r) {
 				for (;;)
@@ -60701,14 +60757,14 @@ object-assign
 								(t = e.payload),
 								(n = { type: 'candidate', candidate: t }),
 								console.log(n),
-								f.emit('message', n);
+								g.emit('message', n);
 						case 5:
 						case 'end':
 							return r.stop();
 					}
-			}, h);
+			}, p);
 		}
-		function H(e) {
+		function T(e) {
 			var t, n;
 			return a.default.wrap(function(r) {
 				for (;;)
@@ -60731,7 +60787,7 @@ object-assign
 									});
 								}),
 								(r.next = 6),
-								(0, A.put)(s.setPeerConn(n))
+								(0, A.put)(l.setPeerConn(n))
 							);
 						case 6:
 							console.log(n);
@@ -60739,53 +60795,63 @@ object-assign
 						case 'end':
 							return r.stop();
 					}
-			}, p);
-		}
-		function R(e) {
-			var t, n, r, o;
-			return a.default.wrap(function(i) {
-				for (;;)
-					switch ((i.prev = i.next)) {
-						case 0:
-							return (
-								(t = e.constraints),
-								console.log('Sending offer'),
-								{},
-								(i.next = 5),
-								(0, A.select)(M)
-							);
-						case 5:
-							return (
-								(n = i.sent),
-								(r = n.conn),
-								(i.next = 9),
-								r
-									.createOffer({ offerToReceiveVideo: !0, offerToReceiveAudio: !0 })
-									.catch(function(e) {})
-							);
-						case 9:
-							return (
-								(o = i.sent),
-								r.setLocalDescription(o),
-								(i.next = 13),
-								(0, A.put)(s.setPeerInitiator(!0))
-							);
-						case 13:
-							f.emit('message', o, t);
-						case 14:
-						case 'end':
-							return i.stop();
-					}
 			}, B);
 		}
-		var T = function(e, t) {
+		function x(e) {
+			var t, n, r, o, i, c, s, u, d, h;
+			return a.default.wrap(function(a) {
+				for (;;)
+					switch ((a.prev = a.next)) {
+						case 0:
+							return (
+								(t = e.altConstraints),
+								(n = e.altOfferOptions),
+								console.log('Sending offer'),
+								(a.next = 4),
+								(0, A.select)(Y)
+							);
+						case 4:
+							return (
+								(r = a.sent),
+								(o = r.mediaStream),
+								(i = r.offerOptions),
+								(c = f({}, o, {}, t)),
+								(s = f({}, i, {}, n)),
+								(a.next = 12),
+								(0, A.select)(F)
+							);
+						case 12:
+							return (
+								(u = a.sent),
+								(d = u.conn),
+								(a.next = 16),
+								d.createOffer(s).catch(function(e) {
+									console.log(e);
+								})
+							);
+						case 16:
+							return (
+								(h = a.sent),
+								d.setLocalDescription(h),
+								(a.next = 20),
+								(0, A.put)(l.setPeerInitiator(!0))
+							);
+						case 20:
+							g.emit('message', h, c);
+						case 21:
+						case 'end':
+							return a.stop();
+					}
+			}, w);
+		}
+		var U = function(e, t) {
 			var n;
 			return a.default.async(function(r) {
 				for (;;)
 					switch ((r.prev = r.next)) {
 						case 0:
 							return (
-								(0, A.put)(s.setPeerStarted(!0)),
+								(0, A.put)(l.setPeerStarted(!0)),
 								console.log('START', 'getting usermedia'),
 								(r.next = 4),
 								a.default.awrap(navigator.mediaDevices.getUserMedia(t))
@@ -60805,123 +60871,131 @@ object-assign
 					}
 			});
 		};
-		function x(e) {
-			var t, n, r, o, i, c, s, l, u, g, h;
+		function j(e) {
+			var t, n, r, o, i, c, s, l, u, d, h, p, B;
 			return a.default.wrap(function(a) {
 				for (;;)
 					switch ((a.prev = a.next)) {
 						case 0:
 							return (
-								(t = e.message), (n = e.peerConstraints), (a.next = 3), (0, A.select)(M)
+								(t = e.message), (n = e.peerConstraints), (a.next = 3), (0, A.select)(F)
 							);
 						case 3:
-							return (
-								(r = a.sent),
+							if (
+								((r = a.sent),
 								(o = r.conn),
 								(i = r.isStarted),
 								(c = r.isInitiator),
-								(a.next = 7),
-								(0, A.select)(D)
-							);
-						case 7:
-							if ((a.sent, console.log('GOT_MESSAGE', t), 'offer' != t.type)) {
-								a.next = 39;
+								console.log('GOT_MESSAGE', t),
+								'offer' != t.type)
+							) {
+								a.next = 40;
 								break;
 							}
+							if (!n) {
+								a.next = 11;
+								break;
+							}
+							return (a.next = 11), (0, A.put)(D({ mediaStream: n }));
+						case 11:
 							return (
-								(a.next = 12), o.setRemoteDescription(new RTCSessionDescription(t))
+								(a.next = 14), o.setRemoteDescription(new RTCSessionDescription(t))
 							);
-						case 12:
+						case 14:
 							if (c || i) {
-								a.next = 18;
+								a.next = 20;
 								break;
 							}
-							return (a.next = 15), (0, A.call)(T, o, n);
-						case 15:
-							a.sent, (a.next = 22);
+							return (a.next = 17), (0, A.call)(U, o, n);
+						case 17:
+							a.sent, (a.next = 24);
 							break;
-						case 18:
-							return (a.next = 20), navigator.mediaDevices.getUserMedia(n);
 						case 20:
+							return (a.next = 22), navigator.mediaDevices.getUserMedia(n);
+						case 22:
 							(s = a.sent).getTracks().forEach(function(e) {
 								console.log('adding track', 'from message start func'),
 									o.addTrack(e, s);
 							});
-						case 22:
+						case 24:
 							return (
 								console.log('GOT_MESSAGE', 'setting remote desc'),
-								(a.next = 26),
-								(0, A.put)(b(!0))
+								(a.next = 27),
+								(0, A.put)(M(!0))
 							);
-						case 26:
+						case 27:
 							return (
 								console.log('put setting remote'),
 								console.log('GOT_MESSAGE', 'creating answer'),
-								(a.next = 30),
+								(a.next = 31),
 								o.createAnswer().catch(function(e) {
 									console.log(e);
 								})
 							);
-						case 30:
+						case 31:
 							return (
 								(l = a.sent),
 								console.log('GOT_MESSAGE', 'setting local desc'),
-								(a.next = 34),
+								(a.next = 35),
 								o.setLocalDescription(l)
 							);
-						case 34:
+						case 35:
 							console.log('GOT_MESSAGE', 'sending answer'),
 								(u = o.localDescription),
-								f.emit('message', u),
-								(a.next = 60);
+								g.emit('message', u),
+								(a.next = 66);
 							break;
-						case 39:
+						case 40:
 							if ('answer' !== t.type) {
-								a.next = 53;
+								a.next = 59;
 								break;
 							}
 							return (
 								console.log('GOT_MESSAGE', 'answer: setting remote desc'),
-								(a.next = 43),
+								(a.next = 44),
 								o.setRemoteDescription(new RTCSessionDescription(t)).catch(function(e) {
 									console.log(e);
 								})
 							);
-						case 43:
-							return (a.next = 45), (0, A.put)(b(!0));
-						case 45:
+						case 44:
+							return (a.next = 46), (0, A.put)(M(!0));
+						case 46:
+							return (a.next = 48), (0, A.select)(Y);
+						case 48:
 							return (
-								(a.next = 47),
-								navigator.mediaDevices.getUserMedia({ audio: !0, video: !0 })
+								(d = a.sent),
+								(h = d.mediaStream),
+								(a.next = 53),
+								navigator.mediaDevices.getUserMedia(h)
 							);
-						case 47:
-							(g = a.sent).getTracks().forEach(function(e) {
-								o.addTrack(e, g);
+						case 53:
+							(p = a.sent).getTracks().forEach(function(e) {
+								o.addTrack(e, p);
 							}),
 								console.log('ADDED TRACK'),
 								console.log('set remote desc'),
-								(a.next = 60);
+								(a.next = 66);
 							break;
-						case 53:
+						case 59:
 							if ('candidate' != t.type) {
-								a.next = 60;
+								a.next = 66;
 								break;
 							}
-							return (a.next = 56), (0, A.take)(I);
-						case 56:
+							return (a.next = 62), (0, A.take)(b);
+						case 62:
 							a.sent,
 								console.log('GOT_MESSAGE', 'candidate'),
-								(h = new RTCIceCandidate(d({}, t.candidate))),
-								o.addIceCandidate(h).catch(function(e) {
+								(B = new RTCIceCandidate(f({}, t.candidate))),
+								o.addIceCandidate(B).catch(function(e) {
 									console.log(e);
 								});
-						case 60:
+						case 66:
 						case 'end':
 							return a.stop();
 					}
-			}, y);
+			}, m);
 		}
-		function U() {
+		function O() {
 			return a.default.wrap(function(e) {
 				for (;;)
 					switch ((e.prev = e.next)) {
@@ -60929,21 +61003,21 @@ object-assign
 							return (
 								(e.next = 2),
 								(0, A.all)([
-									S(),
-									(0, A.takeLatest)(C, k),
-									(0, A.takeLatest)(E, H),
-									(0, A.takeLatest)(Q, R),
-									(0, A.takeEvery)(v, x)
+									R(),
+									(0, A.takeLatest)(Q, H),
+									(0, A.takeLatest)(C, T),
+									(0, A.takeLatest)(v, x),
+									(0, A.takeEvery)(I, j)
 								])
 							);
 						case 2:
 						case 'end':
 							return e.stop();
 					}
-			}, m);
+			}, E);
 		}
-		var j = U;
-		t.default = j;
+		var P = O;
+		t.default = P;
 	},
 	function(e, t, n) {
 		'use strict';
@@ -61162,7 +61236,7 @@ object-assign
 				o
 			);
 		}
-		function H() {
+		function R() {
 			var e = null;
 			var t = [];
 			return {
@@ -61208,7 +61282,7 @@ object-assign
 				}
 			};
 		}
-		var R = !(
+		var H = !(
 			'undefined' == typeof window ||
 			!window.document ||
 			!window.document.createElement
@@ -61226,7 +61300,7 @@ object-assign
 			}
 		}
 		function O(e) {
-			void 0 === e && (e = {}), R || M(!1);
+			void 0 === e && (e = {}), H || M(!1);
 			var t,
 				n = window.history,
 				r =
@@ -61259,7 +61333,7 @@ object-assign
 					.toString(36)
 					.substr(2, u);
 			}
-			var h = H();
+			var h = R();
 			function p(e) {
 				Object(E.a)(P, e),
 					(P.length = n.length),
@@ -61406,7 +61480,7 @@ object-assign
 			window.location.replace(J(window.location.href) + '#' + e);
 		}
 		function W(e) {
-			void 0 === e && (e = {}), R || M(!1);
+			void 0 === e && (e = {}), H || M(!1);
 			var t = window.history,
 				n = (window.navigator.userAgent.indexOf('Firefox'), e),
 				r = n.getUserConfirmation,
@@ -61421,7 +61495,7 @@ object-assign
 				var e = l(_());
 				return A && (e = Y(e, A)), k(e);
 			}
-			var d = H();
+			var d = R();
 			function f(e) {
 				Object(E.a)(b, e),
 					(b.length = t.length),
@@ -62066,17 +62140,17 @@ object-assign
 			Ne = n(403),
 			Se = n.n(Ne),
 			ke = n(404),
-			He = n.n(ke);
+			Re = n.n(ke);
 		n.d(t, 'default', function() {
 			return Te;
 		});
-		const Re = Se()({});
+		const He = Se()({});
 		class Te extends o.a.Component {
 			render() {
 				return o.a.createElement(
-					He.a,
+					Re.a,
 					null,
-					o.a.createElement(i.Provider, { store: Re }, o.a.createElement(Ye, null))
+					o.a.createElement(i.Provider, { store: He }, o.a.createElement(Ye, null))
 				);
 			}
 		}

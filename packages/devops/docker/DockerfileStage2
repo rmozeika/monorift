@@ -12,4 +12,4 @@ COPY ./private/docker.conf ./local.conf
 
 EXPOSE 8080
 ## Launch the wait tool and then your application
-RUN yarn run init:std
+#RUN yarn run init:std

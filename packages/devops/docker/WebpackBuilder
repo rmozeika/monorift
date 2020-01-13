@@ -5,17 +5,16 @@ WORKDIR /
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY packages/rp2/package.json /package.json
+COPY packages/rift/package.json /package.json
 #COPY packages/rift/package.json /packages/rift/package.json
+COPY ./webpack.prod.docker.js /webpack.config.js
 
 
-
-COPY dist.web/. /dist.web/.
+#COPY dist.web/. /dist.web/.
 
 RUN yarn install
-#RUN yarn install -g webpack
-#RUN yarn install -g webpack-cli
-
+RUN yarn global add webpack
+RUN yarn global add webpack-cli
 #RUN cd /packages/rift
 #RUN yarn install
 

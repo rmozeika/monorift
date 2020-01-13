@@ -11,7 +11,7 @@ const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
 const config = require('./config.js');
-const { mongoConnectionString: uri, remote, sessionSecret } = config;
+const { mongoConnectionString: uri, remote, sessionSecret, debug } = config;
 const fs = require('fs');
 const webpack = require('webpack');
 var io = require('socket.io');
@@ -22,7 +22,6 @@ var store = new MongoDBStore({
 	uri,
 	collection: 'mySessions'
 });
-const [debug = false] = process.argv.slice(2);
 console.log('CHCK DEBUG', debug);
 // LOGGING
 // var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
@@ -99,11 +98,16 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 let buildpath;
 // if (false) {
 if (remote == 'false') {
+	console.log('Not remote');
 	const opts = {};
 	if (debug) {
 		opts.maxAge = 5;
 	}
-	const webpackConfig = require('../../webpack.config.js');
+
+	const webpackConfig =
+		debug == 'false'
+			? require('../../webpack.config.prod.js')
+			: require('../../webpack.config.js');
 	const buildpath = path.resolve(webpackConfig.output.path);
 	app.use(express.static(buildpath, opts));
 	//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
@@ -119,6 +123,8 @@ if (remote == 'false') {
 	app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
 } else {
+	console.log('Is remote');
+
 	// app.use('*', express.static(path.resolve('./dist.web')));
 	builpath = path.resolve(__dirname, './dist.web');
 	app.use(express.static(__dirname + './dist.web'));

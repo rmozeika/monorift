@@ -25,9 +25,11 @@ const debug = false; //change to false
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('*', (req, res) => {
-	console.log(req);
+	console.log('got req (get)');
+	res.send('success');
 });
 app.post('*', async (req, res) => {
+	console.log('Got request!');
 	const { body } = req;
 	const sig = req.headers['x-hub-signature'];
 	if (!sig || !body) return;
@@ -37,8 +39,9 @@ app.post('*', async (req, res) => {
 	const valid = sig == digest;
 	if (!valid) return;
 	const { ref } = body;
-	console.log(req);
+	console.log(ref);
 	if (ref == branch || debug) {
+		console.log('Updating bash and writing file');
 		const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
 		// const operation = await execFileAsync(updateScript, { cwd: __dirname }).catch(
 		// 	e => {
@@ -49,7 +52,7 @@ app.post('*', async (req, res) => {
 		let output = '';
 		const logChunk = chunk => {
 			let str = chunk.toString();
-			console.log(str);
+			console.log('Chunk', str);
 			output += str;
 		};
 		updateScr.stdout.on('data', logChunk);
@@ -57,7 +60,8 @@ app.post('*', async (req, res) => {
 		updateScr.on('close', code => {
 			console.log('closed ' + code);
 			const logFile = path.resolve(__dirname, 'history');
-			writeFile(logFile, output);
+			utils.writeFile(logFile, output);
+			res.send('done');
 		});
 		// console.log(operation);
 	}

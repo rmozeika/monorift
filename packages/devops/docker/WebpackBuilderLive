@@ -1,0 +1,3 @@
+FROM robertmozeika/rp2-webpack-stage:latest
+COPY ./packages/rift/. ./
+RUN webpack --config webpack.config.js

@@ -4,8 +4,12 @@ FROM robertmozeika/rp2-stage:latest
 COPY ./packages/rp2/. ./
 # Overwrite conf for kubernetes
 # COPY ./packages/devops/docker.conf ./local.conf
-COPY ./packages/devops/docker/docker.conf ./local.conf
-EXPOSE 8080
+COPY ./private/docker.conf ./local.conf
+# COPY ./packages/rift ./packages/rift
 
+# COPY ./webpack.config.js ./webpack.config.js
+# RUN webpack --config ./webpack.config.js
+
+EXPOSE 8080
 ## Launch the wait tool and then your application
-CMD yarn run init:std
+#RUN yarn run init:std

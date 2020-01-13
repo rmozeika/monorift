@@ -1,0 +1,1 @@
+rsync --recursive -v -e ssh --exclude='ec2-files/*' --exclude='copes/*' ./private/. awsmono:/home/monorift/monorift/private

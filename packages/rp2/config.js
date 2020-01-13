@@ -9,10 +9,17 @@ var localConfPath = path.resolve(__dirname, process.env.CONFIG || 'local.conf');
 envFile(localConfPath, { raise: false });
 
 var env = process.env;
-
+const { clientID, clientSecret, domain, callbackURL } = env;
 exports.rootuser = env.rootuser;
 exports.rootpassword = env.rootpassword;
 exports.remote = env.remote || true;
+exports.debug = env.debug || false;
 exports.mongoConnectionString = env.mongoConnectionString;
 exports.sessionSecret = env.sessionSecret;
+exports.auth0Config = {
+	clientID,
+	clientSecret,
+	domain,
+	callbackURL
+};
 exports.env = env;

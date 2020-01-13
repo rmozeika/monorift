@@ -56,3 +56,7 @@ npm install --global webpack
 npm install --global webpack-cli
 2m && npm install
 npm run-script build:prod
+
+systemctl enable nginx
+systemctl start nginx 
+#check permission denied error due to selinux

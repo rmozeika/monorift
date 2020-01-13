@@ -255,6 +255,9 @@ class Adapter extends React.Component {
 		const audioElem = <audio src="example.mp3"></audio>;
 		return (
 			<Layout style={styles.container}>
+				<Layout style={styles.row}>
+					<Text>Hello!</Text>
+				</Layout>
 				{toDisplay()}
 				<Layout style={styles.row}>
 					<audio

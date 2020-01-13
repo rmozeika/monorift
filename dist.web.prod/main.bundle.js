@@ -25298,6 +25298,15 @@ object-assign
 								return u.createElement(
 									d.Layout,
 									{ style: w.container, __source: { fileName: p, lineNumber: 257 } },
+									u.createElement(
+										d.Layout,
+										{ style: w.row, __source: { fileName: p, lineNumber: 258 } },
+										u.createElement(
+											d.Text,
+											{ __source: { fileName: p, lineNumber: 259 } },
+											'Hello!'
+										)
+									),
 									(function() {
 										if (!0 !== t.created) return i;
 										var e = { audio: n, video: r };
@@ -25311,7 +25320,7 @@ object-assign
 									})(),
 									u.createElement(
 										d.Layout,
-										{ style: w.row, __source: { fileName: p, lineNumber: 259 } },
+										{ style: w.row, __source: { fileName: p, lineNumber: 262 } },
 										u.createElement('audio', {
 											ref: this.audioFileRef,
 											src: '/example.mp3?'.concat(
@@ -25321,7 +25330,7 @@ object-assign
 											),
 											type: 'audio/mpeg',
 											controls: !0,
-											__source: { fileName: p, lineNumber: 260 }
+											__source: { fileName: p, lineNumber: 263 }
 										})
 									)
 								);

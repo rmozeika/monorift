@@ -78,8 +78,63 @@ app.use(function(req, res, next) {
 	next();
 });
 var api = require('./api.js');
+const setupDefaultRoute = () => {
+	if (remote == 'false') {
+		console.log('Not remote');
+		const opts = {};
+		if (debug) {
+			opts.maxAge = 5;
+		}
 
+		const webpackConfig =
+			debug == 'false'
+				? require('../../webpack.config.prod.js')
+				: require('../../webpack.config.js');
+		const buildpath = path.resolve(webpackConfig.output.path);
+		app.use(express.static(buildpath, opts));
+		//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
+		// buildpath = path.resolve(webpackConfig.output.path);
+		// app.use(express.static(buildpath));
+		// app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
+		// app.get('*', (req, res) => {
+		//   //res.
+		//   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
+		//   res.sendFile(indexPath);
+		// });
+		// app.use(express.static(path.resolve(webpackConfig.output.path)))
+		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
+		// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
+	} else {
+		console.log('Is remote');
+
+		// app.use('*', express.static(path.resolve('./dist.web')));
+		builpath = path.resolve(__dirname, './dist.web');
+		app.use(express.static(__dirname + './dist.web'));
+		app.use('*', express.static(path.resolve(__dirname, './dist.web')));
+	}
+};
+const setFurtherRoutes = () => {
+	app.use(
+		function(req, res, next) {
+			var err = new Error('Not Found');
+			err.status = 404;
+			next(err);
+		}.bind(this)
+	);
+	app.use('/', (req, res) => {
+		res.send('root');
+	});
+	app.use(function(err, req, res, next) {
+		res.locals.message = err.message;
+		res.locals.error = req.app.get('env') === 'development' ? err : {};
+		console.log(err);
+		res.status(err.status || 500);
+		res.send('error');
+	});
+};
 api.init(app).then(() => {
+	setupDefaultRoute();
+	setFurtherRoutes();
 	console.log('api ready');
 });
 app.use('/profile', express.static(path.join(__dirname, 'site')));
@@ -97,54 +152,6 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 
 let buildpath;
 // if (false) {
-if (remote == 'false') {
-	console.log('Not remote');
-	const opts = {};
-	if (debug) {
-		opts.maxAge = 5;
-	}
-
-	const webpackConfig =
-		debug == 'false'
-			? require('../../webpack.config.prod.js')
-			: require('../../webpack.config.js');
-	const buildpath = path.resolve(webpackConfig.output.path);
-	app.use(express.static(buildpath, opts));
-	//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
-	// buildpath = path.resolve(webpackConfig.output.path);
-	// app.use(express.static(buildpath));
-	// app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
-	// app.get('*', (req, res) => {
-	//   //res.
-	//   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
-	//   res.sendFile(indexPath);
-	// });
-	// app.use(express.static(path.resolve(webpackConfig.output.path)))
-	app.use('*', express.static(path.resolve(webpackConfig.output.path)));
-	// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
-} else {
-	console.log('Is remote');
-
-	// app.use('*', express.static(path.resolve('./dist.web')));
-	builpath = path.resolve(__dirname, './dist.web');
-	app.use(express.static(__dirname + './dist.web'));
-	app.use('*', express.static(path.resolve(__dirname, './dist.web')));
-}
-app.use(
-	function(req, res, next) {
-		var err = new Error('Not Found');
-		err.status = 404;
-		next(err);
-	}.bind(this)
-);
-
-app.use(function(err, req, res, next) {
-	res.locals.message = err.message;
-	res.locals.error = req.app.get('env') === 'development' ? err : {};
-	console.log(err);
-	res.status(err.status || 500);
-	res.send('error');
-});
 
 console.log('App ready!');
 

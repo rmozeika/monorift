@@ -174,11 +174,23 @@ function onAuthorizeFail(data, message, error, accept) {
 
 	accept(null, false);
 }
-app.io.on('connection', socket => {
+app.io.on('connection', async socket => {
 	const { session = {} } = socket.request;
 	const { passport = {} } = session;
 	const { user = false } = passport;
-
+	// app.api.repositories.users.mongoInstance.updateOne(
+	// 	{ $set: { username: user.nickname} },
+	// 	{ socket_id: socket.id })
+	// 	.then(result => {
+	// 		console.log(result);
+	// 	}).catch(e => {
+	// 		console.log(e);
+	// 	});
+	app.api.repositories.users
+		.updateByUsername(user.nickname, { socket_id: socket.id })
+		.then(result => {
+			console.log(result);
+		});
 	socket.on('check_auth', ack => {
 		if (user) {
 			ack(user);
@@ -186,6 +198,7 @@ app.io.on('connection', socket => {
 		}
 		ack({ user: false });
 	});
+	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });
 app.io.on('message', function(msg) {
 	console.log(msg);

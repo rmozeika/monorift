@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 const passport = require('./auth0');
+const redis = require('redis');
+
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
@@ -36,15 +38,23 @@ console.log('CHCK DEBUG', debug);
 //   console.log('child process exited with code ' + code);
 // });
 var app = express();
-const sessionMiddleware = require('express-session')({
-	secret: sessionSecret,
-	key: 'express.sid',
-	cookie: {
-		maxAge: 1000 * 60 * 60 * 24 * 7
-	},
-	store: store,
-	resave: true,
-	saveUninitialized: true
+// const sessionMiddleware = require('express-session')({
+// 	secret: sessionSecret,
+// 	key: 'express.sid',
+// 	cookie: {
+// 		maxAge: 1000 * 60 * 60 * 24 * 7
+// 	},
+// 	store: store,
+// 	resave: true,
+// 	saveUninitialized: true
+// });
+let RedisStore = require('connect-redis')(session);
+let client = redis.createClient();
+
+const sessionMiddleware = session({
+	store: new RedisStore({ client }),
+	secret: 'keyboard cat',
+	resave: false
 });
 
 app.use(sessionMiddleware);
@@ -154,11 +164,10 @@ let buildpath;
 // if (false) {
 
 console.log('App ready!');
-
 app.api = api;
 const socketIO = io();
 app.io = socketIO;
-
+api.redis = client;
 app.io.use(function(socket, next) {
 	sessionMiddleware(socket.request, {}, next);
 });
@@ -186,6 +195,10 @@ app.io.on('connection', async socket => {
 	// 	}).catch(e => {
 	// 		console.log(e);
 	// 	});
+	if (user) {
+		client.sadd('online_users', user.nickname);
+		client.set(user.nickname, socket.id);
+	}
 	app.api.repositories.users
 		.updateByUsername(user.nickname, { socket_id: socket.id })
 		.then(result => {

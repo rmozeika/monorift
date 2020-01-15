@@ -21,6 +21,8 @@ import Editor from './containers/Editor';
 import Tiffany from './containers/Tiffany';
 
 import Talk from './containers/Talk';
+import Users from './containers/Users';
+
 import { setCode } from './actions';
 import { Main } from './components/tScri';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
@@ -70,6 +72,7 @@ class App extends React.Component<Props, State> {
 						<NavBar />
 						<Switch>
 							<Route path="/">
+								<Users />
 								<Talk />
 							</Route>
 						</Switch>

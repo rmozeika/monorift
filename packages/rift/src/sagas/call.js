@@ -63,9 +63,9 @@ const connect = () => {
 
 const createSocketChannel = socket =>
 	eventChannel(emit => {
-		const handler = (data, secondArg) => {
+		const handler = (data, { peerConstraints, user }) => {
 			console.log('emitting message from socketchannel');
-			emit({ message: data, peerConstraints: secondArg });
+			emit({ message: data, peerConstraints, user });
 		};
 		const onCandidateHandler = candidate => {
 			put({ type: ADD_CANDIDATE, candidate });
@@ -94,9 +94,9 @@ function* initCallSaga() {
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
-		const { message, peerConstraints } = yield take(socketChannel);
+		const { message, peerConstraints, user } = yield take(socketChannel);
 		try {
-			yield put({ type: GOT_MESSAGE, message, peerConstraints });
+			yield put({ type: GOT_MESSAGE, message, peerConstraints, user });
 		} catch (e) {
 			console.log('Call Saga Error', e);
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
@@ -134,7 +134,7 @@ function* createPeerConnSaga({ config = {} }) {
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions }) {
+function* sendOfferSaga({ altConstraints, altOfferOptions, user }) {
 	console.log('Sending offer');
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
@@ -149,7 +149,7 @@ function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	});
 	conn.setLocalDescription(offer);
 	yield put(Actions.setPeerInitiator(true));
-	socket.emit('message', offer, constraints);
+	socket.emit('message', offer, { constraints, user });
 }
 function* gotOfferSaga({ offer }) {}
 
@@ -166,7 +166,7 @@ const start = async (conn, peerConstraints) => {
 	return;
 };
 function addCandidate(candidate) {}
-function* gotMessageSaga({ message, peerConstraints }) {
+function* gotMessageSaga({ message, peerConstraints, user }) {
 	//while (true) {
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator } = peerStore;

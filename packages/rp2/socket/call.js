@@ -17,6 +17,11 @@ class Call extends Socket {
 	}
 	onConnect(socket) {
 		this.createDefaultListeners();
+		const { session = {} } = socket.request;
+		const { passport = {} } = session;
+		const { user = false } = passport;
+		client.set(user.nickname, socket.id);
+
 		socket.on('message', this.onMessage);
 		//socket.on('message1', )
 	}

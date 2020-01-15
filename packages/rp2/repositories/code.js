@@ -2,7 +2,8 @@ var Repository = require('./repository.js');
 const textract = require('textract');
 const path = require('path');
 const esprima = require('esprima');
-const git = require('nodegit');
+// removed because it slow yarn
+// const git = require('nodegit');
 const collection = 'code';
 const fs = require('fs');
 const util = require('util');

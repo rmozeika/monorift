@@ -14,7 +14,6 @@ export const online = (state = {}, action) => {
 			const newState = state;
 			return newState;
 		case SET_ONLINE_USERS:
-			debugger;
 			return { ...state, gotOnlineUsers: true, users: action.payload };
 		default:
 			return state;

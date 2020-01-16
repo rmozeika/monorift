@@ -53,7 +53,10 @@ class UserRoute extends Route {
 		console.log(this);
 		const redisCmd = util.promisify(this.api.redis.SMEMBERS).bind(this.api.redis);
 		redisCmd('online_users').then(result => {
-			res.send(result);
+			const objUsers = result.map(user => {
+				return { name: user };
+			});
+			res.send(objUsers);
 		});
 	}
 }

@@ -27,7 +27,6 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 	try {
 		const origin = originLink(nsp || 'online');
 		const res = yield fetch(origin, { method: 'POST' });
-		debugger;
 		const data = yield res.json();
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));

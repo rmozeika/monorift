@@ -5,10 +5,12 @@ import {
 	Layout,
 	Text,
 	Button,
+	ButtonGroup,
 	styled,
 	Icon,
 	List,
-	ListItem
+	ListItem,
+	withStyles
 } from 'react-native-ui-kitten';
 const styles = StyleSheet.create({
 	container: {
@@ -55,40 +57,82 @@ class UsersList extends React.Component {
 		super();
 	}
 	render() {
-		const { online } = this.props;
-		const renderItemAccessory = style => <Button style={style}>FOLLOW</Button>;
+		const { online, themedStyle } = this.props;
+		const renderItemAccessory = style => (
+			<ButtonGroup>
+				<Button style={style}>Call</Button>
+				<Button style={style}>Video</Button>
+			</ButtonGroup>
+		);
 
-		const renderItemIcon = style => <Icon {...style} name="person" />;
-		const renderItem = ({ item, index }) => (
-			<ListItem
-				title={`${item.title} ${index + 1}`}
-				description={`${item.description} ${index + 1}`}
-				icon={renderItemIcon}
-				accessory={renderItemAccessory}
-			/>
-		);
-		const onlineUserList = online.map(user => {
+		const renderItemIcon = style => {
+			console.log(style);
+			const style2 = {
+				width: style.width,
+				height: style.height,
+				marginHorizontal: style.marginHorizontal,
+				color: 'black'
+			};
 			return (
-				<Layout style={styles.userBlock}>
-					<Layout style={styles.column}>
-						<Button>Test</Button>
-					</Layout>
-					<Layout style={styles.column}>
-						<Text>{user}</Text>
-					</Layout>
-					<Layout style={styles.column}>
-						<Button>Test</Button>
-					</Layout>
-				</Layout>
+				<Icon
+					{...style2}
+					style={{ color: themedStyle.icons.color }}
+					name="user"
+					solid
+					fill="#3366FF"
+				/>
 			);
-		});
-		return (
-			<Layout style={styles.container}>
-				{/* <Layout style={styles.row}> */}
-				{onlineUserList}
-				{/* </Layout> */}
-			</Layout>
-		);
+		};
+		const renderItem = ({ item: user, index }) => {
+			console.log(user);
+			const { name } = user;
+			return (
+				<ListItem
+					title={`${name} ${index + 1}`}
+					description={`${'Call'} ${index + 1}`}
+					icon={renderItemIcon}
+					accessory={renderItemAccessory}
+				/>
+			);
+		};
+
+		// const onlineUserList = online.map(user => {
+		// 	return (
+		// 		<Layout style={styles.userBlock}>
+		// 			<Layout style={styles.column}>
+		// 				<Button>Test</Button>
+		// 			</Layout>
+		// 			<Layout style={styles.column}>
+		// 				<Text>{user}</Text>
+		// 			</Layout>
+		// 			<Layout style={styles.column}>
+		// 				<Button>Test</Button>
+		// 			</Layout>
+		// 		</Layout>
+		// 	);
+		// });
+		return <List data={online} renderItem={renderItem} />;
+
+		// return (
+		// 	<Layout style={styles.container}>
+		// 		{/* <Layout style={styles.row}> */}
+		// 		{onlineUserList}
+		// 		{/* </Layout> */}
+		// 	</Layout>
+		// );
 	}
 }
-export default UsersList;
+
+export const UsersListWithStyles = withStyles(UsersList, theme => ({
+	buttonGroup: {
+		backgroundColor: theme['color-primary-100'],
+		marginHorizontal: 0
+	},
+	icons: {
+		backgroundColor: theme['color-primary-100'],
+		color: theme['color-basic-800']
+	},
+	container: { backgroundColor: '#1A2138' },
+	action: { marginHorizontal: 4 }
+}));
+export default UsersListWithStyles;

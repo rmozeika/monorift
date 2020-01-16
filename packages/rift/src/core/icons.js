@@ -19,78 +19,71 @@ const iconFontStyles = `@font-face {
 }`;
 // #WEB ONLY
 if (Platform.OS == 'web') {
-  const style = document.createElement('style');
-  style.type = 'text/css';
-  if (style.styleSheet) {
-    style.styleSheet.cssText = iconFontStyles;
-  } else {
-    style.appendChild(document.createTextNode(iconFontStyles));
-  }
+	const style = document.createElement('style');
+	style.type = 'text/css';
+	if (style.styleSheet) {
+		style.styleSheet.cssText = iconFontStyles;
+	} else {
+		style.appendChild(document.createTextNode(iconFontStyles));
+	}
 
-
- 
-// Inject stylesheet
-document.head.appendChild(style);
-console.log(Icon);
+	// Inject stylesheet
+	document.head.appendChild(style);
+	console.log(Icon);
 }
 // #ENDWEB
 
 function IconProvider(name) {
-    return {
-      toReactElement: (props) => AwesomeIcon({ name, ...props }, props),
-    };
-  }
-  
+	return {
+		toReactElement: props => AwesomeIcon({ name, ...props }, props)
+	};
+}
+
 function AwesomeIcon({ name, style, children, buttonProps }, props) {
-  console.log(props);
-  const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+	console.log(props);
+	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 
-  if (children || buttonProps) {
-    // const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+	if (children || buttonProps) {
+		// const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 
-    return (
-      <Icon5.Button
-        name={name}
-        // size={height}
-        color={tintColor}
-        // style={iconStyle}
-        {...buttonProps}
-        iconStyle={iconStyle}
-        // backgroundColor={'#FF6721'}
-      >
-        {children}
-      </Icon5.Button>
-    )
-  }
-  return (
-    <Icon5
-      name={name}
-      size={height}
-      color={tintColor}
-      style={iconStyle}
-    />
-  );
+		return (
+			<Icon5.Button
+				name={name}
+				// size={height}
+				color={tintColor}
+				// style={iconStyle}
+				{...buttonProps}
+				iconStyle={iconStyle}
+				// backgroundColor={'#FF6721'}
+			>
+				{children}
+			</Icon5.Button>
+		);
+	}
+	return <Icon5 name={name} size={height} color={tintColor} style={iconStyle} />;
 }
 
 export const AwesomeIconsPack = {
-  name: 'awesome',
-  icons: createIconsMap(),
+	name: 'awesome',
+	icons: createIconsMap()
 };
 
 function createIconsMap() {
-  return {
-    'facebook': IconProvider('facebook'),
-    'google': IconProvider('google'),
-    'sign-in-alt': IconProvider('sign-in-alt'),
-    'sign-out-alt': IconProvider('sign-out-alt'),
-    'bars': IconProvider('bars'),
-  };
+	return {
+		facebook: IconProvider('facebook'),
+		google: IconProvider('google'),
+		'sign-in-alt': IconProvider('sign-in-alt'),
+		'sign-out-alt': IconProvider('sign-out-alt'),
+		bars: IconProvider('bars'),
+		// 'person': IconProvider('person')
+		user: IconProvider('user')
+	};
 
-  // or
+	// or
 
-//   return new Proxy({}, {
-//     get(target, name) {
-//       return IconProvider(name);
-//     },
-//   });
+	//   return new Proxy({}, {
+	//     get(target, name) {
+	//       return IconProvider(name);
+	//     },
+	//   });
 }

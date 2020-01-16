@@ -11,8 +11,8 @@ class Call extends Socket {
 			}
 		}
 	];
-	constructor(io) {
-		super(io, nameSpace);
+	constructor(io, api) {
+		super(io, nameSpace, api);
 		this.createListeners(this.listeners);
 	}
 	onConnect(socket) {
@@ -20,7 +20,7 @@ class Call extends Socket {
 		const { session = {} } = socket.request;
 		const { passport = {} } = session;
 		const { user = false } = passport;
-		client.set(user.nickname, socket.id);
+		this.redis.set(user.nickname, socket.id);
 
 		socket.on('message', this.onMessage);
 		//socket.on('message1', )

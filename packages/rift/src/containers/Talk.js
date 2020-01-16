@@ -61,7 +61,8 @@ let connName = 'peerStore';
 class Adapter extends React.Component {
 	constructor(props) {
 		super(props);
-		let audioRef = React.createRef();
+		// let audioRef = React.createRef();
+		let audioRef = this.props.audioRef;
 		let videoRef = React.createRef();
 		let selfRef = React.createRef();
 		this.audioRef = audioRef;

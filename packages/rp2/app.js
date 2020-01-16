@@ -216,5 +216,5 @@ app.io.on('connection', async socket => {
 app.io.on('message', function(msg) {
 	console.log(msg);
 });
-const call = new Call(app.io);
+const call = new Call(app.io, api);
 module.exports = app;

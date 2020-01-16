@@ -134,7 +134,7 @@ function* createPeerConnSaga({ config = {} }) {
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions, user }) {
+function* sendOfferSaga({ altConstraints, altOfferOptions, user = {} }) {
 	console.log('Sending offer');
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);

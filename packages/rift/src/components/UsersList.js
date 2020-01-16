@@ -58,12 +58,23 @@ class UsersList extends React.Component {
 	}
 	render() {
 		const { online, themedStyle } = this.props;
-		const renderItemAccessory = style => (
-			<ButtonGroup>
-				<Button style={style}>Call</Button>
-				<Button style={style}>Video</Button>
-			</ButtonGroup>
-		);
+		debugger;
+		const renderItemAccessory = style => {
+			const buttonStyle = {
+				...style,
+				marginHorizontal: themedStyle.buttonGroup.marginHorizontal
+			};
+			console.log('BUTTON_STYLE', buttonStyle);
+			debugger;
+			return (
+				<Layout>
+					<ButtonGroup appearance="outline" status="primary">
+						<Button style={buttonStyle}>Call</Button>
+						<Button style={buttonStyle}>Video</Button>
+					</ButtonGroup>
+				</Layout>
+			);
+		};
 
 		const renderItemIcon = style => {
 			console.log(style);
@@ -111,7 +122,9 @@ class UsersList extends React.Component {
 		// 		</Layout>
 		// 	);
 		// });
-		return <List data={online} renderItem={renderItem} />;
+		return (
+			<List data={online} renderItem={renderItem} style={{ width: '100%' }} />
+		);
 
 		// return (
 		// 	<Layout style={styles.container}>

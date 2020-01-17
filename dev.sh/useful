@@ -1,0 +1,4 @@
+dist.web.prod/**, packages/rp2/dist.web, **/dist.web/**,  **/.git*, **/android/**, **/ios/
+
+.*debugger;\n
+.*debugger;?\n

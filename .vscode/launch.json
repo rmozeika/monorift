@@ -7,6 +7,25 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "start:sever",
+			"program": "${workspaceFolder}/packages/rp2/bin/www",
+			"smartStep": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "transer-file",
+			"program": "${workspaceFolder}/dev.sh/transfer-files/index.js",
+			"args": []
+			// "args": ["service"]
+			// "args": ["deployconf"]
+
+			// "autoAttachChildProcesses": true,
+			// "stopOnEntry": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "start:server w/ yarn",
 			"runtimeExecutable": "yarn",
 			"runtimeArgs": ["run", "start"],
@@ -32,13 +51,6 @@
 			"name": "cli build",
 			"program": "${workspaceFolder}/cli.js",
 			"args": ["build", "docker"]
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "start:sever",
-			"program": "${workspaceFolder}/packages/rp2/bin/www",
-			"smartStep": true
 		},
 		{
 			"type": "node",
@@ -75,18 +87,6 @@
 			"port": "9229",
 			"localRoot": "${workspaceFolder}", //packages/deploy/hooks.js",
 			"remoteRoot": "/home/ec2-user/monorift"
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "transer-file",
-			"program": "${workspaceFolder}/dev.sh/transfer-files/index.js",
-			"args": []
-			// "args": ["service"]
-			// "args": ["deployconf"]
-
-			// "autoAttachChildProcesses": true,
-			// "stopOnEntry": true
 		}
 	]
 }

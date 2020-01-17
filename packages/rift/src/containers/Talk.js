@@ -61,7 +61,8 @@ let connName = 'peerStore';
 class Adapter extends React.Component {
 	constructor(props) {
 		super(props);
-		let audioRef = React.createRef();
+		// let audioRef = React.createRef();
+		let audioRef = this.props.audioRef;
 		let videoRef = React.createRef();
 		let selfRef = React.createRef();
 		this.audioRef = audioRef;
@@ -188,7 +189,7 @@ class Adapter extends React.Component {
 		const peerConnection = event.target;
 		const iceCandidate = event.candidate;
 
-		if (iceCandidate) {
+		if (iceCandidate && event.currentTarget.remoteDescription !== null) {
 			const newIceCandidate = new RTCIceCandidate(iceCandidate);
 			console.log('sending candidate');
 			this.props.sendCandidate(newIceCandidate);
@@ -198,14 +199,18 @@ class Adapter extends React.Component {
 		const { peerStore, peerConnStatus } = this.props;
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={styles.row}>
-				{onPress ? <Button onPress={onPress}>Call</Button> : null}
+				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
 				<audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio>
 			</Layout>
 		);
 		const video = (ref, onPress, key) => {
 			return (
 				<Layout key={key} styles={styles.row2}>
-					{onPress ? <Button onPress={onPress}>Call</Button> : null}
+					{onPress ? (
+						<Button disabled onPress={onPress}>
+							Video Call
+						</Button>
+					) : null}
 					<video styles={styles.video} autoPlay muted playsInline ref={ref} />
 				</Layout>
 			);
@@ -222,8 +227,8 @@ class Adapter extends React.Component {
 				handler: this.videoCall.bind(this),
 				ref: this.videoRef,
 				key: 'video-1'
-			},
-			{ type: 'video', handler: false, ref: this.selfRef, key: 'video-2' }
+			}
+			// { type: 'video', handler: false, ref: this.selfRef, key: 'video-2' }
 		];
 
 		const loading = (

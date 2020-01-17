@@ -2,6 +2,7 @@ import config, * as fromConfig from './config';
 import code, * as fromCode from './code';
 import auth, * as fromAuth from './auth';
 import callReducer, * as fromCall from './call';
+import usersReducer, * as fromUsers from './users';
 
 import { combineReducers } from 'redux';
 
@@ -18,14 +19,16 @@ export const initialState = {
 	//     mediaStream: { audio: true, video: false }
 	//   }
 	// },
-	call: { ...fromCall.initialState }
+	call: { ...fromCall.initialState },
+	users: { ...fromUsers.initialState }
 };
 
 export default combineReducers({
 	config,
 	code,
 	auth,
-	call: callReducer
+	call: callReducer,
+	users: usersReducer
 });
 
 export const createReducer = (initialState, handlers) => {

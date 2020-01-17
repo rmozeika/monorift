@@ -16,9 +16,10 @@ class UserRepository extends Repository {
 		return this.findOne({ username }, cb);
 	}
 	importProfile(profile, cb) {
-		const { email, username, nickname } = profile;
+		const { emails, username, nickname } = profile;
+		const [{ value }] = emails;
 		const obj = {
-			email,
+			email: value,
 			username: nickname,
 			src: profile
 		};

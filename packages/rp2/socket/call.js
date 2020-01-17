@@ -20,7 +20,7 @@ class Call extends Socket {
 		const { session = {} } = socket.request;
 		const { passport = {} } = session;
 		const { user = false } = passport;
-		this.redis.set(user.nickname, socket.id);
+		this.redis.set(user.username, socket.id);
 
 		socket.on('message', this.onMessage.bind(socket, this.redis));
 		//socket.on('message1', )
@@ -45,7 +45,7 @@ class Call extends Socket {
 				this.to(res[0].id).emit('message', msg, {
 					users,
 					constraints,
-					from: { id: this.id, name: this.request.session.passport.user.nickname }
+					from: { id: this.id, name: this.request.session.passport.user.username }
 				});
 			});
 			// .catch(e => {

@@ -51,16 +51,29 @@ class UserRoute extends Route {
 	}
 	getOnlineUsers(req, res) {
 		console.log(this);
-		const { nickname = '' } =
-			req.session && req.session.passport && req.session.passport.user; // req.session?.passport?.user;
+		const username = this.getUserNameFromReq(req);
+
+		console.log(username);
 		const redisCmd = util.promisify(this.api.redis.SMEMBERS).bind(this.api.redis);
 		redisCmd('online_users').then(result => {
-			const filtered = result.filter(user => nickname !== user);
+			const filtered = result.filter(user => username !== user);
 			const objUsers = filtered.map(user => {
 				return { name: user };
 			});
 			res.send(objUsers);
 		});
+	}
+	getUserNameFromReq(req) {
+		if (
+			!req.session ||
+			!req.session.passport ||
+			!req.session.passport.user ||
+			!req.session.passport.user.username
+		)
+			return '';
+		const { username } =
+			req.session && req.session.passport && req.session.passport.user;
+		return username;
 	}
 }
 

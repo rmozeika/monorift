@@ -20,11 +20,11 @@ const strategy = new Auth0Strategy(
 		users.findOne({ username: profile.nickname }).then(user => {
 			if (!user) {
 				users.importProfile(profile).then(res => {
-					return done(null, profile);
+					return done(null, user);
 				});
 				//return done(null, profile)
 			} else {
-				return done(null, profile);
+				return done(null, user);
 			}
 		});
 	}

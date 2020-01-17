@@ -194,7 +194,7 @@ app.io.on('connection', async socket => {
 	const { passport = {} } = session;
 	const { user = false } = passport;
 	// app.api.repositories.users.mongoInstance.updateOne(
-	// 	{ $set: { username: user.nickname} },
+	// 	{ $set: { username: user.username} },
 	// 	{ socket_id: socket.id })
 	// 	.then(result => {
 	// 		console.log(result);
@@ -202,11 +202,11 @@ app.io.on('connection', async socket => {
 	// 		console.log(e);
 	// 	});
 	if (user) {
-		client.sadd('online_users', user.nickname);
-		client.set(user.nickname, socket.id);
+		client.sadd('online_users', user.username);
+		client.set(user.username, socket.id);
 	}
 	app.api.repositories.users
-		.updateByUsername(user.nickname, { socket_id: socket.id })
+		.updateByUsername(user.username, { socket_id: socket.id })
 		.then(result => {
 			console.log(result);
 		});

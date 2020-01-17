@@ -46,8 +46,8 @@ const selectConstraints = state => {
 	return { mediaStream, offerOptions };
 };
 const selectMe = state => {
-	const { nickname } = state.auth.user;
-	return nickname;
+	const { username } = state.auth.user;
+	return username;
 };
 const selectCheckedUsers = state => {
 	const { users } = state.users.online;

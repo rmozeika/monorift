@@ -6,6 +6,9 @@ docker-compose down
 cd ../../..
 git pull origin remote
 pwd
+docker image rm robertmozeika/rp2-stage:latest
+
+docker image rm robertmozeika/rp2-live:latest
 DOCKER_BUILDKIT=1 docker build . -f ./packages/devops/docker/DockerfileStage2 -t robertmozeika/rp2-live:latest
 # BACK_PID=$!
 # while kill -0 $BACK_PID ; do

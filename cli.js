@@ -9,7 +9,7 @@ const fs = require('fs');
 const { exec, execFile, spawn } = require('child_process');
 const execa = util.promisify(require('child_process').exec);
 //const ls = spawn('docker-compose up', [], {
-
+const transferFiles = require('./scripts/xfer-files.js');
 // exec('ls | grep js', (err, stdout, stderr) => {
 //   if (err) {
 //     //some err occurred
@@ -220,23 +220,37 @@ const argInterface = {
 				}
 			}
 		},
+		transfer: {
+			val: 'transfer',
+			func: async ([type, files]) => {
+				transferFiles(files);
+				console.log('done');
+				// if (buildType === 'docker') {
+				// isMonorift();
+				// const buildDocker = spawn(
+				// 	'docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest'
+				// );
+
+				// spawn.close();
+			}
+		},
 		dev: {
 			val: 'dev',
-			func: ([buildType, ...args]) => {
+			func: ([type, ...args]) => {
 				return new Promise((resolve, reject) => {
 					try {
 						// const buildDevServer = await execa('webpack-dev-server --config webpack.config.js')
-						const buildDevServer = spawn('webpack-dev-server', [
-							'--config',
-							'webpack.config.js'
-						]);
-						buildDevServer.stdout.on('data', data => {
-							console.log(data.toString());
-						});
-						buildDevServer.stdout.on('end', e => {
-							console.log(e);
-							resolve();
-						});
+						// const buildDevServer = spawn('webpack-dev-server', [
+						// 	'--config',
+						// 	'webpack.config.js'
+						// ]);
+						// buildDevServer.stdout.on('data', data => {
+						// 	console.log(data.toString());
+						// });
+						// buildDevServer.stdout.on('end', e => {
+						// 	console.log(e);
+						// 	resolve();
+						// });
 						debugger;
 					} catch (e) {
 						console.log(e);

@@ -56,8 +56,6 @@ services:
    - ../data/logs/mongo:/data/logs
   expose:
    - 27017
-  ports:
-   - 27017:27017
   labels:
    com.monorift.app: monorift
  redis-svc:
@@ -65,8 +63,6 @@ services:
   container_name: 'redis'
   expose:
    - 6379
-  ports:
-   - 6379:6379
   labels:
    com.monorift.app: monorift
 # volumes:

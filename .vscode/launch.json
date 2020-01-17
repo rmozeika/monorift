@@ -50,7 +50,7 @@
 			"request": "launch",
 			"name": "cli build",
 			"program": "${workspaceFolder}/cli.js",
-			"args": ["build", "docker"]
+			"args": ["transfer", "dist"]
 		},
 		{
 			"type": "node",

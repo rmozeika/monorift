@@ -51,9 +51,12 @@ class UserRoute extends Route {
 	}
 	getOnlineUsers(req, res) {
 		console.log(this);
+		const { nickname = '' } =
+			req.session && req.session.passport && req.session.passport.user; // req.session?.passport?.user;
 		const redisCmd = util.promisify(this.api.redis.SMEMBERS).bind(this.api.redis);
 		redisCmd('online_users').then(result => {
-			const objUsers = result.map(user => {
+			const filtered = result.filter(user => nickname !== user);
+			const objUsers = filtered.map(user => {
 				return { name: user };
 			});
 			res.send(objUsers);

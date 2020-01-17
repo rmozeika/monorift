@@ -165,7 +165,7 @@ class UsersList extends React.Component {
 			const { name } = user;
 			return (
 				<ListItem
-					title={`${name} ${index + 1}`}
+					title={`${name}`}
 					description={`${'Call'} ${index + 1}`}
 					icon={renderItemIcon}
 					accessory={renderItemAccessory}

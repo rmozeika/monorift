@@ -22,21 +22,39 @@ class Call extends Socket {
 		const { user = false } = passport;
 		this.redis.set(user.nickname, socket.id);
 
-		socket.on('message', this.onMessage.bind(this));
+		socket.on('message', this.onMessage.bind(socket, this.redis));
 		//socket.on('message1', )
 	}
-	async onMessage(msg, { users, constraints }) {
-		console.log('GOT_MESSAGE', util.inspect(msg));
-		const mappedUsers = await users
-			.map(async user => {
-				const _id = await this.redis.get(user.name, socket.id);
-				return { name: user.name, _id };
-			})
-			.catch(e => {
-				console.log(e);
+	async onMessage(redis, msg, secondArg) {
+		if (secondArg) {
+			const { users, constraints } = secondArg;
+			console.log('GOT_MESSAGE', util.inspect(msg));
+			const mappedUsers = await Promise.all(
+				users.map(async user => {
+					try {
+						const getAsync = util.promisify(redis.get).bind(redis);
+						if (user.id) return user;
+						const id = await getAsync(user.name);
+						// Promise.resolve({ name: user.name, _id })
+						return { name: user.name, id };
+					} catch (e) {
+						console.log(e);
+					}
+				})
+			).then(res => {
+				this.to(res[0].id).emit('message', msg, {
+					users,
+					constraints,
+					from: { id: this.id, name: this.request.session.passport.user.nickname }
+				});
 			});
-		console.log(mappedUsers);
-		this.broadcast.emit('message', msg, { users, constraints });
+			// .catch(e => {
+			// 	console.log(e);
+			// });
+			console.log(mappedUsers);
+		} else {
+			this.broadcast.emit('message', msg, secondArg);
+		}
 	}
 	onMessage1(msg) {
 		this.nsp.emit('message', msg);

@@ -13,7 +13,13 @@ const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
 const config = require('./config.js');
-const { mongoConnectionString: uri, remote, sessionSecret, debug } = config;
+const {
+	mongoConnectionString: uri,
+	remote,
+	sessionSecret,
+	debug,
+	redisConnectionString
+} = config;
 const fs = require('fs');
 const webpack = require('webpack');
 var io = require('socket.io');
@@ -49,7 +55,7 @@ var app = express();
 // 	saveUninitialized: true
 // });
 let RedisStore = require('connect-redis')(session);
-let client = redis.createClient();
+let client = redis.createClient(6379, redisConnectionString);
 
 const sessionMiddleware = session({
 	store: new RedisStore({ client }),

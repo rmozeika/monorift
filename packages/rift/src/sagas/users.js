@@ -26,12 +26,13 @@ function* onlineUsersSaga() {
 function* loadOnlineUsersSaga(nsp, onComplete) {
 	try {
 		const origin = originLink(nsp || 'online');
+		console.log('origin link', origin);
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));
 	} catch (err) {
-		yield put(failure(err));
+		console.log(err);
 	}
 }
 

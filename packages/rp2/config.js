@@ -15,6 +15,7 @@ exports.rootpassword = env.rootpassword;
 exports.remote = env.remote || true;
 exports.debug = env.debug || false;
 exports.mongoConnectionString = env.mongoConnectionString;
+exports.redisConnectionString = env.redisConnectionString;
 exports.sessionSecret = env.sessionSecret;
 exports.auth0Config = {
 	clientID,

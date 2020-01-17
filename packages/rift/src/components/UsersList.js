@@ -10,7 +10,8 @@ import {
 	Icon,
 	List,
 	ListItem,
-	withStyles
+	withStyles,
+	Toggle
 } from 'react-native-ui-kitten';
 const styles = StyleSheet.create({
 	container: {
@@ -55,24 +56,89 @@ const styles = StyleSheet.create({
 class UsersList extends React.Component {
 	constructor(props) {
 		super();
+		this.state = {
+			checked: [false]
+		};
+		this.onAdd = this.onAdd.bind(this);
+	}
+	setChecked(index, vale) {}
+	onPressedCall(index, type) {
+		console.log('clicked!');
+	}
+	onAdd(index, val) {
+		debugger;
+		const { addToCall } = this.props;
+		addToCall(index);
+	}
+	onRemove(index, val) {
+		const { removeFromCall } = this.props;
+		removeFromCall(index);
 	}
 	render() {
 		const { online, themedStyle } = this.props;
-		debugger;
-		const renderItemAccessory = style => {
+		const renderItemAccessory = (style, index) => {
 			const buttonStyle = {
 				...style,
-				marginHorizontal: themedStyle.buttonGroup.marginHorizontal
+				...themedStyle.button
+				// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
 			};
 			console.log('BUTTON_STYLE', buttonStyle);
-			debugger;
+			const { checked } = this.state;
+			const createAddFunc = thisIndex => {
+				function callAdd() {
+					this.onAdd(thisIndex);
+				}
+				debugger;
+				return callAdd.bind(this);
+			};
+			let taskButton;
+			if (online[index].checked) {
+				taskButton = (
+					<Button
+						onPress={() => this.onRemove(index)}
+						appearance="outline"
+						status="danger"
+						style={buttonStyle}
+					>
+						Remove
+					</Button>
+				);
+			} else {
+				taskButton = (
+					<Button
+						status="success"
+						appearance="outline"
+						onPress={() => this.onAdd(index)}
+						style={buttonStyle}
+					>
+						Add
+					</Button>
+				);
+			}
 			return (
-				<Layout>
-					<ButtonGroup appearance="outline" status="primary">
-						<Button style={buttonStyle}>Call</Button>
-						<Button style={buttonStyle}>Video</Button>
-					</ButtonGroup>
+				// <Layout styles={ { flexDirection: 'row' } }>
+				// <Toggle
+				// 	checked={checked}
+				// 	style={{ marginLeft: 8 }}
+				// 	// onChange={() => { if (truethis.setState({ checked: true })}
+				// />
+				// <ButtonGroup themedStyle={{ color: 'red' }} appearance="outline" status="primary">
+				<Layout style={themedStyle.psuedoBtnGroup}>
+					<Button
+						appearance="outline"
+						status="primary"
+						onPress={() => {
+							this.onPressedCall(index, 'audio').bind(this);
+						}}
+						style={buttonStyle}
+					>
+						Call
+					</Button>
+					{taskButton}
 				</Layout>
+				// </ButtonGroup>
+
+				// </Layout>
 			);
 		};
 
@@ -146,6 +212,14 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		color: theme['color-basic-800']
 	},
 	container: { backgroundColor: '#1A2138' },
-	action: { marginHorizontal: 4 }
+	action: { marginHorizontal: 4 },
+	removeButton: {
+		color: theme['color-danger-500']
+	},
+	button: { flexGrow: 0, width: '20vw' },
+	psuedoBtnGroup: {
+		display: 'flex',
+		flexDirection: 'row'
+	}
 }));
 export default UsersListWithStyles;

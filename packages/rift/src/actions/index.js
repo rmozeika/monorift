@@ -132,3 +132,14 @@ export const setOnlineUsers = users => ({
 	type: SET_ONLINE_USERS,
 	payload: users
 });
+export const ADD_CALL = 'ADD_CALL';
+export const addToCall = index => ({
+	type: ADD_CALL,
+	index
+});
+
+export const REMOVE_CALL = 'ADD_CALL';
+export const removeFromCall = index => ({
+	type: REMOVE_CALL,
+	index
+});

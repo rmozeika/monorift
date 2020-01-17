@@ -45,6 +45,12 @@ const selectConstraints = state => {
 	const { mediaStream, offerOptions } = state.call.constraints;
 	return { mediaStream, offerOptions };
 };
+const selectCheckedUsers = state => {
+	const { users } = state.users.online;
+	const selectedUsers = users.filter(({ name, checked }) => checked);
+	debugger;
+	return selectedUsers;
+};
 const nsp = 'call';
 
 // const socketServerURL = `https://monorift.com/${nsp}`;
@@ -63,9 +69,9 @@ const connect = () => {
 
 const createSocketChannel = socket =>
 	eventChannel(emit => {
-		const handler = (data, { peerConstraints, user }) => {
+		const handler = (data, { peerConstraints, users }) => {
 			console.log('emitting message from socketchannel');
-			emit({ message: data, peerConstraints, user });
+			emit({ message: data, peerConstraints, users });
 		};
 		const onCandidateHandler = candidate => {
 			put({ type: ADD_CANDIDATE, candidate });
@@ -94,9 +100,9 @@ function* initCallSaga() {
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
-		const { message, peerConstraints, user } = yield take(socketChannel);
+		const { message, peerConstraints, users } = yield take(socketChannel);
 		try {
-			yield put({ type: GOT_MESSAGE, message, peerConstraints, user });
+			yield put({ type: GOT_MESSAGE, message, peerConstraints, users });
 		} catch (e) {
 			console.log('Call Saga Error', e);
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
@@ -134,7 +140,7 @@ function* createPeerConnSaga({ config = {} }) {
 	yield put(Actions.setPeerConn(conn));
 	console.log(conn);
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions, user = {} }) {
+function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	console.log('Sending offer');
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
@@ -149,7 +155,9 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, user = {} }) {
 	});
 	conn.setLocalDescription(offer);
 	yield put(Actions.setPeerInitiator(true));
-	socket.emit('message', offer, { constraints, user });
+	const users = yield select(selectCheckedUsers);
+	debugger;
+	socket.emit('message', offer, { constraints, users });
 }
 function* gotOfferSaga({ offer }) {}
 

@@ -36,7 +36,7 @@ class Users extends React.Component {
 	}
 	componentDidUpdate() {}
 	render() {
-		const { gotOnlineUsers, online } = this.props;
+		const { gotOnlineUsers, online, addToCall, removeFromCall } = this.props;
 		const loading = (
 			<Layout style={styles.row}>
 				<Text>Loading...</Text>
@@ -46,7 +46,13 @@ class Users extends React.Component {
 			if (!gotOnlineUsers) {
 				return loading;
 			}
-			return <UserList online={online}></UserList>;
+			return (
+				<UserList
+					addToCall={addToCall}
+					removeFromCall={removeFromCall}
+					online={online}
+				></UserList>
+			);
 		};
 		return <Layout style={styles.container}>{toDisplay()}</Layout>;
 	}
@@ -54,7 +60,11 @@ class Users extends React.Component {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		getOnlineUsers: () => dispatch(Actions.getOnlineUsers())
+		getOnlineUsers: () => dispatch(Actions.getOnlineUsers()),
+		setConstraints: ({ mediaStream }) =>
+			dispatch(Actions.setConstraints({ mediaStream })),
+		addToCall: index => dispatch(Actions.addToCall(index)),
+		removeFromCall: index => dispatch(Actions.removeFromCall(index))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

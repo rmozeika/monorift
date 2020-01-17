@@ -24,7 +24,7 @@ class Socket {
 		const { nsp } = this;
 
 		if (this.onMessage) {
-			nsp.on('message', this.onMessage);
+			nsp.on('message', this.onMessage.bind(this));
 			nsp.on('message1', this.onMessage);
 		}
 		if (this.onDisconnect) {

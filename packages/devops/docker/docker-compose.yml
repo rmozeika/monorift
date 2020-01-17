@@ -60,6 +60,15 @@ services:
    - 27017:27017
   labels:
    com.monorift.app: monorift
+ redis-svc:
+  image: redis:6.0-rc
+  container_name: 'redis'
+  expose:
+   - 6379
+  ports:
+   - 6379:6379
+  labels:
+   com.monorift.app: monorift
 # volumes:
 #   data-volume:
 # Docker Networks

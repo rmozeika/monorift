@@ -6,17 +6,12 @@ WORKDIR /
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY packages/rp2/package.json /package.json
-#COPY packages/rift/package.json /packages/rift/package.json
 
 
 
 COPY dist.web/. /dist.web/.
 
 RUN yarn install
-#RUN yarn install -g webpack
-#RUN yarn install -g webpack-cli
 
-#RUN cd /packages/rift
-#RUN yarn install
 
 

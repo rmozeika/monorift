@@ -45,6 +45,16 @@ const selectConstraints = state => {
 	const { mediaStream, offerOptions } = state.call.constraints;
 	return { mediaStream, offerOptions };
 };
+const selectMe = state => {
+	const { nickname } = state.auth.user;
+	return nickname;
+};
+const selectCheckedUsers = state => {
+	const { users } = state.users.online;
+	const selectedUsers = users.filter(({ name, checked }) => checked);
+	debugger;
+	return selectedUsers;
+};
 const nsp = 'call';
 
 // const socketServerURL = `https://monorift.com/${nsp}`;
@@ -65,7 +75,12 @@ const createSocketChannel = socket =>
 	eventChannel(emit => {
 		const handler = (data, secondArg) => {
 			console.log('emitting message from socketchannel');
-			emit({ message: data, peerConstraints: secondArg });
+			let msg = { message: data }; //from: this._id };
+			if (secondArg) {
+				const { constraints, users, from } = secondArg;
+				msg = { ...msg, ...secondArg };
+			}
+			emit(msg);
 		};
 		const onCandidateHandler = candidate => {
 			put({ type: ADD_CANDIDATE, candidate });
@@ -80,7 +95,7 @@ const createSocketChannel = socket =>
 				onCandidateHandler(msg.candidate);
 			}
 			if (msg.type == 'offer') {
-				put({ type: GOT_MESSAGE, msg }, peerConstraints);
+				put({ type: GOT_MESSAGE, msg }, constraints);
 			}
 		};
 
@@ -94,9 +109,9 @@ function* initCallSaga() {
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
-		const { message, peerConstraints } = yield take(socketChannel);
+		const { message, constraints, users, from } = yield take(socketChannel);
 		try {
-			yield put({ type: GOT_MESSAGE, message, peerConstraints });
+			yield put({ type: GOT_MESSAGE, message, constraints, users, from });
 		} catch (e) {
 			console.log('Call Saga Error', e);
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
@@ -149,7 +164,11 @@ function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	});
 	conn.setLocalDescription(offer);
 	yield put(Actions.setPeerInitiator(true));
-	socket.emit('message', offer, constraints);
+	const users = yield select(selectCheckedUsers);
+	const from = yield select(selectMe);
+
+	debugger;
+	socket.emit('message', offer, { constraints, users });
 }
 function* gotOfferSaga({ offer }) {}
 
@@ -166,7 +185,7 @@ const start = async (conn, peerConstraints) => {
 	return;
 };
 function addCandidate(candidate) {}
-function* gotMessageSaga({ message, peerConstraints }) {
+function* gotMessageSaga({ message, constraints, from }) {
 	//while (true) {
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator } = peerStore;
@@ -175,18 +194,18 @@ function* gotMessageSaga({ message, peerConstraints }) {
 	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {
 		debugger; //REMOVE
-		if (peerConstraints) {
-			yield put(setConstraints({ mediaStream: peerConstraints }));
+		if (constraints) {
+			yield put(setConstraints({ mediaStream: constraints }));
 		}
 		debugger; //REMOVE
 		yield conn.setRemoteDescription(new RTCSessionDescription(message));
 
 		if (!isInitiator && !isStarted) {
-			const starter = yield call(start, conn, peerConstraints);
+			const starter = yield call(start, conn, constraints);
 			// return;
 			//put(Actions.setPeerStarted(true));
 		} else {
-			const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
+			const stream = yield navigator.mediaDevices.getUserMedia(constraints);
 			stream.getTracks().forEach(track => {
 				console.log('adding track', 'from message start func');
 				conn.addTrack(track, stream);
@@ -196,7 +215,7 @@ function* gotMessageSaga({ message, peerConstraints }) {
 		// yield conn.setRemoteDescription(new RTCSessionDescription(message));
 		yield put(setRemote(true));
 		console.log('put setting remote');
-		// const stream = yield navigator.mediaDevices.getUserMedia(peerConstraints);
+		// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
 		// stream.getTracks().forEach(track => {
 		// 	conn.addTrack(track, stream);
 		// });
@@ -212,7 +231,8 @@ function* gotMessageSaga({ message, peerConstraints }) {
 		// socket.emit('message', conn.localDescription);
 		console.log('GOT_MESSAGE', 'sending answer');
 		const desc = conn.localDescription;
-		socket.emit('message', desc);
+		const sendBackTo = from;
+		socket.emit('message', desc, { users: [from] });
 		// console.log('set local desc');
 		//signaling.send({message: conn.localDescription});
 	} else if (message.type === 'answer') {

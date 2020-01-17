@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 const passport = require('./auth0');
+const redis = require('redis');
+
 const session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
@@ -36,15 +38,23 @@ console.log('CHCK DEBUG', debug);
 //   console.log('child process exited with code ' + code);
 // });
 var app = express();
-const sessionMiddleware = require('express-session')({
-	secret: sessionSecret,
-	key: 'express.sid',
-	cookie: {
-		maxAge: 1000 * 60 * 60 * 24 * 7
-	},
-	store: store,
-	resave: true,
-	saveUninitialized: true
+// const sessionMiddleware = require('express-session')({
+// 	secret: sessionSecret,
+// 	key: 'express.sid',
+// 	cookie: {
+// 		maxAge: 1000 * 60 * 60 * 24 * 7
+// 	},
+// 	store: store,
+// 	resave: true,
+// 	saveUninitialized: true
+// });
+let RedisStore = require('connect-redis')(session);
+let client = redis.createClient();
+
+const sessionMiddleware = session({
+	store: new RedisStore({ client }),
+	secret: 'keyboard cat',
+	resave: false
 });
 
 app.use(sessionMiddleware);
@@ -78,8 +88,63 @@ app.use(function(req, res, next) {
 	next();
 });
 var api = require('./api.js');
+const setupDefaultRoute = () => {
+	if (remote == 'false') {
+		console.log('Not remote');
+		const opts = {};
+		if (debug) {
+			opts.maxAge = 5;
+		}
 
+		const webpackConfig =
+			debug == 'false'
+				? require('../../webpack.config.prod.js')
+				: require('../../webpack.config.js');
+		const buildpath = path.resolve(webpackConfig.output.path);
+		app.use(express.static(buildpath, opts));
+		//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
+		// buildpath = path.resolve(webpackConfig.output.path);
+		// app.use(express.static(buildpath));
+		// app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
+		// app.get('*', (req, res) => {
+		//   //res.
+		//   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
+		//   res.sendFile(indexPath);
+		// });
+		// app.use(express.static(path.resolve(webpackConfig.output.path)))
+		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
+		// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
+	} else {
+		console.log('Is remote');
+
+		// app.use('*', express.static(path.resolve('./dist.web')));
+		builpath = path.resolve(__dirname, './dist.web');
+		app.use(express.static(__dirname + './dist.web'));
+		app.use('*', express.static(path.resolve(__dirname, './dist.web')));
+	}
+};
+const setFurtherRoutes = () => {
+	app.use(
+		function(req, res, next) {
+			var err = new Error('Not Found');
+			err.status = 404;
+			next(err);
+		}.bind(this)
+	);
+	app.use('/', (req, res) => {
+		res.send('root');
+	});
+	app.use(function(err, req, res, next) {
+		res.locals.message = err.message;
+		res.locals.error = req.app.get('env') === 'development' ? err : {};
+		console.log(err);
+		res.status(err.status || 500);
+		res.send('error');
+	});
+};
 api.init(app).then(() => {
+	setupDefaultRoute();
+	setFurtherRoutes();
 	console.log('api ready');
 });
 app.use('/profile', express.static(path.join(__dirname, 'site')));
@@ -97,61 +162,12 @@ app.use('/profile', express.static(path.join(__dirname, 'site')));
 
 let buildpath;
 // if (false) {
-if (remote == 'false') {
-	console.log('Not remote');
-	const opts = {};
-	if (debug) {
-		opts.maxAge = 5;
-	}
-
-	const webpackConfig =
-		debug == 'false'
-			? require('../../webpack.config.prod.js')
-			: require('../../webpack.config.js');
-	const buildpath = path.resolve(webpackConfig.output.path);
-	app.use(express.static(buildpath, opts));
-	//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
-	// buildpath = path.resolve(webpackConfig.output.path);
-	// app.use(express.static(buildpath));
-	// app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
-	// app.get('*', (req, res) => {
-	//   //res.
-	//   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
-	//   res.sendFile(indexPath);
-	// });
-	// app.use(express.static(path.resolve(webpackConfig.output.path)))
-	app.use('*', express.static(path.resolve(webpackConfig.output.path)));
-	// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
-} else {
-	console.log('Is remote');
-
-	// app.use('*', express.static(path.resolve('./dist.web')));
-	builpath = path.resolve(__dirname, './dist.web');
-	app.use(express.static(__dirname + './dist.web'));
-	app.use('*', express.static(path.resolve(__dirname, './dist.web')));
-}
-app.use(
-	function(req, res, next) {
-		var err = new Error('Not Found');
-		err.status = 404;
-		next(err);
-	}.bind(this)
-);
-
-app.use(function(err, req, res, next) {
-	res.locals.message = err.message;
-	res.locals.error = req.app.get('env') === 'development' ? err : {};
-	console.log(err);
-	res.status(err.status || 500);
-	res.send('error');
-});
 
 console.log('App ready!');
-
 app.api = api;
 const socketIO = io();
 app.io = socketIO;
-
+api.redis = client;
 app.io.use(function(socket, next) {
 	sessionMiddleware(socket.request, {}, next);
 });
@@ -167,11 +183,27 @@ function onAuthorizeFail(data, message, error, accept) {
 
 	accept(null, false);
 }
-app.io.on('connection', socket => {
+app.io.on('connection', async socket => {
 	const { session = {} } = socket.request;
 	const { passport = {} } = session;
 	const { user = false } = passport;
-
+	// app.api.repositories.users.mongoInstance.updateOne(
+	// 	{ $set: { username: user.nickname} },
+	// 	{ socket_id: socket.id })
+	// 	.then(result => {
+	// 		console.log(result);
+	// 	}).catch(e => {
+	// 		console.log(e);
+	// 	});
+	if (user) {
+		client.sadd('online_users', user.nickname);
+		client.set(user.nickname, socket.id);
+	}
+	app.api.repositories.users
+		.updateByUsername(user.nickname, { socket_id: socket.id })
+		.then(result => {
+			console.log(result);
+		});
 	socket.on('check_auth', ack => {
 		if (user) {
 			ack(user);
@@ -179,9 +211,10 @@ app.io.on('connection', socket => {
 		}
 		ack({ user: false });
 	});
+	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });
 app.io.on('message', function(msg) {
 	console.log(msg);
 });
-const call = new Call(app.io);
+const call = new Call(app.io, api);
 module.exports = app;

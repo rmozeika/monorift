@@ -11,3 +11,7 @@ console.log(
 		.toString()
 		.substr(2)
 );
+
+const test = true;
+const newTest = !test;
+console.log(newTest);

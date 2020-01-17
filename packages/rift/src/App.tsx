@@ -20,7 +20,8 @@ import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
 import Tiffany from './containers/Tiffany';
 
-import Talk from './containers/Talk';
+import Call from './containers/Call';
+
 import { setCode } from './actions';
 import { Main } from './components/tScri';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
@@ -48,6 +49,9 @@ interface Props {
 }
 // ThemeService.select({'Eva Light': null}, "Eva Light")
 class App extends React.Component<Props, State> {
+	public constructor(props) {
+		super(props);
+	}
 	public state: State = {
 		theme: 'Eva Light'
 	};
@@ -70,7 +74,7 @@ class App extends React.Component<Props, State> {
 						<NavBar />
 						<Switch>
 							<Route path="/">
-								<Talk />
+								<Call />
 							</Route>
 						</Switch>
 					</Router>

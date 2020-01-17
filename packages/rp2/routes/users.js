@@ -5,7 +5,7 @@ var Route = require('./route.js');
 
 const routeName = '/users';
 const repoName = 'users';
-
+const util = require('util');
 class UserRoute extends Route {
 	constructor(api) {
 		super(api, routeName, repoName);
@@ -13,6 +13,9 @@ class UserRoute extends Route {
 			this.router.get('/', secured(), this.retrieveAll.bind(this));
 			this.router.post('/', secured(), this.retrieveAll.bind(this));
 			this.router.post('/createUser', secured(), this.createUser.bind(this));
+			// this.router.post('/online', secured(), this.createUser.bind(this));
+			this.router.post('/online', this.getOnlineUsers.bind(this));
+
 			this.router.get('/username', secured(), this.getUser.bind(this));
 		});
 	}
@@ -45,6 +48,19 @@ class UserRoute extends Route {
 	getUser(req, res) {
 		const { user } = req;
 		return res.send(user);
+	}
+	getOnlineUsers(req, res) {
+		console.log(this);
+		const { nickname = '' } =
+			req.session && req.session.passport && req.session.passport.user; // req.session?.passport?.user;
+		const redisCmd = util.promisify(this.api.redis.SMEMBERS).bind(this.api.redis);
+		redisCmd('online_users').then(result => {
+			const filtered = result.filter(user => nickname !== user);
+			const objUsers = filtered.map(user => {
+				return { name: user };
+			});
+			res.send(objUsers);
+		});
 	}
 }
 

@@ -51,7 +51,6 @@ function* initAuthSaga() {
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
 		const payload = yield take(socketChannel);
-		debugger; //REMOVE
 		console.log('GOT MESSAGE, AUTH', payload);
 		try {
 			if (payload && payload.username) {

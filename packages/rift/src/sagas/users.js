@@ -7,10 +7,15 @@ import {
 	takeLatest,
 	actionChannel
 } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
+
 import 'isomorphic-unfetch';
+import io from 'socket.io-client';
 
 import * as Actions from '../actions';
 import { originLink } from '../core/utils';
+const socketServerURL = originLink('users');
+let socket;
 
 function* onlineUsersSaga() {
 	// yield take(types.initUsers)
@@ -35,9 +40,74 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 		console.log(err);
 	}
 }
+const connect = () => {
+	debugger; //remove
+	socket = io(socketServerURL);
+	return new Promise(resolve => {
+		socket.on('connect', () => {
+			resolve(socket);
+		});
+	});
+};
+const createSocketChannel = socket =>
+	eventChannel(emit => {
+		const handler = (data, secondArg) => {
+			debugger; //remove
+			console.log('emitting message from socketchannel');
+			let msg = { message: data }; //from: this._id };
+			if (secondArg) {
+				const { constraints, users, from } = secondArg;
+				msg = { ...msg, ...secondArg };
+			}
+			emit(msg);
+		};
+		const onCandidateHandler = candidate => {
+			put({ type: ADD_CANDIDATE, candidate });
+		};
+		socket.on('message', handler);
+		socket.on('broadcast', handler);
+		socket.on('disconnect', reason => {
+			console.log('disconnected');
+			socket.connect();
+		});
+		const oldOnMsg = (msg, secondArg) => {
+			if (msg.type == 'candidate') {
+				onCandidateHandler(msg.candidate);
+			}
+			if (msg.type == 'offer') {
+				put({ type: GOT_MESSAGE, msg }, constraints);
+			}
+		};
 
+		return () => {
+			//socket.off('login', handler);
+		};
+	});
+
+function* initSocketSaga() {
+	debugger; //remove
+	const socket = yield call(connect);
+	//socket.send('hi');
+	const socketChannel = yield call(createSocketChannel, socket);
+	while (true) {
+		debugger; //remove
+		const { message } = yield take(socketChannel);
+		debugger; //remove
+		try {
+			if (message.online == true) {
+				yield put(Actions.addOnlineUser(message.user));
+			} else if (message.online == false) {
+				yield put(Actions.removeOnlineUser(message.user));
+			}
+		} catch (e) {
+			console.log('Call Saga Error', e);
+			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
+		}
+	}
+}
 function* rootSaga() {
 	yield all([
+		initSocketSaga(),
 		// takeLatest(ActionTypes.loadData, loadDataSaga),
 		takeLatest(Actions.GET_ONLINE_USERS, onlineUsersSaga)
 	]);

@@ -1,5 +1,5 @@
 const Socket = require('./index');
-const nameSpace = 'call';
+const nameSpace = 'users';
 const util = require('util');
 
 class Call extends Socket {
@@ -17,18 +17,6 @@ class Call extends Socket {
 	}
 	onConnect(socket) {
 		this.createDefaultListeners();
-		const { session = {} } = socket.request;
-		const { passport = {} } = session;
-		const { user = false } = passport;
-		this.redis.set(user.username, socket.id);
-		const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
-		if (user) {
-			userSock.emit('broadcast', { name: user.username, online: true });
-			console.log(userSock);
-			// Object.keys(userSock.sockets).forEach(sock => {
-			// 	sock.braodcast.emit('message', user.username);
-			// })
-		}
 		socket.on('message', this.onMessage.bind(socket, this.redis));
 		//socket.on('message1', )
 	}

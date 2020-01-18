@@ -201,7 +201,7 @@ app.io.on('connection', async socket => {
 	// 	}).catch(e => {
 	// 		console.log(e);
 	// 	});
-	if (user) {
+	if (user && user.username) {
 		client.sadd('online_users', user.username);
 		client.set(user.username, socket.id);
 	}

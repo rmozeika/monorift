@@ -66,7 +66,6 @@ class UsersList extends React.Component {
 		console.log('clicked!');
 	}
 	onAdd(index, val) {
-		debugger;
 		const { addToCall } = this.props;
 		addToCall(index);
 	}
@@ -88,7 +87,6 @@ class UsersList extends React.Component {
 				function callAdd() {
 					this.onAdd(thisIndex);
 				}
-				debugger;
 				return callAdd.bind(this);
 			};
 			let taskButton;

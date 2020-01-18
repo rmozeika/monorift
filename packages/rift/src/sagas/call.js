@@ -36,7 +36,7 @@ const {
 import io from 'socket.io-client';
 const onError = e => {
 	console.log(e);
-	debugger;
+	debugger; //error
 };
 const selectPeerStore = state => {
 	return state.call.peerStore;
@@ -52,7 +52,7 @@ const selectMe = state => {
 const selectCheckedUsers = state => {
 	const { users } = state.users.online;
 	const selectedUsers = users.filter(({ name, checked }) => checked);
-	debugger;
+	debugger; //error
 	return selectedUsers;
 };
 const nsp = 'call';
@@ -156,7 +156,6 @@ function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	const constraints = { ...mediaStream, ...altConstraints };
 	const offerOpts = { ...offerOptions, ...altOfferOptions };
 
-	debugger; //REMOVE
 	const { conn } = yield select(selectPeerStore);
 	const offer = yield conn.createOffer(offerOpts).catch(e => {
 		console.log(e);
@@ -167,7 +166,6 @@ function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	const users = yield select(selectCheckedUsers);
 	const from = yield select(selectMe);
 
-	debugger;
 	socket.emit('message', offer, { constraints, users });
 }
 function* gotOfferSaga({ offer }) {}
@@ -193,11 +191,10 @@ function* gotMessageSaga({ message, constraints, from }) {
 	//const message = message.offer;
 	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {
-		debugger; //REMOVE
 		if (constraints) {
 			yield put(setConstraints({ mediaStream: constraints }));
 		}
-		debugger; //REMOVE
+
 		yield conn.setRemoteDescription(new RTCSessionDescription(message));
 
 		if (!isInitiator && !isStarted) {
@@ -223,7 +220,7 @@ function* gotMessageSaga({ message, constraints, from }) {
 		console.log('GOT_MESSAGE', 'creating answer');
 		const answer = yield conn.createAnswer().catch(e => {
 			console.log(e);
-			debugger;
+			debugger; //error
 		});
 		console.log('GOT_MESSAGE', 'setting local desc');
 
@@ -249,10 +246,9 @@ function* gotMessageSaga({ message, constraints, from }) {
 		// 	video: true
 		// });
 		const { mediaStream } = yield select(selectConstraints);
-		debugger; //REMOVE
+
 		const stream = yield navigator.mediaDevices.getUserMedia(mediaStream);
 		stream.getTracks().forEach(track => {
-			debugger; //REMOVE
 			conn.addTrack(track, stream);
 		});
 		console.log('ADDED TRACK');

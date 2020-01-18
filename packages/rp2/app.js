@@ -201,9 +201,16 @@ app.io.on('connection', async socket => {
 	// 	}).catch(e => {
 	// 		console.log(e);
 	// 	});
-	if (user && user.username) {
-		client.sadd('online_users', user.username);
+	const isUser = user && user.username;
+	if (isUser) {
+		const key = client.sadd('online_users', user.username);
 		client.set(user.username, socket.id);
+		client.hmset(`user:${user.username}`, [
+			'socketid',
+			socket.id,
+			'key',
+			user._id
+		]);
 	}
 	app.api.repositories.users
 		.updateByUsername(user.username, { socket_id: socket.id })
@@ -217,8 +224,16 @@ app.io.on('connection', async socket => {
 		}
 		ack({ user: false });
 	});
+	socket.on('disconnect', socket => {
+		console.log('disconnected');
+		// client.srem('online_users', key);
+	});
 	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });
+app.io.on('disconnect', async socket => {
+	console.log('disconnected');
+});
+
 app.io.on('message', function(msg) {
 	console.log(msg);
 });

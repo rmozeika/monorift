@@ -91,9 +91,11 @@ function* initSocketSaga() {
 
 		try {
 			if (message.online == true) {
-				yield put(Actions.addOnlineUser(message.name));
+				const user = { name: message.name };
+				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				yield put(Actions.removeOnlineUser(message.name));
+				const user = { name: message.name };
+				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {
 			console.log('Call Saga Error', e);

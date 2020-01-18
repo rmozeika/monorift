@@ -27,10 +27,15 @@ export const online = (state = {}, action) => {
 			}));
 			return { ...state, gotOnlineUsers: true, users };
 		case ADD_ONLINE_USER:
-			let usersAdd = this.state.users.push({ ...action.payload, checked: false });
-			return { ...state, users: usersAdd };
+			const userPresent = state.users.some(
+				user => user.name == action.payload.name
+			);
+			if (userPresent) return state;
+			let usersAdd = [...state.users, { ...action.payload, checked: false }];
+			const addedToState = { ...state, users: usersAdd };
+			return addedToState;
 		case REMOVE_ONLINE_USER:
-			let usersRemoved = this.state.users.filter(
+			let usersRemoved = state.users.filter(
 				user => action.payload.name !== user.name
 			);
 			return { ...state, users: usersRemoved };

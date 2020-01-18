@@ -42,6 +42,7 @@ const createSocketChannel = socket =>
 		});
 		return () => {
 			socket.off('login', handler);
+			socket.disconnect();
 		};
 	});
 

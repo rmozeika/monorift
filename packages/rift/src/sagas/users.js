@@ -41,7 +41,6 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 	}
 }
 const connect = () => {
-	debugger; //remove
 	socket = io(socketServerURL);
 	return new Promise(resolve => {
 		socket.on('connect', () => {
@@ -52,7 +51,6 @@ const connect = () => {
 const createSocketChannel = socket =>
 	eventChannel(emit => {
 		const handler = (data, secondArg) => {
-			debugger; //remove
 			console.log('emitting message from socketchannel');
 			let msg = { message: data }; //from: this._id };
 			if (secondArg) {
@@ -85,19 +83,17 @@ const createSocketChannel = socket =>
 	});
 
 function* initSocketSaga() {
-	debugger; //remove
 	const socket = yield call(connect);
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
-		debugger; //remove
 		const { message } = yield take(socketChannel);
-		debugger; //remove
+
 		try {
 			if (message.online == true) {
-				yield put(Actions.addOnlineUser(message.user));
+				yield put(Actions.addOnlineUser(message.name));
 			} else if (message.online == false) {
-				yield put(Actions.removeOnlineUser(message.user));
+				yield put(Actions.removeOnlineUser(message.name));
 			}
 		} catch (e) {
 			console.log('Call Saga Error', e);

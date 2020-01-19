@@ -47,6 +47,7 @@
 		"react-router": "^2.6.1",
 		"redis": "^2.8.0",
 		"redux-devtools": "^3.5.0",
+		"robertmozeika-site": "^0.0.91",
 		"serve-favicon": "~2.4.5",
 		"socket.io": "^2.3.0",
 		"tail": "^2.0.3",

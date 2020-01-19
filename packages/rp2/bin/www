@@ -5,6 +5,8 @@
  */
 
 var app = require('../app');
+var siteApp = require('../site/app');
+
 var debug = require('debug')('rs2:server');
 var http = require('http');
 
@@ -21,6 +23,11 @@ app.set('port', port);
 
 var server = http.createServer(app);
 app.io.attach(server);
+
+var sitePort = normalizePort('7070');
+siteApp.set('port', sitePort);
+var siteServer = http.createServer(siteApp);
+siteServer.listen(sitePort);
 /**
  * Listen on provided port, on all network interfaces.
  */

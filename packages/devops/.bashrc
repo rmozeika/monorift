@@ -6,7 +6,9 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific environment
-PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+PATH="/usr/local/bin:$HOME/.local/bin:$HOME/bin:$PATH"
+export PATH
+
 source $HOME/.monoriftrc
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:

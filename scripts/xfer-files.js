@@ -23,6 +23,12 @@ const transferDockerConf = async () => {
 	const { stdout, stderr } = await execFile(sendConf, { cwd: devopsPath });
 	console.log(stdout, stderr);
 };
+
+const transferNginxConf = async () => {
+	const nginxConf = path.resolve(devopsPath, '.bin', 'nginx-conf.sh');
+	const { stdout, stderr } = await execFile(nginxConf, { cwd: devopsPath });
+	console.log(stdout, stderr);
+};
 const transferPrivate = async () => {
 	const sendPrivate = path.resolve(devopsPath, '.bin', 'transfer-private.sh');
 	const { stdout, stderr } = await execFile(sendPrivate, {
@@ -62,6 +68,8 @@ module.exports = function(script) {
 			break;
 		case 'devopsconf':
 			transferDockerConf();
+		case 'nginxconf':
+			transferNginxConf();
 		case 'service':
 			trasnferDeployService();
 			break;
@@ -75,9 +83,11 @@ module.exports = function(script) {
 			transferPrivate();
 			break;
 		default:
-			console.log('No known statements, sending all');
-			transferDeployConf();
-			trasnferDeployService();
+			console.log(
+				`No known statements, [ "deployconf", "devopsconf", "nginxconf", "service", "dist", "bash", "private"]`
+			);
+		// transferDeployConf();
+		// trasnferDeployService();
 	}
 };
 function defaultScript() {

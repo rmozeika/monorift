@@ -24,13 +24,19 @@ class Call extends Socket {
 		const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
 		if (user) {
 			userSock.emit('broadcast', { name: user.username, online: true });
-			console.log(userSock);
-			// Object.keys(userSock.sockets).forEach(sock => {
-			// 	sock.braodcast.emit('message', user.username);
-			// })
 		}
 		socket.on('message', this.onMessage.bind(socket, this.redis));
-		//socket.on('message1', )
+		socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
+	}
+	async onUserDisconnect(userSock, user) {
+		// console.log(this);
+		// const { session = {} } = this.request;
+		// const { passport = {} } = session;
+		// const { user = false } = passport;
+		// const userSock = io.of('/users'); //.broadcast.emit('message', username);
+		if (user) {
+			userSock.emit('broadcast', { name: user.username, online: false });
+		}
 	}
 	async onMessage(redis, msg, secondArg) {
 		if (secondArg) {

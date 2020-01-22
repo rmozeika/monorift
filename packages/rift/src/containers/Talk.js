@@ -106,7 +106,9 @@ class Adapter extends React.Component {
 			if (audioRef.current.srcObject) return;
 			//videoRef.current.srcObject = e.streams[0];
 			if (e.track.kind == 'audio') {
-				audioRef.current.srcObject = e.streams[0];
+				let inboundStream = new MediaStream(e.track);
+
+				audioRef.current.srcObject = inboundStream;
 			}
 			let audio = audioRef.current;
 			// // localAudio.audioRef.srcObject = track;
@@ -134,10 +136,10 @@ class Adapter extends React.Component {
 		setConstraints({ mediaStream: mediaStreamConstraints });
 	}
 	gotMedia(stream) {
-		const { peerStore } = this.props;
+		const { peerStore, mediaStreamConstraints } = this.props;
 		const { conn } = peerStore;
 		const audioTracks = stream.getAudioTracks();
-		console.log('Got stream with constraints:', constraints);
+		// console.log('Got stream with constraints:', constraints);
 		console.log('Using audio device: ' + audioTracks[0].label);
 		stream.oninactive = function() {
 			console.log('Stream ended');

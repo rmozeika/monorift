@@ -41,6 +41,7 @@ const createSocketChannel = socket =>
 			emit(data);
 		});
 		return () => {
+			debugger;
 			socket.off('login', handler);
 			socket.disconnect();
 		};

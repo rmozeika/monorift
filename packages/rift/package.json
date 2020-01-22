@@ -23,7 +23,7 @@
 		"@emotion/core": "^10.0.17",
 		"@emotion/native": "^10.0.14",
 		"@eva-design/eva": "^1.0.1",
-		"@storybook/react": "^5.2.0",
+		"@storybook/react": "^5.3.8",
 		"@ui-kitten/eva-icons": "^4.2.0-beta.2",
 		"babel": "^6.23.0",
 		"babel-loader": "^8.0.6",
@@ -58,7 +58,7 @@
 		"styled-components": "^4.3.2",
 		"tail": "^2.0.3",
 		"url-loader": "^2.1.0",
-		"webpack": "^4.39.3",
+		"webpack": "^4.41.5",
 		"webpack-dev-server": "^3.10.1"
 	},
 	"devDependencies": {

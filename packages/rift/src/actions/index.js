@@ -138,7 +138,7 @@ export const addToCall = index => ({
 	index
 });
 
-export const REMOVE_CALL = 'ADD_CALL';
+export const REMOVE_CALL = 'REMOVE_CALL';
 export const removeFromCall = index => ({
 	type: REMOVE_CALL,
 	index

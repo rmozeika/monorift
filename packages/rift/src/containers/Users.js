@@ -32,10 +32,6 @@ class Users extends React.Component {
 		super(props);
 		this.props.getOnlineUsers();
 	}
-	// componentDidMount() {
-	// 	this.props.getOnlineUsers();
-	// }
-	// componentDidUpdate() {}
 	render() {
 		const { gotOnlineUsers, online, addToCall, removeFromCall } = this.props;
 		const loading = (

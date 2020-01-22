@@ -193,14 +193,6 @@ app.io.on('connection', async socket => {
 	const { session = {} } = socket.request;
 	const { passport = {} } = session;
 	const { user = false } = passport;
-	// app.api.repositories.users.mongoInstance.updateOne(
-	// 	{ $set: { username: user.username} },
-	// 	{ socket_id: socket.id })
-	// 	.then(result => {
-	// 		console.log(result);
-	// 	}).catch(e => {
-	// 		console.log(e);
-	// 	});
 	const isUser = user && user.username;
 	if (isUser) {
 		const key = client.sadd('online_users', user.username);
@@ -226,7 +218,9 @@ app.io.on('connection', async socket => {
 	});
 	socket.on('disconnect', socket => {
 		console.log('disconnected');
-		// client.srem('online_users', key);
+		if (user.username) {
+			client.srem('online_users', user.username);
+		}
 	});
 	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });

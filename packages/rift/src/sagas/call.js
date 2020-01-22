@@ -52,7 +52,6 @@ const selectMe = state => {
 const selectCheckedUsers = state => {
 	const { users } = state.users.online;
 	const selectedUsers = users.filter(({ name, checked }) => checked);
-	debugger; //error
 	return selectedUsers;
 };
 const nsp = 'call';
@@ -173,6 +172,8 @@ function* gotOfferSaga({ offer }) {}
 const start = async (conn, peerConstraints) => {
 	put(Actions.setPeerStarted(true));
 	console.log('START', 'getting usermedia');
+	console.log('getting user media');
+
 	const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
 	stream.getTracks().forEach(track => {
 		console.log('adding track', 'from message start func');
@@ -202,6 +203,7 @@ function* gotMessageSaga({ message, constraints, from }) {
 			// return;
 			//put(Actions.setPeerStarted(true));
 		} else {
+			console.log('getting user media');
 			const stream = yield navigator.mediaDevices.getUserMedia(constraints);
 			stream.getTracks().forEach(track => {
 				console.log('adding track', 'from message start func');
@@ -247,10 +249,11 @@ function* gotMessageSaga({ message, constraints, from }) {
 		// });
 		const { mediaStream } = yield select(selectConstraints);
 
-		const stream = yield navigator.mediaDevices.getUserMedia(mediaStream);
-		stream.getTracks().forEach(track => {
-			conn.addTrack(track, stream);
-		});
+		// HERE!!
+		// const stream = yield navigator.mediaDevices.getUserMedia(mediaStream);
+		// stream.getTracks().forEach(track => {
+		// 	conn.addTrack(track, stream);
+		// });
 		console.log('ADDED TRACK');
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {

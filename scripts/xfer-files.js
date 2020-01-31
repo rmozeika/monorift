@@ -19,6 +19,7 @@ const transferDeployConf = async () => {
 	console.log(stdout, stderr);
 };
 const transferDockerConf = async () => {
+	//I think this isnt used
 	const sendConf = path.resolve(devopsPath, '.bin', 'update-conf.sh');
 	const { stdout, stderr } = await execFile(sendConf, { cwd: devopsPath });
 	console.log(stdout, stderr);
@@ -82,9 +83,13 @@ module.exports = function(script) {
 		case 'private':
 			transferPrivate();
 			break;
+		case 'app':
+			transferPrivate();
+			transferDistWeb();
+			break;
 		default:
 			console.log(
-				`No known statements, [ "deployconf", "devopsconf", "nginxconf", "service", "dist", "bash", "private"]`
+				`No known statements, [ "app", "deployconf", "devopsconf", "nginxconf", "service", "dist", "bash", "private"]`
 			);
 		// transferDeployConf();
 		// trasnferDeployService();

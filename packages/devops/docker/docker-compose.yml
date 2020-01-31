@@ -49,9 +49,6 @@ services:
   #network_mode: host
   image: mongo:4.2.2
   container_name: 'mongo'
-  # environment:
-  #   MONGO_INITDB_ROOT_USERNAME: monorift
-  #   MONGO_INITDB_ROOT_PASSWORD: replacehere
   env_file:
    - ../../../private/mongodb.env
   volumes:

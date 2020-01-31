@@ -17,16 +17,22 @@ const strategy = new Auth0Strategy(
 		// extraParams.id_token has the JSON Web Token
 		// profile has all the information from the user
 		const users = api.repositories['users'];
-		users.findOne({ username: profile.nickname }).then(user => {
-			if (!user) {
-				users.importProfile(profile).then(res => {
-					return done(null, profile);
-				});
-				//return done(null, profile)
-			} else {
-				return done(null, profile);
-			}
-		});
+		users
+			.findOne({ username: profile.nickname })
+			.then(user => {
+				if (!user) {
+					users.importProfile(profile).then(res => {
+						return done(null, user);
+					});
+					//return done(null, profile)
+				} else {
+					return done(null, user);
+				}
+			})
+			.catch(e => {
+				console.log(e);
+				process.exit(0);
+			});
 	}
 );
 

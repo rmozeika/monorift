@@ -138,8 +138,18 @@ export const addToCall = index => ({
 	index
 });
 
-export const REMOVE_CALL = 'ADD_CALL';
+export const REMOVE_CALL = 'REMOVE_CALL';
 export const removeFromCall = index => ({
 	type: REMOVE_CALL,
 	index
+});
+export const ADD_ONLINE_USER = 'ADD_ONLINE_USER';
+export const REMOVE_ONLINE_USER = 'REMOVE_ONLINE_USER';
+export const addOnlineUser = user => ({
+	type: ADD_ONLINE_USER,
+	payload: user
+});
+export const removeOnlineUser = user => ({
+	type: REMOVE_ONLINE_USER,
+	payload: user
 });

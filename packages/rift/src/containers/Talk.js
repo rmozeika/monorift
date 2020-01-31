@@ -78,6 +78,11 @@ class Adapter extends React.Component {
 			iceServers: [
 				{
 					urls: 'stun:stun.l.google.com:19302'
+				},
+				{
+					urls: 'turn:127.0.0.1:3478?transport=udp',
+					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
+					username: 'rtcpeer'
 				}
 			]
 		});
@@ -88,7 +93,6 @@ class Adapter extends React.Component {
 		const { conn } = peerStore;
 		const onTrack = e => {
 			const { mediaStreamConstraints } = this.props;
-			debugger; //REMOVE
 			console.log('ONTRACK called', e);
 			// if (mediaStreamConstraints.video) {
 			if (mediaStreamConstraints.video) {
@@ -107,6 +111,9 @@ class Adapter extends React.Component {
 			if (audioRef.current.srcObject) return;
 			//videoRef.current.srcObject = e.streams[0];
 			if (e.track.kind == 'audio') {
+				// let inboundStream = new MediaStream([e.track]);
+
+				// audioRef.current.srcObject = inboundStream;
 				audioRef.current.srcObject = e.streams[0];
 			}
 			let audio = audioRef.current;
@@ -134,46 +141,93 @@ class Adapter extends React.Component {
 		mediaStreamConstraints = { audio, video };
 		setConstraints({ mediaStream: mediaStreamConstraints });
 	}
+	gotMedia(stream) {
+		const { peerStore, mediaStreamConstraints } = this.props;
+		const { conn } = peerStore;
+		const audioTracks = stream.getAudioTracks();
+		// console.log('Got stream with constraints:', constraints);
+		console.log('Using audio device: ' + audioTracks[0].label);
+		stream.oninactive = function() {
+			console.log('Stream ended');
+		};
+		stream.getTracks().forEach(track => {
+			console.log('adding track', 'from getMedia after call');
+			conn.addTrack(track, stream);
+		});
+	}
 	async getMedia(constraints, alternateConn) {
-		debugger; //REMOVE
 		let stream = null;
 		const { peerStore } = this.props;
 		const { conn } = peerStore;
 		try {
 			stream = await navigator.mediaDevices.getUserMedia(constraints);
-			const audioTracks = stream.getAudioTracks();
-			console.log('Got stream with constraints:', constraints);
-			console.log('Using audio device: ' + audioTracks[0].label);
-			stream.oninactive = function() {
-				console.log('Stream ended');
-			};
-			stream.getTracks().forEach(track => {
-				console.log('adding track', 'from getMedia after call');
-				conn.addTrack(track, stream);
-			});
-			if (mediaStreamConstraints.video) {
-				// this.selfRef.current.srcObject = stream;
-			}
+			// const audioTracks = stream.getAudioTracks();
+			// console.log('Got stream with constraints:', constraints);
+			// console.log('Using audio device: ' + audioTracks[0].label);
+			// stream.oninactive = function() {
+			// 	console.log('Stream ended');
+			// };
+			// stream.getTracks().forEach(track => {
+			// 	console.log('adding track', 'from getMedia after call');
+			// 	conn.addTrack(track, stream);
+			// });
+			// if (mediaStreamConstraints.video) {
+			// 	// this.selfRef.current.srcObject = stream;
+			// }
 			//stream.addTrack(stream)
 			//selfRef.current.srcObject = stream;
 			// audioRef.current.srcObject = stream;
 			window.stream = stream; // make variable available to browser console
+			this.gotMedia(stream);
 		} catch (err) {
 			console.log(err);
 			/* handle the error */
 		}
 	}
+	async getMediaFromFile() {
+		const { audioFileRef } = this;
+		debugger;
+		//const stream = audioFileRef.current.captureStream();
+		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		var source = audioCtx.createMediaElementSource(audioFileRef.current);
+		debugger;
+		var dest = audioCtx.createMediaStreamDestination();
+		debugger;
+
+		source.connect(dest);
+		debugger;
+		// dest.connect(source);
+		var stream = dest.stream;
+		audioFileRef.current.play();
+		window.stream = stream; // make variable available to browser console
+		this.gotMedia(stream);
+	}
 	async startCall(constraints) {
 		const { peerStore, setPeerInitiator } = this.props;
 		await this.getMedia(constraints);
 		setPeerInitiator(true);
-		this.props.sendOffer({}); //{ constraints }); //mediaStreamConstraints });
+		// this.props.sendOffer({}); //{ constraints }); //mediaStreamConstraints });
 	}
 	videoCall() {
 		const { peerStore } = this.props;
 		const videoConstraints = { audio: true, video: true };
 		this.setMediaStreamConstraints(true, true);
 		this.startCall(videoConstraints);
+	}
+	async fileCall() {
+		const audioConstraints = { audio: true, video: false };
+
+		const { peerStore } = this.props;
+		this.setMediaStreamConstraints(true, false);
+		// peerStore.conn.addEventListener('icecandidate', this.handleConnection.bind(this));
+		peerStore.onicecandidate = e => {};
+		// this.startCall(audioConstraints);
+
+		const { setPeerInitiator } = this.props;
+		debugger;
+		await this.getMediaFromFile(audioConstraints);
+		setPeerInitiator(true);
+		this.props.sendOffer({});
 	}
 	call() {
 		const audioConstraints = { audio: true, video: false };
@@ -258,6 +312,7 @@ class Adapter extends React.Component {
 			</Layout>
 		);
 		const audioElem = <audio src="example.mp3"></audio>;
+		const fileCall = this.fileCall.bind(this);
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.row}>
@@ -265,6 +320,7 @@ class Adapter extends React.Component {
 				</Layout>
 				{toDisplay()}
 				<Layout style={styles.row}>
+					<Button onPress={fileCall}>Stream Audio</Button>
 					<audio
 						ref={this.audioFileRef}
 						src={`/example.mp3?${Math.random()

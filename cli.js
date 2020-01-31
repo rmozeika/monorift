@@ -205,7 +205,28 @@ const argInterface = {
 		},
 		kill: {
 			val: 'kill',
-			func: async args => {}
+			func: async args => {
+				execFile('./dev.sh/docker-kill.sh', [], (error, stdout, stderr) => {
+					console.log(stdout);
+					console.log(stderr);
+					console.log(error);
+				});
+				// const cmd = 'docker rmi -f $(docker images -a -q)';
+				// const killDocker = spawn(
+				// 	cmd
+				// );
+				// killDocker.stdout.on('data', data => {
+				// 	console.log(`stdout: ${data}`);
+
+				// });
+				// killDocker.stderr.on('data', (data) => {
+				// 	console.error(`stderr: ${data}`);
+				//   });
+				// killDocker.on('close', (code) => {
+				// 	console.log(`child process exited with code ${code}`);
+				//   });
+				// spawn.close();
+			}
 		},
 		build: {
 			val: 'build',

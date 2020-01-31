@@ -20,10 +20,23 @@ class Call extends Socket {
 		const { session = {} } = socket.request;
 		const { passport = {} } = session;
 		const { user = false } = passport;
-		this.redis.set(user.nickname, socket.id);
-
+		this.redis.set(user.username, socket.id);
+		const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
+		if (user) {
+			userSock.emit('broadcast', { name: user.username, online: true });
+		}
 		socket.on('message', this.onMessage.bind(socket, this.redis));
-		//socket.on('message1', )
+		socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
+	}
+	async onUserDisconnect(userSock, user) {
+		// console.log(this);
+		// const { session = {} } = this.request;
+		// const { passport = {} } = session;
+		// const { user = false } = passport;
+		// const userSock = io.of('/users'); //.broadcast.emit('message', username);
+		if (user) {
+			userSock.emit('broadcast', { name: user.username, online: false });
+		}
 	}
 	async onMessage(redis, msg, secondArg) {
 		if (secondArg) {
@@ -45,7 +58,7 @@ class Call extends Socket {
 				this.to(res[0].id).emit('message', msg, {
 					users,
 					constraints,
-					from: { id: this.id, name: this.request.session.passport.user.nickname }
+					from: { id: this.id, name: this.request.session.passport.user.username }
 				});
 			});
 			// .catch(e => {

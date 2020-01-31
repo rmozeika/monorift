@@ -28,7 +28,7 @@ services:
   #network_mode: host
   image: 'robertmozeika/rp2-live:latest'
   container_name: mrapp
-  restart: unless-stopped
+  restart: always
   ports:
    - '8080:8080'
   # command: ["./wait-for-it.sh", "db-svc:27017", "--", "npm", "start"]
@@ -37,6 +37,7 @@ services:
    - ../data/logs:/logs
    - ../data/logs/node/app.log:/app.log
    - ../../../dist.web:/dist.web
+   - ../../../private/docker.conf:/local.conf
   depends_on:
    - db-svc
   links:
@@ -48,14 +49,20 @@ services:
   #network_mode: host
   image: mongo:4.2.2
   container_name: 'mongo'
-  environment:
-   - MONGO_DATA_DIR=/data/db
-   - MONGO_LOG_DIR=/data/logs
+  env_file:
+   - ../../../private/mongodb.env
   volumes:
    - ../data/db:/data/db
    - ../data/logs/mongo:/data/logs
+   - ../data/etc/mongo/mongod.conf:/etc/mongod.conf
+  command:
+   - '--auth'
+   - '-f'
+   - '/etc/mongod.conf'
   expose:
    - 27017
+  ports:
+   - '27018:27017'
   labels:
    com.monorift.app: monorift
  redis-svc:

@@ -41,7 +41,9 @@ const createSocketChannel = socket =>
 			emit(data);
 		});
 		return () => {
+			debugger;
 			socket.off('login', handler);
+			socket.disconnect();
 		};
 	});
 
@@ -53,7 +55,7 @@ function* initAuthSaga() {
 		const payload = yield take(socketChannel);
 		console.log('GOT MESSAGE, AUTH', payload);
 		try {
-			if (payload.user !== false) {
+			if (payload && payload.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload });
 			} else {
 				yield put({ type: AUTH.LOGIN.REQUEST }, payload);

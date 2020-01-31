@@ -19,8 +19,15 @@ const transferDeployConf = async () => {
 	console.log(stdout, stderr);
 };
 const transferDockerConf = async () => {
+	//I think this isnt used
 	const sendConf = path.resolve(devopsPath, '.bin', 'update-conf.sh');
 	const { stdout, stderr } = await execFile(sendConf, { cwd: devopsPath });
+	console.log(stdout, stderr);
+};
+
+const transferNginxConf = async () => {
+	const nginxConf = path.resolve(devopsPath, '.bin', 'nginx-conf.sh');
+	const { stdout, stderr } = await execFile(nginxConf, { cwd: devopsPath });
 	console.log(stdout, stderr);
 };
 const transferPrivate = async () => {
@@ -39,6 +46,7 @@ const trasnferDeployService = async () => {
 };
 
 const transferDistWeb = async () => {
+	const buildProd = await exec('yarn run build:prod', { cwd: currentPath });
 	const cmd = `rsync --recursive -v -e ssh  ./dist.web.prod/. awsmono:/home/monorift/monorift/dist.web/.`;
 
 	const sendingDist = await exec(cmd, { cwd: currentPath });
@@ -62,6 +70,8 @@ module.exports = function(script) {
 			break;
 		case 'devopsconf':
 			transferDockerConf();
+		case 'nginxconf':
+			transferNginxConf();
 		case 'service':
 			trasnferDeployService();
 			break;
@@ -74,10 +84,16 @@ module.exports = function(script) {
 		case 'private':
 			transferPrivate();
 			break;
+		case 'app':
+			transferDistWeb();
+			transferPrivate();
+			break;
 		default:
-			console.log('No known statements, sending all');
-			transferDeployConf();
-			trasnferDeployService();
+			console.log(
+				`No known statements, [ "app", "deployconf", "devopsconf", "nginxconf", "service", "dist", "bash", "private"]`
+			);
+		// transferDeployConf();
+		// trasnferDeployService();
 	}
 };
 function defaultScript() {

@@ -26,11 +26,11 @@ var io = require('socket.io');
 const passportSocketIo = require('passport.socketio');
 const Socket = require('./socket');
 const Call = require('./socket/call');
-var store = new MongoDBStore({
-	uri,
-	collection: 'mySessions'
-});
-console.log('CHCK DEBUG', debug);
+// var store = new MongoDBStore({
+// 	uri,
+// 	collection: 'mySessions'
+// });
+console.log('VERSION', '1.1');
 // LOGGING
 // var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
 
@@ -193,20 +193,19 @@ app.io.on('connection', async socket => {
 	const { session = {} } = socket.request;
 	const { passport = {} } = session;
 	const { user = false } = passport;
-	// app.api.repositories.users.mongoInstance.updateOne(
-	// 	{ $set: { username: user.nickname} },
-	// 	{ socket_id: socket.id })
-	// 	.then(result => {
-	// 		console.log(result);
-	// 	}).catch(e => {
-	// 		console.log(e);
-	// 	});
-	if (user) {
-		client.sadd('online_users', user.nickname);
-		client.set(user.nickname, socket.id);
+	const isUser = user && user.username;
+	if (isUser) {
+		const key = client.sadd('online_users', user.username);
+		client.set(user.username, socket.id);
+		client.hmset(`user:${user.username}`, [
+			'socketid',
+			socket.id,
+			'key',
+			user._id
+		]);
 	}
 	app.api.repositories.users
-		.updateByUsername(user.nickname, { socket_id: socket.id })
+		.updateByUsername(user.username, { socket_id: socket.id })
 		.then(result => {
 			console.log(result);
 		});
@@ -217,8 +216,18 @@ app.io.on('connection', async socket => {
 		}
 		ack({ user: false });
 	});
+	socket.on('disconnect', socket => {
+		console.log('disconnected');
+		if (user.username) {
+			client.srem('online_users', user.username);
+		}
+	});
 	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });
+app.io.on('disconnect', async socket => {
+	console.log('disconnected');
+});
+
 app.io.on('message', function(msg) {
 	console.log(msg);
 });

@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		// padding: 16,
 		// flexDirection: 'row',
-		alignItems: 'center'
+		alignItems: 'center',
+		overflow: 'scroll'
 	},
 	row: {
 		padding: 15,

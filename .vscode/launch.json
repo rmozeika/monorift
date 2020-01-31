@@ -41,9 +41,16 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "cli dev",
+			"name": "cli kill",
 			"program": "${workspaceFolder}/cli.js",
-			"args": ["dev"]
+			"args": ["kill"] //, "--quiet"]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "cli app",
+			"program": "${workspaceFolder}/cli.js",
+			"args": ["transfer", "app"]
 		},
 		{
 			"type": "node",

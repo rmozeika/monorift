@@ -30,11 +30,8 @@ const styles = StyleSheet.create({
 class Users extends React.Component {
 	constructor(props) {
 		super(props);
-	}
-	componentDidMount() {
 		this.props.getOnlineUsers();
 	}
-	componentDidUpdate() {}
 	render() {
 		const { gotOnlineUsers, online, addToCall, removeFromCall } = this.props;
 		const loading = (

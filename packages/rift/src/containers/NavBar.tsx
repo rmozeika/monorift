@@ -33,7 +33,7 @@ interface Auth {
 interface User {
 	displayName?: string;
 	picture?: string;
-	nickname?: boolean;
+	username?: boolean;
 }
 
 interface NavBarProps {
@@ -110,7 +110,7 @@ class NavBar extends React.Component<NavProps, {}> {
 	public render(): React.ReactNode {
 		const { themedStyle, auth } = this.props;
 		const { user } = auth;
-		const title = auth.loggedIn ? `Welcome ${user.nickname}` : 'Sign in';
+		const title = auth.loggedIn ? `Welcome ${user.username}` : 'Sign in';
 		return (
 			<TopNavigation
 				// style={themedStyle.container}

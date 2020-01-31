@@ -48,9 +48,9 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "cli dev",
+			"name": "cli app",
 			"program": "${workspaceFolder}/cli.js",
-			"args": ["dev"]
+			"args": ["transfer", "app"]
 		},
 		{
 			"type": "node",

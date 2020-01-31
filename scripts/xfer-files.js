@@ -46,6 +46,7 @@ const trasnferDeployService = async () => {
 };
 
 const transferDistWeb = async () => {
+	const buildProd = await exec('yarn run build:prod', { cwd: currentPath });
 	const cmd = `rsync --recursive -v -e ssh  ./dist.web.prod/. awsmono:/home/monorift/monorift/dist.web/.`;
 
 	const sendingDist = await exec(cmd, { cwd: currentPath });
@@ -84,8 +85,8 @@ module.exports = function(script) {
 			transferPrivate();
 			break;
 		case 'app':
-			transferPrivate();
 			transferDistWeb();
+			transferPrivate();
 			break;
 		default:
 			console.log(

@@ -1,6 +1,7 @@
 node_modules
 yarn.lock
 dist.web
+dist.web.prod
 private
 **/private
 **/data
@@ -16,3 +17,4 @@ packages/cli/**
 .vscode/settings.json
 **/history
 **/yarn-error.log
+packages/deploy/history

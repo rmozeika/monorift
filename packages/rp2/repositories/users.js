@@ -1,6 +1,6 @@
 var Repository = require('./repository.js');
 
-const collection = 'user-repository';
+const collection = 'users';
 
 class UserRepository extends Repository {
 	constructor(api) {

@@ -41,6 +41,13 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "cli kill",
+			"program": "${workspaceFolder}/cli.js",
+			"args": ["kill"] //, "--quiet"]
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "cli dev",
 			"program": "${workspaceFolder}/cli.js",
 			"args": ["dev"]

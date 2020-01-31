@@ -78,6 +78,11 @@ class Adapter extends React.Component {
 			iceServers: [
 				{
 					urls: 'stun:stun.l.google.com:19302'
+				},
+				{
+					urls: 'turn:127.0.0.1:3478?transport=udp',
+					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
+					username: 'rtcpeer'
 				}
 			]
 		});
@@ -106,9 +111,10 @@ class Adapter extends React.Component {
 			if (audioRef.current.srcObject) return;
 			//videoRef.current.srcObject = e.streams[0];
 			if (e.track.kind == 'audio') {
-				let inboundStream = new MediaStream(e.track);
+				// let inboundStream = new MediaStream([e.track]);
 
-				audioRef.current.srcObject = inboundStream;
+				// audioRef.current.srcObject = inboundStream;
+				audioRef.current.srcObject = e.streams[0];
 			}
 			let audio = audioRef.current;
 			// // localAudio.audioRef.srcObject = track;
@@ -181,7 +187,17 @@ class Adapter extends React.Component {
 	async getMediaFromFile() {
 		const { audioFileRef } = this;
 		debugger;
-		const stream = audioFileRef.current.captureStream();
+		//const stream = audioFileRef.current.captureStream();
+		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		var source = audioCtx.createMediaElementSource(audioFileRef.current);
+		debugger;
+		var dest = audioCtx.createMediaStreamDestination();
+		debugger;
+
+		source.connect(dest);
+		debugger;
+		// dest.connect(source);
+		var stream = dest.stream;
 		audioFileRef.current.play();
 		window.stream = stream; // make variable available to browser console
 		this.gotMedia(stream);
@@ -190,7 +206,7 @@ class Adapter extends React.Component {
 		const { peerStore, setPeerInitiator } = this.props;
 		await this.getMedia(constraints);
 		setPeerInitiator(true);
-		this.props.sendOffer({}); //{ constraints }); //mediaStreamConstraints });
+		// this.props.sendOffer({}); //{ constraints }); //mediaStreamConstraints });
 	}
 	videoCall() {
 		const { peerStore } = this.props;

@@ -1,5 +1,9 @@
 const { ObjectId, MongoClient } = require('mongodb');
-const uri = require('../config.js').mongoConnectionString;
+const {
+	mongoConnectionString: uri,
+	mongoUser,
+	mongoPassword
+} = require('../config.js');
 
 function LogCallback(method, suffix, cb) {
 	const util = require('util');
@@ -46,14 +50,34 @@ const extendMethods = [
 class MongoService {
 	constructor() {
 		// this.connectToServer();
-		this.createMethods(extendMethods);
+		// this.createMethods(extendMethods);
 	}
 
 	connectToServer(cb) {
-		MongoClient.connect(uri).then(client => {
-			this._db = client.db('data');
-			return cb(null, client);
-		});
+		const options = {
+			authMechanism: 'SCRAM-SHA-1',
+			authSource: 'admin'
+		};
+		options['auth.user'] = mongoUser;
+		options['auth.password'] = mongoPassword;
+		console.log('connecting to mongo');
+		const MonoriftClient = new MongoClient(uri, options);
+		MonoriftClient.connect()
+			.then(async client => {
+				this.createMethods(extendMethods);
+
+				this._db = client.db('data');
+				const col = this._db.collection('users');
+				const users = await col.findOne({ username: 'delete' });
+				console.log(users);
+				return cb(null, client);
+			})
+			.catch(e => {
+				console.log('error connectiong', e);
+				process.exit(22);
+				// throw new Error(e);
+				// console.log('not stopped?')
+			});
 	}
 
 	getDb() {

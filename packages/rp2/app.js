@@ -26,11 +26,11 @@ var io = require('socket.io');
 const passportSocketIo = require('passport.socketio');
 const Socket = require('./socket');
 const Call = require('./socket/call');
-var store = new MongoDBStore({
-	uri,
-	collection: 'mySessions'
-});
-console.log('CHCK DEBUG', debug);
+// var store = new MongoDBStore({
+// 	uri,
+// 	collection: 'mySessions'
+// });
+console.log('VERSION', '1.1');
 // LOGGING
 // var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
 

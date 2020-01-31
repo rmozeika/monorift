@@ -11,12 +11,13 @@ import {
 	actionChannel,
 	select
 } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
+import { eventChannel, runSaga } from 'redux-saga';
 import { originLink } from '../core/utils';
 // import es6promise from 'es6-promise'
 import 'isomorphic-unfetch';
 
 import * as Actions from '../actions';
+
 let mediaStreamConstraints = {
 	audio: true,
 	video: false
@@ -30,7 +31,8 @@ const {
 	GOT_MESSAGE,
 	SET_REMOTE,
 	setRemote,
-	setConstraints
+	setConstraints,
+	sendOffer
 } = Actions;
 
 import io from 'socket.io-client';
@@ -125,31 +127,40 @@ function* sendCandidateSaga(action) {
 	socket.emit('message', candidateToSend);
 }
 function* createPeerConnSaga({ config = {} }) {
-	const conn = new RTCPeerConnection(config);
-	window.conn = conn;
-	conn.onnegotiationneeded = async e => {
-		console.log('On negition needed called');
-		// // if (true) return;
-		// try {
+	try {
+		const conn = new RTCPeerConnection(config);
+		yield put(Actions.setPeerConn(conn));
 
-		// 	const desc = await conn.createOffer();
-		// 	conn.setLocalDescription(desc).catch(e => {
-		// 		console.log(e);
-		// 	});
-		// 	socket.emit('message', desc, { audio: true, video: true });
-		// 	await conn.setLocalDescription(await conn.createOffer());
-		// 	// send the offer to the other peer
-		// 	//signaling.send({desc: conn.localDescription});
-		// 	socket.emit('message', conn.localDescription);
-		// } catch (err) {
-		// 	console.error(err);
-		// }
-	};
-	yield put(Actions.setPeerConn(conn));
-	console.log(conn);
+		window.conn = conn;
+		// const putOffer =
+		const tickChannel = eventChannel(emit => {
+			conn.onnegotiationneeded = async e => {
+				debugger;
+				console.log('On negition needed called');
+				emit('offer needed');
+				console.log();
+			};
+			// const handle = setInterval(() => {
+			//   emit("tick");
+			// }, 100);
+			return () => {};
+		});
+		for (let i = 0; i < 5; i++) {
+			debugger;
+			yield take(tickChannel);
+			debugger;
+			yield put(sendOffer({}));
+			debugger;
+		}
+		console.log(conn);
+	} catch (error) {
+		debugger;
+		console.log(error);
+	}
 }
 function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	console.log('Sending offer');
+	debugger;
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
 	const constraints = { ...mediaStream, ...altConstraints };

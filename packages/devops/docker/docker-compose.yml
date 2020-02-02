@@ -76,6 +76,7 @@ services:
   build:
    context: ./coturn
   restart: always
+  container_name: coturn
   volumes:
    - ../../../private/coturn/turnserver.conf:/etc/turnserver.conf
    - ../../../private/privkey.pem:/etc/ssl/private/privkey.pem

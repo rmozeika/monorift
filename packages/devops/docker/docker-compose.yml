@@ -72,6 +72,30 @@ services:
    - 6379
   labels:
    com.monorift.app: monorift
+ coturn:
+  build:
+   context: ./coturn
+  restart: always
+  volumes:
+   - ../../../private/coturn/turnserver.conf:/etc/turnserver.conf
+   - ../../../private/privkey.pem:/etc/ssl/private/privkey.pem
+   - ../../../private/fullchain.pem:/etc/ssl/certs/cert.pem
+  ports:
+   - '3478:3478'
+   - '3478:3478/udp'
+   - '3479:3479'
+   - '3479:3479/udp'
+   - '5349:5349'
+   - '5349:5349/udp'
+   - '5350:5350'
+   - '5350:5350/udp'
+  env_file:
+   - ../../../private/coturn/coturn.env
+   # - mysql/mysql.env
+   # - postgresql/postgresql.env
+   # - redis/redis.env
+   - ../../../private/coturn/mongodb.env
+# volumes
 # volumes:
 #   data-volume:
 # Docker Networks

@@ -18,3 +18,6 @@ packages/cli/**
 **/history
 **/yarn-error.log
 packages/deploy/history
+logs/compose
+package-lock.json
+packages/deploy/package-lock.json

@@ -126,7 +126,9 @@ function* sendCandidateSaga(action) {
 	console.log(candidateToSend);
 	socket.emit('message', candidateToSend);
 }
-function* createPeerConnSaga({ config = {} }) {
+function* createPeerConnSaga(action) {
+	debugger;
+	const { config } = action;
 	try {
 		const conn = new RTCPeerConnection(config);
 		yield put(Actions.setPeerConn(conn));

@@ -80,7 +80,7 @@ class Adapter extends React.Component {
 					urls: 'stun:stun.l.google.com:19302'
 				},
 				{
-					urls: 'turn:127.0.0.1:3478?transport=udp',
+					urls: 'turn:monorift:78?transport=udp',
 					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
 					username: 'rtcpeer'
 				}

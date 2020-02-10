@@ -19,6 +19,7 @@ import { AwesomeIconsPack } from './core/icons';
 import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
 import Tiffany from './containers/Tiffany';
+import About from './containers/About';
 
 import Call from './containers/Call';
 
@@ -73,6 +74,9 @@ class App extends React.Component<Props, State> {
 					<Router>
 						<NavBar />
 						<Switch>
+							<Route path="/about">
+								<About />
+							</Route>
 							<Route path="/">
 								<Call />
 							</Route>

@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
+import {
+	Layout,
+	Text,
+	Button,
+	styled,
+	withStyles,
+	TabView
+} from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -34,7 +41,7 @@ class CallContainer extends React.Component {
 	}
 	render() {
 		return (
-			<Layout style={styles.container}>
+			<Layout style={[styles.container, styles.container]}>
 				<Users />
 				<Talk audioRef={this.audioRef} />
 			</Layout>
@@ -42,4 +49,8 @@ class CallContainer extends React.Component {
 	}
 }
 
-export default CallContainer;
+export default withStyles(CallContainer, theme => ({
+	container: {
+		backgroundColor: theme['color-primary-100']
+	}
+}));

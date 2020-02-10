@@ -260,11 +260,7 @@ class Adapter extends React.Component {
 		const video = (ref, onPress, key) => {
 			return (
 				<Layout key={key} styles={styles.row2}>
-					{onPress ? (
-						<Button disabled onPress={onPress}>
-							Video Call
-						</Button>
-					) : null}
+					{onPress ? <Button onPress={onPress}>Video Call</Button> : null}
 					<video styles={styles.video} autoPlay muted playsInline ref={ref} />
 				</Layout>
 			);

@@ -118,6 +118,8 @@ const setupDefaultRoute = () => {
 		//   res.sendFile(indexPath);
 		// });
 		// app.use(express.static(path.resolve(webpackConfig.output.path)))
+		// app.use('/about', express.static(path.resolve(webpackConfig.output.path)));
+
 		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 		// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
 	} else {

@@ -18,6 +18,10 @@ const styles = StyleSheet.create({
 	row: {
 		padding: 15,
 		width: '100%'
+	},
+	button: {
+		// margin: 8,
+		width: '50%'
 	}
 });
 // let peerStore;
@@ -49,7 +53,13 @@ class Users extends React.Component {
 					removeFromCall={removeFromCall}
 					online={online}
 				>
-					<Button>Test</Button>
+					<Button
+						style={styles.button}
+						appearance="outline"
+						onPress={this.props.goToTalk}
+					>
+						To Call
+					</Button>
 				</UserList>
 			);
 		};

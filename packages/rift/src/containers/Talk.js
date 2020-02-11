@@ -186,16 +186,12 @@ class Adapter extends React.Component {
 	}
 	async getMediaFromFile() {
 		const { audioFileRef } = this;
-		debugger;
 		//const stream = audioFileRef.current.captureStream();
 		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 		var source = audioCtx.createMediaElementSource(audioFileRef.current);
-		debugger;
 		var dest = audioCtx.createMediaStreamDestination();
-		debugger;
 
 		source.connect(dest);
-		debugger;
 		// dest.connect(source);
 		var stream = dest.stream;
 		audioFileRef.current.play();
@@ -224,7 +220,6 @@ class Adapter extends React.Component {
 		// this.startCall(audioConstraints);
 
 		const { setPeerInitiator } = this.props;
-		debugger;
 		await this.getMediaFromFile(audioConstraints);
 		setPeerInitiator(true);
 		this.props.sendOffer({});

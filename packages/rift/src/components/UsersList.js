@@ -55,6 +55,15 @@ const styles = StyleSheet.create({
 		flexBasis: 'auto',
 		flexShrink: 1,
 		flexGrow: 1
+	},
+	button: {
+		// margin: 8,
+		width: '50%'
+	},
+	buttonBottom: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
 	}
 });
 class UsersList extends React.Component {
@@ -78,7 +87,7 @@ class UsersList extends React.Component {
 		removeFromCall(index);
 	}
 	render() {
-		const { online, themedStyle } = this.props;
+		const { online, themedStyle, children } = this.props;
 		const renderItemAccessory = (style, index) => {
 			const buttonStyle = {
 				...style,
@@ -178,6 +187,8 @@ class UsersList extends React.Component {
 		return (
 			<Layout style={styles.userListLayout}>
 				<List data={online} renderItem={renderItem} style={{ width: '100%' }} />
+				{/* <Button style={styles.button}>Test</Button> */}
+				<Layout style={styles.buttonBottom}>{children}</Layout>
 			</Layout>
 		);
 	}

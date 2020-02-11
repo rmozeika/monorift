@@ -13,6 +13,7 @@ import {
 	withStyles,
 	Toggle
 } from 'react-native-ui-kitten';
+import { loadData } from '@src/actions';
 const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
@@ -22,6 +23,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		flexDirection: 'row',
 		flexWrap: 'wrap'
+	},
+	userListLayout: {
+		width: '100%'
 	},
 	row: {
 		padding: 15,
@@ -171,32 +175,11 @@ class UsersList extends React.Component {
 			);
 		};
 
-		// const onlineUserList = online.map(user => {
-		// 	return (
-		// 		<Layout style={styles.userBlock}>
-		// 			<Layout style={styles.column}>
-		// 				<Button>Test</Button>
-		// 			</Layout>
-		// 			<Layout style={styles.column}>
-		// 				<Text>{user}</Text>
-		// 			</Layout>
-		// 			<Layout style={styles.column}>
-		// 				<Button>Test</Button>
-		// 			</Layout>
-		// 		</Layout>
-		// 	);
-		// });
 		return (
-			<List data={online} renderItem={renderItem} style={{ width: '100%' }} />
+			<Layout style={styles.userListLayout}>
+				<List data={online} renderItem={renderItem} style={{ width: '100%' }} />
+			</Layout>
 		);
-
-		// return (
-		// 	<Layout style={styles.container}>
-		// 		{/* <Layout style={styles.row}> */}
-		// 		{onlineUserList}
-		// 		{/* </Layout> */}
-		// 	</Layout>
-		// );
 	}
 }
 

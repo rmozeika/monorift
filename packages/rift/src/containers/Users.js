@@ -48,7 +48,9 @@ class Users extends React.Component {
 					addToCall={addToCall}
 					removeFromCall={removeFromCall}
 					online={online}
-				></UserList>
+				>
+					<Button>Test</Button>
+				</UserList>
 			);
 		};
 		return <Layout style={styles.container}>{toDisplay()}</Layout>;

@@ -5,7 +5,8 @@ import {
 	Button,
 	styled,
 	withStyles,
-	TabView
+	TabView,
+	Tab
 } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
@@ -25,6 +26,9 @@ const styles = StyleSheet.create({
 	row: {
 		padding: 15,
 		width: '100%'
+	},
+	tabContainer: {
+		minHeight: 64
 	}
 });
 // let peerStore;
@@ -38,12 +42,35 @@ class CallContainer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.audioRef = React.createRef();
+		this.state = {
+			coutopTabsIndex: 0,
+			setTopTabsIndex: 0
+		};
+	}
+	goToTalk() {
+		this.setState({ setTopTabsIndex: 1 });
 	}
 	render() {
+		const { topTabsIndex, setTopTabsIndex } = this.state;
+		// const [bottomTabsIndex, setBottomTabsIndex] = React.useState(0);
 		return (
-			<Layout style={[styles.container, styles.container]}>
-				<Users />
-				<Talk audioRef={this.audioRef} />
+			<Layout style={styles.container}>
+				<TabView
+					selectedIndex={topTabsIndex}
+					onSelect={setTopTabsIndex}
+					style={{ width: '100%' }}
+				>
+					<Tab title="users">
+						<Layout style={styles.tabContainer}>
+							<Users goToTalk={this.goToTalk.bind(this)} />
+						</Layout>
+					</Tab>
+					<Tab title="talk">
+						<Layout style={styles.tabContainer}>
+							<Talk audioRef={this.audioRef} />
+						</Layout>
+					</Tab>
+				</TabView>
 			</Layout>
 		);
 	}

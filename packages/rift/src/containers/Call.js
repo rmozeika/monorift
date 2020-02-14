@@ -21,7 +21,9 @@ const styles = StyleSheet.create({
 		// padding: 16,
 		// flexDirection: 'row',
 		alignItems: 'center',
-		overflow: 'scroll'
+		overflow: 'scroll',
+		maxWidth: 900,
+		margin: 'auto'
 	},
 	row: {
 		padding: 15,
@@ -43,12 +45,14 @@ class CallContainer extends React.Component {
 		super(props);
 		this.audioRef = React.createRef();
 		this.state = {
-			coutopTabsIndex: 0,
+			topTabsIndex: 0,
 			setTopTabsIndex: 0
 		};
 	}
 	goToTalk() {
-		this.setState({ setTopTabsIndex: 1 });
+		console.log('Call talk func');
+		debugger;
+		this.setState({ topTabsIndex: 1 });
 	}
 	render() {
 		const { topTabsIndex, setTopTabsIndex } = this.state;

@@ -36,6 +36,10 @@ class Users extends React.Component {
 		super(props);
 		this.props.getOnlineUsers();
 	}
+	goTalk() {
+		console.log('Pressed user');
+		this.props.goToTalk();
+	}
 	render() {
 		const { gotOnlineUsers, online, addToCall, removeFromCall } = this.props;
 		const loading = (
@@ -56,7 +60,7 @@ class Users extends React.Component {
 					<Button
 						style={styles.button}
 						appearance="outline"
-						onPress={this.props.goToTalk}
+						onPress={this.goTalk.bind(this)}
 					>
 						To Call
 					</Button>

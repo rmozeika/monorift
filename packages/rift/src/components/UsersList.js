@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 		height: 'auto',
 		width: 'auto',
 		flexBasis: 'auto',
-		flexShrink: 1,
+		flexShrink: 0,
 		flexGrow: 1
 	},
 	button: {
@@ -77,6 +77,10 @@ class UsersList extends React.Component {
 	setChecked(index, vale) {}
 	onPressedCall(index, type) {
 		console.log('clicked!');
+	}
+	goTalk() {
+		debugger;
+		console.log('UsersList');
 	}
 	onAdd(index, val) {
 		const { addToCall } = this.props;

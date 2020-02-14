@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
+import Media from './Media';
+
 const trace = msg => {
 	console.log(msg);
 };
@@ -26,24 +28,13 @@ const styles = StyleSheet.create({
 	},
 	row: {
 		// flex: 1
-		//backgroundColor: 'red',
 		padding: 15,
 		width: '100%'
-	},
-	row2: {
-		// flex: 1
-		//backgroundColor: 'red',
-		padding: 15,
-		width: '100%'
-	},
-	bigBlue: {
-		//backgroundColor: 'blue',
-		flexGrow: 5
 	},
 	video: {
-		backgroundColor: 'blue',
-		width: '100%',
-		height: 200
+		// backgroundColor: 'blue',
+		width: '100%'
+		// height: 200
 	}
 });
 // let peerStore;
@@ -249,14 +240,14 @@ class Adapter extends React.Component {
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={styles.row}>
 				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
-				<audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio>
+				{/* <audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio> */}
 			</Layout>
 		);
 		const video = (ref, onPress, key) => {
 			return (
-				<Layout key={key} styles={styles.row2}>
+				<Layout key={key} style={styles.row}>
 					{onPress ? <Button onPress={onPress}>Video Call</Button> : null}
-					<video styles={styles.video} autoPlay muted playsInline ref={ref} />
+					{/* <video style={{ width: '100%' }} autoPlay muted playsInline ref={ref} /> */}
 				</Layout>
 			);
 		};
@@ -306,8 +297,8 @@ class Adapter extends React.Component {
 		const fileCall = this.fileCall.bind(this);
 		return (
 			<Layout style={styles.container}>
-				<Layout style={styles.row}>
-					<Text>Hello!</Text>
+				<Layout style={[styles.row, { padding: 0 }]}>
+					<Media videoRef={this.videoRef} audioRef={this.audioRef} />
 				</Layout>
 				{toDisplay()}
 				<Layout style={styles.row}>

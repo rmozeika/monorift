@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
 	},
 	userListLayout: {
 		width: '100%'
+		// display: 'flex'
 	},
 	row: {
 		padding: 15,
@@ -45,7 +46,8 @@ const styles = StyleSheet.create({
 		padding: 15,
 		height: 'auto',
 		width: 'auto',
-		display: 'flex'
+		// display: 'flex',
+		flexShrink: 1
 		// flexWrap: 'wrap'
 	},
 	column: {
@@ -190,7 +192,11 @@ class UsersList extends React.Component {
 
 		return (
 			<Layout style={styles.userListLayout}>
-				<List data={online} renderItem={renderItem} style={{ width: '100%' }} />
+				<List
+					data={online}
+					renderItem={renderItem}
+					style={{ width: '100%', flexShrink: 1 }}
+				/>
 				{/* <Button style={styles.button}>Test</Button> */}
 				<Layout style={styles.buttonBottom}>{children}</Layout>
 			</Layout>

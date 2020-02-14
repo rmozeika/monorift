@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		overflow: 'scroll',
 		maxWidth: 900,
-		margin: 'auto'
+		margin: 'auto',
+		width: '100%'
 	},
 	row: {
 		padding: 15,

@@ -113,7 +113,7 @@ class Adapter extends React.Component {
 			// 	srcObject = e.streams[0];
 			// }
 			// console.log(audioRef.current.srcObject);
-			audio.play();
+			// audio.play();
 		};
 
 		if (peerConnStatus.created === true && conn.ontrack == null) {

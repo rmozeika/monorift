@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
 class Media extends React.Component {
 	constructor(props) {
 		super(props);
+		this.setState({ audioControl: null });
 		// // let audioRef = React.createRef();
 		// let audioRef = this.props.audioRef;
 		// let videoRef = React.createRef();
@@ -39,16 +40,21 @@ class Media extends React.Component {
 		// window.videoRef = this.videoRef;
 	}
 	createAudioContext(node) {
+		debugger;
+		const audioControl = this.state == null ? null : this.state.audioControl;
+		if (audioControl !== null) return;
+		debugger;
+		const myAudio = this.props.audioRef.current;
 		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 		var source = audioCtx.createMediaElementSource(myAudio);
 		// gainNode.connect(audioCtx.destination);
 		var source1 = audioCtx.createBufferSource();
-		this.state.audioControl = source1;
-		source1.connect(context.destination);
+		this.setState({ audioControl: source1 });
+		source1.connect(audioCtx.destination);
 		// source1.start(0);
 	}
 	play() {
-		this.state.source1.start(0);
+		this.state.audioControl.start(0);
 	}
 	render() {
 		const { videoRef, audioRef } = this.props;
@@ -62,6 +68,7 @@ class Media extends React.Component {
 				</Layout>
 				<Layout style={styles.row}>
 					<Button onPress={this.createAudioContext.bind(this)}>Start</Button>
+					<Button onPress={this.play.bind(this)}>Play</Button>
 				</Layout>
 			</Layout>
 		);

@@ -51,10 +51,14 @@ class Media extends React.Component {
 		var source1 = audioCtx.createBufferSource();
 		this.setState({ audioControl: source1 });
 		source1.connect(audioCtx.destination);
+		debugger;
 		// source1.start(0);
 	}
 	play() {
 		this.state.audioControl.start(0);
+	}
+	stop() {
+		this.state.audioControl.stop();
 	}
 	render() {
 		const { videoRef, audioRef } = this.props;
@@ -64,11 +68,12 @@ class Media extends React.Component {
 					<video style={{ width: '100%' }} autoPlay playsInline ref={videoRef} />
 				</Layout>
 				<Layout style={styles.row}>
-					<audio id={`audio-1`} controls autoPlay ref={audioRef}></audio>
+					<audio id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>
 				<Layout style={styles.row}>
 					<Button onPress={this.createAudioContext.bind(this)}>Start</Button>
 					<Button onPress={this.play.bind(this)}>Play</Button>
+					<Button onPress={this.stop.bind(this)}>Stop</Button>
 				</Layout>
 			</Layout>
 		);

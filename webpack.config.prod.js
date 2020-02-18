@@ -7,15 +7,20 @@ var src = path.join(__dirname, './packages/rift/src');
 module.exports = {
 	context: path.resolve(__dirname),
 	entry: [path.join(src, 'index.js')],
-	mode: 'development',
+	mode: 'production',
 	module: {
 		rules: [
 			{
 				test: /\.ts(x?)$/,
-				exclude: /node_modules/,
+				// exclude: /node_modules/,
 				use: [
 					{
-						loader: 'ts-loader'
+						loader: 'ts-loader',
+						options: {
+							// transpileOnly: true
+							configFile: 'tsconfig.json',
+							ignoreDiagnostics: [1144]
+						}
 					}
 				]
 			},

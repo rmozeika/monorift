@@ -9,7 +9,7 @@ import {
 	Tab
 } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
-import { StyleSheet, Linking, Platform } from 'react-native';
+import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import UserList from '../components/UsersList';
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 		// padding: 16,
 		// flexDirection: 'row',
 		alignItems: 'center',
-		overflow: 'scroll',
+		// overflow: 'scroll',
 		maxWidth: 900,
 		margin: 'auto',
 		width: '100%'
@@ -64,24 +64,26 @@ class CallContainer extends React.Component {
 		const { tab } = this.props;
 		// const [bottomTabsIndex, setBottomTabsIndex] = React.useState(0);
 		return (
-			<Layout style={styles.container}>
-				<TabView
-					selectedIndex={tab}
-					onSelect={this.setTopTabsIndex}
-					style={{ width: '100%' }}
-				>
-					<Tab title="users">
-						<Layout style={styles.tabContainer}>
-							<Users />
-						</Layout>
-					</Tab>
-					<Tab title="talk">
-						<Layout style={styles.tabContainer}>
-							<Talk audioRef={this.audioRef} />
-						</Layout>
-					</Tab>
-				</TabView>
-			</Layout>
+			<ScrollView>
+				<Layout style={styles.container}>
+					<TabView
+						selectedIndex={tab}
+						onSelect={this.setTopTabsIndex}
+						style={{ width: '100%' }}
+					>
+						<Tab title="users">
+							<Layout style={styles.tabContainer}>
+								<Users />
+							</Layout>
+						</Tab>
+						<Tab title="talk">
+							<Layout style={styles.tabContainer}>
+								<Talk audioRef={this.audioRef} />
+							</Layout>
+						</Tab>
+					</TabView>
+				</Layout>
+			</ScrollView>
 		);
 	}
 }

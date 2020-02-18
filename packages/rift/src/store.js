@@ -4,25 +4,25 @@ import rootReducer, { initialState } from './reducers';
 import rootSaga from './sagas';
 console.log(initialState);
 const bindMiddleware = middleware => {
-  if (process.env.NODE_ENV !== 'production') {
-    const { composeWithDevTools } = require('redux-devtools-extension');
-    return composeWithDevTools(applyMiddleware(...middleware));
-  }
-  return applyMiddleware(...middleware);
+	if (process.env.NODE_ENV !== 'production') {
+		const { composeWithDevTools } = require('redux-devtools-extension');
+		return composeWithDevTools(applyMiddleware(...middleware));
+	}
+	return applyMiddleware(...middleware);
 };
 
-function configureStore (initialStates = {}) {
+function configureStore(initialStates = {}) {
+	debugger;
+	const sagaMiddleware = createSagaMiddleware();
+	const store = createStore(
+		rootReducer,
+		initialState,
+		bindMiddleware([sagaMiddleware])
+	);
 
-  const sagaMiddleware = createSagaMiddleware();
-  const store = createStore(
-    rootReducer,
-    initialState,
-    bindMiddleware([sagaMiddleware])
-  );
+	store.sagaTask = sagaMiddleware.run(rootSaga);
 
-  store.sagaTask = sagaMiddleware.run(rootSaga);
-
-  return store;
+	return store;
 }
 
 export default configureStore;

@@ -153,3 +153,14 @@ export const removeOnlineUser = user => ({
 	type: REMOVE_ONLINE_USER,
 	payload: user
 });
+export const SET_STREAM = 'SET_STREAM';
+export const setStream = stream => ({
+	type: SET_STREAM,
+	payload: stream
+});
+
+export const SET_TAB_VIEW = 'SET_TAB_VIEW';
+export const setTabView = index => ({
+	type: SET_TAB_VIEW,
+	payload: index
+});

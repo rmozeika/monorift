@@ -55,19 +55,24 @@ class CallContainer extends React.Component {
 		debugger;
 		this.setState({ topTabsIndex: 1 });
 	}
+	setTopTabsIndex(index) {
+		debugger;
+		console.log(index);
+	}
 	render() {
 		const { topTabsIndex, setTopTabsIndex } = this.state;
+		const { tab } = this.props;
 		// const [bottomTabsIndex, setBottomTabsIndex] = React.useState(0);
 		return (
 			<Layout style={styles.container}>
 				<TabView
-					selectedIndex={topTabsIndex}
-					onSelect={setTopTabsIndex}
+					selectedIndex={tab}
+					onSelect={this.setTopTabsIndex}
 					style={{ width: '100%' }}
 				>
 					<Tab title="users">
 						<Layout style={styles.tabContainer}>
-							<Users goToTalk={this.goToTalk.bind(this)} />
+							<Users />
 						</Layout>
 					</Tab>
 					<Tab title="talk">
@@ -81,8 +86,26 @@ class CallContainer extends React.Component {
 	}
 }
 
-export default withStyles(CallContainer, theme => ({
+const CallContainerStyled = withStyles(CallContainer, theme => ({
 	container: {
 		backgroundColor: theme['color-primary-100']
 	}
 }));
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+	return {
+		setViewTab: tab => dispatch(Actions.setTabView(tab))
+	};
+};
+const mapStateToProps = (state, ownProps) => {
+	const { view } = state;
+	const { tab } = view;
+	return {
+		tab: tab
+	};
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CallContainerStyled);

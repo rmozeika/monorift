@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
+import { connect } from 'react-redux';
+import * as Actions from '../actions';
 
 import {
 	Layout,
@@ -83,6 +85,7 @@ class UsersList extends React.Component {
 	goTalk() {
 		debugger;
 		console.log('UsersList');
+		this.props.setViewTab(1);
 	}
 	onAdd(index, val) {
 		const { addToCall } = this.props;
@@ -198,7 +201,15 @@ class UsersList extends React.Component {
 					style={{ width: '100%', flexShrink: 1 }}
 				/>
 				{/* <Button style={styles.button}>Test</Button> */}
-				<Layout style={styles.buttonBottom}>{children}</Layout>
+				<Layout style={styles.buttonBottom}>
+					<Button
+						style={styles.button}
+						appearance="outline"
+						onPress={this.goTalk.bind(this)}
+					>
+						To Call
+					</Button>
+				</Layout>
 			</Layout>
 		);
 	}
@@ -224,4 +235,20 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		flexDirection: 'row'
 	}
 }));
-export default UsersListWithStyles;
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+	return {
+		setViewTab: tab => dispatch(Actions.setTabView(tab))
+	};
+};
+const mapStateToProps = (state, ownProps) => {
+	const { view } = state;
+	const { tab } = view;
+	return {
+		tab: tab
+	};
+};
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(UsersListWithStyles);

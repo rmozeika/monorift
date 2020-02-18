@@ -7,7 +7,8 @@ import {
 	HANDLERS_SET,
 	SET_PEER_STARTED,
 	SET_PEER_INITIATOR,
-	SET_REMOTE
+	SET_REMOTE,
+	SET_STREAM
 } from '../actions';
 export const initialState = {
 	peerStore: {
@@ -17,7 +18,8 @@ export const initialState = {
 		handlersAttached: false,
 		isStarted: false,
 		isInitiator: false,
-		remoteSet: false
+		remoteSet: false,
+		stream: null
 	},
 	candidate: {},
 	constraints: {
@@ -52,6 +54,8 @@ export const peerStore = (state = [], action = {}) => {
 			return { ...state, isInitiator: action.initiator };
 		case SET_REMOTE:
 			return { ...state, remoteSet: action.remoteSet };
+		case SET_STREAM:
+			return { ...state, stream: action.payload };
 		default:
 			return state;
 	}

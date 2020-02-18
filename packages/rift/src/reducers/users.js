@@ -8,7 +8,7 @@ import {
 	REMOVE_ONLINE_USER
 } from '../actions';
 
-export const intialState = {
+export const initialState = {
 	online: {
 		users: [],
 		gotOnlineUsers: false

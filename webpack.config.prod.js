@@ -7,7 +7,7 @@ var src = path.join(__dirname, './packages/rift/src');
 module.exports = {
 	context: path.resolve(__dirname),
 	entry: [path.join(src, 'index.js')],
-	mode: 'production',
+	mode: 'development',
 	module: {
 		rules: [
 			{
@@ -105,7 +105,8 @@ module.exports = {
 			// Support React Native Web
 			// https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
 			'react-native': 'react-native-web',
-			'@src': path.resolve(__dirname, './packages/rift/src')
+			'@src': path.resolve(__dirname, './packages/rift/src'),
+			'react-native-svg': 'react-native-svg-web'
 		},
 		extensions: ['.ts', '.tsx', '.js']
 	},
@@ -118,7 +119,7 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'dist.web.prod'),
 		publicPath: '/',
-		filename: '[name].bundle.js'
+		filename: '[name].bundle.js?ver[hash:6]'
 	},
 	devtool: 'source-map'
 };

@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	tabContainer: {
-		minHeight: 64
+		minHeight: 64,
+		flexDirection: 'column'
 	}
 });
 // let peerStore;
@@ -64,26 +65,24 @@ class CallContainer extends React.Component {
 		const { tab } = this.props;
 		// const [bottomTabsIndex, setBottomTabsIndex] = React.useState(0);
 		return (
-			<ScrollView>
-				<Layout style={styles.container}>
-					<TabView
-						selectedIndex={tab}
-						onSelect={this.setTopTabsIndex}
-						style={{ width: '100%' }}
-					>
-						<Tab title="users">
-							<Layout style={styles.tabContainer}>
-								<Users />
-							</Layout>
-						</Tab>
-						<Tab title="talk">
-							<Layout style={styles.tabContainer}>
-								<Talk audioRef={this.audioRef} />
-							</Layout>
-						</Tab>
-					</TabView>
-				</Layout>
-			</ScrollView>
+			<Layout style={styles.container}>
+				<TabView
+					selectedIndex={tab}
+					onSelect={this.setTopTabsIndex}
+					style={{ width: '100%' }}
+				>
+					<Tab title="users">
+						<Layout style={styles.tabContainer}>
+							<Users />
+						</Layout>
+					</Tab>
+					<Tab title="talk">
+						<Layout style={styles.tabContainer}>
+							<Talk audioRef={this.audioRef} />
+						</Layout>
+					</Tab>
+				</TabView>
+			</Layout>
 		);
 	}
 }

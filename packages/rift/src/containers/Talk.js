@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
-import { StyleSheet, Linking, Platform } from 'react-native';
+import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import Media from './Media';
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 		// padding: 16,
 		// flexDirection: 'row',
 		alignItems: 'center'
+		// height: '100%'
 	},
 	row: {
 		// flex: 1
@@ -302,26 +303,36 @@ class Adapter extends React.Component {
 		const audioElem = <audio src="example.mp3"></audio>;
 		const fileCall = this.fileCall.bind(this);
 		return (
-			<Layout style={styles.container}>
-				<Layout style={[styles.row, { padding: 0 }]}>
-					<Media videoRef={this.videoRef} audioRef={this.audioRef} />
+			<ScrollView
+				style={{
+					overflowY: 'scroll',
+					height: 500,
+					flexGrow: 1,
+					flexDirection: 'column'
+				}}
+				contentContainerStyle={{ flexGrow: 1 }}
+			>
+				<Layout style={styles.container}>
+					<Layout style={[styles.row, { padding: 0 }]}>
+						<Media videoRef={this.videoRef} audioRef={this.audioRef} />
+					</Layout>
+					{toDisplay()}
+					<Layout style={[styles.row, { padding: 2 }]}>
+						<Button onPress={fileCall} appearance="outline" status="warning">
+							Stream Audio from File
+						</Button>
+						<audio
+							ref={this.audioFileRef}
+							src={`/example.mp3?${Math.random()
+								.toString()
+								.substr(2)}`}
+							type="audio/mpeg"
+							controls
+							style={{ margin: 'auto' }}
+						></audio>
+					</Layout>
 				</Layout>
-				{toDisplay()}
-				<Layout style={[styles.row, { padding: 2 }]}>
-					<Button onPress={fileCall} appearance="outline" status="warning">
-						Stream Audio from File
-					</Button>
-					<audio
-						ref={this.audioFileRef}
-						src={`/example.mp3?${Math.random()
-							.toString()
-							.substr(2)}`}
-						type="audio/mpeg"
-						controls
-						style={{ margin: 'auto' }}
-					></audio>
-				</Layout>
-			</Layout>
+			</ScrollView>
 		);
 	}
 }

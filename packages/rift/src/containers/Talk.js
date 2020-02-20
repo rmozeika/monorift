@@ -306,7 +306,7 @@ class Adapter extends React.Component {
 			<ScrollView
 				style={{
 					overflowY: 'scroll',
-					height: 500,
+					height: '85vh',
 					flexGrow: 1,
 					flexDirection: 'column'
 				}}

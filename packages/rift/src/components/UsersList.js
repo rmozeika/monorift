@@ -27,7 +27,9 @@ const styles = StyleSheet.create({
 		flexWrap: 'wrap'
 	},
 	userListLayout: {
-		width: '100%'
+		width: '100%',
+		overflowY: 'scroll',
+		height: '80vh'
 		// display: 'flex'
 	},
 	row: {
@@ -201,7 +203,7 @@ class UsersList extends React.Component {
 					style={{ width: '100%', flexShrink: 1 }}
 				/>
 				{/* <Button style={styles.button}>Test</Button> */}
-				<Layout style={styles.buttonBottom}>
+				{/* <Layout style={styles.buttonBottom}>
 					<Button
 						style={styles.button}
 						appearance="outline"
@@ -209,7 +211,7 @@ class UsersList extends React.Component {
 					>
 						To Call
 					</Button>
-				</Layout>
+				</Layout> */}
 			</Layout>
 		);
 	}

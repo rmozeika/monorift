@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
+import {
+	Layout,
+	Text,
+	Button,
+	styled,
+	withStyles
+} from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -7,6 +13,9 @@ import * as Actions from '../actions';
 import UserList from '../components/UsersList';
 
 const styles = StyleSheet.create({
+	userLayout: {
+		width: '100%'
+	},
 	container: {
 		flex: 1,
 		// padding: 16,
@@ -21,7 +30,17 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		// margin: 8,
-		width: '50%'
+		margin: 15,
+		width: '100%',
+		height: '100%',
+		margin: 0
+	},
+	buttonRow: {
+		display: 'flex',
+		alignItems: 'center',
+		jusatifyContent: 'center',
+		margin: 0,
+		height: '10vh'
 	}
 });
 // let peerStore;
@@ -37,47 +56,58 @@ class Users extends React.Component {
 		this.props.getOnlineUsers();
 	}
 	goTalk() {
-		console.log('Pressed user');
-		this.props.goToTalk();
+		this.props.setViewTab(1);
 	}
 	render() {
-		const { gotOnlineUsers, online, addToCall, removeFromCall } = this.props;
+		const {
+			gotOnlineUsers,
+			online,
+			addToCall,
+			removeFromCall,
+			themedStyle
+		} = this.props;
 		const loading = (
 			<Layout style={styles.row}>
 				<Text>Loading...</Text>
 			</Layout>
 		);
+
 		const toDisplay = () => {
 			if (!gotOnlineUsers) {
 				return loading;
 			}
 			return (
-				<UserList
-					addToCall={addToCall}
-					removeFromCall={removeFromCall}
-					online={online}
-				>
-					<Button
-						style={styles.button}
-						appearance="outline"
-						onPress={this.goTalk.bind(this)}
-					>
-						To Call
-					</Button>
-				</UserList>
+				<Layout style={styles.userLayout}>
+					<UserList
+						addToCall={addToCall}
+						removeFromCall={removeFromCall}
+						online={online}
+					></UserList>
+					<Layout style={[styles.buttonRow, themedStyle.buttonRow]}>
+						<Button
+							style={styles.button}
+							// appearance="outline"
+							onPress={this.goTalk.bind(this)}
+						>
+							To Call
+						</Button>
+					</Layout>
+				</Layout>
 			);
 		};
 		return <Layout style={styles.container}>{toDisplay()}</Layout>;
 	}
 }
+const UsersStyled = withStyles(Users, theme => ({
+	buttonRow: {
+		backgroundColor: theme['color-primary-500']
+	}
+}));
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		getOnlineUsers: () => dispatch(Actions.getOnlineUsers()),
-		setConstraints: ({ mediaStream }) =>
-			dispatch(Actions.setConstraints({ mediaStream })),
-		addToCall: index => dispatch(Actions.addToCall(index)),
-		removeFromCall: index => dispatch(Actions.removeFromCall(index))
+		setViewTab: tab => dispatch(Actions.setTabView(tab)),
+		getOnlineUsers: () => dispatch(Actions.getOnlineUsers())
 	};
 };
 const mapStateToProps = (state, ownProps) => {
@@ -89,4 +119,4 @@ const mapStateToProps = (state, ownProps) => {
 		gotOnlineUsers
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(UsersStyled);

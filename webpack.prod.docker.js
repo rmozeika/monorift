@@ -111,7 +111,7 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebPackPlugin({
-			template: __dirname + '/src/public/index.html',
+			template: __dirname + '/public/index.html',
 			filename: 'index.html'
 		})
 	],

@@ -64,12 +64,17 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		// margin: 8,
-		width: '50%'
+		// width: '50%',
+		flex: 1
 	},
 	buttonBottom: {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center'
+	},
+	pseudoButtonGroup: {
+		maxWidth: '50%',
+		display: 'flex'
 	}
 });
 class UsersList extends React.Component {
@@ -85,7 +90,6 @@ class UsersList extends React.Component {
 		console.log('clicked!');
 	}
 	goTalk() {
-		debugger;
 		console.log('UsersList');
 		this.props.setViewTab(1);
 	}
@@ -100,12 +104,19 @@ class UsersList extends React.Component {
 	render() {
 		const { online, themedStyle, children } = this.props;
 		const renderItemAccessory = (style, index) => {
-			const buttonStyle = {
-				...style,
-				...themedStyle.button
+			// const buttonStyle = {
+			// 	...style,
+			// 	...themedStyle.button,
+			// 	...styles.button
+			// 	// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
+			// };
+			const buttonStyleAlt = [
+				style,
+				// themedStyle.button,
+				styles.button
 				// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
-			};
-			console.log('BUTTON_STYLE', buttonStyle);
+			];
+			// console.log('BUTTON_STYLE', buttonStyle);
 			const { checked } = this.state;
 			const createAddFunc = thisIndex => {
 				function callAdd() {
@@ -113,6 +124,7 @@ class UsersList extends React.Component {
 				}
 				return callAdd.bind(this);
 			};
+
 			let taskButton;
 			if (online[index].checked) {
 				taskButton = (
@@ -120,7 +132,7 @@ class UsersList extends React.Component {
 						onPress={() => this.onRemove(index)}
 						appearance="outline"
 						status="danger"
-						style={buttonStyle}
+						style={buttonStyleAlt}
 					>
 						Remove
 					</Button>
@@ -131,28 +143,22 @@ class UsersList extends React.Component {
 						status="success"
 						appearance="outline"
 						onPress={() => this.onAdd(index)}
-						style={buttonStyle}
+						style={buttonStyleAlt}
 					>
 						Add
 					</Button>
 				);
 			}
+			debugger;
 			return (
-				// <Layout styles={ { flexDirection: 'row' } }>
-				// <Toggle
-				// 	checked={checked}
-				// 	style={{ marginLeft: 8 }}
-				// 	// onChange={() => { if (truethis.setState({ checked: true })}
-				// />
-				// <ButtonGroup themedStyle={{ color: 'red' }} appearance="outline" status="primary">
-				<Layout style={themedStyle.psuedoBtnGroup}>
+				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
 					<Button
 						appearance="outline"
 						status="primary"
 						onPress={() => {
 							this.onPressedCall(index, 'audio').bind(this);
 						}}
-						style={buttonStyle}
+						style={buttonStyleAlt}
 					>
 						Call
 					</Button>
@@ -202,16 +208,6 @@ class UsersList extends React.Component {
 					renderItem={renderItem}
 					style={{ width: '100%', flexShrink: 1 }}
 				/>
-				{/* <Button style={styles.button}>Test</Button> */}
-				{/* <Layout style={styles.buttonBottom}>
-					<Button
-						style={styles.button}
-						appearance="outline"
-						onPress={this.goTalk.bind(this)}
-					>
-						To Call
-					</Button>
-				</Layout> */}
 			</Layout>
 		);
 	}
@@ -231,8 +227,7 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	removeButton: {
 		color: theme['color-danger-500']
 	},
-	button: { flexGrow: 0, width: '20vw' },
-	psuedoBtnGroup: {
+	pseudoButtonGroup: {
 		display: 'flex',
 		flexDirection: 'row'
 	}

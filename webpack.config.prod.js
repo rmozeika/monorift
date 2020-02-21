@@ -117,7 +117,7 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebPackPlugin({
-			template: __dirname + '/packages/rift/src/public/index.html',
+			template: __dirname + '/packages/rift/public/index.html',
 			filename: 'index.html'
 		})
 	],

@@ -33,6 +33,14 @@ const styles = StyleSheet.create({
 	tabContainer: {
 		minHeight: 64,
 		flexDirection: 'column'
+	},
+	desktopLayout: {
+		display: 'flex',
+		flexDirection: 'row'
+	},
+	column: {
+		flexBasis: '50%',
+		flexGrow: 1
 	}
 });
 // let peerStore;
@@ -53,16 +61,31 @@ class CallContainer extends React.Component {
 	}
 	goToTalk() {
 		console.log('Call talk func');
-		debugger;
 		this.setState({ topTabsIndex: 1 });
 	}
 	setTopTabsIndex(index) {
-		debugger;
 		console.log(index);
 	}
 	render() {
 		const { topTabsIndex, setTopTabsIndex } = this.state;
 		const { tab } = this.props;
+		const isMobile = window.innerWidth <= 500;
+		if (!isMobile) {
+			return (
+				<Layout style={styles.desktopLayout}>
+					<Layout style={styles.column}>
+						<Layout style={styles.tabContainer}>
+							<Users />
+						</Layout>
+					</Layout>
+					<Layout style={styles.column}>
+						<Layout style={styles.tabContainer}>
+							<Talk audioRef={this.audioRef} />
+						</Layout>
+					</Layout>
+				</Layout>
+			);
+		}
 		// const [bottomTabsIndex, setBottomTabsIndex] = React.useState(0);
 		return (
 			<Layout style={styles.container}>

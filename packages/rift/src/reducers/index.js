@@ -4,7 +4,6 @@ import auth, * as fromAuth from './auth';
 import callReducer, * as fromCall from './call';
 import usersReducer, * as fromUsers from './users';
 import viewReducer, * as fromView from './view';
-debugger;
 
 import { combineReducers } from 'redux';
 export const initialState = {

@@ -102,7 +102,7 @@ class UsersList extends React.Component {
 		removeFromCall(index);
 	}
 	render() {
-		const { online, themedStyle, children } = this.props;
+		const { online, themedStyle, customHeight } = this.props;
 		const renderItemAccessory = (style, index) => {
 			// const buttonStyle = {
 			// 	...style,
@@ -149,7 +149,6 @@ class UsersList extends React.Component {
 					</Button>
 				);
 			}
-			debugger;
 			return (
 				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
 					<Button
@@ -202,7 +201,7 @@ class UsersList extends React.Component {
 		};
 
 		return (
-			<Layout style={styles.userListLayout}>
+			<Layout style={[styles.userListLayout, { height: customHeight }]}>
 				<List
 					data={online}
 					renderItem={renderItem}
@@ -235,7 +234,9 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		setViewTab: tab => dispatch(Actions.setTabView(tab))
+		setViewTab: tab => dispatch(Actions.setTabView(tab)),
+		addToCall: index => dispatch(Actions.addToCall(index)),
+		removeFromCall: index => dispatch(Actions.removeFromCall(index))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

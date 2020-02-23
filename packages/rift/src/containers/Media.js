@@ -92,7 +92,6 @@ class Media extends React.Component {
 
 	componentDidUpdate(prevProps) {
 		// Typical usage (don't forget to compare props):
-		// debugger;
 		if (this.props.stream !== prevProps.stream) {
 			//   this.fetchData(this.props.userID);
 			this.createAudioContext(this.props.stream);

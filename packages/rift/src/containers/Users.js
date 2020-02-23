@@ -11,10 +11,17 @@ import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import UserList from '../components/UsersList';
+import ToCallButton from '../components/buttons/ToCall';
 
 const styles = StyleSheet.create({
 	userLayout: {
-		width: '100%'
+		width: '100%',
+		height: '100%'
+	},
+	loadingContainer: {
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
 	container: {
 		flex: 1,
@@ -59,31 +66,29 @@ class Users extends React.Component {
 		this.props.setViewTab(1);
 	}
 	render() {
-		const {
-			gotOnlineUsers,
-			online,
-			addToCall,
-			removeFromCall,
-			themedStyle
-		} = this.props;
+		const { gotOnlineUsers, online, themedStyle, customHeights } = this.props;
 		const loading = (
 			<Layout style={styles.row}>
 				<Text>Loading...</Text>
 			</Layout>
 		);
-
+		// const buttonHeight = (customHeight.callButton !== null)
+		debugger; //remove
+		if (customHeights.callButton == null) {
+			return (
+				<Layout style={[styles.userLayout, styles.loadingContainer]}>
+					<Text>Loading</Text>
+				</Layout>
+			);
+		}
 		const toDisplay = () => {
 			if (!gotOnlineUsers) {
 				return loading;
 			}
 			return (
 				<Layout style={styles.userLayout}>
-					<UserList
-						addToCall={addToCall}
-						removeFromCall={removeFromCall}
-						online={online}
-					></UserList>
-					<Layout style={[styles.buttonRow, themedStyle.buttonRow]}>
+					<UserList online={online} customHeight={customHeights.userList}></UserList>
+					{/* <Layout style={[styles.buttonRow, themedStyle.buttonRow, { height: customHeights.callButton }]}>
 						<Button
 							style={styles.button}
 							// appearance="outline"
@@ -91,7 +96,17 @@ class Users extends React.Component {
 						>
 							To Call
 						</Button>
-					</Layout>
+					</Layout> */}
+					<ToCallButton
+						style={[
+							styles.buttonRow,
+							themedStyle.buttonRow,
+							{ height: customHeights.callButton }
+						]}
+						onPress={this.goTalk.bind(this)}
+						buttonHeight={customHeights.callButton}
+						themedStyle={themedStyle.buttonRow}
+					/>
 				</Layout>
 			);
 		};

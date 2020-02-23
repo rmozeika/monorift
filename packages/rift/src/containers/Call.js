@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
 		// overflow: 'scroll',
 		maxWidth: 900,
 		margin: 'auto',
-		width: '100%'
+		width: '100%',
+		height: '100%'
 	},
 	row: {
 		padding: 15,
@@ -32,15 +33,24 @@ const styles = StyleSheet.create({
 	},
 	tabContainer: {
 		minHeight: 64,
-		flexDirection: 'column'
+		flexDirection: 'column',
+		flexGrow: 1
+		// height: '100%'
+	},
+	desktopTabContainer: {
+		minHeight: 64,
+		flexDirection: 'column',
+		height: '100%'
 	},
 	desktopLayout: {
 		display: 'flex',
-		flexDirection: 'row'
+		flexDirection: 'row',
+		height: '100%'
 	},
 	column: {
 		flexBasis: '50%',
-		flexGrow: 1
+		flexGrow: 1,
+		height: '100%'
 	}
 });
 // let peerStore;
@@ -56,30 +66,54 @@ class CallContainer extends React.Component {
 		this.audioRef = React.createRef();
 		this.state = {
 			topTabsIndex: 0,
-			setTopTabsIndex: 0
+			setTopTabsIndex: 0,
+			customHeights: {
+				container: null,
+				userList: null,
+				callButton: null
+			}
 		};
+		this.callContainerRef = React.createRef();
 	}
 	goToTalk() {
 		console.log('Call talk func');
 		this.setState({ topTabsIndex: 1 });
 	}
+	onLayout({ nativeEvent, timeStamp }) {
+		const { mobile } = this.props;
+		const { layout } = nativeEvent;
+		const { width, height } = layout;
+		const heightWithoutTabBar = height - 32;
+		const callButton = mobile ? heightWithoutTabBar * 0.1 : 0;
+		const userList = heightWithoutTabBar - callButton;
+		this.setState({
+			customHeights: {
+				container: heightWithoutTabBar,
+				userList,
+				callButton
+			}
+		});
+	}
 	setTopTabsIndex(index) {
 		console.log(index);
 	}
 	render() {
-		const { topTabsIndex, setTopTabsIndex } = this.state;
-		const { tab } = this.props;
+		const { customHeights } = this.state;
+		const { tab, mobile } = this.props;
 		const isMobile = window.innerWidth <= 500;
-		if (!isMobile) {
+		if (!mobile) {
 			return (
 				<Layout style={styles.desktopLayout}>
 					<Layout style={styles.column}>
-						<Layout style={styles.tabContainer}>
-							<Users />
+						<Layout
+							onLayout={this.onLayout.bind(this)}
+							style={styles.desktopTabContainer}
+						>
+							<Users customHeights={customHeights} />
 						</Layout>
 					</Layout>
 					<Layout style={styles.column}>
-						<Layout style={styles.tabContainer}>
+						<Layout style={styles.desktopTabContainer}>
 							<Talk audioRef={this.audioRef} />
 						</Layout>
 					</Layout>
@@ -92,11 +126,11 @@ class CallContainer extends React.Component {
 				<TabView
 					selectedIndex={tab}
 					onSelect={this.setTopTabsIndex}
-					style={{ width: '100%' }}
+					style={{ width: '100%', height: '100%' }}
 				>
 					<Tab title="users">
-						<Layout style={styles.tabContainer}>
-							<Users />
+						<Layout style={styles.tabContainer} onLayout={this.onLayout.bind(this)}>
+							<Users customHeights={customHeights} />
 						</Layout>
 					</Tab>
 					<Tab title="talk">
@@ -123,9 +157,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 const mapStateToProps = (state, ownProps) => {
 	const { view } = state;
-	const { tab } = view;
+	const { tab, mobile } = view;
 	return {
-		tab: tab
+		tab,
+		mobile
 	};
 };
 

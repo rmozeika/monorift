@@ -12,10 +12,15 @@ module.exports = {
 		rules: [
 			{
 				test: /\.ts(x?)$/,
-				exclude: /node_modules/,
+				// exclude: /node_modules/,
 				use: [
 					{
-						loader: 'ts-loader'
+						loader: 'ts-loader',
+						options: {
+							// transpileOnly: true
+							configFile: 'tsconfig.json',
+							ignoreDiagnostics: [1144]
+						}
 					}
 				]
 			},
@@ -105,13 +110,14 @@ module.exports = {
 			// Support React Native Web
 			// https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
 			'react-native': 'react-native-web',
-			'@src': path.resolve(__dirname, './packages/rift/src')
+			'@src': path.resolve(__dirname, './packages/rift/src'),
+			'react-native-svg': 'react-native-svg-web'
 		},
 		extensions: ['.ts', '.tsx', '.js']
 	},
 	plugins: [
 		new HtmlWebPackPlugin({
-			template: __dirname + '/packages/rift/src/public/index.html',
+			template: __dirname + '/packages/rift/public/index.html',
 			filename: 'index.html'
 		})
 	],

@@ -15,15 +15,14 @@ import {
 } from 'react-native-ui-kitten';
 import { AwesomeIconsPack } from './core/icons';
 
-// import Homescreen from './containers/Home';
 import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
 import Tiffany from './containers/Tiffany';
+import About from './containers/About';
 
 import Call from './containers/Call';
 
-import { setCode } from './actions';
-import { Main } from './components/tScri';
+import { setCode, setIsMobile } from './actions';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import {
 	ThemeContext,
@@ -45,12 +44,16 @@ interface State {
 	theme: ThemeKey;
 }
 interface Props {
-	setCode: (code: object) => void;
+	initCode: (code: object) => void;
+	setIsMobile: (isMobile: boolean) => void;
 }
 // ThemeService.select({'Eva Light': null}, "Eva Light")
 class App extends React.Component<Props, State> {
 	public constructor(props) {
 		super(props);
+		console.log(' setting mobile');
+		const isMobile = window.innerWidth <= 500;
+		this.props.setIsMobile(isMobile);
 	}
 	public state: State = {
 		theme: 'Eva Light'
@@ -65,19 +68,24 @@ class App extends React.Component<Props, State> {
 			currentTheme: this.state.theme,
 			toggleTheme: this.onSwitchTheme
 		};
-		this.props.setCode({ name: 'test', text: 'fun' });
+		// this.props.setCode({ name: 'test', text: 'fun' });
 		return (
 			<ThemeContext.Provider value={contextValue}>
 				<IconRegistry icons={[AwesomeIconsPack]} />
 				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
-					<Router>
-						<NavBar />
-						<Switch>
-							<Route path="/">
-								<Call />
-							</Route>
-						</Switch>
-					</Router>
+					<View style={styles.parentView}>
+						<Router>
+							<NavBar />
+							<Switch>
+								<Route path="/about">
+									<About />
+								</Route>
+								<Route path="/">
+									<Call />
+								</Route>
+							</Switch>
+						</Router>
+					</View>
 				</ApplicationProvider>
 			</ThemeContext.Provider>
 		);
@@ -92,7 +100,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		initCode: code => {
 			dispatch(setCode(code));
+		},
+		setIsMobile: isMobile => {
+			dispatch(setIsMobile(isMobile));
 		}
 	};
 };
-export default connect(mapStateToProps, { setCode })(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

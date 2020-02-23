@@ -3,9 +3,9 @@ import code, * as fromCode from './code';
 import auth, * as fromAuth from './auth';
 import callReducer, * as fromCall from './call';
 import usersReducer, * as fromUsers from './users';
+import viewReducer, * as fromView from './view';
 
 import { combineReducers } from 'redux';
-
 export const initialState = {
 	config: {},
 	code: { file1: 'beforeafter' },
@@ -20,7 +20,8 @@ export const initialState = {
 	//   }
 	// },
 	call: { ...fromCall.initialState },
-	users: { ...fromUsers.initialState }
+	users: { ...fromUsers.initialState },
+	view: { ...fromView.initialState }
 };
 
 export default combineReducers({
@@ -28,7 +29,8 @@ export default combineReducers({
 	code,
 	auth,
 	call: callReducer,
-	users: usersReducer
+	users: usersReducer,
+	view: viewReducer
 });
 
 export const createReducer = (initialState, handlers) => {

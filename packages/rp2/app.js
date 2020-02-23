@@ -105,7 +105,8 @@ const setupDefaultRoute = () => {
 		const webpackConfig =
 			debug == 'false'
 				? require('../../webpack.config.prod.js')
-				: require('../../webpack.config.js');
+				: // : require('../../webpack.config.prod.js');
+				  require('../../webpack.config.js');
 		const buildpath = path.resolve(webpackConfig.output.path);
 		app.use(express.static(buildpath, opts));
 		//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
@@ -118,6 +119,8 @@ const setupDefaultRoute = () => {
 		//   res.sendFile(indexPath);
 		// });
 		// app.use(express.static(path.resolve(webpackConfig.output.path)))
+		// app.use('/about', express.static(path.resolve(webpackConfig.output.path)));
+
 		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 		// app.use('/tiffany', express.static(path.resolve(webpackConfig.output.path)));
 	} else {

@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
-import { StyleSheet, Linking, Platform } from 'react-native';
+import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
+import Media from './Media';
+
 const trace = msg => {
 	console.log(msg);
 };
@@ -23,27 +25,17 @@ const styles = StyleSheet.create({
 		// padding: 16,
 		// flexDirection: 'row',
 		alignItems: 'center'
+		// height: '100%'
 	},
 	row: {
 		// flex: 1
-		//backgroundColor: 'red',
 		padding: 15,
 		width: '100%'
-	},
-	row2: {
-		// flex: 1
-		//backgroundColor: 'red',
-		padding: 15,
-		width: '100%'
-	},
-	bigBlue: {
-		//backgroundColor: 'blue',
-		flexGrow: 5
 	},
 	video: {
-		backgroundColor: 'blue',
-		width: '100%',
-		height: 200
+		// backgroundColor: 'blue',
+		width: '100%'
+		// height: 200
 	}
 });
 // let peerStore;
@@ -115,6 +107,8 @@ class Adapter extends React.Component {
 
 				// audioRef.current.srcObject = inboundStream;
 				audioRef.current.srcObject = e.streams[0];
+				this.props.setStream(e.streams[0]);
+				// this.setState({ stream: e.streams[0]});
 			}
 			let audio = audioRef.current;
 			// // localAudio.audioRef.srcObject = track;
@@ -127,7 +121,7 @@ class Adapter extends React.Component {
 
 		if (peerConnStatus.created === true && conn.ontrack == null) {
 			console.log('handlers added: ontrack and onice');
-			conn.ontrack = onTrack;
+			conn.ontrack = onTrack.bind(this);
 			conn.addEventListener('track', e => {
 				console.log('on EVENT track');
 			});
@@ -186,16 +180,12 @@ class Adapter extends React.Component {
 	}
 	async getMediaFromFile() {
 		const { audioFileRef } = this;
-		debugger;
 		//const stream = audioFileRef.current.captureStream();
 		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 		var source = audioCtx.createMediaElementSource(audioFileRef.current);
-		debugger;
 		var dest = audioCtx.createMediaStreamDestination();
-		debugger;
 
 		source.connect(dest);
-		debugger;
 		// dest.connect(source);
 		var stream = dest.stream;
 		audioFileRef.current.play();
@@ -224,7 +214,6 @@ class Adapter extends React.Component {
 		// this.startCall(audioConstraints);
 
 		const { setPeerInitiator } = this.props;
-		debugger;
 		await this.getMediaFromFile(audioConstraints);
 		setPeerInitiator(true);
 		this.props.sendOffer({});
@@ -252,20 +241,20 @@ class Adapter extends React.Component {
 	render() {
 		const { peerStore, peerConnStatus } = this.props;
 		const audio = (ref, onPress, key) => (
-			<Layout key={key} style={styles.row}>
-				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
-				<audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio>
+			<Layout key={key} style={[styles.row, { padding: 2 }]}>
+				{onPress ? (
+					<Button appearance="outline" onPress={onPress}>
+						Audio Call
+					</Button>
+				) : null}
+				{/* <audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio> */}
 			</Layout>
 		);
 		const video = (ref, onPress, key) => {
 			return (
-				<Layout key={key} styles={styles.row2}>
-					{onPress ? (
-						<Button disabled onPress={onPress}>
-							Video Call
-						</Button>
-					) : null}
-					<video styles={styles.video} autoPlay muted playsInline ref={ref} />
+				<Layout key={key} style={[styles.row, { padding: 2 }]}>
+					{onPress ? <Button onPress={onPress}>Video Call</Button> : null}
+					{/* <video style={{ width: '100%' }} autoPlay muted playsInline ref={ref} /> */}
 				</Layout>
 			);
 		};
@@ -307,30 +296,43 @@ class Adapter extends React.Component {
 			</Layout>
 		);
 		const AudioFile = (
-			<Layout style={styles.row}>
-				<audio src="example.mp3"></audio>
+			<Layout style={[styles.row, { padding: 0 }]}>
+				<audio style={{ margin: 'auto' }} src="example.mp3"></audio>
 			</Layout>
 		);
 		const audioElem = <audio src="example.mp3"></audio>;
 		const fileCall = this.fileCall.bind(this);
 		return (
-			<Layout style={styles.container}>
-				<Layout style={styles.row}>
-					<Text>Hello!</Text>
+			<ScrollView
+				style={{
+					overflowY: 'scroll',
+					height: '85vh',
+					flexGrow: 1,
+					flexDirection: 'column'
+				}}
+				contentContainerStyle={{ flexGrow: 1 }}
+			>
+				<Layout style={styles.container}>
+					<Layout style={[styles.row, { padding: 0 }]}>
+						<Media videoRef={this.videoRef} audioRef={this.audioRef} />
+					</Layout>
+					{toDisplay()}
+					<Layout style={[styles.row, { padding: 2 }]}>
+						<Button onPress={fileCall} appearance="outline" status="warning">
+							Stream Audio from File
+						</Button>
+						<audio
+							ref={this.audioFileRef}
+							src={`/example.mp3?${Math.random()
+								.toString()
+								.substr(2)}`}
+							type="audio/mpeg"
+							controls
+							style={{ margin: 'auto' }}
+						></audio>
+					</Layout>
 				</Layout>
-				{toDisplay()}
-				<Layout style={styles.row}>
-					<Button onPress={fileCall}>Stream Audio</Button>
-					<audio
-						ref={this.audioFileRef}
-						src={`/example.mp3?${Math.random()
-							.toString()
-							.substr(2)}`}
-						type="audio/mpeg"
-						controls
-					></audio>
-				</Layout>
-			</Layout>
+			</ScrollView>
 		);
 	}
 }
@@ -343,7 +345,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		setConstraints: ({ mediaStream }) =>
 			dispatch(Actions.setConstraints({ mediaStream })),
 		setPeerInitiator: isInitiator =>
-			dispatch(Actions.setPeerInitiator(isInitiator))
+			dispatch(Actions.setPeerInitiator(isInitiator)),
+		setStream: stream => dispatch(Actions.setStream(stream))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

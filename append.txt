@@ -1,47 +1,0 @@
-Starting mongo ... 
-[1A[2KStarting mongo ... [32mdone[0m[1BStarting rp2   ... 
-[1A[2KStarting rp2   ... [32mdone[0m[1BStarting webserver ... 
-[1A[2KStarting webserver ... [32mdone[0m[1BAttaching to mongo, rp2, webserver
-[36mmongo        |[0m 2019-11-29T18:11:40.613+0000 I  CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] MongoDB starting : pid=1 port=27017 dbpath=/data/db 64-bit host=7454698cb693
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] db version v4.2.1
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] git version: edf6d45851c0b9ee15548f0f847df141764a317e
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] OpenSSL version: OpenSSL 1.1.1  11 Sep 2018
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] allocator: tcmalloc
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] modules: none
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] build environment:
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten]     distmod: ubuntu1804
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten]     distarch: x86_64
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten]     target_arch: x86_64
-[36mmongo        |[0m 2019-11-29T18:11:40.617+0000 I  CONTROL  [initandlisten] options: { net: { bindIp: "*" } }
-[36mmongo        |[0m 2019-11-29T18:11:40.623+0000 I  STORAGE  [initandlisten] Detected data files in /data/db created by the 'wiredTiger' storage engine, so setting the active storage engine to 'wiredTiger'.
-[36mmongo        |[0m 2019-11-29T18:11:40.627+0000 I  STORAGE  [initandlisten] wiredtiger_open config: create,cache_size=487M,cache_overflow=(file_max=0M),session_max=33000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000,close_scan_interval=10,close_handle_minimum=250),statistics_log=(wait=0),verbose=[recovery_progress,checkpoint_progress],
-[33mrp2          |[0m 
-[33mrp2          |[0m > rp2@0.0.1 init:std /
-[33mrp2          |[0m > node ./bin/www
-[33mrp2          |[0m 
-[33mrp2          |[0m /app.js:21
-[33mrp2          |[0m   uri,
-[33mrp2          |[0m   ^
-[33mrp2          |[0m 
-[33mrp2          |[0m ReferenceError: uri is not defined
-[33mrp2          |[0m     at Object.<anonymous> (/app.js:21:3)
-[33mrp2          |[0m     at Module._compile (internal/modules/cjs/loader.js:1063:30)
-[33mrp2          |[0m     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1103:10)
-[33mrp2          |[0m     at Module.load (internal/modules/cjs/loader.js:914:32)
-[33mrp2          |[0m     at Function.Module._load (internal/modules/cjs/loader.js:822:14)
-[33mrp2          |[0m     at Module.require (internal/modules/cjs/loader.js:956:19)
-[33mrp2          |[0m     at require (internal/modules/cjs/helpers.js:74:18)
-[33mrp2          |[0m     at Object.<anonymous> (/bin/www:7:11)
-[33mrp2          |[0m     at Module._compile (internal/modules/cjs/loader.js:1063:30)
-[33mrp2          |[0m     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1103:10)
-[33mrp2          |[0m npm ERR! code ELIFECYCLE
-[33mrp2          |[0m npm ERR! errno 1
-[33mrp2          |[0m npm ERR! rp2@0.0.1 init:std: `node ./bin/www`
-[33mrp2          |[0m npm ERR! Exit status 1
-[33mrp2          |[0m npm ERR! 
-[33mrp2          |[0m npm ERR! Failed at the rp2@0.0.1 init:std script.
-[33mrp2          |[0m npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
-[33mrp2          |[0m 
-[33mrp2          |[0m npm ERR! A complete log of this run can be found in:
-[33mrp2          |[0m npm ERR!     /root/.npm/_logs/2019-11-29T18_11_43_424Z-debug.log

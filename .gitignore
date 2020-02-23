@@ -21,3 +21,5 @@ packages/deploy/history
 logs/compose
 package-lock.json
 packages/deploy/package-lock.json
+lerna-debug.log
+yarn-backup.lock

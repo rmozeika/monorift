@@ -127,7 +127,6 @@ function* sendCandidateSaga(action) {
 	socket.emit('message', candidateToSend);
 }
 function* createPeerConnSaga(action) {
-	debugger;
 	const { config } = action;
 	try {
 		const conn = new RTCPeerConnection(config);
@@ -137,7 +136,6 @@ function* createPeerConnSaga(action) {
 		// const putOffer =
 		const tickChannel = eventChannel(emit => {
 			conn.onnegotiationneeded = async e => {
-				debugger;
 				console.log('On negition needed called');
 				emit('offer needed');
 				console.log();
@@ -148,21 +146,16 @@ function* createPeerConnSaga(action) {
 			return () => {};
 		});
 		for (let i = 0; i < 5; i++) {
-			debugger;
 			yield take(tickChannel);
-			debugger;
 			yield put(sendOffer({}));
-			debugger;
 		}
 		console.log(conn);
 	} catch (error) {
-		debugger;
 		console.log(error);
 	}
 }
 function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 	console.log('Sending offer');
-	debugger;
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
 	const constraints = { ...mediaStream, ...altConstraints };

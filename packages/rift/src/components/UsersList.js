@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
+import { connect } from 'react-redux';
+import * as Actions from '../actions';
 
 import {
 	Layout,
@@ -13,6 +15,7 @@ import {
 	withStyles,
 	Toggle
 } from 'react-native-ui-kitten';
+import { loadData } from '@src/actions';
 const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
@@ -22,6 +25,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		flexDirection: 'row',
 		flexWrap: 'wrap'
+	},
+	userListLayout: {
+		width: '100%',
+		overflowY: 'scroll',
+		height: '80vh'
+		// display: 'flex'
 	},
 	row: {
 		padding: 15,
@@ -41,7 +50,8 @@ const styles = StyleSheet.create({
 		padding: 15,
 		height: 'auto',
 		width: 'auto',
-		display: 'flex'
+		// display: 'flex',
+		flexShrink: 1
 		// flexWrap: 'wrap'
 	},
 	column: {
@@ -49,8 +59,22 @@ const styles = StyleSheet.create({
 		height: 'auto',
 		width: 'auto',
 		flexBasis: 'auto',
-		flexShrink: 1,
+		flexShrink: 0,
 		flexGrow: 1
+	},
+	button: {
+		// margin: 8,
+		// width: '50%',
+		flex: 1
+	},
+	buttonBottom: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	pseudoButtonGroup: {
+		maxWidth: '50%',
+		display: 'flex'
 	}
 });
 class UsersList extends React.Component {
@@ -65,6 +89,10 @@ class UsersList extends React.Component {
 	onPressedCall(index, type) {
 		console.log('clicked!');
 	}
+	goTalk() {
+		console.log('UsersList');
+		this.props.setViewTab(1);
+	}
 	onAdd(index, val) {
 		const { addToCall } = this.props;
 		addToCall(index);
@@ -74,14 +102,21 @@ class UsersList extends React.Component {
 		removeFromCall(index);
 	}
 	render() {
-		const { online, themedStyle } = this.props;
+		const { online, themedStyle, customHeight } = this.props;
 		const renderItemAccessory = (style, index) => {
-			const buttonStyle = {
-				...style,
-				...themedStyle.button
+			// const buttonStyle = {
+			// 	...style,
+			// 	...themedStyle.button,
+			// 	...styles.button
+			// 	// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
+			// };
+			const buttonStyleAlt = [
+				style,
+				// themedStyle.button,
+				styles.button
 				// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
-			};
-			console.log('BUTTON_STYLE', buttonStyle);
+			];
+			// console.log('BUTTON_STYLE', buttonStyle);
 			const { checked } = this.state;
 			const createAddFunc = thisIndex => {
 				function callAdd() {
@@ -89,6 +124,7 @@ class UsersList extends React.Component {
 				}
 				return callAdd.bind(this);
 			};
+
 			let taskButton;
 			if (online[index].checked) {
 				taskButton = (
@@ -96,7 +132,7 @@ class UsersList extends React.Component {
 						onPress={() => this.onRemove(index)}
 						appearance="outline"
 						status="danger"
-						style={buttonStyle}
+						style={buttonStyleAlt}
 					>
 						Remove
 					</Button>
@@ -107,28 +143,21 @@ class UsersList extends React.Component {
 						status="success"
 						appearance="outline"
 						onPress={() => this.onAdd(index)}
-						style={buttonStyle}
+						style={buttonStyleAlt}
 					>
 						Add
 					</Button>
 				);
 			}
 			return (
-				// <Layout styles={ { flexDirection: 'row' } }>
-				// <Toggle
-				// 	checked={checked}
-				// 	style={{ marginLeft: 8 }}
-				// 	// onChange={() => { if (truethis.setState({ checked: true })}
-				// />
-				// <ButtonGroup themedStyle={{ color: 'red' }} appearance="outline" status="primary">
-				<Layout style={themedStyle.psuedoBtnGroup}>
+				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
 					<Button
 						appearance="outline"
 						status="primary"
 						onPress={() => {
 							this.onPressedCall(index, 'audio').bind(this);
 						}}
-						style={buttonStyle}
+						style={buttonStyleAlt}
 					>
 						Call
 					</Button>
@@ -171,32 +200,15 @@ class UsersList extends React.Component {
 			);
 		};
 
-		// const onlineUserList = online.map(user => {
-		// 	return (
-		// 		<Layout style={styles.userBlock}>
-		// 			<Layout style={styles.column}>
-		// 				<Button>Test</Button>
-		// 			</Layout>
-		// 			<Layout style={styles.column}>
-		// 				<Text>{user}</Text>
-		// 			</Layout>
-		// 			<Layout style={styles.column}>
-		// 				<Button>Test</Button>
-		// 			</Layout>
-		// 		</Layout>
-		// 	);
-		// });
 		return (
-			<List data={online} renderItem={renderItem} style={{ width: '100%' }} />
+			<Layout style={[styles.userListLayout, { height: customHeight }]}>
+				<List
+					data={online}
+					renderItem={renderItem}
+					style={{ width: '100%', flexShrink: 1 }}
+				/>
+			</Layout>
 		);
-
-		// return (
-		// 	<Layout style={styles.container}>
-		// 		{/* <Layout style={styles.row}> */}
-		// 		{onlineUserList}
-		// 		{/* </Layout> */}
-		// 	</Layout>
-		// );
 	}
 }
 
@@ -214,10 +226,27 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	removeButton: {
 		color: theme['color-danger-500']
 	},
-	button: { flexGrow: 0, width: '20vw' },
-	psuedoBtnGroup: {
+	pseudoButtonGroup: {
 		display: 'flex',
 		flexDirection: 'row'
 	}
 }));
-export default UsersListWithStyles;
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+	return {
+		setViewTab: tab => dispatch(Actions.setTabView(tab)),
+		addToCall: index => dispatch(Actions.addToCall(index)),
+		removeFromCall: index => dispatch(Actions.removeFromCall(index))
+	};
+};
+const mapStateToProps = (state, ownProps) => {
+	const { view } = state;
+	const { tab } = view;
+	return {
+		tab: tab
+	};
+};
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(UsersListWithStyles);

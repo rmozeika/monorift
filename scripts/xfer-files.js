@@ -47,6 +47,10 @@ const trasnferDeployService = async () => {
 
 const transferDistWeb = async () => {
 	const buildProd = await exec('yarn run build:prod', { cwd: currentPath });
+	console.log(buildProd.stdout);
+	if (buildProd.stderr !== '') {
+		console.error(buildProd.stderr);
+	}
 	const cmd = `rsync --recursive -v -e ssh  ./dist.web.prod/. awsmono:/home/monorift/monorift/dist.web/.`;
 
 	const sendingDist = await exec(cmd, { cwd: currentPath });

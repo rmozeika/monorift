@@ -17,7 +17,8 @@ const styles = StyleSheet.create({
 		flexBasis: '50%',
 		height: '100%',
 		margin: 0,
-		flexGrow: 1
+		flexGrow: 1,
+		borderRadius: 0
 	},
 	buttonRow: {
 		display: 'flex',

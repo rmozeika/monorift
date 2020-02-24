@@ -78,8 +78,6 @@ class Users extends React.Component {
 				<Text>Loading...</Text>
 			</Layout>
 		);
-		// const buttonHeight = (customHeight.callButton !== null)
-		debugger; //remove
 		if (customHeights.callButton == null) {
 			return (
 				<Layout style={[styles.userLayout, styles.loadingContainer]}>

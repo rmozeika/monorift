@@ -84,7 +84,6 @@ class CallContainer extends React.Component {
 		const { mobile } = this.props;
 		const { layout } = nativeEvent;
 		const { width, height } = layout;
-		debugger;
 		if (!mobile) {
 			this.setState({
 				customHeights: {

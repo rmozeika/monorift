@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
+import { Layout, Text, Button, withStyles } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -239,7 +239,7 @@ class Adapter extends React.Component {
 		}
 	}
 	render() {
-		const { peerStore, peerConnStatus } = this.props;
+		const { peerStore, peerConnStatus, themedStyle } = this.props;
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={[styles.row, { padding: 2 }]}>
 				{onPress ? (
@@ -336,7 +336,11 @@ class Adapter extends React.Component {
 		);
 	}
 }
-
+const AdapterWithStyles = withStyles(Adapter, theme => ({
+	container: {
+		backgroundColor: theme['color-basic-500']
+	}
+}));
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),
@@ -350,14 +354,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { call } = state;
+	const { call, view } = state;
+	const { mobile } = view;
 	const { peerStore, constraints } = call;
 	const { created, handlersAttached, conn } = peerStore;
 	return {
 		peerStore,
 		conn,
 		peerConnStatus: { created, handlersAttached },
-		mediaStreamConstraints: constraints.mediaStream
+		mediaStreamConstraints: constraints.mediaStream,
+		mobile
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Adapter);
+export default connect(mapStateToProps, mapDispatchToProps)(AdapterWithStyles);

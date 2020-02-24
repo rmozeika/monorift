@@ -8,22 +8,10 @@ const path = require('path');
 const fs = require('fs');
 const { exec, execFile, spawn } = require('child_process');
 const execa = util.promisify(require('child_process').exec);
-//const ls = spawn('docker-compose up', [], {
 const transferFiles = require('./scripts/xfer-files.js');
-// exec('ls | grep js', (err, stdout, stderr) => {
-//   if (err) {
-//     //some err occurred
-//     console.error(err)
-//   } else {
-//    // the *entire* stdout and stderr (buffered)
-//    console.log(`stdout: ${stdout}`);
-//    console.log(`stderr: ${stderr}`);
-//   }
-// });
+
 let args = process.argv.slice(2);
 if (args.length == 0) {
-	// exec('')
-	// return
 	args = ['start'];
 }
 const isDockerContainersRunning = async () => {
@@ -98,31 +86,16 @@ const composeUp = () => {
 			res();
 		});
 	});
-
-	// await goToPath();
-	// process.chdir('./packages/devops/docker/');
-	// // async function lsExample() {
-	// //     const { stdout, stderr } = await execa('ls');
-	// //     console.log('stdout:', stdout);
-	// //     console.error('stderr:', stderr);
-	// //   }
-	// const prcs = await execa('docker-compose up', ["-d"]);
-	// const { error, stdout, stderr } = prcs
-	//  console.log(stdout);
 };
 
 const composeDown = async () => {
 	await goToPath();
 	process.chdir('./packages/devops/docker/');
-	// async function lsExample() {
-	//     const { stdout, stderr } = await execa('ls');
-	//     console.log('stdout:', stdout);
-	//     console.error('stderr:', stderr);
-	//   }
 	const prcs = await execa('docker-compose down', []);
 	const { error, stdout, stderr } = prcs;
 	console.log(stdout);
 };
+
 async function isMonorift() {
 	const isMonorift = pwd.stdout.match(/monorift\/.+/);
 	if (isMonorift.length > 0) {
@@ -140,6 +113,7 @@ async function goToPath() {
 	var lib = path.join(path.dirname(fs.realpathSync(__filename)));
 	process.chdir(lib);
 }
+
 const argInterface = {
 	main: {
 		cm: {
@@ -211,21 +185,6 @@ const argInterface = {
 					console.log(stderr);
 					console.log(error);
 				});
-				// const cmd = 'docker rmi -f $(docker images -a -q)';
-				// const killDocker = spawn(
-				// 	cmd
-				// );
-				// killDocker.stdout.on('data', data => {
-				// 	console.log(`stdout: ${data}`);
-
-				// });
-				// killDocker.stderr.on('data', (data) => {
-				// 	console.error(`stderr: ${data}`);
-				//   });
-				// killDocker.on('close', (code) => {
-				// 	console.log(`child process exited with code ${code}`);
-				//   });
-				// spawn.close();
 			}
 		},
 		build: {
@@ -246,43 +205,6 @@ const argInterface = {
 			func: async ([type, files]) => {
 				transferFiles(files);
 				console.log('done');
-				// if (buildType === 'docker') {
-				// isMonorift();
-				// const buildDocker = spawn(
-				// 	'docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest'
-				// );
-
-				// spawn.close();
-			}
-		},
-		dev: {
-			val: 'dev',
-			func: ([type, ...args]) => {
-				return new Promise((resolve, reject) => {
-					try {
-						// const buildDevServer = await execa('webpack-dev-server --config webpack.config.js')
-						// const buildDevServer = spawn('webpack-dev-server', [
-						// 	'--config',
-						// 	'webpack.config.js'
-						// ]);
-						// buildDevServer.stdout.on('data', data => {
-						// 	console.log(data.toString());
-						// });
-						// buildDevServer.stdout.on('end', e => {
-						// 	console.log(e);
-						// 	resolve();
-						// });
-						debugger;
-					} catch (e) {
-						console.log(e);
-					}
-				});
-				// if (buildType === 'docker') {
-				//     isMonorift();
-				//     const buildDocker = spawn('docker build . -f ./packages/devops/docker/Dockerfile -t robertmozeika/rp2:latest');
-
-				//     spawn.close()
-				// }
 			}
 		}
 	}
@@ -300,17 +222,3 @@ async function run() {
 	console.log('done');
 }
 run();
-// const child = execFile('./.bin/mr.sh', ['cm'], (error, stdout, stderr) => {
-//     if (error) {
-//       throw error;
-//     }
-//     console.log(stdout);
-//   });
-// const myShellScript = exec('sh doSomething.sh /myDir');
-// myShellScript.stdout.on('data', (data)=>{
-//     console.log(data);
-//     // do whatever you want here with data
-// });
-// myShellScript.stderr.on('data', (data)=>{
-//     console.error(data);
-// }) ;

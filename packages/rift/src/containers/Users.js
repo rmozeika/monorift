@@ -66,14 +66,18 @@ class Users extends React.Component {
 		this.props.setViewTab(1);
 	}
 	render() {
-		const { gotOnlineUsers, online, themedStyle, customHeights } = this.props;
+		const {
+			gotOnlineUsers,
+			online,
+			themedStyle,
+			customHeights,
+			mobile
+		} = this.props;
 		const loading = (
 			<Layout style={styles.row}>
 				<Text>Loading...</Text>
 			</Layout>
 		);
-		// const buttonHeight = (customHeight.callButton !== null)
-		debugger; //remove
 		if (customHeights.callButton == null) {
 			return (
 				<Layout style={[styles.userLayout, styles.loadingContainer]}>
@@ -97,16 +101,18 @@ class Users extends React.Component {
 							To Call
 						</Button>
 					</Layout> */}
-					<ToCallButton
-						style={[
-							styles.buttonRow,
-							themedStyle.buttonRow,
-							{ height: customHeights.callButton }
-						]}
-						onPress={this.goTalk.bind(this)}
-						buttonHeight={customHeights.callButton}
-						themedStyle={themedStyle.buttonRow}
-					/>
+					{mobile && (
+						<ToCallButton
+							style={[
+								styles.buttonRow,
+								themedStyle.buttonRow,
+								{ height: customHeights.callButton }
+							]}
+							onPress={this.goTalk.bind(this)}
+							buttonHeight={customHeights.callButton}
+							themedStyle={themedStyle.buttonRow}
+						/>
+					)}
 				</Layout>
 			);
 		};
@@ -126,12 +132,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { users } = state;
+	const { users, view } = state;
 	const { online } = users;
 	const { gotOnlineUsers } = online;
+	const { mobile } = view;
 	return {
 		online: online.users,
-		gotOnlineUsers
+		gotOnlineUsers,
+		mobile
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UsersStyled);

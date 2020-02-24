@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		// padding: 16,
-		// flexDirection: 'row',
+		flexDirection: 'column',
 		alignItems: 'center',
 		// overflow: 'scroll',
 		maxWidth: 900,
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
 	tabContainer: {
 		minHeight: 64,
 		flexDirection: 'column',
-		flexGrow: 1
-		// height: '100%'
+		flexGrow: 1,
+		height: '100%'
 	},
 	desktopTabContainer: {
 		minHeight: 64,
@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
 	desktopLayout: {
 		display: 'flex',
 		flexDirection: 'row',
-		height: '100%'
+		flexGrow: 1
+		// height: '100%'
 	},
 	column: {
 		flexBasis: '50%',
@@ -83,12 +84,22 @@ class CallContainer extends React.Component {
 		const { mobile } = this.props;
 		const { layout } = nativeEvent;
 		const { width, height } = layout;
+		if (!mobile) {
+			this.setState({
+				customHeights: {
+					container: height,
+					userList: height,
+					callButton: 0
+				}
+			});
+			return;
+		}
 		const heightWithoutTabBar = height - 32;
-		const callButton = mobile ? heightWithoutTabBar * 0.1 : 0;
-		const userList = heightWithoutTabBar - callButton;
+		const callButton = height * 0.1; // heightWithoutTabBar * 0.1;
+		const userList = height - callButton;
 		this.setState({
 			customHeights: {
-				container: heightWithoutTabBar,
+				container: height,
 				userList,
 				callButton
 			}
@@ -126,7 +137,7 @@ class CallContainer extends React.Component {
 				<TabView
 					selectedIndex={tab}
 					onSelect={this.setTopTabsIndex}
-					style={{ width: '100%', height: '100%' }}
+					style={{ width: '100%', flexGrow: 1 }}
 				>
 					<Tab title="users">
 						<Layout style={styles.tabContainer} onLayout={this.onLayout.bind(this)}>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import IncomingCall from '../IncomingCall';
 
 import {
 	Layout,
@@ -11,6 +12,11 @@ import {
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+	container: {
+		display: 'flex',
+		flexWrap: 'wrap',
+		flexDirection: 'row'
+	},
 	button: {
 		// margin: 8,
 		margin: 15,
@@ -24,58 +30,77 @@ const styles = StyleSheet.create({
 	buttonRow: {
 		display: 'flex',
 		alignItems: 'center',
-		jusatifyContent: 'center',
+		justifyContent: 'center',
 		margin: 0,
 		height: '10vh',
-		flexDirection: 'row'
+		flexDirection: 'row',
+		flexBasis: '100%',
+		flexGrow: 1
 	}
 });
 
 const CallActions = ({
-	buttonHeight,
+	baseHeight,
 	onPress,
 	themedStyle,
-	callIncoming,
+	incomingCall,
 	answer,
-	reject,
-	userCalling
+	reject
 }) => {
 	const mobile = useSelector(state => state.view.mobile);
-	debugger;
+	// const incomingCall =
 	const buttons = [
 		{
 			name: 'Talk',
 			onPress: onPress,
-			condition: mobile == true,
+			condition: mobile == true && incomingCall.pending == false,
 			status: 'primary'
 		},
 		{
 			name: 'Answer',
 			onPress: answer,
-			condition: callIncoming == true,
+			condition: incomingCall.pending == true,
 			status: 'success'
 		},
 		{
 			name: 'Reject',
 			onPress: reject,
-			condition: callIncoming == true,
+			condition: incomingCall.pending == true,
 			status: 'danger'
 		}
 	];
+	debugger;
+	const heightMultiplier = incomingCall.pending ? 0.2 : 0.1;
+	const derivedHeight = baseHeight * heightMultiplier;
 	const activeButtons = buttons.filter(({ condition }) => condition);
 	if (activeButtons.length > 0) {
 		return (
-			<Layout style={[styles.buttonRow, themedStyle, { height: buttonHeight }]}>
-				{activeButtons.map(({ name, onPress, status }) => (
-					<Button style={styles.button} status={status} onPress={onPress}>
-						{name}
-					</Button>
-				))}
+			<Layout style={[styles.container, { height: derivedHeight }]}>
+				{incomingCall.pending && (
+					<IncomingCall
+						derivedHeight={baseHeight * 0.1}
+						name={incomingCall.from.name}
+					/>
+				)}
+				<Layout
+					style={[styles.buttonRow, themedStyle, { height: baseHeight * 0.1 }]}
+				>
+					{activeButtons.map(({ name, onPress, status }) => (
+						<Button
+							style={[styles.button, { height: baseHeight * 0.1 }]}
+							status={status}
+							onPress={onPress}
+						>
+							{name}
+						</Button>
+					))}
+				</Layout>
 			</Layout>
 		);
 	}
+	debugger;
 	return (
-		<Layout style={[styles.buttonRow, themedStyle, { height: buttonHeight }]}>
+		<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
 			<Button
 				style={styles.button}
 				// appearance="outline"
@@ -83,23 +108,13 @@ const CallActions = ({
 			>
 				Talk
 			</Button>
-			{callIncoming && (
-				<Button
-					style={styles.button}
-					// appearance="outline"
-					status="success"
-					onPress={answer}
-				>
+			{incomingCall && (
+				<Button style={styles.button} status="success" onPress={answer}>
 					Answer
 				</Button>
 			)}
-			{callIncoming && (
-				<Button
-					style={styles.button}
-					// appearance="outline"
-					status="danger"
-					onPress={reject}
-				>
+			{incomingCall && (
+				<Button style={styles.button} status="danger" onPress={reject}>
 					Reject
 				</Button>
 			)}

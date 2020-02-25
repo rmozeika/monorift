@@ -22,7 +22,13 @@ export const initialState = {
 		isInitiator: false,
 		remoteSet: false,
 		stream: null,
-		incomingCall: { received: false, from: null, answered: null }
+		// incomingCall: { received: false, from: null, answered: null, pending: false }
+		incomingCall: {
+			received: true,
+			from: { id: 'bullshit', name: 'robertmozeika' },
+			answered: false,
+			pending: true
+		}
 	},
 	candidate: {},
 	constraints: {
@@ -42,7 +48,27 @@ export const candidate = (state = {}, action = {}) => {
 			return state;
 	}
 };
+export const incomingCall = (state = {}, action = {}) => {
+	switch (action.type) {
+		case CALL_INCOMING:
+			return {
+				...state,
+				received: true,
+				from: action.payload,
+				answered: false,
+				pending: true // maybe redundant but prevents logic when setting answer button
+			};
+		case ANSWER_INCOMING:
+			return {
+				...state,
+				answered: action.payload,
+				pending: false
+			};
 
+		default:
+			return state;
+	}
+};
 export const peerStore = (state = [], action = {}) => {
 	switch (action.type) {
 		case CREATE_PEER_CONN:
@@ -60,23 +86,29 @@ export const peerStore = (state = [], action = {}) => {
 		case SET_STREAM:
 			return { ...state, stream: action.payload };
 		case CALL_INCOMING:
-			return {
-				...state,
-				incomingCall: {
-					...state.incomingCall,
-					received: true,
-					from: action.payload,
-					answered: false
-				}
-			};
+			return Object.assign({}, state, {
+				incomingCall: incomingCall(state.incomingCall, action)
+			});
+		// return {
+		// 	...state,
+		// 	incomingCall: {
+		// 		...state.incomingCall,
+		// 		received: true,
+		// 		from: action.payload,
+		// 		answered: false
+		// 	}
+		// };
 		case ANSWER_INCOMING:
-			return {
-				...state,
-				incomingCall: {
-					...state.incomingCall,
-					answered: action.payload
-				}
-			};
+			return Object.assign({}, state, {
+				incomingCall: incomingCall(state.incomingCall, action)
+			});
+		// return {
+		// 	...state,
+		// 	incomingCall: {
+		// 		...state.incomingCall,
+		// 		answered: action.payload
+		// 	}
+		// };
 		default:
 			return state;
 	}
@@ -94,5 +126,6 @@ const callReducer = combineReducers({
 	candidate,
 	peerStore,
 	constraints
+	// incoming
 });
 export default callReducer;

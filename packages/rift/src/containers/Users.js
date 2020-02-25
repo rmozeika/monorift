@@ -25,8 +25,6 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		flex: 1,
-		// padding: 16,
-		// flexDirection: 'row',
 		alignItems: 'center',
 		display: 'flex',
 		width: '100%'
@@ -36,7 +34,6 @@ const styles = StyleSheet.create({
 		width: '100%'
 	},
 	button: {
-		// margin: 8,
 		margin: 15,
 		width: '100%',
 		height: '100%',
@@ -45,31 +42,46 @@ const styles = StyleSheet.create({
 	buttonRow: {
 		display: 'flex',
 		alignItems: 'center',
-		jusatifyContent: 'center',
+		justifyContent: 'center',
 		margin: 0,
 		height: '10vh'
 	}
 });
-// let peerStore;
-
-// let connName2 = 'conn2';
-// let audioRef = React.createRef();
-// let videoRef = React.createRef();
-// let selfRef = React.createRef();
 
 class Users extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = { containerHeight: null };
 		this.props.getOnlineUsers();
 		this.goTalk = this.goTalk.bind(this);
 		this.answer = this.answer.bind(this);
 		this.reject = this.reject.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 	}
 	goTalk() {
 		this.props.setViewTab(1);
 	}
+	onLayout({ nativeEvent, timeStamp }) {
+		const { mobile, incomingCall } = this.props;
+		const { layout } = nativeEvent;
+		const { width, height } = layout;
+		// if (!mobile) {
+		// 	this.setState({
+		// 		containerHeight: {
+		// 			container: height,
+		// 			userList: height,
+		// 			callButton: 0
+		// 		}
+		// 	});
+		// 	return;
+		// }
+		// const actionHeightMultiplier = incomingCall.received ? 0.15 : 0.1;
+		// const callActions = height * actionHeightMultiplier;
+		this.setState({
+			containerHeight: height
+		});
+	}
 	answer() {
-		debugger;
 		const { answer } = this.props;
 		answer(true);
 	}
@@ -77,63 +89,78 @@ class Users extends React.Component {
 		const { answer } = this.props;
 		answer(false);
 	}
+	calculateHeights() {
+		const { containerHeight, mobile, incomingCall } = this.props;
+		const callActions = containerHeight * actionHeightMultiplier;
+		const userList = containerHeight - callActions;
+		return { userList, callActions };
+	}
 	render() {
 		const {
 			gotOnlineUsers,
 			online,
 			themedStyle,
-			customHeights,
 			mobile,
 			incomingCall
 		} = this.props;
-		const loading = (
-			<Layout style={styles.row}>
-				<Text>Loading...</Text>
-			</Layout>
-		);
-		if (customHeights.callButton == null) {
+		const { containerHeight } = this.state;
+		// const heights = this.calculateHeights();
+		// const loading = (
+		// 	<Layout style={styles.row}>
+		// 		<Text>Loading...</Text>
+		// 	</Layout>
+		// );
+		if (containerHeight == null) {
 			return (
-				<Layout style={[styles.userLayout, styles.loadingContainer]}>
+				<Layout
+					onLayout={this.onLayout}
+					style={[styles.userLayout, styles.loadingContainer]}
+				>
 					<Text>Loading</Text>
 				</Layout>
 			);
 		}
-		const toDisplay = () => {
-			if (!gotOnlineUsers) {
-				return loading;
-			}
+		if (!gotOnlineUsers) {
 			return (
-				<Layout style={styles.userLayout}>
-					<UserList online={online} customHeight={customHeights.userList}></UserList>
-					{/* <Layout style={[styles.buttonRow, themedStyle.buttonRow, { height: customHeights.callButton }]}>
-						<Button
-							style={styles.button}
-							// appearance="outline"
-							onPress={this.goTalk.bind(this)}
-						>
-							To Call
-						</Button>
-					</Layout> */}
-					{/* {mobile && ( */}
-					<CallActions
-						style={[
-							styles.buttonRow,
-							themedStyle.buttonRow,
-							{ height: customHeights.callButton }
-						]}
-						onPress={this.goTalk}
-						buttonHeight={customHeights.callButton}
-						themedStyle={themedStyle.buttonRow}
-						callIncoming={incomingCall.received}
-						userCalling={incomingCall.from}
-						answer={this.answer}
-						reject={this.reject}
-					/>
-					{/* )} */}
+				<Layout
+					onLayout={this.onLayout}
+					style={[styles.userLayout, styles.loadingContainer]}
+				>
+					<Text>Loading</Text>
 				</Layout>
 			);
-		};
-		return <Layout style={styles.container}>{toDisplay()}</Layout>;
+		}
+		// const toDisplay = () => {
+		// 	debugger;
+		// 	return (
+		// 		<Layout style={styles.userLayout}>
+		// 			<UserList online={online} baseHeight={containerHeight} ></UserList>
+		// 			<CallActions
+		// 				onPress={this.goTalk}
+		// 				themedStyle={themedStyle.buttonRow}
+		// 				incomingCall={incomingCall}
+		// 				answer={this.answer}
+		// 				reject={this.reject}
+		// 				baseHeight={containerHeight}
+		// 			/>
+		// 		</Layout>
+		// 	);
+		// };
+		return (
+			<Layout style={styles.container}>
+				<Layout style={styles.userLayout}>
+					<UserList online={online} baseHeight={containerHeight}></UserList>
+					<CallActions
+						onPress={this.goTalk}
+						themedStyle={themedStyle.buttonRow}
+						incomingCall={incomingCall}
+						answer={this.answer}
+						reject={this.reject}
+						baseHeight={containerHeight}
+					/>
+				</Layout>
+			</Layout>
+		);
 	}
 }
 const UsersStyled = withStyles(Users, theme => ({
@@ -164,4 +191,11 @@ const mapStateToProps = (state, ownProps) => {
 		incomingCall
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(UsersStyled);
+function mergeProps(stateProps, dispatchProps, ownProps) {
+	return { ...ownProps, ...stateProps, ...dispatchProps };
+}
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)(UsersStyled);

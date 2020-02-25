@@ -2,7 +2,8 @@ import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
-
+import * as Selectors from '../selectors';
+import * as CallSelectors from '../selectors/call';
 import {
 	Layout,
 	Text,
@@ -102,7 +103,7 @@ class UsersList extends React.Component {
 		removeFromCall(index);
 	}
 	render() {
-		const { online, themedStyle, customHeight } = this.props;
+		const { online, themedStyle, baseHeight, incomingCallPending } = this.props;
 		const renderItemAccessory = (style, index) => {
 			// const buttonStyle = {
 			// 	...style,
@@ -145,7 +146,7 @@ class UsersList extends React.Component {
 						onPress={() => this.onAdd(index)}
 						style={buttonStyleAlt}
 					>
-						Add
+						Add Friend
 					</Button>
 				);
 			}
@@ -199,9 +200,11 @@ class UsersList extends React.Component {
 				/>
 			);
 		};
-
+		const { mobile } = this.props;
+		const heightMultiplier = incomingCallPending ? 0.8 : 0.9;
+		const derivedHeight = baseHeight * heightMultiplier;
 		return (
-			<Layout style={[styles.userListLayout, { height: customHeight }]}>
+			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<List
 					data={online}
 					renderItem={renderItem}
@@ -240,10 +243,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { view } = state;
-	const { tab } = view;
+	const { view, peerStore } = state;
+	const { tab, mobile } = view;
 	return {
-		tab: tab
+		tab,
+		mobile,
+		incomingCallPending: CallSelectors.incomingCallPending(state)
 	};
 };
 export default connect(

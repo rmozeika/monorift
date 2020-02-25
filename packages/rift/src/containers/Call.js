@@ -68,11 +68,7 @@ class CallContainer extends React.Component {
 		this.state = {
 			topTabsIndex: 0,
 			setTopTabsIndex: 0,
-			customHeights: {
-				container: null,
-				userList: null,
-				callButton: null
-			}
+			containerHeight: null
 		};
 		this.callContainerRef = React.createRef();
 	}
@@ -86,7 +82,7 @@ class CallContainer extends React.Component {
 		const { width, height } = layout;
 		if (!mobile) {
 			this.setState({
-				customHeights: {
+				containerHeight: {
 					container: height,
 					userList: height,
 					callButton: 0
@@ -94,22 +90,24 @@ class CallContainer extends React.Component {
 			});
 			return;
 		}
-		const heightWithoutTabBar = height - 32;
-		const callButton = height * 0.1; // heightWithoutTabBar * 0.1;
-		const userList = height - callButton;
 		this.setState({
-			customHeights: {
-				container: height,
-				userList,
-				callButton
-			}
+			containerHeight: height
 		});
+		// const callButton = height * 0.1;
+		// const userList = height - callButton;
+		// this.setState({
+		// 	containerHeight: {
+		// 		container: height,
+		// 		userList,
+		// 		callButton
+		// 	}
+		// });
 	}
 	setTopTabsIndex(index) {
 		console.log(index);
 	}
 	render() {
-		const { customHeights } = this.state;
+		const { containerHeight } = this.state;
 		const { tab, mobile } = this.props;
 		const isMobile = window.innerWidth <= 500;
 		if (!mobile) {
@@ -117,10 +115,12 @@ class CallContainer extends React.Component {
 				<Layout style={styles.desktopLayout}>
 					<Layout style={styles.column}>
 						<Layout
-							onLayout={this.onLayout.bind(this)}
+							// onLayout={this.onLayout.bind(this)}
 							style={styles.desktopTabContainer}
 						>
-							<Users customHeights={customHeights} />
+							<Users
+							// containerHeight={containerHeight}
+							/>
 						</Layout>
 					</Layout>
 					<Layout style={styles.column}>
@@ -140,8 +140,11 @@ class CallContainer extends React.Component {
 					style={{ width: '100%', flexGrow: 1 }}
 				>
 					<Tab title="Users">
-						<Layout style={styles.tabContainer} onLayout={this.onLayout.bind(this)}>
-							<Users customHeights={customHeights} />
+						<Layout
+							style={styles.tabContainer}
+							// onLayout={this.onLayout.bind(this)}
+						>
+							<Users containerHeight={containerHeight} />
 						</Layout>
 					</Tab>
 					<Tab title="Talk">

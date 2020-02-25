@@ -139,12 +139,12 @@ class CallContainer extends React.Component {
 					onSelect={this.setTopTabsIndex}
 					style={{ width: '100%', flexGrow: 1 }}
 				>
-					<Tab title="users">
+					<Tab title="Users">
 						<Layout style={styles.tabContainer} onLayout={this.onLayout.bind(this)}>
 							<Users customHeights={customHeights} />
 						</Layout>
 					</Tab>
-					<Tab title="talk">
+					<Tab title="Talk">
 						<Layout style={styles.tabContainer}>
 							<Talk audioRef={this.audioRef} />
 						</Layout>

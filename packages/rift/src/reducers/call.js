@@ -8,7 +8,9 @@ import {
 	SET_PEER_STARTED,
 	SET_PEER_INITIATOR,
 	SET_REMOTE,
-	SET_STREAM
+	SET_STREAM,
+	CALL_INCOMING,
+	ANSWER_INCOMING
 } from '../actions';
 export const initialState = {
 	peerStore: {
@@ -19,7 +21,8 @@ export const initialState = {
 		isStarted: false,
 		isInitiator: false,
 		remoteSet: false,
-		stream: null
+		stream: null,
+		incomingCall: { received: false, from: null, answered: null }
 	},
 	candidate: {},
 	constraints: {
@@ -56,6 +59,24 @@ export const peerStore = (state = [], action = {}) => {
 			return { ...state, remoteSet: action.remoteSet };
 		case SET_STREAM:
 			return { ...state, stream: action.payload };
+		case CALL_INCOMING:
+			return {
+				...state,
+				incomingCall: {
+					...state.incomingCall,
+					received: true,
+					from: action.payload,
+					answered: false
+				}
+			};
+		case ANSWER_INCOMING:
+			return {
+				...state,
+				incomingCall: {
+					...state.incomingCall,
+					answered: action.payload
+				}
+			};
 		default:
 			return state;
 	}

@@ -56,6 +56,12 @@ const transferDistWeb = async () => {
 	const sendingDist = await exec(cmd, { cwd: currentPath });
 	console.log(sendingDist.stdout, sendingDist.stderr);
 };
+const transferDistDev = async () => {
+	const cmd = `rsync --recursive -v -e ssh  ./dist.web/. awsmono:/home/monorift/monorift/dist.web/.`;
+
+	const sendingDist = await exec(cmd, { cwd: currentPath });
+	console.log(sendingDist.stdout, sendingDist.stderr);
+};
 
 const transferBash = async () => {
 	const sendBash = path.resolve(devopsPath, '.bin', 'send-bashrc.sh');
@@ -81,6 +87,9 @@ module.exports = function(script) {
 			break;
 		case 'dist':
 			transferDistWeb();
+			break;
+		case 'distdev':
+			transferDistDev();
 			break;
 		case 'bash':
 			transferBash();

@@ -11,7 +11,7 @@ import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import UserList from '../components/UsersList';
-import ToCallButton from '../components/buttons/ToCall';
+import CallActions from '../components/buttons/CallActions';
 
 const styles = StyleSheet.create({
 	userLayout: {
@@ -61,9 +61,21 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.props.getOnlineUsers();
+		this.goTalk = this.goTalk.bind(this);
+		this.answer = this.answer.bind(this);
+		this.reject = this.reject.bind(this);
 	}
 	goTalk() {
 		this.props.setViewTab(1);
+	}
+	answer() {
+		debugger;
+		const { answer } = this.props;
+		answer(true);
+	}
+	reject() {
+		const { answer } = this.props;
+		answer(false);
 	}
 	render() {
 		const {
@@ -71,7 +83,8 @@ class Users extends React.Component {
 			online,
 			themedStyle,
 			customHeights,
-			mobile
+			mobile,
+			incomingCall
 		} = this.props;
 		const loading = (
 			<Layout style={styles.row}>
@@ -101,18 +114,22 @@ class Users extends React.Component {
 							To Call
 						</Button>
 					</Layout> */}
-					{mobile && (
-						<ToCallButton
-							style={[
-								styles.buttonRow,
-								themedStyle.buttonRow,
-								{ height: customHeights.callButton }
-							]}
-							onPress={this.goTalk.bind(this)}
-							buttonHeight={customHeights.callButton}
-							themedStyle={themedStyle.buttonRow}
-						/>
-					)}
+					{/* {mobile && ( */}
+					<CallActions
+						style={[
+							styles.buttonRow,
+							themedStyle.buttonRow,
+							{ height: customHeights.callButton }
+						]}
+						onPress={this.goTalk}
+						buttonHeight={customHeights.callButton}
+						themedStyle={themedStyle.buttonRow}
+						callIncoming={incomingCall.received}
+						userCalling={incomingCall.from}
+						answer={this.answer}
+						reject={this.reject}
+					/>
+					{/* )} */}
 				</Layout>
 			);
 		};
@@ -128,18 +145,23 @@ const UsersStyled = withStyles(Users, theme => ({
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		setViewTab: tab => dispatch(Actions.setTabView(tab)),
-		getOnlineUsers: () => dispatch(Actions.getOnlineUsers())
+		getOnlineUsers: () => dispatch(Actions.getOnlineUsers()),
+		answer: answered => dispatch(Actions.answer(answered))
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { users, view } = state;
+	const { users, view, call } = state;
 	const { online } = users;
 	const { gotOnlineUsers } = online;
 	const { mobile } = view;
+
+	const { incomingCall } = call.peerStore;
+
 	return {
 		online: online.users,
 		gotOnlineUsers,
-		mobile
+		mobile,
+		incomingCall
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UsersStyled);

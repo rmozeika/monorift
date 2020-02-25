@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import produce from 'immer';
 import {
 	GET_ONLINE_USERS,
 	SET_ONLINE_USERS,
@@ -14,12 +15,9 @@ export const initialState = {
 		gotOnlineUsers: false
 	}
 };
-
+const onlineUsers = (state, action) => {};
 export const online = (state = {}, action) => {
 	switch (action.type) {
-		case GET_ONLINE_USERS:
-			const newState = state;
-			return newState;
 		case SET_ONLINE_USERS:
 			const users = action.payload.map(user => ({
 				...user,

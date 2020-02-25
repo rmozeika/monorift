@@ -30,9 +30,11 @@ const {
 	SEND_OFFER,
 	GOT_MESSAGE,
 	SET_REMOTE,
+	ANSWER_INCOMING,
 	setRemote,
 	setConstraints,
-	sendOffer
+	sendOffer,
+	setIncomingCall
 } = Actions;
 
 import io from 'socket.io-client';
@@ -42,6 +44,9 @@ const onError = e => {
 };
 const selectPeerStore = state => {
 	return state.call.peerStore;
+};
+const selectIncomingCall = state => {
+	return state.call.peerStore.incomingCall;
 };
 const selectConstraints = state => {
 	const { mediaStream, offerOptions } = state.call.constraints;
@@ -226,18 +231,19 @@ function* gotMessageSaga({ message, constraints, from }) {
 		// });
 		// console.log('ADDED TRACK');
 		console.log('GOT_MESSAGE', 'creating answer');
-		const answer = yield conn.createAnswer().catch(e => {
-			console.log(e);
-			debugger; //error
-		});
-		console.log('GOT_MESSAGE', 'setting local desc');
+		yield put(setIncomingCall(from));
+		// const answer = yield conn.createAnswer().catch(e => {
+		// 	console.log(e);
+		// 	debugger; //error
+		// });
+		// console.log('GOT_MESSAGE', 'setting local desc');
 
-		yield conn.setLocalDescription(answer);
-		// socket.emit('message', conn.localDescription);
-		console.log('GOT_MESSAGE', 'sending answer');
-		const desc = conn.localDescription;
-		const sendBackTo = from;
-		socket.emit('message', desc, { users: [from] });
+		// yield conn.setLocalDescription(answer);
+		// // socket.emit('message', conn.localDescription);
+		// console.log('GOT_MESSAGE', 'sending answer');
+		// const desc = conn.localDescription;
+		// const sendBackTo = from;
+		// socket.emit('message', desc, { users: [from] });
 		// console.log('set local desc');
 		//signaling.send({message: conn.localDescription});
 	} else if (message.type === 'answer') {
@@ -282,13 +288,50 @@ function* gotMessageSaga({ message, constraints, from }) {
 	}
 	//}
 }
+function* incomingCallSaga(incomingCall) {
+	// const incomingCall =
+	// const answer = yield conn.createAnswer().catch(e => {
+	// 	console.log(e);
+	// 	debugger; //error
+	// });
+	// console.log('GOT_MESSAGE', 'setting local desc');
+	// yield conn.setLocalDescription(answer);
+	// // socket.emit('message', conn.localDescription);
+	// console.log('GOT_MESSAGE', 'sending answer');
+	// const desc = conn.localDescription;
+	// const sendBackTo = from;
+	// socket.emit('message', desc, { users: [from] });
+}
+function* answerCallSaga({ payload: answered }) {
+	if (!answered) {
+		return; // reject call action
+	}
+	const peerStore = yield select(selectPeerStore);
+	const { conn, isStarted, isInitiator, incomingCall } = peerStore;
+	const { from } = incomingCall;
+	const answer = yield conn.createAnswer().catch(e => {
+		console.log(e);
+		debugger; //error
+	});
+	console.log('GOT_MESSAGE', 'setting local desc');
+
+	yield conn.setLocalDescription(answer);
+	// socket.emit('message', conn.localDescription);
+	console.log('GOT_MESSAGE', 'sending answer');
+	const desc = conn.localDescription;
+	const sendBackTo = from;
+	socket.emit('message', desc, { users: [from] });
+}
+
 function* rootSaga() {
 	yield all([
 		initCallSaga(),
 		takeLatest(SEND_CANDIDATE, sendCandidateSaga),
 		takeLatest(CREATE_PEER_CONN, createPeerConnSaga),
 		takeLatest(SEND_OFFER, sendOfferSaga),
-		takeEvery(GOT_MESSAGE, gotMessageSaga)
+		takeEvery(GOT_MESSAGE, gotMessageSaga),
+		// takeLatest(CALL_INCOMING, incomingCallSaga)
+		takeLatest(ANSWER_INCOMING, answerCallSaga)
 	]);
 }
 

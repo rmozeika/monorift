@@ -159,6 +159,18 @@ export const setStream = stream => ({
 	payload: stream
 });
 
+export const CALL_INCOMING = 'CALL_INCOMING';
+export const setIncomingCall = from => ({
+	type: CALL_INCOMING,
+	payload: from
+});
+
+export const ANSWER_INCOMING = 'ANSWER_INCOMING';
+export const answer = answered => ({
+	type: ANSWER_INCOMING,
+	payload: answered
+});
+
 export const SET_TAB_VIEW = 'SET_TAB_VIEW';
 export const setTabView = index => ({
 	type: SET_TAB_VIEW,

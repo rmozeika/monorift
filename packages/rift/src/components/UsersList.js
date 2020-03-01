@@ -147,13 +147,13 @@ class UsersList extends React.Component {
 						onPress={() => this.onAdd(index)}
 						style={buttonStyleAlt}
 					>
-						Add Friend
+						Add To Call
 					</Button>
 				);
 			}
 			return (
 				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
-					<Button
+					{/* <Button
 						appearance="outline"
 						status="primary"
 						onPress={() => {
@@ -161,8 +161,8 @@ class UsersList extends React.Component {
 						}}
 						style={buttonStyleAlt}
 					>
-						Call
-					</Button>
+						Add to Call
+					</Button> */}
 					{taskButton}
 				</Layout>
 				// </ButtonGroup>
@@ -249,7 +249,8 @@ const mapStateToProps = (state, ownProps) => {
 	return {
 		tab,
 		mobile,
-		incomingCallPending: CallSelectors.incomingCallPending(state)
+		incomingCallPending: CallSelectors.incomingCallPending(state),
+		friends: []
 	};
 };
 export default connect(

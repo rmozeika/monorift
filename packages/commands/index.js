@@ -11,9 +11,8 @@ rp2
 		//     socket_id: null
 
 		// })
-		//rp2.repositories.users.addFriend('robertmozeika', 'santaclauseoldsaintnick')
-		rp2.repositories.users
-			.getFriendsForUser('robertmozeika')
+
+		acceptFriend()
 			.then(user => {
 				console.log(user);
 			})
@@ -21,6 +20,22 @@ rp2
 				console.log(e);
 			});
 	})
+
 	.catch(e => {
 		console.log(e);
 	});
+const acceptFriend = () => {
+	return rp2.repositories.users.acceptFriend(
+		'robertmozeika',
+		'santaclauseoldsaintnick'
+	);
+};
+const addFriend = () => {
+	return rp2.repositories.users.addFriend(
+		'robertmozeika',
+		'santaclauseoldsaintnick'
+	);
+};
+const getFriends = () => {
+	return rp2.repositories.users.getFriendsForUser('robertmozeika');
+};

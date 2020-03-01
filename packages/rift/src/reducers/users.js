@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
 import produce from 'immer';
 import {
-	GET_ONLINE_USERS,
+	FETCH_ONLINE_USERS,
 	SET_ONLINE_USERS,
+	SET_FRIENDS,
 	ADD_CALL,
 	REMOVE_CALL,
 	ADD_ONLINE_USER,
@@ -13,7 +14,8 @@ export const initialState = {
 	online: {
 		users: [],
 		gotOnlineUsers: false
-	}
+	},
+	friends: []
 };
 const onlineUsers = (state, action) => {};
 export const online = (state = {}, action) => {
@@ -58,8 +60,17 @@ export const online = (state = {}, action) => {
 			return state;
 	}
 };
+export const friends = (state = {}, action) => {
+	switch (action.type) {
+		case SET_FRIENDS:
+			return { ...state, ...action.payload };
+		default:
+			return state;
+	}
+};
 
 const usersReducer = combineReducers({
-	online
+	online,
+	friends
 });
 export default usersReducer;

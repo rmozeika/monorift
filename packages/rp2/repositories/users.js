@@ -1,7 +1,16 @@
 var Repository = require('./repository.js');
 
 const collection = 'users';
-
+// friendship status
+// A = accepted
+// S = SENT
+// P = PENDING
+const friendStatus = {
+	accepted: 'A',
+	sent: 'S',
+	pending: 'P',
+	rejected: 'R'
+};
 class UserRepository extends Repository {
 	constructor(api) {
 		super(api, collection);
@@ -64,18 +73,58 @@ class UserRepository extends Repository {
 			opts
 		});
 	}
-	async addFriend(username, friend) {
-		const userIds = await this.postgresInstance
+	async getUsersIdsByUsername(usernames) {
+		const users = await this.postgresInstance
 			.knex('users')
-			.whereIn('username', [username, friend])
+			.whereIn('username', usernames)
 			.select('id');
-		console.log(userIds);
+		const ids = users.map(({ id }) => id);
+		return ids;
+	}
+	async acceptFriend(username, friend) {
+		const [userId, friendId] = await this.getUsersIdsByUsername([
+			username,
+			friend
+		]);
+		const accepted = await this.postgresInstance
+			.knex('friendship')
+			.update('status', friendStatus.accepted)
+			.where({ member1_id: userId, member2_id: friendId })
+			.orWhere({ member1_id: friendId, member2_id: userId });
+		console.log(accepted);
+		return accepted;
+	}
+	async rejectFriend(username, friend) {
+		const [userId, friendId] = await this.getUsersIdsByUsername([
+			username,
+			friend
+		]);
+		const accepted = await this.postgresInstance
+			.knex('friendship')
+			.update('status', friendStatus.rejected)
+			.where({ member1_id: userId, member2_id: friendId })
+			.orWhere({ member1_id: friendId, member2_id: userId });
+	}
+	async addFriend(username, friend) {
+		const [userId, friendId] = await this.getUsersIdsByUsername([
+			username,
+			friend
+		]);
+		// console.log(userIds);
 		const inserted1 = await this.postgresInstance
 			.knex('friendship')
-			.insert({ member1_id: userIds[0].id, member2_id: userIds[1].id });
+			.insert({
+				member1_id: userId,
+				member2_id: friendId,
+				status: friendStatus['sent']
+			});
 		const inserted2 = await this.postgresInstance
 			.knex('friendship')
-			.insert({ member1_id: userIds[1].id, member2_id: userIds[0].id });
+			.insert({
+				member1_id: friendId,
+				member2_id: userId,
+				status: friendStatus['pending']
+			});
 
 		return { inserted1, inserted2 };
 	}

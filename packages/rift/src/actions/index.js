@@ -123,14 +123,24 @@ export const setRemote = (remoteIsSet = true) => ({
 // import { TiffanyActions } from '../reducers/tiffany';
 // export const tiffany = TiffanyActions;
 
-export const GET_ONLINE_USERS = 'GET_ONLINE_USERS';
+export const FETCH_ONLINE_USERS = 'FETCH_ONLINE_USERS';
 export const SET_ONLINE_USERS = 'SET_ONLINE_USERS';
-export const getOnlineUsers = () => ({
-	type: GET_ONLINE_USERS
+export const fetchOnlineUsers = () => ({
+	type: FETCH_ONLINE_USERS
 });
 export const setOnlineUsers = users => ({
 	type: SET_ONLINE_USERS,
 	payload: users
+});
+
+export const FETCH_FRIENDS = 'FETCH_FRIENDS';
+export const fetchFriends = () => ({
+	type: FETCH_FRIENDS
+});
+export const SET_FRIENDS = 'SET_FRIENDS';
+export const setFriends = friends => ({
+	type: SET_FRIENDS,
+	payload: friends
 });
 export const ADD_CALL = 'ADD_CALL';
 export const addToCall = index => ({

@@ -6,7 +6,8 @@ export const originLink = type => {
 		logout: '/auth/logout',
 		call: '/call',
 		online: '/users/online',
-		users: '/users'
+		users: '/users',
+		friends: '/users/friends'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;

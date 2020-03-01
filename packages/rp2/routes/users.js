@@ -14,10 +14,23 @@ class UserRoute extends Route {
 			this.router.post('/', secured(), this.retrieveAll.bind(this));
 			this.router.post('/createUser', secured(), this.createUser.bind(this));
 			// this.router.post('/online', secured(), this.createUser.bind(this));
-			this.router.post('/online', this.getOnlineUsers.bind(this));
+			this.router.post('/online', this.fetchOnlineUsers.bind(this));
+			this.router.post('/friends', this.fetchFriends.bind(this));
 
 			this.router.get('/username', secured(), this.getUser.bind(this));
 		});
+	}
+	getUserNameFromReq(req) {
+		if (
+			!req.session ||
+			!req.session.passport ||
+			!req.session.passport.user ||
+			!req.session.passport.user.username
+		)
+			return '';
+		const { username } =
+			req.session && req.session.passport && req.session.passport.user;
+		return username;
 	}
 
 	retrieveAll(req, res) {
@@ -49,7 +62,7 @@ class UserRoute extends Route {
 		const { user } = req;
 		return res.send(user);
 	}
-	getOnlineUsers(req, res) {
+	fetchOnlineUsers(req, res) {
 		console.log(this);
 		const username = this.getUserNameFromReq(req);
 
@@ -63,17 +76,15 @@ class UserRoute extends Route {
 			res.send(objUsers);
 		});
 	}
-	getUserNameFromReq(req) {
-		if (
-			!req.session ||
-			!req.session.passport ||
-			!req.session.passport.user ||
-			!req.session.passport.user.username
-		)
-			return '';
-		const { username } =
-			req.session && req.session.passport && req.session.passport.user;
-		return username;
+	async fetchFriends(req, res) {
+		const username = this.getUserNameFromReq(req);
+
+		const friends = await this.repository.getFriendsForUser(username);
+		res.send(friends);
+	}
+	addFriend(req, res) {
+		const username = this.getUserNameFromReq(req);
+		console.log(username);
 	}
 }
 

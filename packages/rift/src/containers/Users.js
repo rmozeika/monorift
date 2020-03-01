@@ -52,7 +52,9 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { containerHeight: null };
-		this.props.getOnlineUsers();
+		this.props.fetchOnlineUsers();
+		this.props.fetchFriends();
+
 		this.goTalk = this.goTalk.bind(this);
 		this.answer = this.answer.bind(this);
 		this.reject = this.reject.bind(this);
@@ -172,8 +174,9 @@ const UsersStyled = withStyles(Users, theme => ({
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		setViewTab: tab => dispatch(Actions.setTabView(tab)),
-		getOnlineUsers: () => dispatch(Actions.getOnlineUsers()),
-		answer: answered => dispatch(Actions.answer(answered))
+		fetchOnlineUsers: () => dispatch(Actions.fetchOnlineUsers()),
+		answer: answered => dispatch(Actions.answer(answered)),
+		fetchFriends: () => dispatch(Actions.fetchFriends())
 	};
 };
 const mapStateToProps = (state, ownProps) => {

@@ -40,6 +40,18 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 		console.log(err);
 	}
 }
+function* loadFriendsSaga() {
+	try {
+		const origin = originLink(nsp || 'friends');
+		console.log('origin link', origin);
+		const res = yield fetch(origin, { method: 'POST' });
+		const data = yield res.json();
+		yield put(Actions.setFriends(data));
+		// yield put(setOnlineUsers(data));
+	} catch (err) {
+		console.log(err);
+	}
+}
 const connect = () => {
 	socket = io(socketServerURL);
 	return new Promise(resolve => {
@@ -107,7 +119,8 @@ function* rootSaga() {
 	yield all([
 		initSocketSaga(),
 		// takeLatest(ActionTypes.loadData, loadDataSaga),
-		takeLatest(Actions.GET_ONLINE_USERS, onlineUsersSaga)
+		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
+		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga)
 	]);
 }
 

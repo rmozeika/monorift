@@ -111,25 +111,21 @@ class UserRepository extends Repository {
 			friend
 		]);
 		// console.log(userIds);
-		const inserted1 = await this.postgresInstance
-			.knex('friendship')
-			.insert({
-				member1_id: userId,
-				member2_id: friendId,
-				status: friendStatus['sent']
-			});
-		const inserted2 = await this.postgresInstance
-			.knex('friendship')
-			.insert({
-				member1_id: friendId,
-				member2_id: userId,
-				status: friendStatus['pending']
-			});
+		const inserted1 = await this.postgresInstance.knex('friendship').insert({
+			member1_id: userId,
+			member2_id: friendId,
+			status: friendStatus['sent']
+		});
+		const inserted2 = await this.postgresInstance.knex('friendship').insert({
+			member1_id: friendId,
+			member2_id: userId,
+			status: friendStatus['pending']
+		});
 
 		return { inserted1, inserted2 };
 	}
 	async getFriendsForUser(username) {
-		const userIds = await this.postgresInstance
+		const friends = await this.postgresInstance
 			.knex('users')
 			.innerJoin('friendship', 'users.id', '=', 'friendship.member2_id')
 			.where(
@@ -139,7 +135,7 @@ class UserRepository extends Repository {
 					.where('username', username)
 					.select('id')
 			);
-		console.log(userIds);
+		return friends;
 	}
 }
 

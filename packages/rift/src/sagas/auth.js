@@ -64,11 +64,15 @@ function* initAuthSaga() {
 		}
 	}
 }
-
+function* onLoginSaga() {
+	console.log('on log in success');
+	yield put(Actions.fetchFriends());
+	console.log('fetching friends');
+}
 function* rootSaga() {
 	yield all([
-		initAuthSaga()
-		// takeLatest(ActionTypes.login, loadDataSaga),
+		initAuthSaga(),
+		takeLatest(AUTH.LOGIN.SUCCESS, onLoginSaga)
 		// takeLatest(ActionTypes.initConfig, initConfigSaga)
 	]);
 }

@@ -63,7 +63,7 @@ export const online = (state = {}, action) => {
 export const friends = (state = {}, action) => {
 	switch (action.type) {
 		case SET_FRIENDS:
-			return { ...state, ...action.payload };
+			return [...state, ...action.payload];
 		default:
 			return state;
 	}

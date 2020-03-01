@@ -53,7 +53,7 @@ class Users extends React.Component {
 		super(props);
 		this.state = { containerHeight: null };
 		this.props.fetchOnlineUsers();
-		this.props.fetchFriends();
+		// this.props.fetchFriends();
 
 		this.goTalk = this.goTalk.bind(this);
 		this.answer = this.answer.bind(this);

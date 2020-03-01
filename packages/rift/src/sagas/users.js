@@ -42,7 +42,7 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 }
 function* loadFriendsSaga() {
 	try {
-		const origin = originLink(nsp || 'friends');
+		const origin = originLink('friends');
 		console.log('origin link', origin);
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();

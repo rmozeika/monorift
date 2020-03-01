@@ -244,13 +244,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { view, peerStore } = state;
+	const { view, peerStore, users } = state;
 	const { tab, mobile } = view;
 	return {
 		tab,
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
-		friends: []
+		friends: users.friends
 	};
 };
 export default connect(

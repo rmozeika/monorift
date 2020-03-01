@@ -69,6 +69,13 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "commands",
+			"program": "${workspaceFolder}/packages/commands/index.js",
+			"smartStep": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "webpack:build",
 			"program": "${workspaceFolder}/node_modules/.bin/webpack",
 			"args": ["--config", "webpack.config.js"],

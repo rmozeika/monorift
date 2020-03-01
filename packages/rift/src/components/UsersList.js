@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
 import * as CallSelectors from '../selectors/call';
+import UserListItem from './UserListItem';
 import {
 	Layout,
 	Text,

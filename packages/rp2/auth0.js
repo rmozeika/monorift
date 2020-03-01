@@ -22,7 +22,7 @@ const strategy = new Auth0Strategy(
 			.then(user => {
 				if (!user) {
 					users.importProfile(profile).then(res => {
-						return done(null, user);
+						return done(null, res);
 					});
 					//return done(null, profile)
 				} else {

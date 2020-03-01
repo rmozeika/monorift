@@ -83,7 +83,7 @@ class MongoService {
 	getDb() {
 		return this._db;
 	}
-
+	// DELETE
 	getMethodNames() {
 		let methodNames = [];
 		extendMethods.forEach(method => {

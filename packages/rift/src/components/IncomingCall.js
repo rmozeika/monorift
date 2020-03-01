@@ -45,7 +45,6 @@ const IncomingCall = ({ name, derivedHeight }) => {
 		});
 	};
 
-	debugger;
 	const theme = useTheme();
 
 	const color = colorAnim.interpolate({
@@ -54,7 +53,6 @@ const IncomingCall = ({ name, derivedHeight }) => {
 	});
 	loop();
 
-	debugger;
 	const msg = `from ${name}`;
 	return (
 		<Animated.View // Special animatable View

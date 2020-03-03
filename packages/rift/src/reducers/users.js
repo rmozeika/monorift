@@ -31,7 +31,7 @@ export const online = (state = {}, action) => {
 			return { ...state, gotOnlineUsers: true, users };
 		case ADD_ONLINE_USER:
 			const userPresent = state.users.some(
-				user => user.name == action.payload.name
+				user => user.username == action.payload.username
 			);
 			if (userPresent) return state;
 			let usersAdd = [...state.users, { ...action.payload, checked: false }];
@@ -39,23 +39,23 @@ export const online = (state = {}, action) => {
 			return addedToState;
 		case REMOVE_ONLINE_USER:
 			let usersRemoved = state.users.filter(
-				user => action.payload.name !== user.name
+				user => action.payload.username !== user.username
 			);
 			return { ...state, users: usersRemoved };
 		case ADD_CALL:
-			let addUsers = state.users.map(({ checked, name }, index) => {
+			let addUsers = state.users.map(({ checked, username }, index) => {
 				if (action.index == index) {
-					return { name, checked: true };
+					return { username, checked: true };
 				}
-				return { checked, name };
+				return { checked, username };
 			});
 			return { ...state, users: addUsers };
 		case REMOVE_CALL:
-			let removeUsers = state.users.map(({ checked, name }, index) => {
+			let removeUsers = state.users.map(({ checked, username }, index) => {
 				if (action.index == index) {
-					return { name, checked: false };
+					return { username, checked: false };
 				}
-				return { checked, name };
+				return { checked, username };
 			});
 			return { ...state, users: removeUsers };
 
@@ -103,18 +103,28 @@ export const byId = (state = {}, action) => {
 						online: false
 					};
 				}, {});
-				debugger;
 				break;
 			case SET_ONLINE_USERS:
 				console.log(state); //remove
-				debugger; //remove
 				action.payload.forEach(user => {
 					const { username } = user;
 					if (!draft[username]) return;
 					draft[username].online = true;
 				});
-				debugger; //remove
 				break;
+			case ADD_ONLINE_USER:
+				const userPresent = state.users.some(
+					user => user.name == action.payload.name
+				);
+				if (userPresent) return state;
+				let usersAdd = [...state.users, { ...action.payload, checked: false }];
+				const addedToState = { ...state, users: usersAdd };
+				return addedToState;
+			case REMOVE_ONLINE_USER:
+				let usersRemoved = state.users.filter(
+					user => action.payload.name !== user.name
+				);
+				return { ...state, users: usersRemoved };
 			default:
 				return draft;
 		}

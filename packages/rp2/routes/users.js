@@ -79,7 +79,7 @@ class UserRoute extends Route {
 		redisCmd('online_users').then(result => {
 			const filtered = result.filter(user => username !== user);
 			const objUsers = filtered.map(user => {
-				return { name: user };
+				return { username: user };
 			});
 			res.send(objUsers);
 		});

@@ -193,10 +193,10 @@ class UsersList extends React.Component {
 		};
 		const renderItem = ({ item: user, index }) => {
 			console.log(user);
-			const { name } = user;
+			const { username } = user;
 			return (
 				<ListItem
-					title={`${name}`}
+					title={`${username}`}
 					description={`${'Call'} ${index + 1}`}
 					icon={renderItemIcon}
 					accessory={renderItemAccessory}

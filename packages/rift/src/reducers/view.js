@@ -14,7 +14,4 @@ const viewReducer = (state = {}, action) => {
 			return state;
 	}
 };
-// const viewReducer = combineReducers({
-// 	online
-// });
 export default viewReducer;

@@ -6,9 +6,6 @@ import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import iconFont from 'react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf';
 import iconFontSolid from 'react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf';
 
-// Old FontAwesome
-// import iconFont from 'react-native-vector-icons/Fonts/FontAwesome.ttf';
-
 const iconFontStyles = `@font-face {
   src: url(${iconFont});
   font-family: FontAwesome5_Regular;
@@ -17,7 +14,6 @@ const iconFontStyles = `@font-face {
   src: url(${iconFontSolid});
   font-family: FontAwesome5_Solid;
 }`;
-// #WEB ONLY
 if (Platform.OS == 'web') {
 	const style = document.createElement('style');
 	style.type = 'text/css';
@@ -26,12 +22,9 @@ if (Platform.OS == 'web') {
 	} else {
 		style.appendChild(document.createTextNode(iconFontStyles));
 	}
-
-	// Inject stylesheet
 	document.head.appendChild(style);
 	console.log(Icon);
 }
-// #ENDWEB
 
 function IconProvider(name) {
 	return {
@@ -44,17 +37,12 @@ function AwesomeIcon({ name, style, children, buttonProps }, props) {
 	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 
 	if (children || buttonProps) {
-		// const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
-
 		return (
 			<Icon5.Button
 				name={name}
-				// size={height}
 				color={tintColor}
-				// style={iconStyle}
 				{...buttonProps}
 				iconStyle={iconStyle}
-				// backgroundColor={'#FF6721'}
 			>
 				{children}
 			</Icon5.Button>
@@ -75,15 +63,6 @@ function createIconsMap() {
 		'sign-in-alt': IconProvider('sign-in-alt'),
 		'sign-out-alt': IconProvider('sign-out-alt'),
 		bars: IconProvider('bars'),
-		// 'person': IconProvider('person')
 		user: IconProvider('user')
 	};
-
-	// or
-
-	//   return new Proxy({}, {
-	//     get(target, name) {
-	//       return IconProvider(name);
-	//     },
-	//   });
 }

@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
 		flex: 1,
-		// padding: 16,
-		// flexDirection: 'row',
 		alignItems: 'center',
 		flexDirection: 'row',
 		flexWrap: 'wrap'
@@ -33,13 +31,11 @@ const styles = StyleSheet.create({
 		width: '100%',
 		overflowY: 'scroll',
 		height: '80vh'
-		// display: 'flex'
 	},
 	row: {
 		padding: 15,
 		width: '100%',
 		alignItems: 'center'
-		// flexDirection: 'row'
 	},
 	userBlock: {
 		flex: 1,
@@ -53,9 +49,7 @@ const styles = StyleSheet.create({
 		padding: 15,
 		height: 'auto',
 		width: 'auto',
-		// display: 'flex',
 		flexShrink: 1
-		// flexWrap: 'wrap'
 	},
 	column: {
 		padding: 15,
@@ -66,8 +60,6 @@ const styles = StyleSheet.create({
 		flexGrow: 1
 	},
 	button: {
-		// margin: 8,
-		// width: '50%',
 		flex: 1
 	},
 	buttonBottom: {
@@ -114,12 +106,7 @@ class UsersList extends React.Component {
 		} = this.props;
 
 		const renderItemAccessory = (style, index) => {
-			const buttonStyleAlt = [
-				style,
-				// themedStyle.button,
-				styles.button
-				// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
-			];
+			const buttonStyleAlt = [style, styles.button];
 			const { checked } = this.state;
 
 			return (

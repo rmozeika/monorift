@@ -25,7 +25,6 @@ import {
 	TopNavigationProps,
 	IconProps
 } from 'react-native-ui-kitten';
-// his
 interface Auth {
 	loggedIn: boolean;
 	user: User;
@@ -41,13 +40,10 @@ interface NavBarProps {
 }
 
 type NavProps = NavBarProps & ThemedComponentProps;
-// ThemeService.select({'Eva Light': null}, "Eva Light")
-// const history = useHistory();
 
 class NavBar extends React.Component<NavProps, {}> {
 	private renderSigninIcon = (style): React.ReactElement<ImageProps> => {
 		const { themedStyle } = this.props;
-		// const { signinButton } = themedStyle;
 		return <Icon name="sign-in-alt" style={{ ...style }} solid />;
 	};
 	private renderSignoutIcon = (style): React.ReactElement<ImageProps> => {
@@ -69,9 +65,7 @@ class NavBar extends React.Component<NavProps, {}> {
 			console.error('An error occurred', err);
 		});
 	}
-	private openMenu(): void {
-		// Linking.openURL(window.location.origin + '/auth/logout').catch((err) => console.error('An error occurred', err))
-	}
+	private openMenu(): void {}
 	private renderLeftControls(): React.ReactElement<TopNavigationActionProps> {
 		const { themedStyle, auth } = this.props;
 		let icon = this.renderMenuIcon;
@@ -90,7 +84,6 @@ class NavBar extends React.Component<NavProps, {}> {
 	}
 	private renderRightControls(): React.ReactElement<TopNavigationActionProps> {
 		const { themedStyle, auth } = this.props;
-		// if (!auth.loggedIn) return;
 		const icon = this.renderSignoutIcon;
 		const onPress = this.onSignout;
 		return (
@@ -108,13 +101,9 @@ class NavBar extends React.Component<NavProps, {}> {
 		const title = auth.loggedIn ? `Welcome ${user.username}` : 'Sign in';
 		return (
 			<TopNavigation
-				// style={themedStyle.container}
 				title={title}
-				// subtitle='Subtitle'
 				leftControl={this.renderLeftControls()}
 				rightControls={this.renderRightControls()}
-				// titleStyle={styles.title}
-				// subtitleStyle={styles.subtitle}
 			/>
 		);
 	}
@@ -130,14 +119,6 @@ const styles = StyleSheet.create({
 	title: { color: '#EDF1F7' },
 	subtitle: { color: '#C5CEE0' }
 });
-
-// const mapDispatchToProps = (dispatch, ownProps) => {
-//     return {
-//       initCode: ({ name, code }) => {
-//         dispatch(setCode({ name, code}));
-//       }
-//     };
-//   };
 export const NavBarWithStyles = withStyles(NavBar, (theme: ThemeType) => ({
 	signinButton: { backgroundColor: theme['color-primary-100'] },
 	icons: { backgroundColor: theme['color-primary-100'] },

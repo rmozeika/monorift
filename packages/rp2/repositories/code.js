@@ -2,14 +2,11 @@ var Repository = require('./repository.js');
 const textract = require('textract');
 const path = require('path');
 const esprima = require('esprima');
-// removed because it slow yarn
-// const git = require('nodegit');
 const collection = 'code';
 const fs = require('fs');
 const util = require('util');
 const acorn = require('acorn');
 const parser = require('code-parser');
-// const rift = require('rift');
 const { ObjectId } = require('mongodb');
 const EventEmitter = require('events');
 
@@ -18,27 +15,13 @@ class CodeRepository extends Repository {
 	constructor(api) {
 		const subcollections = 'code.class';
 		super(api, collection); //, subcollections);
-
-		// const test = this.initRepo('rmozeika', 'rift', 'src').then((res)=> {
-		//     console.log(res);
-		// }).catch(err => {
-		//     console.log(err);
-		// });
 	}
 
 	async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {
 		try {
 			const repo = await this.clone(user, repoName);
-			// console.log(repo);
 			const src = path.join(repo.path, srcPath);
 			const files = await this.separateByFile(src);
-			// // console.log(fileNames);
-			// const parsePromises = fileNames.map(({ name }) => {
-			//     if (/\.tsx$/.test(name) || /\.js$/.test(name)) {
-			//         return this.parseCodeFromFile(src, name);
-			//     }
-			// }).filter(parsePromise => parsePromise);
-			// const files = await Promise.all(parsePromises);
 			const { _id, fileMap } = await this.createProject(user, repoName, files);
 			console.log(files);
 			const codeEmitter = this.createListeners(_id);
@@ -93,7 +76,6 @@ class CodeRepository extends Repository {
 				const fz = await Promise.all(
 					files.map(async file => {
 						if (file.isDirectory()) {
-							// return await readFiles(`${dir}/${file.name}`);
 							const recurs = await readFiles(`${dir}/${file.name}`);
 							return `finished ${file.name}`;
 						}
@@ -103,7 +85,6 @@ class CodeRepository extends Repository {
 						if (!filter.test(file.name)) {
 							return `not parsed ${file.name}`;
 						} else {
-							// console.log(`started ${file.name}`)
 						}
 						const read = await readFile(path.join(dir, file.name), {
 							encoding: 'utf-8'
@@ -118,16 +99,11 @@ class CodeRepository extends Repository {
 						});
 						return `finished ${file.name}`;
 					})
-				).catch(e => {
-					// console.log(e);
-				});
-				// console.log(fz);
+				).catch(e => {});
 			}
 			return `${dir} finished`;
 		};
 		const resultOfRead = await readFiles(repository);
-		// codeEmitter.on
-		// const
 		return fileList;
 	}
 	parseCode(input) {
@@ -147,11 +123,8 @@ class CodeRepository extends Repository {
 		const existing = await this.findOne({ repo, user });
 		const fileMap = new Map(
 			files.map(({ name, _id, text, dir }, index) => {
-				// console.log(index, name);
 				if (name == 'index.js') {
-					// console.log(name)
 				}
-				// const fileKey = (dir.relative) ?
 				return [
 					`${dir.relative}${name}`,
 					{ _id, text, dir: dir.relative, index, name }
@@ -221,11 +194,7 @@ class CodeRepository extends Repository {
 					});
 					this.onTaskEnded(event, ...args, error, result);
 				};
-				// if (event === 'file') {
 				super.on(event, newFn);
-				// } else {
-				//     super.on(event, fn)
-				// }
 			}
 			onTaskEnded(type, object, error, result) {
 				this.allStarted.delete(object);
@@ -242,16 +211,8 @@ class CodeRepository extends Repository {
 		}
 
 		const codeEmitter = new CodeEmitter();
-
-		// codeEmitter.on('end', () => {
-		//     codeEmitter.status
-		// })
-		// const handleFinish = (type, object) => {
-		//     codeEmitter.
-		// }
 		const handleError = (type, object) => {};
 		codeEmitter.on('class', async c => {
-			// console.log(c, this);
 			const { parent, name } = c;
 			const found = await this.findOne(
 				{ project: _id, parent, name },
@@ -350,7 +311,6 @@ class CodeRepository extends Repository {
 		return this.updateById({ filter, doc: { $set: doc }, opts }, type);
 	}
 	errorHandler(e) {
-		// console.log(e);
 		return { isError: true, error: e };
 	}
 }

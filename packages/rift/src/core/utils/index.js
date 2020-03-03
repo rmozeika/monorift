@@ -15,9 +15,4 @@ export const originLink = type => {
 	let host = window.location.origin;
 	let link = `${host}${path}`;
 	return link;
-	// return `${host}${path}`;
-	// if (Platform.OS == 'web') {
-	// }
-
-	// return 'robertmozeika.com';
 };

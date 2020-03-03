@@ -18,10 +18,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	button: {
-		// margin: 8,
 		margin: 15,
-		// width: '100%',
-		// flexBasis: '50%',
 		height: '100%',
 		margin: 0,
 		flexGrow: 1,
@@ -48,7 +45,6 @@ const CallActions = ({
 	reject
 }) => {
 	const mobile = useSelector(state => state.view.mobile);
-	// const incomingCall =
 	const buttons = [
 		{
 			name: 'Talk',
@@ -99,11 +95,7 @@ const CallActions = ({
 	}
 	return (
 		<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
-			<Button
-				style={styles.button}
-				// appearance="outline"
-				onPress={onPress}
-			>
+			<Button style={styles.button} onPress={onPress}>
 				Talk
 			</Button>
 			{incomingCall && (

@@ -63,12 +63,7 @@ class NavBar extends React.Component<NavProps, {}> {
 			console.error('An error occurred', err);
 		});
 	}
-	// private onTiffany(): void {
-	//   // Linking.openURL(originLink('login')).catch((err) => {
-	//   //   console.error('An error occurred', err);
-	//   // })
-	//   // history.push('/tiffany');
-	// }
+
 	private onSignout(): void {
 		Linking.openURL(originLink('logout')).catch(err => {
 			console.error('An error occurred', err);

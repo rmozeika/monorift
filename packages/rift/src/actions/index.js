@@ -120,8 +120,6 @@ export const setRemote = (remoteIsSet = true) => ({
 	type: SET_REMOTE,
 	remoteSet: remoteIsSet
 });
-// import { TiffanyActions } from '../reducers/tiffany';
-// export const tiffany = TiffanyActions;
 
 export const FETCH_ONLINE_USERS = 'FETCH_ONLINE_USERS';
 export const SET_ONLINE_USERS = 'SET_ONLINE_USERS';

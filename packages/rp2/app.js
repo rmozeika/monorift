@@ -26,34 +26,8 @@ var io = require('socket.io');
 const passportSocketIo = require('passport.socketio');
 const Socket = require('./socket');
 const Call = require('./socket/call');
-// var store = new MongoDBStore({
-// 	uri,
-// 	collection: 'mySessions'
-// });
 console.log('VERSION', '1.1');
-// LOGGING
-// var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
-
-// var spawn = require('child_process').spawn,
-//     ls    = spawn('ls', ['-lh', '/usr']);
-
-// ls.stdout.pipe(logStream);
-// ls.stderr.pipe(logStream);
-
-// ls.on('close', function (code) {
-//   console.log('child process exited with code ' + code);
-// });
 var app = express();
-// const sessionMiddleware = require('express-session')({
-// 	secret: sessionSecret,
-// 	key: 'express.sid',
-// 	cookie: {
-// 		maxAge: 1000 * 60 * 60 * 24 * 7
-// 	},
-// 	store: store,
-// 	resave: true,
-// 	saveUninitialized: true
-// });
 let RedisStore = require('connect-redis')(session);
 let client = redis.createClient(6379, redisConnectionString);
 
@@ -66,7 +40,6 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-// app.use('files', express.static(path.join(__dirname, 'public')));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

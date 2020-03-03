@@ -1,7 +1,11 @@
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-ui-kitten';
 
-export default ({ checked, onRemove, onAdd }) => {
+const style = StyleSheet.create({
+	flex: 1
+});
+export default ({ checked, onRemove, onAdd, otherStyles }) => {
 	const buttonProps = {
 		remove: {
 			onPress: onRemove,
@@ -18,7 +22,7 @@ export default ({ checked, onRemove, onAdd }) => {
 		? buttonProps['remove']
 		: buttonProps['add'];
 	return (
-		<Button appearance="outline" style={buttonStyleAlt} {...restProps}>
+		<Button appearance="outline" style={[style, otherStyles]} {...restProps}>
 			{text}
 		</Button>
 	);

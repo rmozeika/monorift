@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
 import * as CallSelectors from '../selectors/call';
-import UserListItem from './UserListItem';
+import AddToCallButton from '../components/buttons/AddToCall';
 import {
 	Layout,
 	Text,
@@ -86,6 +86,7 @@ class UsersList extends React.Component {
 			checked: [false]
 		};
 		this.onAdd = this.onAdd.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 	}
 	setChecked(index, vale) {}
 	onPressedCall(index, type) {
@@ -128,6 +129,7 @@ class UsersList extends React.Component {
 			};
 
 			let taskButton;
+
 			if (online[index].checked) {
 				taskButton = (
 					<Button
@@ -147,7 +149,7 @@ class UsersList extends React.Component {
 						onPress={() => this.onAdd(index)}
 						style={buttonStyleAlt}
 					>
-						Add To Call
+						Add
 					</Button>
 				);
 			}

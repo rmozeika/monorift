@@ -7,7 +7,9 @@ export const originLink = type => {
 		call: '/call',
 		online: '/users/online',
 		users: '/users',
-		friends: '/users/friends'
+		userList: '/users/all',
+		friends: '/users/friends',
+		addFriend: 'users/friends/add'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;

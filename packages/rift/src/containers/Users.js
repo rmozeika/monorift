@@ -10,7 +10,9 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
-import UserList from '../components/UsersList';
+import UserList from './UsersList';
+import FriendList from './FriendList';
+
 import CallActions from '../components/buttons/CallActions';
 
 const styles = StyleSheet.create({
@@ -52,7 +54,7 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { containerHeight: null };
-		this.props.fetchOnlineUsers();
+		// this.props.fetchOnlineUsers();
 		// this.props.fetchFriends();
 
 		this.goTalk = this.goTalk.bind(this);
@@ -106,12 +108,7 @@ class Users extends React.Component {
 			incomingCall
 		} = this.props;
 		const { containerHeight } = this.state;
-		// const heights = this.calculateHeights();
-		// const loading = (
-		// 	<Layout style={styles.row}>
-		// 		<Text>Loading...</Text>
-		// 	</Layout>
-		// );
+
 		if (containerHeight == null) {
 			return (
 				<Layout
@@ -132,26 +129,17 @@ class Users extends React.Component {
 				</Layout>
 			);
 		}
-		// const toDisplay = () => {
-		// 	debugger;
-		// 	return (
-		// 		<Layout style={styles.userLayout}>
-		// 			<UserList online={online} baseHeight={containerHeight} ></UserList>
-		// 			<CallActions
-		// 				onPress={this.goTalk}
-		// 				themedStyle={themedStyle.buttonRow}
-		// 				incomingCall={incomingCall}
-		// 				answer={this.answer}
-		// 				reject={this.reject}
-		// 				baseHeight={containerHeight}
-		// 			/>
-		// 		</Layout>
-		// 	);
-		// };
+		const userList = (
+			<UserList online={online} baseHeight={containerHeight}></UserList>
+		);
+		const friendList = (
+			<FriendList online={online} baseHeight={containerHeight}></FriendList>
+		);
+
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.userLayout}>
-					<UserList online={online} baseHeight={containerHeight}></UserList>
+					{this.props.friendList ? friendList : userList}
 					<CallActions
 						onPress={this.goTalk}
 						themedStyle={themedStyle.buttonRow}
@@ -176,7 +164,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		setViewTab: tab => dispatch(Actions.setTabView(tab)),
 		fetchOnlineUsers: () => dispatch(Actions.fetchOnlineUsers()),
 		answer: answered => dispatch(Actions.answer(answered)),
-		fetchFriends: () => dispatch(Actions.fetchFriends())
+		fetchFriends: () => dispatch(Actions.fetchFriends()),
+		addFriend: friend => dispatch(Actions.addFriend(friend))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

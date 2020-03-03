@@ -73,6 +73,13 @@ class UserRepository extends Repository {
 			opts
 		});
 	}
+	async getUsersPostgres() {
+		const users = await this.postgresInstance
+			.knex('users')
+			// .whereIn('username', usernames)
+			.select('*');
+		return users;
+	}
 	async getUsersIdsByUsername(usernames) {
 		const users = await this.postgresInstance
 			.knex('users')

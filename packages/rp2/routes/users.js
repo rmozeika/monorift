@@ -11,12 +11,15 @@ class UserRoute extends Route {
 		super(api, routeName, repoName);
 		setImmediate(() => {
 			this.router.get('/', secured(), this.retrieveAll.bind(this));
+			this.router.get('/all', this.fetchUserList.bind(this));
+			this.router.post('/all', this.fetchUserList.bind(this));
+
 			this.router.post('/', secured(), this.retrieveAll.bind(this));
 			this.router.post('/createUser', secured(), this.createUser.bind(this));
 			// this.router.post('/online', secured(), this.createUser.bind(this));
 			this.router.post('/online', this.fetchOnlineUsers.bind(this));
 			this.router.post('/friends', this.fetchFriends.bind(this));
-
+			this.router.post('/friends/add', this.addFriend.bind(this));
 			this.router.get('/username', secured(), this.getUser.bind(this));
 		});
 	}
@@ -62,6 +65,11 @@ class UserRoute extends Route {
 		const { user } = req;
 		return res.send(user);
 	}
+	// users postgres
+	async fetchUserList(req, res) {
+		const users = await this.repository.getUsersPostgres();
+		res.send(users);
+	}
 	fetchOnlineUsers(req, res) {
 		console.log(this);
 		const username = this.getUserNameFromReq(req);
@@ -82,8 +90,9 @@ class UserRoute extends Route {
 		const friends = await this.repository.getFriendsForUser(username);
 		res.send(friends);
 	}
-	addFriend(req, res) {
+	async addFriend(req, res) {
 		const username = this.getUserNameFromReq(req);
+		const { friend } = req.body;
 		console.log(username);
 	}
 }

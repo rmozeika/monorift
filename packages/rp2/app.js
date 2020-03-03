@@ -109,23 +109,10 @@ const setupDefaultRoute = () => {
 				  require('../../webpack.config.js');
 		const buildpath = path.resolve(webpackConfig.output.path);
 		app.use(express.static(buildpath, opts));
-		//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
-		// buildpath = path.resolve(webpackConfig.output.path);
-		// app.use(express.static(buildpath));
-		// app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
-		// app.get('*', (req, res) => {
-		//   //res.
-		//   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
-		//   res.sendFile(indexPath);
-		// });
-		// app.use(express.static(path.resolve(webpackConfig.output.path)))
-		// app.use('/about', express.static(path.resolve(webpackConfig.output.path)));
-
 		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	} else {
 		console.log('Is remote');
 
-		// app.use('*', express.static(path.resolve('./dist.web')));
 		builpath = path.resolve(__dirname, './dist.web');
 		app.use(express.static(__dirname + './dist.web'));
 		app.use('*', express.static(path.resolve(__dirname, './dist.web')));
@@ -156,20 +143,8 @@ api.init(app).then(() => {
 	console.log('api ready');
 });
 app.use('/profile', express.static(path.join(__dirname, 'site')));
-// app.use('/rift', express.static(path.join(__dirname, 'client')));
-
-// app.get('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
-//     res.send(true);
-// });
-
-// app.post('/logout', (req, res) => {
-//   req.session.destroy(function (err) {
-//     res.redirect('/users');
-//   });
-// })
 
 let buildpath;
-// if (false) {
 
 console.log('App ready!');
 app.api = api;
@@ -224,7 +199,6 @@ app.io.on('connection', async socket => {
 			client.srem('online_users', user.username);
 		}
 	});
-	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });
 app.io.on('disconnect', async socket => {
 	console.log('disconnected');

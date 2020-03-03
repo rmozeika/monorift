@@ -4,13 +4,6 @@ rp2
 	.init({})
 	.then(() => {
 		console.log(rp2);
-		// rp2.repositories.users.createUser({
-		//     username: 'newdude',
-		//     email: 'newdude@gmail.com',
-		//     src: {},
-		//     socket_id: null
-
-		// })
 
 		acceptFriend()
 			.then(user => {

@@ -100,7 +100,8 @@ export const byId = (state = {}, action) => {
 					draft[user.username] = {
 						...user,
 						isFriend: false,
-						online: false
+						online: false,
+						checked: false
 					};
 				}, {});
 				break;
@@ -113,18 +114,16 @@ export const byId = (state = {}, action) => {
 				});
 				break;
 			case ADD_ONLINE_USER:
-				const userPresent = state.users.some(
-					user => user.name == action.payload.name
-				);
-				if (userPresent) return state;
-				let usersAdd = [...state.users, { ...action.payload, checked: false }];
-				const addedToState = { ...state, users: usersAdd };
-				return addedToState;
+				debugger;
+				const { usernameAddOnline } = action.payload;
+				if (!draft[usernameAddOnline]) return state;
+				draft[usernameAddOnline].online = true;
+				break;
 			case REMOVE_ONLINE_USER:
-				let usersRemoved = state.users.filter(
-					user => action.payload.name !== user.name
-				);
-				return { ...state, users: usersRemoved };
+				const { usernameRemoveOnline } = action.payload;
+				if (!draft[usernameRemoveOnline]) return state;
+				draft[usernameRemoveOnline].online = true;
+				break;
 			default:
 				return draft;
 		}

@@ -43,11 +43,6 @@ app.post('*', async (req, res) => {
 	if (ref == branch || debug) {
 		console.log('Updating bash and writing file');
 		const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
-		// const operation = await execFileAsync(updateScript, { cwd: __dirname }).catch(
-		// 	e => {
-		// 		console.log(e);
-		// 	}
-		// );
 		const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
 		let output = '';
 		const logChunk = chunk => {
@@ -63,20 +58,17 @@ app.post('*', async (req, res) => {
 			utils.writeFile(logFile, output);
 			res.send('done');
 		});
-		// console.log(operation);
 	}
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 const nativeServer = () => {
-	// Create an HTTP tunneling proxy
 	const proxy = http.createServer((req, res) => {
 		res.writeHead(200, { 'Content-Type': 'text/plain' });
 		res.end('okay');
 	});
 	proxy.on('connect', (req, cltSocket, head) => {
-		// Connect to an origin server
 		const { port, hostname } = new URL(`http://${req.url}`);
 		const srvSocket = net.connect(port || 80, hostname, () => {
 			cltSocket.write(
@@ -92,7 +84,6 @@ const nativeServer = () => {
 	proxy.listen(9090, '127.0.0.1', () => {
 		console.log('listening');
 		proxy.on('request', (req, res) => {
-			// crypto.verify(null);
 			const altshakey = 'sha1=86274eaac703a16fab76ce308e6968a64ef19079';
 			const shakey = req.headers['X-Hub-Signature'];
 			const verify = crypto.createVerify('SHA1');
@@ -108,17 +99,12 @@ const nativeServer = () => {
 				const stringData = data.toString();
 				const parsedData = qs.parse(stringData);
 				console.log(parsedData);
-				// const payload = JSON.parse(parsedData);
-				// console.log(verify.verify(publicKey, signature));
 				const digest =
 					'sha1=' + hmac.update(JSON.stringify(parsedData)).digest('hex');
-				// const digestAlt = 'sha1=' + hmac.update(parsedData.payload).digest('hex');
 				const checksum = req.get(sigHeaderName);
-				//crypto.verify(null, parsed, req.headers )
 				utils.writeFile(writePath, parsed); //comment1test
 			});
 			req.on('end', data => {
-				// qs(data);
 				console.log(rawData);
 				console.log(data);
 			});

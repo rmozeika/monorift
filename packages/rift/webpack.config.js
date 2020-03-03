@@ -52,7 +52,6 @@ module.exports = {
 
 					path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
 					path.resolve(__dirname, 'node_modules/react-native-ratings'),
-					// path.resolve(__dirname, 'node_modules/react-native-material-kit'),
 					path.resolve(__dirname, 'node_modules/native-base-shoutem-theme'),
 					path.resolve(__dirname, 'node_modules/react-navigation'),
 					path.resolve(__dirname, 'node_modules/react-native-easy-grid'),
@@ -72,13 +71,7 @@ module.exports = {
 
 				options: {
 					presets: ['module:metro-react-native-babel-preset', '@babel/react'],
-					// presets: ['react-native'],
-
-					// Re-write paths to import only the modules needed by the app
 					plugins: ['react-native-web', '@babel/plugin-syntax-dynamic-import'],
-					// This is a feature of `babel-loader` for webpack (not Babel itself).
-					// It enables caching results in ./node_modules/.cache/babel-loader/
-					// directory for faster rebuilds.
 					cacheDirectory: true
 				}
 			}
@@ -86,8 +79,6 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			// Support React Native Web
-			// https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
 			'react-native': 'react-native-web',
 			'@src': path.resolve(__dirname, 'src')
 		},

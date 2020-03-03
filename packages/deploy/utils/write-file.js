@@ -3,7 +3,6 @@ const util = require('util');
 const fs = require('fs').promises;
 
 const writeFile = (path, data) => {
-	// const writefiledir = path.join(__dirname, 'history');
 	const time = new moment().format('MMMM Do YYYY, h:mm:ss a');
 	console.log(time);
 	let writeData;
@@ -15,7 +14,6 @@ const writeFile = (path, data) => {
 			{ depth: null, showHidden: false, colors: true }
 		);
 	}
-	// console.log(time.toTimeString({ hour12: true }))
 	const formattedText = `
         Started: ${time}
         ${writeData}

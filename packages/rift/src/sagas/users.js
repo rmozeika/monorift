@@ -67,7 +67,6 @@ function* loadFriendsSaga() {
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(Actions.setFriends(data));
-		// yield put(setOnlineUsers(data));
 	} catch (err) {
 		console.log(err);
 	}

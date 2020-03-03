@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import produce from 'immer';
 import {
-	GET_ONLINE_USERS,
+	SET_USERS,
+	FETCH_ONLINE_USERS,
 	SET_ONLINE_USERS,
+	SET_FRIENDS,
 	ADD_CALL,
 	REMOVE_CALL,
 	ADD_ONLINE_USER,
@@ -13,7 +15,10 @@ export const initialState = {
 	online: {
 		users: [],
 		gotOnlineUsers: false
-	}
+	},
+	friends: [],
+	byId: {},
+	allIds: []
 };
 const onlineUsers = (state, action) => {};
 export const online = (state = {}, action) => {
@@ -58,8 +63,109 @@ export const online = (state = {}, action) => {
 			return state;
 	}
 };
+export const friends = (state = {}, action) => {
+	switch (action.type) {
+		case SET_FRIENDS:
+			return [...state, ...action.payload];
+		default:
+			return state;
+	}
+};
+export const queued = (state = {}, action) => {
+	switch (action.type) {
+		default:
+			return state;
+	}
+};
+export const list = (state = {}, action) => {
+	switch (action.type) {
+		case SET_USERS:
+			const users = action.payload.map(user => {
+				return {
+					...user,
+					isFriend: false,
+					online: false
+				};
+			});
+			return [...action.payload];
+		default:
+			return state;
+	}
+};
+export const byId = (state = {}, action) => {
+	const resultProduce = produce(state, draft => {
+		switch (action.type) {
+			case SET_USERS:
+				const users = action.payload.forEach(user => {
+					draft[user.username] = {
+						...user,
+						isFriend: false,
+						online: false
+					};
+				}, {});
+				debugger;
+				break;
+			case SET_ONLINE_USERS:
+				console.log(state); //remove
+				debugger; //remove
+				action.payload.forEach(user => {
+					const { username } = user;
+					if (!draft[username]) return;
+					draft[username].online = true;
+				});
+				debugger; //remove
+				break;
+			default:
+				return draft;
+		}
+	});
+	console.log(resultProduce);
+
+	return resultProduce;
+};
+// export const byId = produce((draft, action) => {
+// 		switch (action.type) {
+// 			case SET_USERS:
+// 				const users = action.payload.forEach(user => {
+// 					draft[user.username] = {
+// 						...user,
+// 						isFriend: false,
+// 						online: false
+// 					};
+// 				}, {});
+// 				debugger;
+// 				break;
+// 			case SET_ONLINE_USERS:
+// 				console.log(state); //remove
+// 				debugger; //remove
+// 				action.payload.forEach(user => {
+// 					const { username } = user;
+// 					if (!draft[username]) return;
+// 					draft[username].online = true;
+// 				});
+// 				debugger; //remove
+// 				break;
+// 			default:
+// 				return draft;
+// 		}
+// 	});
+
+export const allIds = (state = [], action) => {
+	switch (action.type) {
+		case SET_USERS:
+			const ids = action.payload.map(user => user.username);
+			return [...ids];
+		default:
+			return state;
+	}
+};
 
 const usersReducer = combineReducers({
-	online
+	online,
+	friends,
+	// queued,
+	// list,
+	byId,
+	allIds
 });
 export default usersReducer;

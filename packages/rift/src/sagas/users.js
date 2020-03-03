@@ -5,7 +5,8 @@ import {
 	put,
 	take,
 	takeLatest,
-	actionChannel
+	actionChannel,
+	select
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 
@@ -16,7 +17,25 @@ import * as Actions from '../actions';
 import { originLink } from '../core/utils';
 const socketServerURL = originLink('users');
 let socket;
+const selectUsers = state => {
+	return state.users.list;
+};
+function* fetchUsers() {
+	debugger; //remove
+	try {
+		const origin = originLink('userList');
+		console.log('origin link', origin);
+		const res = yield fetch(origin, { method: 'POST' });
+		const data = yield res.json();
+		yield put(Actions.setUsers(data));
+		const users = yield select(selectUsers);
+		debugger; //remove
 
+		yield put(Actions.fetchOnlineUsers());
+	} catch (err) {
+		console.log(err);
+	}
+}
 function* onlineUsersSaga() {
 	// yield take(types.initUsers)
 	yield (data = call(loadOnlineUsersSaga, 'online', Actions.setOnlineUsers));
@@ -34,8 +53,36 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 		console.log('origin link', origin);
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
+		debugger; //remove
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));
+	} catch (err) {
+		console.log(err);
+	}
+}
+function* loadFriendsSaga() {
+	try {
+		const origin = originLink('friends');
+		console.log('origin link', origin);
+		const res = yield fetch(origin, { method: 'POST' });
+		const data = yield res.json();
+		yield put(Actions.setFriends(data));
+		// yield put(setOnlineUsers(data));
+	} catch (err) {
+		console.log(err);
+	}
+}
+function* addFriend(action) {
+	try {
+		const origin = originLink('addFriend');
+		console.log('origin link', origin);
+		debugger; //remove
+		const res = yield fetch(origin, {
+			method: 'POST',
+			body: { friend: action.payload }
+		});
+		debugger; //remove
+		console.log(res);
 	} catch (err) {
 		console.log(err);
 	}
@@ -106,8 +153,10 @@ function* initSocketSaga() {
 function* rootSaga() {
 	yield all([
 		initSocketSaga(),
-		// takeLatest(ActionTypes.loadData, loadDataSaga),
-		takeLatest(Actions.GET_ONLINE_USERS, onlineUsersSaga)
+		fetchUsers(),
+		takeLatest(Actions.FETCH_USERS, fetchUsers),
+		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
+		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga)
 	]);
 }
 

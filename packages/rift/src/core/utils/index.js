@@ -6,7 +6,10 @@ export const originLink = type => {
 		logout: '/auth/logout',
 		call: '/call',
 		online: '/users/online',
-		users: '/users'
+		users: '/users',
+		userList: '/users/all',
+		friends: '/users/friends',
+		addFriend: 'users/friends/add'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;

@@ -69,7 +69,6 @@ const CallActions = ({
 			status: 'danger'
 		}
 	];
-	debugger;
 	const heightMultiplier = incomingCall.pending ? 0.2 : 0.1;
 	const derivedHeight = baseHeight * heightMultiplier;
 	const activeButtons = buttons.filter(({ condition }) => condition);
@@ -98,7 +97,6 @@ const CallActions = ({
 			</Layout>
 		);
 	}
-	debugger;
 	return (
 		<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
 			<Button

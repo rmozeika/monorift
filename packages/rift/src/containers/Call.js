@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
-import UserList from '../components/UsersList';
+import UserList from './UsersList';
 import Talk from './Talk';
 import Users from './Users';
 const styles = StyleSheet.create({
@@ -139,6 +139,14 @@ class CallContainer extends React.Component {
 					onSelect={this.setTopTabsIndex}
 					style={{ width: '100%', flexGrow: 1 }}
 				>
+					<Tab title="Friends">
+						<Layout
+							style={styles.tabContainer}
+							// onLayout={this.onLayout.bind(this)}
+						>
+							<Users friendList={true} containerHeight={containerHeight} />
+						</Layout>
+					</Tab>
 					<Tab title="Users">
 						<Layout
 							style={styles.tabContainer}

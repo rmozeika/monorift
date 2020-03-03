@@ -16,6 +16,7 @@ class Repository {
 		this.collection = collection;
 
 		this.mongoInstance = api.mongoInstance;
+		this.postgresInstance = api.postgresInstance;
 
 		this.extendMethods();
 	}

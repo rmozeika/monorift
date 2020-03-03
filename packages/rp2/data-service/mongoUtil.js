@@ -67,23 +67,18 @@ class MongoService {
 				this.createMethods(extendMethods);
 
 				this._db = client.db('data');
-				const col = this._db.collection('users');
-				const users = await col.findOne({ username: 'delete' });
-				console.log(users);
 				return cb(null, client);
 			})
 			.catch(e => {
-				console.log('error connectiong', e);
+				console.log('error connecting', e);
 				process.exit(22);
-				// throw new Error(e);
-				// console.log('not stopped?')
 			});
 	}
 
 	getDb() {
 		return this._db;
 	}
-
+	// DELETE
 	getMethodNames() {
 		let methodNames = [];
 		extendMethods.forEach(method => {

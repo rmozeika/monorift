@@ -22,13 +22,13 @@ export const initialState = {
 		isInitiator: false,
 		remoteSet: false,
 		stream: null,
-		// incomingCall: { received: false, from: null, answered: null, pending: false }
-		incomingCall: {
-			received: true,
-			from: { id: 'bullshit', name: 'robertmozeika' },
-			answered: false,
-			pending: true
-		}
+		incomingCall: { received: false, from: null, answered: null, pending: false }
+		// incomingCall: {
+		// 	received: true,
+		// 	from: { id: 'bullshit', name: 'robertmozeika' },
+		// 	answered: false,
+		// 	pending: true
+		// }
 	},
 	candidate: {},
 	constraints: {

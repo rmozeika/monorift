@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
 import * as CallSelectors from '../selectors/call';
+import AddToCallButton from '../components/buttons/AddToCall';
 import {
 	Layout,
 	Text,
@@ -85,6 +86,7 @@ class UsersList extends React.Component {
 			checked: [false]
 		};
 		this.onAdd = this.onAdd.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 	}
 	setChecked(index, vale) {}
 	onPressedCall(index, type) {
@@ -127,6 +129,7 @@ class UsersList extends React.Component {
 			};
 
 			let taskButton;
+
 			if (online[index].checked) {
 				taskButton = (
 					<Button
@@ -146,13 +149,13 @@ class UsersList extends React.Component {
 						onPress={() => this.onAdd(index)}
 						style={buttonStyleAlt}
 					>
-						Add Friend
+						Add
 					</Button>
 				);
 			}
 			return (
 				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
-					<Button
+					{/* <Button
 						appearance="outline"
 						status="primary"
 						onPress={() => {
@@ -160,8 +163,8 @@ class UsersList extends React.Component {
 						}}
 						style={buttonStyleAlt}
 					>
-						Call
-					</Button>
+						Add to Call
+					</Button> */}
 					{taskButton}
 				</Layout>
 				// </ButtonGroup>
@@ -243,12 +246,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { view, peerStore } = state;
+	const { view, peerStore, users } = state;
 	const { tab, mobile } = view;
 	return {
 		tab,
 		mobile,
-		incomingCallPending: CallSelectors.incomingCallPending(state)
+		incomingCallPending: CallSelectors.incomingCallPending(state),
+		friends: users.friends
 	};
 };
 export default connect(

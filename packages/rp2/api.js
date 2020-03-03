@@ -1,4 +1,6 @@
 var MongoUtil = require('./data-service/mongoUtil.js');
+var PostgreUtil = require('./data-service/postgresUtil.js');
+
 var routes = require('./routes/index.js');
 var repositories = require('./repositories');
 var config = require('./config.js');
@@ -13,6 +15,7 @@ class Api {
 	async init(app) {
 		this.app = app;
 		await this._connectMongo();
+		await this._connectPostgres();
 		this._registerRoutes();
 		// this._createRootUser();
 	}
@@ -27,7 +30,12 @@ class Api {
 			});
 		});
 	}
-
+	async _connectPostgres() {
+		// return new Promise((resolve, reject) => {
+		this.postgresInstance = new PostgreUtil();
+		await this.postgresInstance.connectToServer();
+		// });
+	}
 	_registerRoutes() {
 		this._createRepositories();
 

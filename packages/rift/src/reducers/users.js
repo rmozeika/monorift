@@ -12,6 +12,10 @@ import {
 } from '../actions';
 
 export const initialState = {
+	status: {
+		gotOnline: false,
+		gotFriends: false
+	},
 	online: {
 		users: [],
 		gotOnlineUsers: false
@@ -21,6 +25,16 @@ export const initialState = {
 	allIds: []
 };
 const onlineUsers = (state, action) => {};
+export const status = (state = {}, action) => {
+	switch (action.type) {
+		case SET_ONLINE_USERS:
+			return { ...state, gotOnline: true };
+		case SET_FRIENDS:
+			return { ...state, gotFriends: true };
+		default:
+			return state;
+	}
+};
 export const online = (state = {}, action) => {
 	switch (action.type) {
 		case SET_ONLINE_USERS:
@@ -77,21 +91,7 @@ export const queued = (state = {}, action) => {
 			return state;
 	}
 };
-export const list = (state = {}, action) => {
-	switch (action.type) {
-		case SET_USERS:
-			const users = action.payload.map(user => {
-				return {
-					...user,
-					isFriend: false,
-					online: false
-				};
-			});
-			return [...action.payload];
-		default:
-			return state;
-	}
-};
+
 export const byId = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
@@ -105,6 +105,13 @@ export const byId = (state = {}, action) => {
 					};
 				}, {});
 				break;
+			case SET_FRIENDS:
+				action.payload.forEach(user => {
+					const { username } = user;
+					if (!draft[username]) return;
+					draft[username].isFriend = true;
+				});
+				break;
 			case SET_ONLINE_USERS:
 				console.log(state); //remove
 				action.payload.forEach(user => {
@@ -114,7 +121,6 @@ export const byId = (state = {}, action) => {
 				});
 				break;
 			case ADD_ONLINE_USER:
-				debugger;
 				const { usernameAddOnline } = action.payload;
 				if (!draft[usernameAddOnline]) return state;
 				draft[usernameAddOnline].online = true;
@@ -144,10 +150,9 @@ export const allIds = (state = [], action) => {
 };
 
 const usersReducer = combineReducers({
+	status,
 	online,
 	friends,
-	// queued,
-	// list,
 	byId,
 	allIds
 });

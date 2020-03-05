@@ -32,7 +32,7 @@ function IconProvider(name) {
 	};
 }
 
-function AwesomeIcon({ name, style, children, buttonProps }, props) {
+function AwesomeIcon({ name, style, children, buttonProps, color }, props) {
 	console.log(props);
 	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 
@@ -48,7 +48,14 @@ function AwesomeIcon({ name, style, children, buttonProps }, props) {
 			</Icon5.Button>
 		);
 	}
-	return <Icon5 name={name} size={height} color={tintColor} style={iconStyle} />;
+	return (
+		<Icon5
+			name={name}
+			size={height}
+			color={color || tintColor}
+			style={iconStyle}
+		/>
+	);
 }
 
 export const AwesomeIconsPack = {
@@ -63,6 +70,7 @@ function createIconsMap() {
 		'sign-in-alt': IconProvider('sign-in-alt'),
 		'sign-out-alt': IconProvider('sign-out-alt'),
 		bars: IconProvider('bars'),
-		user: IconProvider('user')
+		user: IconProvider('user'),
+		circle: IconProvider('circle')
 	};
 }

@@ -1,5 +1,5 @@
 const rp2 = require('../rp2/api.js');
-
+const { getFriends, acceptFriend, addFriend } = require('./users');
 rp2
 	.init({})
 	.then(() => {
@@ -17,18 +17,3 @@ rp2
 	.catch(e => {
 		console.log(e);
 	});
-const acceptFriend = () => {
-	return rp2.repositories.users.acceptFriend(
-		'robertmozeika',
-		'santaclauseoldsaintnick'
-	);
-};
-const addFriend = () => {
-	return rp2.repositories.users.addFriend(
-		'robertmozeika',
-		'santaclauseoldsaintnick'
-	);
-};
-const getFriends = () => {
-	return rp2.repositories.users.getFriendsForUser('robertmozeika');
-};

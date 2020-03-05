@@ -6,7 +6,8 @@ import {
 	styled,
 	withStyles,
 	TabView,
-	Tab
+	Tab,
+	TabBar
 } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
@@ -62,6 +63,7 @@ class CallContainer extends React.Component {
 			containerHeight: null
 		};
 		this.callContainerRef = React.createRef();
+		this.setTopTabsIndex = this.setTopTabsIndex.bind(this);
 	}
 	goToTalk() {
 		console.log('Call talk func');
@@ -87,6 +89,7 @@ class CallContainer extends React.Component {
 	}
 	setTopTabsIndex(index) {
 		console.log(index);
+		this.props.setTabView(index);
 	}
 	render() {
 		const { containerHeight } = this.state;
@@ -108,6 +111,25 @@ class CallContainer extends React.Component {
 				</Layout>
 			);
 		}
+
+		if (true == false) {
+			return (
+				<Layout style={styles.container}>
+					<TabBar
+						selectedIndex={tab}
+						onSelect={this.setTopTabsIndex}
+						style={{ width: '100vw', flexGrow: 1 }}
+					>
+						<Tab title="Friends" />
+						<Tab title="Users" />
+						<Tab title="Talk" />
+					</TabBar>
+					<Layout style={[styles.tabContainer, { width: '100%' }]}>
+						<Users friendList={true} containerHeight={containerHeight} />
+					</Layout>
+				</Layout>
+			);
+		}
 		return (
 			<Layout style={styles.container}>
 				<TabView
@@ -121,9 +143,9 @@ class CallContainer extends React.Component {
 						</Layout>
 					</Tab>
 					<Tab title="Users">
-						<Layout style={styles.tabContainer}>
+						{/* <Layout style={styles.tabContainer}>
 							<Users containerHeight={containerHeight} />
-						</Layout>
+						</Layout> */}
 					</Tab>
 					<Tab title="Talk">
 						<Layout style={styles.tabContainer}>
@@ -144,7 +166,7 @@ const CallContainerStyled = withStyles(CallContainer, theme => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		setViewTab: tab => dispatch(Actions.setTabView(tab))
+		setTabView: tab => dispatch(Actions.setTabView(tab))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

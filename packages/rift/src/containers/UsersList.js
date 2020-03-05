@@ -86,7 +86,7 @@ class UsersList extends React.Component {
 	}
 	goTalk() {
 		console.log('UsersList');
-		this.props.setViewTab(1);
+		this.props.setTabView(2);
 	}
 	onAdd(index, val) {
 		const { addToCall } = this.props;
@@ -208,7 +208,7 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		setViewTab: tab => dispatch(Actions.setTabView(tab)),
+		setTabView: tab => dispatch(Actions.setTabView(tab)),
 		addToCall: index => dispatch(Actions.addToCall(index)),
 		removeFromCall: index => dispatch(Actions.removeFromCall(index))
 	};

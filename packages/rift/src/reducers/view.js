@@ -4,6 +4,17 @@ export const initialState = {
 	tab: 0,
 	mobile: true
 };
+// tab
+// 0 = friends
+// 1 = users
+// 2 = talk
+export const tabTypeIndexes = {
+	0: 'friends',
+	1: 'users',
+	2: 'talk'
+};
+export const getTabType = index => tabTypeIndexes[index];
+
 const viewReducer = (state = {}, action) => {
 	switch (action.type) {
 		case Actions.SET_TAB_VIEW:

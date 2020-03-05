@@ -21,7 +21,6 @@ const selectUsers = state => {
 	return state.users.list;
 };
 function* fetchUsers() {
-	debugger; //remove
 	try {
 		const origin = originLink('userList');
 		console.log('origin link', origin);
@@ -29,7 +28,6 @@ function* fetchUsers() {
 		const data = yield res.json();
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
-		debugger; //remove
 
 		yield put(Actions.fetchOnlineUsers());
 	} catch (err) {
@@ -37,15 +35,10 @@ function* fetchUsers() {
 	}
 }
 function* onlineUsersSaga() {
-	// yield take(types.initUsers)
 	yield (data = call(loadOnlineUsersSaga, 'online', Actions.setOnlineUsers));
 	console.log(data);
 	// yield put = put(Actions.setOnlineUsers);
 	// yield put(setUsersSuccess(Users));
-	// while (true) {
-	//   yield put(tickClock(false))
-	//   yield delay(1000)
-	// }
 }
 function* loadOnlineUsersSaga(nsp, onComplete) {
 	try {
@@ -53,7 +46,6 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 		console.log('origin link', origin);
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
-		debugger; //remove
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));
 	} catch (err) {
@@ -75,12 +67,10 @@ function* addFriend(action) {
 	try {
 		const origin = originLink('addFriend');
 		console.log('origin link', origin);
-		debugger; //remove
 		const res = yield fetch(origin, {
 			method: 'POST',
 			body: { friend: action.payload }
 		});
-		debugger; //remove
 		console.log(res);
 	} catch (err) {
 		console.log(err);

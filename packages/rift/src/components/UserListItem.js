@@ -133,7 +133,7 @@ function CallAdderHOC(WrappedComponent) {
 	}
 	const mapDispatchToProps = (dispatch, ownProps) => {
 		return {
-			setViewTab: tab => dispatch(Actions.setTabView(tab)),
+			setTabView: tab => dispatch(Actions.setTabView(tab)),
 			addToCall: index => dispatch(Actions.addToCall(index)),
 			removeFromCall: index => dispatch(Actions.removeFromCall(index))
 		};

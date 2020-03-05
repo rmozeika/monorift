@@ -53,7 +53,7 @@ class App extends React.Component<Props, State> {
 		this.props.setIsMobile(isMobile);
 	}
 	public state: State = {
-		theme: 'Eva Light'
+		theme: 'Eva Dark'
 	};
 	private onSwitchTheme = (theme: ThemeKey) => {
 		ThemeStore.setTheme(theme).then(() => {

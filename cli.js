@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// let command = require('./command')
-
-// command()
 const util = require('util');
 const path = require('path');
 const fs = require('fs');

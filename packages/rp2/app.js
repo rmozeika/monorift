@@ -26,34 +26,8 @@ var io = require('socket.io');
 const passportSocketIo = require('passport.socketio');
 const Socket = require('./socket');
 const Call = require('./socket/call');
-// var store = new MongoDBStore({
-// 	uri,
-// 	collection: 'mySessions'
-// });
 console.log('VERSION', '1.1');
-// LOGGING
-// var logStream = fs.createWriteStream('./app.log', {flags: 'a'});
-
-// var spawn = require('child_process').spawn,
-//     ls    = spawn('ls', ['-lh', '/usr']);
-
-// ls.stdout.pipe(logStream);
-// ls.stderr.pipe(logStream);
-
-// ls.on('close', function (code) {
-//   console.log('child process exited with code ' + code);
-// });
 var app = express();
-// const sessionMiddleware = require('express-session')({
-// 	secret: sessionSecret,
-// 	key: 'express.sid',
-// 	cookie: {
-// 		maxAge: 1000 * 60 * 60 * 24 * 7
-// 	},
-// 	store: store,
-// 	resave: true,
-// 	saveUninitialized: true
-// });
 let RedisStore = require('connect-redis')(session);
 let client = redis.createClient(6379, redisConnectionString);
 
@@ -66,7 +40,6 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-// app.use('files', express.static(path.join(__dirname, 'public')));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -109,23 +82,10 @@ const setupDefaultRoute = () => {
 				  require('../../webpack.config.js');
 		const buildpath = path.resolve(webpackConfig.output.path);
 		app.use(express.static(buildpath, opts));
-		//  builpath = path.resolve(__dirname + '/../../+ webpackConfig.output.path);
-		// buildpath = path.resolve(webpackConfig.output.path);
-		// app.use(express.static(buildpath));
-		// app.use(express.static(path.resolve(process.cwd() +'/dist.web/')));
-		// app.get('*', (req, res) => {
-		//   //res.
-		//   const indexPath = path.resolve(process.cwd() +'/dist.web/index.html' );
-		//   res.sendFile(indexPath);
-		// });
-		// app.use(express.static(path.resolve(webpackConfig.output.path)))
-		// app.use('/about', express.static(path.resolve(webpackConfig.output.path)));
-
 		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	} else {
 		console.log('Is remote');
 
-		// app.use('*', express.static(path.resolve('./dist.web')));
 		builpath = path.resolve(__dirname, './dist.web');
 		app.use(express.static(__dirname + './dist.web'));
 		app.use('*', express.static(path.resolve(__dirname, './dist.web')));
@@ -156,20 +116,8 @@ api.init(app).then(() => {
 	console.log('api ready');
 });
 app.use('/profile', express.static(path.join(__dirname, 'site')));
-// app.use('/rift', express.static(path.join(__dirname, 'client')));
-
-// app.get('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
-//     res.send(true);
-// });
-
-// app.post('/logout', (req, res) => {
-//   req.session.destroy(function (err) {
-//     res.redirect('/users');
-//   });
-// })
 
 let buildpath;
-// if (false) {
 
 console.log('App ready!');
 app.api = api;
@@ -224,7 +172,6 @@ app.io.on('connection', async socket => {
 			client.srem('online_users', user.username);
 		}
 	});
-	// app.io.sockets.socket(socket.id).emit('recorded your socket id');
 });
 app.io.on('disconnect', async socket => {
 	console.log('disconnected');

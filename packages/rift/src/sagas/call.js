@@ -62,8 +62,6 @@ const selectCheckedUsers = state => {
 	return selectedUsers;
 };
 const nsp = 'call';
-
-// const socketServerURL = `https://monorift.com/${nsp}`;
 const socketServerURL = originLink(nsp); //`http://localhost:8080/${nsp}`;
 
 let socket;
@@ -112,7 +110,6 @@ const createSocketChannel = socket =>
 
 function* initCallSaga() {
 	const socket = yield call(connect);
-	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
 		const { message, constraints, users, from } = yield take(socketChannel);
@@ -138,16 +135,12 @@ function* createPeerConnSaga(action) {
 		yield put(Actions.setPeerConn(conn));
 
 		window.conn = conn;
-		// const putOffer =
 		const tickChannel = eventChannel(emit => {
 			conn.onnegotiationneeded = async e => {
 				console.log('On negition needed called');
 				emit('offer needed');
 				console.log();
 			};
-			// const handle = setInterval(() => {
-			//   emit("tick");
-			// }, 100);
 			return () => {};
 		});
 		for (let i = 0; i < 5; i++) {
@@ -190,17 +183,13 @@ const start = async (conn, peerConstraints) => {
 		console.log('adding track', 'from message start func');
 		conn.addTrack(track, stream);
 	});
-	// conn.addStream(stream);
 	console.log('finished adding tracks');
 	return;
 };
 function addCandidate(candidate) {}
 function* gotMessageSaga({ message, constraints, from }) {
-	//while (true) {
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator } = peerStore;
-	// mediaStreamConstraints = yield select(selectConstraints);
-	//const message = message.offer;
 	console.log('GOT_MESSAGE', message);
 	if (message.type == 'offer') {
 		if (constraints) {
@@ -211,8 +200,6 @@ function* gotMessageSaga({ message, constraints, from }) {
 
 		if (!isInitiator && !isStarted) {
 			const starter = yield call(start, conn, constraints);
-			// return;
-			//put(Actions.setPeerStarted(true));
 		} else {
 			console.log('getting user media');
 			const stream = yield navigator.mediaDevices.getUserMedia(constraints);
@@ -222,30 +209,10 @@ function* gotMessageSaga({ message, constraints, from }) {
 			});
 		}
 		console.log('GOT_MESSAGE', 'setting remote desc');
-		// yield conn.setRemoteDescription(new RTCSessionDescription(message));
 		yield put(setRemote(true));
 		console.log('put setting remote');
-		// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
-		// stream.getTracks().forEach(track => {
-		// 	conn.addTrack(track, stream);
-		// });
-		// console.log('ADDED TRACK');
 		console.log('GOT_MESSAGE', 'creating answer');
 		yield put(setIncomingCall(from));
-		// const answer = yield conn.createAnswer().catch(e => {
-		// 	console.log(e);
-		// 	debugger; //error
-		// });
-		// console.log('GOT_MESSAGE', 'setting local desc');
-
-		// yield conn.setLocalDescription(answer);
-		// // socket.emit('message', conn.localDescription);
-		// console.log('GOT_MESSAGE', 'sending answer');
-		// const desc = conn.localDescription;
-		// const sendBackTo = from;
-		// socket.emit('message', desc, { users: [from] });
-		// console.log('set local desc');
-		//signaling.send({message: conn.localDescription});
 	} else if (message.type === 'answer') {
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
 		yield conn
@@ -255,10 +222,6 @@ function* gotMessageSaga({ message, constraints, from }) {
 				debugger; //error
 			});
 		yield put(setRemote(true));
-		// const stream = yield navigator.mediaDevices.getUserMedia({
-		// 	audio: true,
-		// 	video: true
-		// });
 		const { mediaStream } = yield select(selectConstraints);
 
 		// HERE!!
@@ -269,16 +232,11 @@ function* gotMessageSaga({ message, constraints, from }) {
 		console.log('ADDED TRACK');
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {
-		// const { remoteSet } = yield select(selectPeerStore);
-		// while (true) {
 		const action = yield take(SET_REMOTE);
-		//socket.emit('message', )
 		console.log('GOT_MESSAGE', 'candidate');
 		const altCandid = new RTCIceCandidate({
-			// sdpMLineIndex: message.label,
 			...message.candidate
 		});
-		// conn.addIceCandidate(message.candidate);
 		conn.addIceCandidate(altCandid).catch(e => {
 			console.log(e);
 			debugger; //error
@@ -316,7 +274,6 @@ function* answerCallSaga({ payload: answered }) {
 	console.log('GOT_MESSAGE', 'setting local desc');
 
 	yield conn.setLocalDescription(answer);
-	// socket.emit('message', conn.localDescription);
 	console.log('GOT_MESSAGE', 'sending answer');
 	const desc = conn.localDescription;
 	const sendBackTo = from;

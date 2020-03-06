@@ -54,12 +54,20 @@ class UserRepository extends Repository {
 		return this.findOne({ username }, cb);
 	}
 	importProfile(profile, cb) {
-		const { emails, username, nickname } = profile;
-		const [{ value }] = emails;
+		const { email, emails, username, nickname, mocked = false } = profile;
+		let emailVal;
+		if (email) {
+			emailVal = email;
+		} else {
+			const [{ value }] = emails;
+			emailVal = value;
+		}
+
 		const obj = {
-			email: value,
-			username: nickname,
-			src: profile
+			email: emailVal,
+			username: username || nickname,
+			src: profile,
+			mocked
 		};
 		return this.createUser(obj, cb);
 	}
@@ -112,7 +120,7 @@ class UserRepository extends Repository {
 			.where({ member1_id: userId, member2_id: friendId })
 			.orWhere({ member1_id: friendId, member2_id: userId });
 	}
-	async addFriend(username, friend) {
+	async addFriend(username, friend, mocked = false) {
 		const [userId, friendId] = await this.getUsersIdsByUsername([
 			username,
 			friend
@@ -121,12 +129,14 @@ class UserRepository extends Repository {
 		const inserted1 = await this.postgresInstance.knex('friendship').insert({
 			member1_id: userId,
 			member2_id: friendId,
-			status: friendStatus['sent']
+			status: friendStatus['sent'],
+			mocked
 		});
 		const inserted2 = await this.postgresInstance.knex('friendship').insert({
 			member1_id: friendId,
 			member2_id: userId,
-			status: friendStatus['pending']
+			status: friendStatus['pending'],
+			mocked
 		});
 
 		return { inserted1, inserted2 };

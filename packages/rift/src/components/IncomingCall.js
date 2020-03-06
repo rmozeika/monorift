@@ -95,16 +95,12 @@ const themedStyles = StyleService.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		// borderRadius: 10,
 		height: '50%',
 		borderBottomRightRadius: 0,
 		borderBottomLeftRadius: 0,
-		// backgroundColor: 'color-primary-transparent-200',
 		backgroundColor: 'inherit'
-		// margin: 5
 	},
 	text: {
-		// color: 'color-primary-100'
 		color: 'color-basic-100'
 	}
 });

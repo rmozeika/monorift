@@ -6,7 +6,8 @@ import {
 	styled,
 	withStyles,
 	TabView,
-	Tab
+	Tab,
+	TabBar
 } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
@@ -18,10 +19,8 @@ import Users from './Users';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// padding: 16,
 		flexDirection: 'column',
 		alignItems: 'center',
-		// overflow: 'scroll',
 		maxWidth: 900,
 		margin: 'auto',
 		width: '100%',
@@ -46,7 +45,6 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		flexGrow: 1
-		// height: '100%'
 	},
 	column: {
 		flexBasis: '50%',
@@ -54,12 +52,6 @@ const styles = StyleSheet.create({
 		height: '100%'
 	}
 });
-// let peerStore;
-
-// let connName2 = 'conn2';
-// let audioRef = React.createRef();
-// let videoRef = React.createRef();
-// let selfRef = React.createRef();
 
 class CallContainer extends React.Component {
 	constructor(props) {
@@ -71,6 +63,7 @@ class CallContainer extends React.Component {
 			containerHeight: null
 		};
 		this.callContainerRef = React.createRef();
+		this.setTopTabsIndex = this.setTopTabsIndex.bind(this);
 	}
 	goToTalk() {
 		console.log('Call talk func');
@@ -93,18 +86,10 @@ class CallContainer extends React.Component {
 		this.setState({
 			containerHeight: height
 		});
-		// const callButton = height * 0.1;
-		// const userList = height - callButton;
-		// this.setState({
-		// 	containerHeight: {
-		// 		container: height,
-		// 		userList,
-		// 		callButton
-		// 	}
-		// });
 	}
 	setTopTabsIndex(index) {
 		console.log(index);
+		this.props.setTabView(index);
 	}
 	render() {
 		const { containerHeight } = this.state;
@@ -114,13 +99,8 @@ class CallContainer extends React.Component {
 			return (
 				<Layout style={styles.desktopLayout}>
 					<Layout style={styles.column}>
-						<Layout
-							// onLayout={this.onLayout.bind(this)}
-							style={styles.desktopTabContainer}
-						>
-							<Users
-							// containerHeight={containerHeight}
-							/>
+						<Layout style={styles.desktopTabContainer}>
+							<Users />
 						</Layout>
 					</Layout>
 					<Layout style={styles.column}>
@@ -131,7 +111,25 @@ class CallContainer extends React.Component {
 				</Layout>
 			);
 		}
-		// const [bottomTabsIndex, setBottomTabsIndex] = React.useState(0);
+
+		if (true == false) {
+			return (
+				<Layout style={styles.container}>
+					<TabBar
+						selectedIndex={tab}
+						onSelect={this.setTopTabsIndex}
+						style={{ width: '100vw', flexGrow: 1 }}
+					>
+						<Tab title="Friends" />
+						<Tab title="Users" />
+						<Tab title="Talk" />
+					</TabBar>
+					<Layout style={[styles.tabContainer, { width: '100%' }]}>
+						<Users friendList={true} containerHeight={containerHeight} />
+					</Layout>
+				</Layout>
+			);
+		}
 		return (
 			<Layout style={styles.container}>
 				<TabView
@@ -140,18 +138,12 @@ class CallContainer extends React.Component {
 					style={{ width: '100%', flexGrow: 1 }}
 				>
 					<Tab title="Friends">
-						<Layout
-							style={styles.tabContainer}
-							// onLayout={this.onLayout.bind(this)}
-						>
+						<Layout style={styles.tabContainer}>
 							<Users friendList={true} containerHeight={containerHeight} />
 						</Layout>
 					</Tab>
 					<Tab title="Users">
-						<Layout
-							style={styles.tabContainer}
-							// onLayout={this.onLayout.bind(this)}
-						>
+						<Layout style={styles.tabContainer}>
 							<Users containerHeight={containerHeight} />
 						</Layout>
 					</Tab>
@@ -174,7 +166,7 @@ const CallContainerStyled = withStyles(CallContainer, theme => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		setViewTab: tab => dispatch(Actions.setTabView(tab))
+		setTabView: tab => dispatch(Actions.setTabView(tab))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

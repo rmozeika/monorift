@@ -16,12 +16,6 @@ export function loadDataSuccess(data) {
 		data
 	};
 }
-// export const getConfig = () => dispatch => {
-//   // shop.getConfig(config => {
-//   //   dispatch(setConfig(config));
-//   // });
-//     dispatch(setConfig({ needsToComeFrom: 'somewhere' }));
-// };
 
 export const getConfig = () => ({
 	type: types.getConfig
@@ -60,9 +54,6 @@ export const code = {
 	success: (login, response) => action(CODE[SUCCESS], { login, response }),
 	failure: (login, error) => action(CODE[FAILURE], { login, error })
 };
-// export const REPO = createRequestTypes('REPO');
-// export const STARRED = createRequestTypes('STARRED');
-// export const STARGAZERS = createRequestTypes('STARGAZERS');
 export const SEND_CANDIDATE = 'SEND_CANDIDATE';
 export const sendCandidate = candidate => ({
 	type: SEND_CANDIDATE,

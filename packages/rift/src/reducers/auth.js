@@ -21,7 +21,6 @@ const authReducer = createReducer(
 			return { user: { picture, username, displayName }, loggedIn: true };
 		},
 		[LOGIN.REQUEST]: (authState, action) => {
-			// const { picture, nickname, displayName } = action.payload;
 			return { user: {}, loggedIn: false };
 		}
 	}

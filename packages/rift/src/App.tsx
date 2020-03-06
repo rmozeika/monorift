@@ -1,6 +1,5 @@
 import React from 'react';
 import 'babel-polyfill';
-// import "react-native-svg";
 import { Provider } from 'react-redux';
 import { applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
@@ -46,7 +45,6 @@ interface Props {
 	initCode: (code: object) => void;
 	setIsMobile: (isMobile: boolean) => void;
 }
-// ThemeService.select({'Eva Light': null}, "Eva Light")
 class App extends React.Component<Props, State> {
 	public constructor(props) {
 		super(props);
@@ -55,7 +53,7 @@ class App extends React.Component<Props, State> {
 		this.props.setIsMobile(isMobile);
 	}
 	public state: State = {
-		theme: 'Eva Light'
+		theme: 'Eva Dark'
 	};
 	private onSwitchTheme = (theme: ThemeKey) => {
 		ThemeStore.setTheme(theme).then(() => {
@@ -67,7 +65,6 @@ class App extends React.Component<Props, State> {
 			currentTheme: this.state.theme,
 			toggleTheme: this.onSwitchTheme
 		};
-		// this.props.setCode({ name: 'test', text: 'fun' });
 		return (
 			<ThemeContext.Provider value={contextValue}>
 				<IconRegistry icons={[AwesomeIconsPack]} />
@@ -91,9 +88,7 @@ class App extends React.Component<Props, State> {
 	}
 }
 const mapStateToProps = (state, ownProps) => {
-	return {
-		// prop: state.prop
-	};
+	return {};
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {

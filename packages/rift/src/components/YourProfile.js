@@ -23,24 +23,13 @@ const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
 		flex: 1,
-		// padding: 16,
-		// flexDirection: 'row',
 		alignItems: 'center',
 		flexDirection: 'row',
 		flexWrap: 'wrap'
 	}
 });
 
-const YourProfile = (
-	{
-		// baseHeight,
-		// onPress,
-		// themedStyle,
-		// incomingCall,
-		// answer,
-		// reject
-	}
-) => {
+const YourProfile = ({}) => {
 	const { loggedIn, user } = useSelector(state => state.auth);
 	if (!loggedIn) {
 		return (

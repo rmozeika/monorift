@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
 import * as CallSelectors from '../selectors/call';
+import * as UserSelectors from '../selectors/users';
+
 import AddToCallButton from '../components/buttons/AddToCall';
 
 import {
@@ -23,23 +25,19 @@ const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
 		flex: 1,
-		// padding: 16,
-		// flexDirection: 'row',
 		alignItems: 'center',
 		flexDirection: 'row',
 		flexWrap: 'wrap'
 	},
 	userListLayout: {
 		width: '100%',
-		overflowY: 'scroll',
+		// overflowY: 'scroll',
 		height: '80vh'
-		// display: 'flex'
 	},
 	row: {
 		padding: 15,
 		width: '100%',
 		alignItems: 'center'
-		// flexDirection: 'row'
 	},
 	userBlock: {
 		flex: 1,
@@ -53,9 +51,7 @@ const styles = StyleSheet.create({
 		padding: 15,
 		height: 'auto',
 		width: 'auto',
-		// display: 'flex',
 		flexShrink: 1
-		// flexWrap: 'wrap'
 	},
 	column: {
 		padding: 15,
@@ -66,8 +62,6 @@ const styles = StyleSheet.create({
 		flexGrow: 1
 	},
 	button: {
-		// margin: 8,
-		// width: '50%',
 		flex: 1
 	},
 	buttonBottom: {
@@ -94,7 +88,7 @@ class UsersList extends React.Component {
 	}
 	goTalk() {
 		console.log('UsersList');
-		this.props.setViewTab(1);
+		this.props.setTabView(2);
 	}
 	onAdd(index, val) {
 		const { addToCall } = this.props;
@@ -110,70 +104,85 @@ class UsersList extends React.Component {
 			themedStyle,
 			baseHeight,
 			incomingCallPending,
-			friends
+			friends,
+			users
 		} = this.props;
-
+		const getUserfromIndex = index => orderedUsers[index];
 		const renderItemAccessory = (style, index) => {
-			const buttonStyleAlt = [
-				style,
-				// themedStyle.button,
-				styles.button
-				// marginHorizontal: themedStyle.buttonGroup.marginHorizontal
-			];
+			const buttonStyleAlt = [style, styles.button];
 			const { checked } = this.state;
-
-			return (
-				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
+			const renderButtons = [];
+			debugger;
+			const user = getUserfromIndex(index);
+			if (user.isFriend) {
+				renderButtons.push(
 					<AddToCallButton
-						checked={online[index].checked}
+						checked={user.checked}
 						onAdd={this.onAdd}
 						onRemove={this.onRemove}
 						otherStyles={style}
+						key={`callbutton${index}`}
 					/>
+				);
+			}
+			return (
+				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
+					{renderButtons.map(button => button)}
 				</Layout>
 			);
 		};
 
-		const renderItemIcon = style => {
-			console.log(style);
+		const renderItemIcon = (style, index) => {
+			console.log(style, index);
+			const user = getUserfromIndex(index);
+
 			const style2 = {
 				width: style.width,
 				height: style.height,
-				marginHorizontal: style.marginHorizontal,
-				color: 'black'
+				marginHorizontal: style.marginHorizontal
+				// color: 'black'
+				// color: themedStyle.icons.color,
+				// backgroundColor: themedStyle.icons.color,
 			};
+			const iconKey = user.online ? 'iconOnline' : 'iconOffline';
+			const iconColor = themedStyle[iconKey].color;
+			debugger; //remove
 			return (
 				<Icon
 					{...style2}
-					style={{ color: themedStyle.icons.color }}
-					name="user"
+					// style={{ color: themedStyle.icons.color }}
+					name="circle"
 					solid
-					fill="#3366FF"
+					color={iconColor}
 				/>
 			);
 		};
 
-		const renderFriend = ({ item: user, index }) => {
+		const renderItem = ({ item: user, index }) => {
+			debugger; //remove
 			console.log(user);
-			const { username } = user;
+			const { username, src = {} } = user;
+			const { displayName = '' } = src;
 			return (
 				<ListItem
 					title={`${username}`}
-					description={`${'Call'}`}
+					description={`${displayName}`}
 					icon={renderItemIcon}
 					accessory={renderItemAccessory}
 				/>
 			);
 		};
-		const { mobile } = this.props;
 		const heightMultiplier = incomingCallPending ? 0.8 : 0.9;
 		const derivedHeight = baseHeight * heightMultiplier;
+		const orderedUsers =
+			users && users.online ? users.online.concat(users.offline) : [];
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<List
-					data={friends}
-					renderItem={renderFriend}
+					data={orderedUsers}
+					renderItem={renderItem}
 					style={{ width: '100%', flexShrink: 1 }}
+					showsVerticalScrollIndicator={false}
 				/>
 			</Layout>
 		);
@@ -185,9 +194,15 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
 	},
-	icons: {
+	iconOnline: {
 		backgroundColor: theme['color-primary-100'],
-		color: theme['color-basic-800']
+		// color: theme['color-basic-800']
+		color: theme['color-success-500']
+	},
+	iconOffline: {
+		backgroundColor: theme['color-primary-100'],
+		// color: theme['color-basic-800']
+		color: theme['color-success-500'] // CHANGE THIS!
 	},
 	container: { backgroundColor: '#1A2138' },
 	action: { marginHorizontal: 4 },
@@ -202,7 +217,7 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		setViewTab: tab => dispatch(Actions.setTabView(tab)),
+		setTabView: tab => dispatch(Actions.setTabView(tab)),
 		addToCall: index => dispatch(Actions.addToCall(index)),
 		removeFromCall: index => dispatch(Actions.removeFromCall(index))
 	};
@@ -214,7 +229,8 @@ const mapStateToProps = (state, ownProps) => {
 		tab,
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
-		friends: users.friends
+		friends: users.friends,
+		users: UserSelectors.getVisibleUsers(state)
 	};
 };
 export default connect(

@@ -7,41 +7,19 @@ const routeName = '/code';
 const repoName = 'code';
 
 class CodeRoute extends Route {
-    constructor(api) {
-        super(api, routeName, repoName);
-        setImmediate(() => {
-            // this.router.get('/', secured(), this.clone.bind(this));
-            this.router.post('/', this.clone.bind(this));
-            this.router.get('/repo', this.repo.bind(this));        
-            // this.router.post('/createUser', this.createUser.bind(this));
-            // this.router.get('/username', this.getUser.bind(this));
+	constructor(api) {
+		super(api, routeName, repoName);
+		setImmediate(() => {
+			this.router.post('/', this.clone.bind(this));
+			this.router.get('/repo', this.repo.bind(this));
+		});
+	}
 
-          }); 
-    }
-
-    clone(req, res) {
-        const { repo } = req.data;
-        this.repository.clone(repo);
-    }
-    repo(req, res) {
-        
-    }
-
-    // createUser(req, res) {
-    //     var accessGroups = 'sysadmin';
-    //     if (!this.checkPermission({ req, res }, accessGroups)) return;
-
-    //     const { username, password, privledges } = req.body;
-    //     const user = Object.assign({}, { username, password, privledges });
-    //     this.repository.createUser(user, (err, data)=> {
-    //         if (err) throw err;
-    //         res.send(data);
-    //     });
-    // }
-    // getUser(req, res) {
-    //     const { user} = req;
-    //     return res.send(user);
-    // }
+	clone(req, res) {
+		const { repo } = req.data;
+		this.repository.clone(repo);
+	}
+	repo(req, res) {}
 }
 
 module.exports = CodeRoute;

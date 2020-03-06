@@ -14,13 +14,9 @@ import * as Actions from '../actions';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// padding: 16,
-		// flexDirection: 'row',
 		alignItems: 'center'
 	},
 	row: {
-		// flex: 1
-		// padding: 15,
 		width: '100%'
 	},
 	buttonRow: {
@@ -28,9 +24,7 @@ const styles = StyleSheet.create({
 		margin: 8
 	},
 	video: {
-		// backgroundColor: 'blue',
 		width: '100%'
-		// height: 200
 	},
 	controlButton: {
 		flexGrow: 1,
@@ -43,9 +37,6 @@ const styles = StyleSheet.create({
 		margin: 'auto'
 	}
 });
-// const showHideSettings = {
-
-// }
 function ShowHideButton(props) {
 	const { onPress, text, style, ...otherProps } = props;
 	return (
@@ -61,19 +52,7 @@ function ShowHideButton(props) {
 class Media extends React.Component {
 	constructor(props) {
 		super(props);
-		// this.setState({ audioControl: null, hideAudio: false });
 		this.state = { audioControl: null, audioControlsHidden: false };
-		// this.createAudioContext();
-		// // let audioRef = React.createRef();
-		// let audioRef = this.props.audioRef;
-		// let videoRef = React.createRef();
-		// let selfRef = React.createRef();
-		// this.audioRef = audioRef;
-		// this.videoRef = videoRef;
-		// this.selfRef = selfRef;
-		// this.audioFileRef = React.createRef();
-		// window.audioFileRef = this.audioFileRef;
-		// window.videoRef = this.videoRef;
 	}
 	showHideProps(isHidden) {
 		const showHideSettings = {
@@ -91,9 +70,7 @@ class Media extends React.Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		// Typical usage (don't forget to compare props):
 		if (this.props.stream !== prevProps.stream) {
-			//   this.fetchData(this.props.userID);
 			this.createAudioContext(this.props.stream);
 		}
 	}
@@ -104,18 +81,13 @@ class Media extends React.Component {
 		const myAudio = this.props.audioRef.current;
 		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 		var source = audioCtx.createMediaElementSource(myAudio);
-		// var source = audioCtx.createMediaStreamSource(stream);
-		// gainNode.connect(audioCtx.destination);
 		var source1 = audioCtx.createBufferSource();
 		this.setState({ audioControl: source1 });
 		source.connect(audioCtx.destination);
 		audioCtx.suspend();
-		// audioCtx.suspend();
-		// source1.start(0);
 	}
 	play() {
 		this.props.audioRef.current.play();
-		// this.state.audioControl.buffer.start(0);
 	}
 	stop() {
 		this.props.audioRef.current.pause();

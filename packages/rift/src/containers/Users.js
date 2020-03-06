@@ -63,7 +63,7 @@ class Users extends React.Component {
 		this.onLayout = this.onLayout.bind(this);
 	}
 	goTalk() {
-		this.props.setViewTab(1);
+		this.props.setTabView(1);
 	}
 	onLayout({ nativeEvent, timeStamp }) {
 		const { mobile, incomingCall } = this.props;
@@ -135,11 +135,11 @@ class Users extends React.Component {
 		const friendList = (
 			<FriendList online={online} baseHeight={containerHeight}></FriendList>
 		);
-
+		const renderList = this.props.friendList ? friendList : userList; //userList;
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.userLayout}>
-					{this.props.friendList ? friendList : userList}
+					{friendList}
 					<CallActions
 						onPress={this.goTalk}
 						themedStyle={themedStyle.buttonRow}
@@ -161,7 +161,7 @@ const UsersStyled = withStyles(Users, theme => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		setViewTab: tab => dispatch(Actions.setTabView(tab)),
+		setTabView: tab => dispatch(Actions.setTabView(tab)),
 		fetchOnlineUsers: () => dispatch(Actions.fetchOnlineUsers()),
 		answer: answered => dispatch(Actions.answer(answered)),
 		fetchFriends: () => dispatch(Actions.fetchFriends()),

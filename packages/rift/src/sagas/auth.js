@@ -11,7 +11,6 @@ import {
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { originLink } from '../core/utils';
-// import es6promise from 'es6-promise'
 import 'isomorphic-unfetch';
 
 import * as Actions from '../actions';
@@ -70,11 +69,7 @@ function* onLoginSaga() {
 	console.log('fetching friends');
 }
 function* rootSaga() {
-	yield all([
-		initAuthSaga(),
-		takeLatest(AUTH.LOGIN.SUCCESS, onLoginSaga)
-		// takeLatest(ActionTypes.initConfig, initConfigSaga)
-	]);
+	yield all([initAuthSaga(), takeLatest(AUTH.LOGIN.SUCCESS, onLoginSaga)]);
 }
 
 export default rootSaga;

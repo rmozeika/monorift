@@ -12,12 +12,10 @@ module.exports = {
 		rules: [
 			{
 				test: /\.ts(x?)$/,
-				// exclude: /node_modules/,
 				use: [
 					{
 						loader: 'ts-loader',
 						options: {
-							// transpileOnly: true
 							configFile: 'tsconfig.json',
 							ignoreDiagnostics: [1144]
 						}
@@ -42,14 +40,9 @@ module.exports = {
 					}
 				]
 			},
-			// {
-			//   test: /\.css$/,
-			//   loader: require.resolve('url-loader'), // or directly file-loader
-			//   include: path.resolve(__dirname, "node_modules/react-native-vector-icons"),
-			// },
 			{
 				test: /\.ttf$/,
-				loader: require.resolve('url-loader'), // or directly file-loader
+				loader: require.resolve('url-loader'),
 				include: path.resolve(__dirname, 'node_modules/react-native-vector-icons')
 			},
 			{
@@ -65,10 +58,8 @@ module.exports = {
 				include: [
 					path.resolve(__dirname, 'node_modules/react-native-elements'),
 					path.resolve(__dirname, 'node_modules/react-native-elements/src'),
-
 					path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
 					path.resolve(__dirname, 'node_modules/react-native-ratings'),
-					// path.resolve(__dirname, 'node_modules/react-native-material-kit'),
 					path.resolve(__dirname, 'node_modules/native-base-shoutem-theme'),
 					path.resolve(__dirname, 'node_modules/react-navigation'),
 					path.resolve(__dirname, 'node_modules/react-native-easy-grid'),
@@ -84,22 +75,16 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/static-container'),
 					path.resolve(__dirname, 'node_modules/react-native-ui-kitten'),
 					path.resolve(__dirname, 'node_modules/@ui-kitten/eva-icons')
-					// path.resolve(__dirname, 'node_modules/react-native-svg')
 				],
 				loader: require.resolve('babel-loader'),
 				options: {
 					presets: ['module:metro-react-native-babel-preset', '@babel/react'],
-					// presets: ['react-native'],
 
-					// Re-write paths to import only the modules needed by the app
 					plugins: [
 						'react-native-web',
 						'@babel/plugin-syntax-dynamic-import',
 						'@babel/plugin-proposal-object-rest-spread'
 					],
-					// This is a feature of `babel-loader` for webpack (not Babel itself).
-					// It enables caching results in ./node_modules/.cache/babel-loader/
-					// directory for faster rebuilds.
 					cacheDirectory: true
 				}
 			}
@@ -107,8 +92,6 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			// Support React Native Web
-			// https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
 			'react-native': 'react-native-web',
 			'@src': path.resolve(__dirname, './packages/rift/src'),
 			'react-native-svg': 'react-native-svg-web'
@@ -129,13 +112,7 @@ module.exports = {
 	devtool: 'source-map',
 	devServer: {
 		contentBase: path.join(__dirname, 'dist.web'),
-		// compress: true,
 		port: 9000,
 		writeToDisk: true
-		// allowedHosts: [
-		//   'monorift.com'
-		// ],
-		// public: 'monorift.com:80',
-		// public: 'monorift.com'
 	}
 };

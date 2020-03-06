@@ -61,7 +61,6 @@ class Users extends React.Component {
 		this.answer = this.answer.bind(this);
 		this.reject = this.reject.bind(this);
 		this.onLayout = this.onLayout.bind(this);
-		debugger;
 	}
 	goTalk() {
 		this.props.setTabView(1);

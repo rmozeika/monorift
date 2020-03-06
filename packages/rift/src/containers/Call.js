@@ -143,9 +143,9 @@ class CallContainer extends React.Component {
 						</Layout>
 					</Tab>
 					<Tab title="Users">
-						{/* <Layout style={styles.tabContainer}>
+						<Layout style={styles.tabContainer}>
 							<Users containerHeight={containerHeight} />
-						</Layout> */}
+						</Layout>
 					</Tab>
 					<Tab title="Talk">
 						<Layout style={styles.tabContainer}>

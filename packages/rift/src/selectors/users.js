@@ -44,8 +44,10 @@ export const getVisibleUsers = createSelector(
 				return friendsOnlineOffline;
 			case 'users':
 				if (!didGetOnline) return usersOnlineOfflineBase;
-				const allUsernames = Object.keys(users);
-				const usersOnlineOffline = sortOnlineOffline(users, allUsernames);
+				const nonFriendUsernames = Object.keys(users).filter(
+					username => !users[username].isFriend
+				);
+				const usersOnlineOffline = sortOnlineOffline(users, nonFriendUsernames);
 				return usersOnlineOffline;
 			// Object.keys(users)
 			//     .filter(user => user.online);

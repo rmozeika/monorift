@@ -71,7 +71,8 @@
 			"request": "launch",
 			"name": "commands",
 			"program": "${workspaceFolder}/packages/commands/index.js",
-			"smartStep": true
+			"smartStep": true,
+			"args": ["users", "createMockUsers"]
 		},
 		{
 			"type": "node",

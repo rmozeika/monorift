@@ -7,7 +7,7 @@ const config = {
 		connection: {
 			database: 'monorift',
 			user: 'Bobby',
-			password: 'mage4life'
+			password: 'testUser'
 		}
 		// pool: {
 		//     min: 2,

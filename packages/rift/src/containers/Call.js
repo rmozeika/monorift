@@ -112,7 +112,7 @@ class CallContainer extends React.Component {
 			);
 		}
 
-		if (true == false) {
+		if (true == true) {
 			return (
 				<Layout style={styles.container}>
 					<TabBar
@@ -125,7 +125,9 @@ class CallContainer extends React.Component {
 						<Tab title="Talk" />
 					</TabBar>
 					<Layout style={[styles.tabContainer, { width: '100%' }]}>
-						<Users friendList={true} containerHeight={containerHeight} />
+						{tab == 2 ? <Talk audioRef={this.audioRef} /> : <Users />}
+						{/* <Users />
+						<Talk audioRef={this.audioRef} /> */}
 					</Layout>
 				</Layout>
 			);
@@ -139,12 +141,12 @@ class CallContainer extends React.Component {
 				>
 					<Tab title="Friends">
 						<Layout style={styles.tabContainer}>
-							<Users friendList={true} containerHeight={containerHeight} />
+							<Users friendList={true} />
 						</Layout>
 					</Tab>
 					<Tab title="Users">
 						<Layout style={styles.tabContainer}>
-							<Users containerHeight={containerHeight} />
+							<Users />
 						</Layout>
 					</Tab>
 					<Tab title="Talk">

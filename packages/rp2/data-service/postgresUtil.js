@@ -1,4 +1,6 @@
 const { Client } = require('pg');
+const { psqlConfig } = require('../config.js');
+const { password, host } = psqlConfig;
 const client = new Client();
 const knex = require('knex');
 const config = {
@@ -7,7 +9,8 @@ const config = {
 		connection: {
 			database: 'monorift',
 			user: 'Bobby',
-			password: 'testUser'
+			password,
+			host
 		}
 		// pool: {
 		//     min: 2,

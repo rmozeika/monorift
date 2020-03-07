@@ -54,3 +54,7 @@ export const getVisibleUsers = createSelector(
 		}
 	}
 );
+
+// export const getNonFriendUsers = (state) => {
+
+// }

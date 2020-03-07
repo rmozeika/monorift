@@ -25,4 +25,8 @@ exports.auth0Config = {
 	domain,
 	callbackURL
 };
+exports.psqlConfig = {
+	password: env.psqlPassword,
+	host: env.psqlHost
+};
 exports.env = env;

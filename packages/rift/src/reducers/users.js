@@ -22,7 +22,8 @@ export const initialState = {
 	},
 	friends: [],
 	byId: {},
-	allIds: []
+	allIds: [],
+	queued: []
 };
 const onlineUsers = (state, action) => {};
 export const status = (state = {}, action) => {
@@ -58,7 +59,7 @@ export const online = (state = {}, action) => {
 			return { ...state, users: usersRemoved };
 		case ADD_CALL:
 			let addUsers = state.users.map(({ checked, username }, index) => {
-				if (action.index == index) {
+				if (action.payload.index == index) {
 					return { username, checked: true };
 				}
 				return { checked, username };
@@ -66,7 +67,7 @@ export const online = (state = {}, action) => {
 			return { ...state, users: addUsers };
 		case REMOVE_CALL:
 			let removeUsers = state.users.map(({ checked, username }, index) => {
-				if (action.index == index) {
+				if (action.payload.index == index) {
 					return { username, checked: false };
 				}
 				return { checked, username };
@@ -80,16 +81,28 @@ export const online = (state = {}, action) => {
 export const friends = (state = {}, action) => {
 	switch (action.type) {
 		case SET_FRIENDS:
-			return [...state, ...action.payload];
+			return [...state, action.payload];
 		default:
 			return state;
 	}
 };
-export const queued = (state = {}, action) => {
-	switch (action.type) {
-		default:
-			return state;
-	}
+export const queued = (state = [], action) => {
+	const resultProduce = produce(state, draft => {
+		switch (action.type) {
+			case ADD_CALL:
+				draft.push({
+					...action.payload.user,
+					orderedUserIndex: action.payload.index
+				});
+				break;
+			case REMOVE_CALL:
+				draft.filter(user => user.username !== action.payload.user.username);
+				break;
+			default:
+				return draft;
+		}
+	});
+	return resultProduce;
 };
 
 export const byId = (state = {}, action) => {
@@ -130,6 +143,12 @@ export const byId = (state = {}, action) => {
 				if (!draft[usernameRemoveOnline]) return state;
 				draft[usernameRemoveOnline].online = true;
 				break;
+			case ADD_CALL:
+				draft[action.payload.user.username].checked = true;
+				break;
+			case REMOVE_CALL:
+				draft[action.payload.user.username].checked = false;
+				break;
 			default:
 				return draft;
 		}
@@ -153,6 +172,7 @@ const usersReducer = combineReducers({
 	status,
 	online,
 	friends,
+	queued,
 	byId,
 	allIds
 });

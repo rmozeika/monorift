@@ -49,18 +49,18 @@ class Adapter extends React.Component {
 		window.videoRef = this.videoRef;
 	}
 	componentDidMount() {
-		this.props.createPeerConn({
-			iceServers: [
-				{
-					urls: 'stun:stun.l.google.com:19302'
-				},
-				{
-					urls: 'turn:monorift:78?transport=udp',
-					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
-					username: 'rtcpeer'
-				}
-			]
-		});
+		// this.props.createPeerConn({
+		// 	iceServers: [
+		// 		{
+		// 			urls: 'stun:stun.l.google.com:19302'
+		// 		},
+		// 		{
+		// 			urls: 'turn:monorift:78?transport=udp',
+		// 			credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
+		// 			username: 'rtcpeer'
+		// 		}
+		// 	]
+		// });
 	}
 	componentDidUpdate() {
 		const { peerStore, peerConnStatus } = this.props;

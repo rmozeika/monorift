@@ -82,7 +82,7 @@ class Users extends React.Component {
 		// const actionHeightMultiplier = incomingCall.received ? 0.15 : 0.1;
 		// const callActions = height * actionHeightMultiplier;
 		this.setState({
-			containerHeight: height
+			containerHeight: height - 32
 		});
 	}
 	answer() {

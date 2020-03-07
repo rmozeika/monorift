@@ -1,1 +1,1 @@
-docker container stop $(docker container ls -aq)
+docker rmi -f $(docker images -a -q)

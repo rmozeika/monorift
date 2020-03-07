@@ -82,6 +82,8 @@ services:
    - '5432:5433'
   expose:
    - 5432
+  env_file:
+   - ../../../private/psql.env
  coturn:
   build:
    context: ./coturn

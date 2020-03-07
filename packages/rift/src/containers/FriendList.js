@@ -7,6 +7,7 @@ import * as CallSelectors from '../selectors/call';
 import * as UserSelectors from '../selectors/users';
 
 import AddToCallButton from '../components/buttons/AddToCall';
+import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
 
 import {
 	Layout,
@@ -21,6 +22,7 @@ import {
 	Toggle
 } from 'react-native-ui-kitten';
 import { loadData } from '@src/actions';
+import AddRemoveFriend from '@src/components/buttons/AddRemoveFriend';
 const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
@@ -81,22 +83,37 @@ class UsersList extends React.Component {
 			checked: [false]
 		};
 		this.onAdd = this.onAdd.bind(this);
-	}
-	setChecked(index, vale) {}
-	onPressedCall(index, type) {
-		console.log('clicked!');
+		this.onRemove = this.onRemove.bind(this);
+		this.addFriend = this.addFriend.bind(this);
+		this.removeFriend = this.removeFriend.bind(this);
 	}
 	goTalk() {
 		console.log('UsersList');
 		this.props.setTabView(2);
 	}
-	onAdd(index, val) {
+	onAdd(index) {
+		debugger; //remove
 		const { addToCall } = this.props;
-		addToCall(index);
+		const user = this.getUserFromIndex(index);
+		addToCall(index, user);
 	}
-	onRemove(index, val) {
+	onRemove(index) {
 		const { removeFromCall } = this.props;
-		removeFromCall(index);
+		const user = this.getUserFromIndex(index);
+		removeFromCall(index, user);
+	}
+	addFriend(index) {
+		const { addFriend } = this.props;
+		const user = this.getUserFromIndex(index);
+		addFriend(user);
+	}
+	removeFriend(index) {
+		const { removeFriend } = this.props;
+		const user = this.getUserFromIndex(index);
+		removeFriend(user);
+	}
+	getUserFromIndex(index) {
+		return this.props.orderedUsers[index];
 	}
 	render() {
 		const {
@@ -105,15 +122,15 @@ class UsersList extends React.Component {
 			baseHeight,
 			incomingCallPending,
 			friends,
-			users
+			users,
+			orderedUsers
 		} = this.props;
-		const getUserfromIndex = index => orderedUsers[index];
+
 		const renderItemAccessory = (style, index) => {
 			const buttonStyleAlt = [style, styles.button];
 			const { checked } = this.state;
 			const renderButtons = [];
-			debugger;
-			const user = getUserfromIndex(index);
+			const user = this.getUserFromIndex(index);
 			if (user.isFriend) {
 				renderButtons.push(
 					<AddToCallButton
@@ -122,9 +139,18 @@ class UsersList extends React.Component {
 						onRemove={this.onRemove}
 						otherStyles={style}
 						key={`callbutton${index}`}
+						index={index}
 					/>
 				);
 			}
+			// else {
+			// 	renderButtons.push(
+			// 		<AddRemoveFriendButton
+			// 			friend={false}
+
+			// 		/>
+			// 	)
+			// }
 			return (
 				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
 					{renderButtons.map(button => button)}
@@ -134,7 +160,7 @@ class UsersList extends React.Component {
 
 		const renderItemIcon = (style, index) => {
 			console.log(style, index);
-			const user = getUserfromIndex(index);
+			const user = this.getUserFromIndex(index);
 
 			const style2 = {
 				width: style.width,
@@ -146,7 +172,6 @@ class UsersList extends React.Component {
 			};
 			const iconKey = user.online ? 'iconOnline' : 'iconOffline';
 			const iconColor = themedStyle[iconKey].color;
-			debugger; //remove
 			return (
 				<Icon
 					{...style2}
@@ -159,7 +184,6 @@ class UsersList extends React.Component {
 		};
 
 		const renderItem = ({ item: user, index }) => {
-			debugger; //remove
 			console.log(user);
 			const { username, src = {} } = user;
 			const { displayName = '' } = src;
@@ -174,8 +198,9 @@ class UsersList extends React.Component {
 		};
 		const heightMultiplier = incomingCallPending ? 0.8 : 0.9;
 		const derivedHeight = baseHeight * heightMultiplier;
-		const orderedUsers =
-			users && users.online ? users.online.concat(users.offline) : [];
+		// const orderedUsers =
+		// 	users && users.online ? users.online.concat(users.offline) : [];
+		// this.setState({ orderedUsers });
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<List
@@ -218,19 +243,28 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		setTabView: tab => dispatch(Actions.setTabView(tab)),
-		addToCall: index => dispatch(Actions.addToCall(index)),
-		removeFromCall: index => dispatch(Actions.removeFromCall(index))
+		addToCall: (index, user) => dispatch(Actions.addToCall(index, user)),
+		removeFromCall: (index, user) =>
+			dispatch(Actions.removeFromCall(index, user)),
+		addFriend: user => dispatch(Actions.addFriend(user)),
+		removeFriend: user => dispatch(Actions.removeFriend(user))
 	};
 };
 const mapStateToProps = (state, ownProps) => {
 	const { view, peerStore, users } = state;
 	const { tab, mobile } = view;
+	const visibleUsers = UserSelectors.getVisibleUsers(state);
+	const orderedUsers =
+		visibleUsers && visibleUsers.online
+			? visibleUsers.online.concat(visibleUsers.offline)
+			: [];
 	return {
 		tab,
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
 		friends: users.friends,
-		users: UserSelectors.getVisibleUsers(state)
+		users: visibleUsers,
+		orderedUsers
 	};
 };
 export default connect(

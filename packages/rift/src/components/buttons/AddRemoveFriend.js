@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'react-native-ui-kitten';
 
-export default ({ checked, onRemove, onAdd }) => {
+export default ({ isFriend, onRemove, onAdd }) => {
 	const buttonProps = {
 		remove: {
 			onPress: onRemove,

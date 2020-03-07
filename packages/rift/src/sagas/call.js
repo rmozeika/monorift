@@ -57,9 +57,11 @@ const selectMe = state => {
 	return username;
 };
 const selectCheckedUsers = state => {
-	const { users } = state.users.online;
-	const selectedUsers = users.filter(({ name, checked }) => checked);
-	return selectedUsers;
+	// const { users } = state.users.online;
+	// const selectedUsers = users.filter(({ name, checked }) => checked);
+	const { queued } = state.users;
+
+	return queued;
 };
 const nsp = 'call';
 const socketServerURL = originLink(nsp); //`http://localhost:8080/${nsp}`;
@@ -78,8 +80,10 @@ const connect = () => {
 const createSocketChannel = socket =>
 	eventChannel(emit => {
 		const handler = (data, secondArg) => {
+			debugger; //remove
 			console.log('emitting message from socketchannel');
 			let msg = { message: data }; //from: this._id };
+			console.log('got message handler', msg);
 			if (secondArg) {
 				const { constraints, users, from } = secondArg;
 				msg = { ...msg, ...secondArg };
@@ -110,6 +114,20 @@ const createSocketChannel = socket =>
 
 function* initCallSaga() {
 	const socket = yield call(connect);
+	yield put(
+		Actions.createPeerConn({
+			iceServers: [
+				{
+					urls: 'stun:stun.l.google.com:19302'
+				},
+				{
+					urls: 'turn:monorift:78?transport=udp',
+					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
+					username: 'rtcpeer'
+				}
+			]
+		})
+	);
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
 		const { message, constraints, users, from } = yield take(socketChannel);
@@ -129,9 +147,12 @@ function* sendCandidateSaga(action) {
 	socket.emit('message', candidateToSend);
 }
 function* createPeerConnSaga(action) {
+	debugger; //remove
 	const { config } = action;
 	try {
 		const conn = new RTCPeerConnection(config);
+		debugger; //remove
+
 		yield put(Actions.setPeerConn(conn));
 
 		window.conn = conn;
@@ -188,6 +209,7 @@ const start = async (conn, peerConstraints) => {
 };
 function addCandidate(candidate) {}
 function* gotMessageSaga({ message, constraints, from }) {
+	debugger; //
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator } = peerStore;
 	console.log('GOT_MESSAGE', message);

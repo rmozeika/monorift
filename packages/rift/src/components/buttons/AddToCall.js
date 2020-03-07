@@ -5,7 +5,7 @@ import { Button } from 'react-native-ui-kitten';
 const style = StyleSheet.create({
 	flex: 1
 });
-export default ({ checked, onRemove, onAdd, otherStyles }) => {
+export default ({ index, checked, onRemove, onAdd, otherStyles }) => {
 	const buttonProps = {
 		remove: {
 			onPress: onRemove,
@@ -13,7 +13,7 @@ export default ({ checked, onRemove, onAdd, otherStyles }) => {
 			text: 'Remove from Call'
 		},
 		add: {
-			onPress: onAdd,
+			onPress: () => onAdd(index),
 			status: 'success',
 			text: 'Add To Call'
 		}

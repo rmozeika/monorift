@@ -49,7 +49,7 @@ class App extends React.Component<Props, State> {
 	public constructor(props) {
 		super(props);
 		console.log(' setting mobile');
-		const isMobile = window.innerWidth <= 500;
+		const isMobile = window.innerWidth <= 600;
 		this.props.setIsMobile(isMobile);
 	}
 	public state: State = {

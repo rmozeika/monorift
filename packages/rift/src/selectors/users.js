@@ -30,9 +30,11 @@ const usersOnlineOfflineBase = {
 export const getVisibleUsers = createSelector(
 	// [getTab, getUsers, loggedIn],
 	// (tab, users, isLoggedIn) => {
-	[getTab, getUsers, gotOnline, gotFriends],
-	(tab, users, didGetFriends, didGetOnline) => {
-		const tabType = getTabType(tab);
+	[getTab, getUsers, gotOnline, gotFriends, loggedIn],
+	(tab, users, didGetOnline, didGetFriends, isLoggedIn) => {
+		// CHANGE THIS spaghetti code
+		const tabTypeOffset = isLoggedIn ? 0 : 1;
+		const tabType = getTabType(tab + tabTypeOffset);
 		switch (tabType) {
 			case 'friends':
 				if (!didGetFriends || !didGetOnline) return usersOnlineOfflineBase;
@@ -43,10 +45,15 @@ export const getVisibleUsers = createSelector(
 				const friendsOnlineOffline = sortOnlineOffline(users, friendsUsernames);
 				return friendsOnlineOffline;
 			case 'users':
-				if (!didGetOnline) return usersOnlineOfflineBase;
-				const nonFriendUsernames = Object.keys(users).filter(
-					username => !users[username].isFriend
-				);
+				if (!didGetOnline) {
+					debugger; //remove
+					return usersOnlineOfflineBase;
+				}
+				debugger; //remove
+				const usernames = Object.keys(users);
+				const nonFriendUsernames = isLoggedIn
+					? usernames.filter(username => !users[username].isFriend)
+					: usernames;
 				const usersOnlineOffline = sortOnlineOffline(users, nonFriendUsernames);
 				return usersOnlineOffline;
 			// Object.keys(users)

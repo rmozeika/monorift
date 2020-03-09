@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 export const initialState = {
 	config: {},
 	code: { file1: 'beforeafter' },
-	auth: { loggedIn: false, user: {} },
+	auth: { loggedIn: false, user: {}, checked: false },
 	// call: {
 	//   peerStore: {
 	//     conn: null, created: false, config: {}, handlersAttached: false

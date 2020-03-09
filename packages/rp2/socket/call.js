@@ -43,6 +43,9 @@ class Call extends Socket {
 		}
 	}
 	async onMessage(redis, msg, secondArg) {
+		if (msg.type == 'answer') {
+			console.log(msg);
+		}
 		if (secondArg) {
 			const { users, constraints } = secondArg;
 			console.log('GOT_MESSAGE', util.inspect(msg));
@@ -53,7 +56,7 @@ class Call extends Socket {
 						// if (user.id) return user;
 						const id = await getAsync(user.username);
 						// Promise.resolve({ name: user.username, _id })
-						return { name: user.username, id };
+						return { username: user.username, id };
 					} catch (e) {
 						console.log(e);
 					}
@@ -69,7 +72,10 @@ class Call extends Socket {
 				this.to(res[0].id).emit('message', msg, {
 					users,
 					constraints,
-					from: { id: this.id, name: this.request.session.passport.user.username }
+					from: {
+						id: this.id,
+						username: this.request.session.passport.user.username
+					}
 				});
 			});
 			// .catch(e => {

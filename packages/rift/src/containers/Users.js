@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		display: 'flex',
 		width: '100%'
+		// flexBasis: '50%' // CHANGE THIS FULL VIEW
 	},
 	row: {
 		padding: 15,
@@ -93,12 +94,13 @@ class Users extends React.Component {
 		const { answer } = this.props;
 		answer(false);
 	}
-	calculateHeights() {
-		const { containerHeight, mobile, incomingCall } = this.props;
-		const callActions = containerHeight * actionHeightMultiplier;
-		const userList = containerHeight - callActions;
-		return { userList, callActions };
-	}
+	// REMOVE THIS
+	// calculateHeights() {
+	// 	const { containerHeight, mobile, incomingCall } = this.props;
+	// 	const callActions = containerHeight * actionHeightMultiplier;
+	// 	const userList = containerHeight - callActions;
+	// 	return { userList, callActions };
+	// }
 	render() {
 		const {
 			gotOnlineUsers,
@@ -135,7 +137,7 @@ class Users extends React.Component {
 		const friendList = (
 			<FriendList online={online} baseHeight={containerHeight}></FriendList>
 		);
-		const renderList = this.props.friendList ? friendList : userList; //userList;
+
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.userLayout}>

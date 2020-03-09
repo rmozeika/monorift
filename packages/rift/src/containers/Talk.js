@@ -47,6 +47,7 @@ class Adapter extends React.Component {
 		this.audioFileRef = React.createRef();
 		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
+		// this.getDisplayStyle = this.get
 	}
 	componentDidMount() {
 		// this.props.createPeerConn({
@@ -67,8 +68,11 @@ class Adapter extends React.Component {
 		const { audioRef, videoRef } = this;
 		const { conn } = peerStore;
 		const onTrack = e => {
+			debugger; //remove
 			const { mediaStreamConstraints } = this.props;
 			console.log('ONTRACK called', e);
+			console.log('on track ID', e.track.id);
+
 			if (mediaStreamConstraints.video) {
 				if (!(videoRef && videoRef.current)) {
 					return;
@@ -115,6 +119,7 @@ class Adapter extends React.Component {
 		};
 		stream.getTracks().forEach(track => {
 			console.log('adding track', 'from getMedia after call');
+			console.log('added track ID', track.id);
 			conn.addTrack(track, stream);
 		});
 	}
@@ -147,6 +152,7 @@ class Adapter extends React.Component {
 		const { peerStore, setPeerInitiator } = this.props;
 		await this.getMedia(constraints);
 		setPeerInitiator(true);
+		this.props.sendOffer({});
 	}
 	videoCall() {
 		const { peerStore } = this.props;
@@ -301,7 +307,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 const mapStateToProps = (state, ownProps) => {
 	const { call, view } = state;
-	const { mobile } = view;
+	const { mobile, tab } = view;
 	const { peerStore, constraints } = call;
 	const { created, handlersAttached, conn } = peerStore;
 	return {
@@ -309,7 +315,8 @@ const mapStateToProps = (state, ownProps) => {
 		conn,
 		peerConnStatus: { created, handlersAttached },
 		mediaStreamConstraints: constraints.mediaStream,
-		mobile
+		mobile,
+		tab
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AdapterWithStyles);

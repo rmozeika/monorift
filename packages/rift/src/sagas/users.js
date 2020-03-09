@@ -29,7 +29,7 @@ function* fetchUsers() {
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
 
-		yield put(Actions.fetchOnlineUsers());
+		// yield put(Actions.fetchOnlineUsers());
 	} catch (err) {
 		console.log(err);
 	}
@@ -142,6 +142,7 @@ function* initSocketSaga() {
 function* rootSaga() {
 	yield all([
 		initSocketSaga(),
+		onlineUsersSaga(),
 		fetchUsers(),
 		takeLatest(Actions.FETCH_USERS, fetchUsers),
 		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),

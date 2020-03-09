@@ -65,6 +65,7 @@ const CallActions = ({
 			status: 'danger'
 		}
 	];
+	// CHANGE THIS condense with func in Users
 	const heightMultiplier = incomingCall.pending ? 0.2 : 0.1;
 	const derivedHeight = baseHeight * heightMultiplier;
 	const activeButtons = buttons.filter(({ condition }) => condition);
@@ -93,22 +94,23 @@ const CallActions = ({
 			</Layout>
 		);
 	}
-	return (
-		<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
-			<Button style={styles.button} onPress={onPress}>
-				Talk
-			</Button>
-			{incomingCall && (
-				<Button style={styles.button} status="success" onPress={answer}>
-					Answer
-				</Button>
-			)}
-			{incomingCall && (
-				<Button style={styles.button} status="danger" onPress={reject}>
-					Reject
-				</Button>
-			)}
-		</Layout>
-	);
+	return null;
+	// return (
+	// 	<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
+	// 		<Button style={styles.button} onPress={onPress}>
+	// 			Talk
+	// 		</Button>
+	// 		{incomingCall && (
+	// 			<Button style={styles.button} status="success" onPress={answer}>
+	// 				Answer
+	// 			</Button>
+	// 		)}
+	// 		{incomingCall && (
+	// 			<Button style={styles.button} status="danger" onPress={reject}>
+	// 				Reject
+	// 			</Button>
+	// 		)}
+	// 	</Layout>
+	// );
 };
 export default CallActions;

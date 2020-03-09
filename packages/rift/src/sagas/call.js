@@ -80,7 +80,6 @@ const connect = () => {
 const createSocketChannel = socket =>
 	eventChannel(emit => {
 		const handler = (data, secondArg) => {
-			debugger; //remove
 			console.log('emitting message from socketchannel');
 			let msg = { message: data }; //from: this._id };
 			console.log('got message handler', msg);
@@ -116,16 +115,16 @@ function* initCallSaga() {
 	const socket = yield call(connect);
 	yield put(
 		Actions.createPeerConn({
-			iceServers: [
-				{
-					urls: 'stun:stun.l.google.com:19302'
-				},
-				{
-					urls: 'turn:monorift:78?transport=udp',
-					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
-					username: 'rtcpeer'
-				}
-			]
+			// iceServers: [
+			// 	{
+			// 		urls: 'stun:stun.l.google.com:19302'
+			// 	},
+			// 	{
+			// 		urls: 'turn:monorift:78?transport=udp',
+			// 		credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
+			// 		username: 'rtcpeer'
+			// 	}
+			// ]
 		})
 	);
 	const socketChannel = yield call(createSocketChannel, socket);
@@ -147,11 +146,9 @@ function* sendCandidateSaga(action) {
 	socket.emit('message', candidateToSend);
 }
 function* createPeerConnSaga(action) {
-	debugger; //remove
 	const { config } = action;
 	try {
 		const conn = new RTCPeerConnection(config);
-		debugger; //remove
 
 		yield put(Actions.setPeerConn(conn));
 
@@ -209,7 +206,6 @@ const start = async (conn, peerConstraints) => {
 };
 function addCandidate(candidate) {}
 function* gotMessageSaga({ message, constraints, from }) {
-	debugger; //
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator } = peerStore;
 	console.log('GOT_MESSAGE', message);
@@ -235,6 +231,22 @@ function* gotMessageSaga({ message, constraints, from }) {
 		console.log('put setting remote');
 		console.log('GOT_MESSAGE', 'creating answer');
 		yield put(setIncomingCall(from));
+
+		// ADD REMOVE LATER
+		// console.log('GOT_MESSAGE', 'creating answer');
+		// const answer = yield conn.createAnswer().catch(e => {
+		// 	console.log(e);
+		// 	debugger; //error
+		// });
+		// console.log('GOT_MESSAGE', 'setting local desc');
+
+		// yield conn.setLocalDescription(answer);
+		// // socket.emit('message', conn.localDescription);
+		// console.log('GOT_MESSAGE', 'sending answer');
+		// const desc = conn.localDescription;
+		// const sendBackTo = from;
+		// socket.emit('message', desc, { users: [from] });
+		// ^ ADD REMOVE LATER
 	} else if (message.type === 'answer') {
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
 		yield conn
@@ -283,6 +295,7 @@ function* incomingCallSaga(incomingCall) {
 	// socket.emit('message', desc, { users: [from] });
 }
 function* answerCallSaga({ payload: answered }) {
+	debugger; //remove
 	if (!answered) {
 		return; // reject call action
 	}
@@ -300,6 +313,14 @@ function* answerCallSaga({ payload: answered }) {
 	const desc = conn.localDescription;
 	const sendBackTo = from;
 	socket.emit('message', desc, { users: [from] });
+	// put(Actions.)
+
+	// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
+
+	// stream.getTracks().forEach(track => {
+	// 	console.log('adding track', 'from message start func');
+	// 	conn.addTrack(track, stream);
+	// });
 }
 
 function* rootSaga() {

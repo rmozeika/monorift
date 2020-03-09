@@ -92,7 +92,6 @@ class UsersList extends React.Component {
 		this.props.setTabView(2);
 	}
 	onAdd(index) {
-		debugger; //remove
 		const { addToCall } = this.props;
 		const user = this.getUserFromIndex(index);
 		addToCall(index, user);
@@ -114,6 +113,13 @@ class UsersList extends React.Component {
 	}
 	getUserFromIndex(index) {
 		return this.props.orderedUsers[index];
+	}
+	calculateHeights() {
+		const { mobile, baseHeight, incomingCallPending } = this.props;
+		const extraSpace = incomingCallPending ? 0.1 : 0;
+		const baseHeightMultiplier = mobile ? 0.9 : 1;
+		const heightMultiplier = baseHeightMultiplier - extraSpace;
+		return baseHeight * heightMultiplier;
 	}
 	render() {
 		const {
@@ -196,11 +202,8 @@ class UsersList extends React.Component {
 				/>
 			);
 		};
-		const heightMultiplier = incomingCallPending ? 0.8 : 0.9;
-		const derivedHeight = baseHeight * heightMultiplier;
-		// const orderedUsers =
-		// 	users && users.online ? users.online.concat(users.offline) : [];
-		// this.setState({ orderedUsers });
+
+		const derivedHeight = this.calculateHeights();
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<List

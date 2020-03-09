@@ -74,7 +74,6 @@ export const peerStore = (state = [], action = {}) => {
 		case CREATE_PEER_CONN:
 			return { ...state, created: 0.5, config: action.config || {} };
 		case SET_PEER_CONN:
-			debugger; //remove
 			return { ...state, created: true, conn: action.conn };
 		case HANDLERS_SET:
 			return { ...state, handlersAttached: true };

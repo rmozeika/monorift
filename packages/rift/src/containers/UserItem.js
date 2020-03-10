@@ -3,6 +3,8 @@ import { StyleSheet } from 'react-native';
 import { ListItem, List } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
+import { getUser } from '../selectors/users';
+
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 8,
@@ -26,48 +28,48 @@ class UserItem extends React.PureComponent {
 		super(props);
 		this.addUserToCall = this.addUserToCall.bind(this);
 	}
-	addUserToCall() {
+	addUserToCall(index) {
 		const { user, addToCall } = this.props;
-		addToCall();
+		addToCall(index, user);
 	}
 	render() {
-		debugger; //remove
-		const { user: username, index, onAdd, themedStyle } = this.props;
+		// debugger; //remove
+		const { username, index, themedStyle, user } = this.props;
 		// return (<ListItem title={item.username} />);
 		// renderItem({ item: user, index }) {
 		console.log(username);
 		// const { themedStyle, onAdd } = this.props;
 		console.log('render item', username);
-		// const { username, src = {} } = user;
-		// const { displayName = '' } = src;
+		const { src = {} } = user;
+		const { displayName = '' } = src;
 		const iconColor = themedStyle['iconOnline'].color;
 		const border = {};
 		// const border = user.checked ? { borderWidth: 2, borderColor: iconColor } : {};
-		debugger; //
+		// debugger; //
 		return (
 			// <TouchableOpacity onPress={this.onAdd}>
 
 			<ListItem
 				title={username}
 				// title={`${username}`}
-				// description={`${displayName}`}
+				description={`${displayName}`}
 				// icon={renderItemIcon}
 				key={index}
 				// accessory={renderItemAccessory}
 				style={[styles.listItem, border]}
-				// onClick={() => onAdd(index)}
+				onClick={() => this.addUserToCall(index)}
 			/>
 			// </TouchableOpacity>
 		);
 	}
 }
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, props) => {
 	// const { }
 	return {
-		// prop: state.prop
+		user: getUser(state, props)
 	};
 };
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
 	return {
 		addToCall: (index, user) => dispatch(Actions.addToCall(index, user))
 		// dispatch(actionCreator)

@@ -158,14 +158,11 @@ class UsersList extends React.Component {
 		return baseHeight * heightMultiplier;
 	}
 	renderItem({ item: user, index, ...restProps }) {
-		debugger; //remove
-		// console.log(restProps, otherProps);
-		// const user =
 		if (true == true) {
 			return (
 				<UserItem
 					themedStyle={this.props.themedStyle}
-					user={user}
+					username={user}
 					index={index}
 					onAdd={this.onAdd}
 					{...restProps}
@@ -253,11 +250,9 @@ class UsersList extends React.Component {
 	}
 	render() {
 		const {
-			online,
 			themedStyle,
 			baseHeight,
 			incomingCallPending,
-			friends,
 			users
 			// orderedUsers
 		} = this.props;
@@ -388,7 +383,7 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	}
 }));
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
 	return {
 		setTabView: tab => dispatch(Actions.setTabView(tab)),
 		addToCall: (index, user) => dispatch(Actions.addToCall(index, user)),
@@ -398,10 +393,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		removeFriend: user => dispatch(Actions.removeFriend(user))
 	};
 };
-const mapStateToProps = (state, ownProps) => {
-	const { view, peerStore, users } = state;
+const mapStateToProps = state => {
+	const { view } = state;
 	const { tab, mobile } = view;
-	const visibleUsers = UserSelectors.getVisibleUsers(state);
+	const visibleUsers = UserSelectors.getVisibleUsers(state) || [];
 	// const orderedUsers =
 	// 	visibleUsers && visibleUsers.online
 	// 		? visibleUsers.online.concat(visibleUsers.offline)
@@ -410,7 +405,7 @@ const mapStateToProps = (state, ownProps) => {
 		tab,
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
-		friends: users.friends,
+		// friends: users.friends,
 		users: visibleUsers
 		// orderedUsers
 	};

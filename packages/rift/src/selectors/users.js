@@ -62,3 +62,26 @@ export const getVisibleUsers = createSelector(
 // export const getNonFriendUsers = (state) => {
 
 // }
+import createCachedSelector from 're-reselect';
+const getUserByUsername = (state, props) => state.users.byId[props.username];
+
+// const getUserData = state => state.world;
+export const getUser = createCachedSelector([getUserByUsername], users => {
+	return users;
+})(
+	/*
+	 * Re-reselect resolver function.
+	 * Cache/call a new selector for each different "listId"
+	 */
+	(state, props) => props.username
+);
+// const getCountryData = createCachedSelector(
+//   getUsers,
+//   (state, country) => country,
+//   (world, country) => extractData(world, country),
+// )(
+//   (state, country) => country, // Cache selectors by country name
+// );
+
+// const afghanistan = getCountryData(state, 'afghanistan');
+// const zimbabwe = getCountryData(state, 'zimbawe');

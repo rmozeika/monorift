@@ -16,10 +16,10 @@ const sortOnlineOffline = (users, usernames) => {
 		// console.log(acc);
 		const user = users[username];
 		if (user.online) {
-			onlineOffline.online.push(user);
+			onlineOffline.online.push(username);
 			return;
 		}
-		onlineOffline.offline.push(user);
+		onlineOffline.offline.push(username);
 	});
 	return onlineOffline;
 };
@@ -46,22 +46,19 @@ export const getVisibleUsers = createSelector(
 				return friendsOnlineOffline;
 			case 'users':
 				if (!didGetOnline) {
-					debugger; //remove
 					return usersOnlineOfflineBase;
 				}
-				debugger; //remove
 				const usernames = Object.keys(users);
 				const nonFriendUsernames = isLoggedIn
 					? usernames.filter(username => !users[username].isFriend)
 					: usernames;
-				const usersOnlineOffline = sortOnlineOffline(users, nonFriendUsernames);
-				return usersOnlineOffline;
-			// Object.keys(users)
-			//     .filter(user => user.online);
+				const visibleUsers = sortOnlineOffline(users, nonFriendUsernames);
+				return visibleUsers.online.concat(visibleUsers.offline);
 		}
 	}
 );
-
+// const getAllIds = state => state.users.allIds;
+// const getAllIds = createSelector([getAllIds])
 // export const getNonFriendUsers = (state) => {
 
 // }

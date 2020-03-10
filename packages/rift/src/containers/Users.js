@@ -137,19 +137,20 @@ class Users extends React.Component {
 		const friendList = (
 			<FriendList online={online} baseHeight={containerHeight}></FriendList>
 		);
+		// REACTIVATE call actions
 
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.userLayout}>
 					{friendList}
-					<CallActions
+					{/* <CallActions
 						onPress={this.goTalk}
 						themedStyle={themedStyle.buttonRow}
 						incomingCall={incomingCall}
 						answer={this.answer}
 						reject={this.reject}
 						baseHeight={containerHeight}
-					/>
+					/> */}
 				</Layout>
 			</Layout>
 		);

@@ -40,6 +40,7 @@
 		"metro-react-native-babel-preset": "^0.56.0",
 		"mongodb": "^3.3.2",
 		"postcss": "^7.0.18",
+		"re-reselect": "^3.4.0",
 		"react": "^16.10.2",
 		"react-dom": "^16.10.2",
 		"react-individual-character-input-boxes": "^1.0.1-0",

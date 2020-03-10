@@ -68,7 +68,6 @@ class Adapter extends React.Component {
 		const { audioRef, videoRef } = this;
 		const { conn } = peerStore;
 		const onTrack = e => {
-			debugger; //remove
 			const { mediaStreamConstraints } = this.props;
 			console.log('ONTRACK called', e);
 			console.log('on track ID', e.track.id);

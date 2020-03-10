@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Button } from 'react-native-ui-kitten';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Button, Icon } from 'react-native-ui-kitten';
 
 const style = StyleSheet.create({
 	flex: 1
@@ -21,6 +21,29 @@ export default ({ index, checked, onRemove, onAdd, otherStyles }) => {
 	const { text, ...restProps } = checked
 		? buttonProps['remove']
 		: buttonProps['add'];
+
+	const addIcon = () => {
+		return (
+			<Icon
+				// {...style2}
+				// style={{ color: themedStyle.icons.color }}
+				name="circle"
+				solid
+				color={'rgb(0, 224, 150)'}
+			/>
+		);
+	};
+	if (true == true) {
+		return null;
+	}
+	return (
+		<TouchableOpacity
+			style={{ position: 'absolute', height: '100%', width: '100%' }}
+		></TouchableOpacity>
+	);
+	// return (
+	// 	<Button icon={addIcon} appearance="ghost" style={[style, otherStyles]} {...restProps} />
+	// )
 	return (
 		<Button appearance="outline" style={[style, otherStyles]} {...restProps}>
 			{text}

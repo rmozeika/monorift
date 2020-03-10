@@ -37,7 +37,7 @@ class UserItem extends React.PureComponent {
 		// renderItem({ item: user, index }) {
 		console.log(username);
 		// const { themedStyle, onAdd } = this.props;
-		console.log('render item', user);
+		console.log('render item', username);
 		// const { username, src = {} } = user;
 		// const { displayName = '' } = src;
 		const iconColor = themedStyle['iconOnline'].color;
@@ -48,14 +48,14 @@ class UserItem extends React.PureComponent {
 			// <TouchableOpacity onPress={this.onAdd}>
 
 			<ListItem
-				title={user}
+				title={username}
 				// title={`${username}`}
 				// description={`${displayName}`}
 				// icon={renderItemIcon}
 				key={index}
 				// accessory={renderItemAccessory}
 				style={[styles.listItem, border]}
-				onClick={() => onAdd(index)}
+				// onClick={() => onAdd(index)}
 			/>
 			// </TouchableOpacity>
 		);

@@ -22,7 +22,11 @@ export const initialState = {
 	},
 	friends: [],
 	byId: {},
-	allIds: [],
+	allIds: {
+		master: [],
+		online: [],
+		offline: []
+	},
 	queued: []
 };
 const onlineUsers = (state, action) => {};
@@ -158,15 +162,34 @@ export const byId = (state = {}, action) => {
 	return resultProduce;
 };
 
-export const allIds = (state = [], action) => {
+export const allIds = (state = {}, action) => {
 	switch (action.type) {
 		case SET_USERS:
 			const ids = action.payload.map(user => user.username);
-			return [...ids];
+			return { master: [...ids] };
+		// CHANGE THIS! MERGE THIS WITH ONLINE
+		case SET_ONLINE_USERS:
+			// action.payload.reduce((acc, onlineUser => {
+
+			// }));
+			const online = [];
+			const offline = [];
+			state.master.forEach(username => {
+				const isOnline = action.payload.some(
+					onlineUser => username == onlineUser.username
+				);
+				if (isOnline) {
+					online.push(username);
+					return;
+				}
+				offline.push(username);
+			});
+			return { ...state, online, offline };
 		default:
 			return state;
 	}
 };
+// orderedUsers()
 
 const usersReducer = combineReducers({
 	status,

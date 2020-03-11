@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { ListItem, List } from 'react-native-ui-kitten';
+import { ListItem, Icon, Layout } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import { getUser } from '../selectors/users';
+import AddToCallButton from '../components/buttons/AddToCall';
+import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
 
 const styles = StyleSheet.create({
 	listItem: {
@@ -21,45 +23,134 @@ const styles = StyleSheet.create({
 		// shadowOffset: { width: 0, height: 1 },
 		// shadowOpacity: 0.8,
 		// shadowRadius: 1,
+	},
+	button: {
+		flex: 1
+	},
+	pseudoButtonGroup: {
+		maxWidth: '50%',
+		display: 'flex'
 	}
 });
 class UserItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.addUserToCall = this.addUserToCall.bind(this);
+		this.removeUserFromCall = this.removeUserFromCall.bind(this);
+		this.renderItemAccessory = this.renderItemAccessory.bind(this);
+		this.renderItemIcon = this.renderItemIcon.bind(this);
+		this.addFriend = this.addFriend.bind(this);
+		this.removeFriend = this.removeFriend.bind(this);
 	}
-	addUserToCall(index) {
-		const { user, addToCall } = this.props;
+	addFriend() {
+		const { addFriend, user } = this.props;
+		addFriend(user);
+	}
+	removeFriend() {
+		const { removeFriend, user } = this.props;
+		removeFriend(user);
+	}
+	addUserToCall() {
+		const { user, addToCall, index } = this.props;
 		addToCall(index, user);
 	}
+	removeUserFromCall() {
+		const { user, removeFromCall, index } = this.props;
+		removeFromCall(index, user);
+	}
+	renderItemAccessory(style, index) {
+		const { user, themedStyle } = this.props;
+		const buttonStyleAlt = [style, styles.button];
+		const renderButtons = [];
+		const { isFriend } = user;
+		// if (!user.isFriend) {
+		return (
+			<AddRemoveFriendButton
+				onAdd={this.addFriend}
+				removeFriend={this.removeFriend}
+				isFriend={isFriend}
+				style={buttonStyleAlt}
+			/>
+		);
+		// }
+		if (false == false) {
+			return <Layout></Layout>;
+		}
+		// if (user.isFriend || !user.isFriend) {
+		// 	renderButtons.push(
+		// 		<AddToCallButton
+		// 			checked={user.checked}
+		// 			onAdd={this.onAdd}
+		// 			onRemove={this.onRemove}
+		// 			otherStyles={style}
+		// 			key={`callbutton${index}`}
+		// 			index={index}
+		// 		/>
+		// 	);
+		// }
+		// else {
+		// 	renderButtons.push(
+		// 		<AddRemoveFriendButton
+		// 			friend={false}
+
+		// 		/>
+		// 	)
+		// }
+		return (
+			<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
+				{renderButtons.map(button => button)}
+			</Layout>
+		);
+	}
+	renderItemIcon(style, index) {
+		const { themedStyle, user } = this.props;
+		console.log(style, index);
+
+		const style2 = {
+			width: 5, //style.width, // CHANGE THIS
+			height: 5, //style.height, // CHANGE
+			// marginHorizontal: style.marginHorizontal
+			margin: 0
+			// color: 'black'
+			// color: themedStyle.icons.color,
+			// backgroundColor: themedStyle.icons.color,
+		};
+		const iconKey = user.online ? 'iconOnline' : 'iconOffline';
+		const iconColor = themedStyle[iconKey].color;
+		return (
+			<Icon
+				{...style2}
+				// style={{ color: themedStyle.icons.color }}
+				name="circle"
+				solid
+				color={iconColor}
+			/>
+		);
+	}
 	render() {
-		// debugger; //remove
 		const { username, index, themedStyle, user } = this.props;
-		// return (<ListItem title={item.username} />);
-		// renderItem({ item: user, index }) {
 		console.log(username);
-		// const { themedStyle, onAdd } = this.props;
 		console.log('render item', username);
-		const { src = {} } = user;
+		const { src = {}, checked } = user;
 		const { displayName = '' } = src;
 		const iconColor = themedStyle['iconOnline'].color;
-		const border = {};
-		// const border = user.checked ? { borderWidth: 2, borderColor: iconColor } : {};
-		// debugger; //
+		const border = user.checked ? { borderWidth: 2, borderColor: iconColor } : {};
+		const otherProps = {};
+		if (!user.isFriend) {
+			otherProps['accessory'] = this.renderItemAccessory;
+		}
 		return (
-			// <TouchableOpacity onPress={this.onAdd}>
-
 			<ListItem
 				title={username}
 				// title={`${username}`}
 				description={`${displayName}`}
-				// icon={renderItemIcon}
+				icon={this.renderItemIcon}
 				key={index}
-				// accessory={renderItemAccessory}
+				// { ...otherProps }
+				accessory={this.renderItemAccessory}
 				style={[styles.listItem, border]}
-				onClick={() => this.addUserToCall(index)}
+				onClick={checked ? this.removeUserFromCall : this.addUserToCall}
 			/>
-			// </TouchableOpacity>
 		);
 	}
 }
@@ -71,7 +162,11 @@ const mapStateToProps = (state, props) => {
 };
 const mapDispatchToProps = dispatch => {
 	return {
-		addToCall: (index, user) => dispatch(Actions.addToCall(index, user))
+		addToCall: (index, user) => dispatch(Actions.addToCall(index, user)),
+		removeFromCall: (index, user) =>
+			dispatch(Actions.removeFromCall(index, user)),
+		addFriend: user => dispatch(Actions.addFriend(user)),
+		removeFriend: user => dispatch(Actions.removeFriend(user))
 		// dispatch(actionCreator)
 	};
 };

@@ -27,10 +27,23 @@ const usersOnlineOfflineBase = {
 	online: [],
 	offline: []
 };
+
+export const sortOnline = createSelector([getUsers], users => {
+	return Object.keys(users);
+});
+export const onlineUsernames = state => state.users.allIds.online;
+export const offlineUsernames = state => state.users.allIds.offline;
+
+export const getOnlineOfflineUsernames = createSelector(
+	[onlineUsernames, offlineUsernames],
+	(online, offline) => {
+		return online.concat(offline);
+	}
+);
 export const getVisibleUsers = createSelector(
 	// [getTab, getUsers, loggedIn],
 	// (tab, users, isLoggedIn) => {
-	[getTab, getUsers, gotOnline, gotFriends, loggedIn],
+	[getTab, getOnlineOfflineUsernames, gotOnline, gotFriends, loggedIn],
 	(tab, users, didGetOnline, didGetFriends, isLoggedIn) => {
 		// CHANGE THIS spaghetti code
 		const tabTypeOffset = isLoggedIn ? 0 : 1;
@@ -38,6 +51,9 @@ export const getVisibleUsers = createSelector(
 		switch (tabType) {
 			case 'friends':
 				if (!didGetFriends || !didGetOnline) return usersOnlineOfflineBase;
+				if (true == true) {
+					return users;
+				}
 				const friendsUsernames = Object.keys(users).filter(
 					username => users[username].isFriend
 				);
@@ -46,9 +62,10 @@ export const getVisibleUsers = createSelector(
 				return friendsOnlineOffline;
 			case 'users':
 				if (!didGetOnline) {
-					return usersOnlineOfflineBase;
+					return []; // usersOnlineOfflineBase;
 				}
-				const usernames = Object.keys(users);
+				return users;
+				// REMOVE
 				const nonFriendUsernames = isLoggedIn
 					? usernames.filter(username => !users[username].isFriend)
 					: usernames;

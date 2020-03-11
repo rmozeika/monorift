@@ -71,6 +71,7 @@ function createIconsMap() {
 		'sign-out-alt': IconProvider('sign-out-alt'),
 		bars: IconProvider('bars'),
 		user: IconProvider('user'),
-		circle: IconProvider('circle')
+		circle: IconProvider('circle'),
+		friend: IconProvider('user-plus')
 	};
 }

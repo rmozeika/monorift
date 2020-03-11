@@ -10,8 +10,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
-import UserList from './UsersList';
-import FriendList from './FriendList';
+import UsersList from './UsersList';
 
 import CallActions from '../components/buttons/CallActions';
 
@@ -102,13 +101,7 @@ class Users extends React.Component {
 	// 	return { userList, callActions };
 	// }
 	render() {
-		const {
-			gotOnlineUsers,
-			online,
-			themedStyle,
-			mobile,
-			incomingCall
-		} = this.props;
+		const { gotOnlineUsers, themedStyle, mobile, incomingCall } = this.props;
 		const { containerHeight } = this.state;
 
 		if (containerHeight == null) {
@@ -131,26 +124,19 @@ class Users extends React.Component {
 				</Layout>
 			);
 		}
-		const userList = (
-			<UserList online={online} baseHeight={containerHeight}></UserList>
-		);
-		const friendList = (
-			<FriendList online={online} baseHeight={containerHeight}></FriendList>
-		);
-		// REACTIVATE call actions
 
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.userLayout}>
-					{friendList}
-					{/* <CallActions
+					<UsersList baseHeight={containerHeight}></UsersList>
+					<CallActions
 						onPress={this.goTalk}
 						themedStyle={themedStyle.buttonRow}
 						incomingCall={incomingCall}
 						answer={this.answer}
 						reject={this.reject}
 						baseHeight={containerHeight}
-					/> */}
+					/>
 				</Layout>
 			</Layout>
 		);
@@ -173,14 +159,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 const mapStateToProps = (state, ownProps) => {
 	const { users, view, call } = state;
-	const { online } = users;
-	const { gotOnlineUsers } = online;
+	// const { online } = users;
+	const { gotOnlineUsers } = users.online;
 	const { mobile } = view;
 
 	const { incomingCall } = call.peerStore;
 
 	return {
-		online: online.users,
+		// online: online.users,
 		gotOnlineUsers,
 		mobile,
 		incomingCall

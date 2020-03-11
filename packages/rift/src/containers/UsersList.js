@@ -1,10 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import * as Selectors from '../selectors';
-import * as CallSelectors from '../selectors/call';
-import AddToCallButton from '../components/buttons/AddToCall';
 import {
 	Layout,
 	Text,
@@ -17,7 +12,15 @@ import {
 	withStyles,
 	Toggle
 } from 'react-native-ui-kitten';
+import { connect } from 'react-redux';
+import * as Actions from '../actions';
+import * as Selectors from '../selectors';
+import * as CallSelectors from '../selectors/call';
+import * as UserSelectors from '../selectors/users';
+import UserItem from './UserItem';
+
 import { loadData } from '@src/actions';
+import AddRemoveFriend from '@src/components/buttons/AddRemoveFriend';
 const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
@@ -28,7 +31,7 @@ const styles = StyleSheet.create({
 	},
 	userListLayout: {
 		width: '100%',
-		overflowY: 'scroll',
+		// overflowY: 'scroll',
 		height: '80vh'
 	},
 	row: {
@@ -61,125 +64,172 @@ const styles = StyleSheet.create({
 	button: {
 		flex: 1
 	},
+	// REMOVE
 	buttonBottom: {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
+	// REMOVE
 	pseudoButtonGroup: {
 		maxWidth: '50%',
 		display: 'flex'
+	},
+	list: {
+		width: '100%'
+	},
+	listContentContainer: {
+		// flexShrink: 1,
+		// flexDirection: 'row',
+		// flexWrap: 'wrap',
+		justifyContent: 'space-between'
+	},
+	// REMOVe
+	listItem: {
+		margin: 8,
+		borderRadius: 12,
+		boxShadow: `-8px 8px 16px #111522, 8px -8px 16px #334168;`,
+		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
+		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
+
+		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
+		flexBasis: '45%',
+		flexGrow: 1
+		// flexShrink: 1
+		// shadowColor: '#000',
+		// shadowOffset: { width: 0, height: 1 },
+		// shadowOpacity: 0.8,
+		// shadowRadius: 1,
+	},
+	columnWrapper: {
+		flexBasis: 100,
+		flexGrow: 1,
+		flexShrink: 1
 	}
 });
-class UsersList extends React.Component {
+class UsersList extends React.PureComponent {
 	constructor(props) {
 		super();
-		this.state = {
-			checked: [false]
-		};
-		this.onAdd = this.onAdd.bind(this);
-		this.onRemove = this.onRemove.bind(this);
-	}
-	setChecked(index, vale) {}
-	onPressedCall(index, type) {
-		console.log('clicked!');
+		this.renderItem = this.renderItem.bind(this);
 	}
 	goTalk() {
 		console.log('UsersList');
 		this.props.setTabView(2);
 	}
-	onAdd(index, val) {
-		const { addToCall } = this.props;
-		addToCall(index);
-	}
-	onRemove(index, val) {
+	onRemove(index) {
 		const { removeFromCall } = this.props;
-		removeFromCall(index);
+		const user = this.getUserFromIndex(index);
+		removeFromCall(index, user);
 	}
+	// REMOVE
+	addFriend(index) {
+		const { addFriend } = this.props;
+		const user = this.getUserFromIndex(index);
+		addFriend(user);
+	}
+	// REMOVE
+
+	removeFriend(index) {
+		const { removeFriend } = this.props;
+		const user = this.getUserFromIndex(index);
+		removeFriend(user);
+	}
+	// REMOVE
+
+	getUserFromIndex(index) {
+		return this.props.users[index];
+	}
+	calculateHeights() {
+		const { mobile, baseHeight, incomingCallPending } = this.props;
+		const extraSpace = incomingCallPending ? 0.1 : 0;
+		const baseHeightMultiplier = mobile ? 0.9 : 1;
+		const heightMultiplier = baseHeightMultiplier - extraSpace;
+		return baseHeight * heightMultiplier;
+	}
+	renderItem({ item: user, index, ...restProps }) {
+		return (
+			<UserItem
+				themedStyle={this.props.themedStyle}
+				username={user}
+				index={index}
+				{...restProps}
+			/>
+		);
+	}
+	// // REMOVE
+	// renderItemAccessory(style, index) {
+	// 	const buttonStyleAlt = [style, styles.button];
+	// 	const { checked } = this.state;
+	// 	const renderButtons = [];
+	// 	const user = this.getUserFromIndex(index);
+	// 	if (user.isFriend || !user.isFriend) {
+	// 		renderButtons.push(
+	// 			<AddToCallButton
+	// 				checked={user.checked}
+	// 				onRemove={this.onRemove}
+	// 				otherStyles={style}
+	// 				key={`callbutton${index}`}
+	// 				index={index}
+	// 			/>
+	// 		);
+	// 	}
+	// 	// else {
+	// 	// 	renderButtons.push(
+	// 	// 		<AddRemoveFriendButton
+	// 	// 			friend={false}
+
+	// 	// 		/>
+	// 	// 	)
+	// 	// }
+	// 	return (
+	// 		<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
+	// 			{renderButtons.map(button => button)}
+	// 		</Layout>
+	// 	);
+	// }
+	// // REMOVE
+	// renderItemIcon(style, index) {
+	// 	const { themedStyle } = this.props;
+	// 	console.log(style, index);
+	// 	const user = this.getUserFromIndex(index);
+
+	// 	const style2 = {
+	// 		width: 5, //style.width, // CHANGE THIS
+	// 		height: 5, //style.height, // CHANGE
+	// 		// marginHorizontal: style.marginHorizontal
+	// 		margin: 0
+	// 		// color: 'black'
+	// 		// color: themedStyle.icons.color,
+	// 		// backgroundColor: themedStyle.icons.color,
+	// 	};
+	// 	const iconKey = user.online ? 'iconOnline' : 'iconOffline';
+	// 	const iconColor = themedStyle[iconKey].color;
+	// 	return (
+	// 		<Icon
+	// 			{...style2}
+	// 			// style={{ color: themedStyle.icons.color }}
+	// 			name="circle"
+	// 			solid
+	// 			color={iconColor}
+	// 		/>
+	// 	);
+	// }
 	render() {
-		const { online, themedStyle, baseHeight, incomingCallPending } = this.props;
-		const renderItemAccessory = (style, index) => {
-			const buttonStyleAlt = [style, styles.button];
-			const { checked } = this.state;
-			const createAddFunc = thisIndex => {
-				function callAdd() {
-					this.onAdd(thisIndex);
-				}
-				return callAdd.bind(this);
-			};
+		const { themedStyle, baseHeight, incomingCallPending, users } = this.props;
 
-			let taskButton;
-
-			if (online[index].checked) {
-				taskButton = (
-					<Button
-						onPress={() => this.onRemove(index)}
-						appearance="outline"
-						status="danger"
-						style={buttonStyleAlt}
-					>
-						Remove
-					</Button>
-				);
-			} else {
-				taskButton = (
-					<Button
-						status="success"
-						appearance="outline"
-						onPress={() => this.onAdd(index)}
-						style={buttonStyleAlt}
-					>
-						Add
-					</Button>
-				);
-			}
-			return (
-				<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
-					{/* // more buttons here (add friend) */}
-					{taskButton}
-				</Layout>
-			);
-		};
-
-		const renderItemIcon = style => {
-			console.log(style);
-			const style2 = {
-				width: style.width,
-				height: style.height,
-				marginHorizontal: style.marginHorizontal,
-				color: 'black'
-			};
-			return (
-				<Icon
-					{...style2}
-					style={{ color: themedStyle.icons.color }}
-					name="user"
-					solid
-					fill="#3366FF"
-				/>
-			);
-		};
-		const renderItem = ({ item: user, index }) => {
-			console.log(user);
-			const { username } = user;
-			return (
-				<ListItem
-					title={`${username}`}
-					description={`${'Call'} ${index + 1}`}
-					icon={renderItemIcon}
-					accessory={renderItemAccessory}
-				/>
-			);
-		};
-		const { mobile } = this.props;
-		const heightMultiplier = incomingCallPending ? 0.8 : 0.9;
-		const derivedHeight = baseHeight * heightMultiplier;
+		const derivedHeight = this.calculateHeights();
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<List
-					data={online}
-					renderItem={renderItem}
-					style={{ width: '100%', flexShrink: 1 }}
+					data={users}
+					renderItem={this.renderItem}
+					// renderItem={UserItem}
+					style={styles.list}
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={styles.listContentContainer}
+					// horizontal={true}
+					numColumns={2}
+					columnWrapperStyle={styles.columnWrapper}
 				/>
 			</Layout>
 		);
@@ -191,9 +241,15 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
 	},
-	icons: {
+	iconOnline: {
 		backgroundColor: theme['color-primary-100'],
-		color: theme['color-basic-800']
+		// color: theme['color-basic-800']
+		color: theme['color-success-500']
+	},
+	iconOffline: {
+		backgroundColor: theme['color-primary-100'],
+		// color: theme['color-basic-800']
+		color: theme['color-success-500'] // CHANGE THIS!
 	},
 	container: { backgroundColor: '#1A2138' },
 	action: { marginHorizontal: 4 },
@@ -206,24 +262,30 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	}
 }));
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
 	return {
-		setTabView: tab => dispatch(Actions.setTabView(tab)),
-		addToCall: index => dispatch(Actions.addToCall(index)),
-		removeFromCall: index => dispatch(Actions.removeFromCall(index))
+		setTabView: tab => dispatch(Actions.setTabView(tab))
 	};
 };
-const mapStateToProps = (state, ownProps) => {
-	const { view, peerStore, users } = state;
+const mapStateToProps = state => {
+	const { view } = state;
 	const { tab, mobile } = view;
+	const visibleUsers = UserSelectors.getVisibleUsers(state) || [];
 	return {
 		tab,
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
-		friends: users.friends
+		users: visibleUsers
 	};
 };
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(UsersListWithStyles);
+
+// RMEMOVE THIS, change talk button to this
+// const = `border-radius: 50px;
+// background: linear-gradient(315deg, #376dff, #2e5ce6);
+// box-shadow:  -14px -14px 28px #1f3e9c,
+//              14px 14px 28px #478eff;
+// `

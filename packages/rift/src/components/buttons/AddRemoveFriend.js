@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { Button } from 'react-native-ui-kitten';
-
-export default ({ isFriend, onRemove, onAdd }) => {
+import { Button, Icon } from 'react-native-ui-kitten';
+import { StyleSheet } from 'react-native';
+const AddFriendIcon = style => <Icon name="friend" />;
+const styles = StyleSheet.create({
+	button: {
+		flex: 0,
+		margin: 0,
+		marginRight: 4,
+		minWidth: 10
+	}
+});
+export default ({ isFriend, onRemove, onAdd, style }) => {
 	const buttonProps = {
 		remove: {
 			onPress: onRemove,
@@ -14,9 +23,17 @@ export default ({ isFriend, onRemove, onAdd }) => {
 			text: 'Add To Call'
 		}
 	};
-	const { text, ...restProps } = checked
+	const { text, ...restProps } = isFriend
 		? buttonProps['remove']
 		: buttonProps['add'];
+	return (
+		<Button
+			style={[style, styles.button]}
+			appearance="ghost"
+			status="success"
+			icon={AddFriendIcon}
+		></Button>
+	);
 	return (
 		<Button appearance="outline" style={buttonStyleAlt} {...restProps}>
 			{text}

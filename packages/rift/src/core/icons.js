@@ -124,7 +124,9 @@ function createIconsMap() {
 		user: IconProvider('user'),
 		circle: IconProvider('circle'),
 		friend: IconProvider('user-plus'),
-		activity: FeatherIconProvider('activity')
+		// activity: FeatherIconProvider('activity')
+		activity: FeatherIconProvider('smartphone')
+
 		// activity: IconProvider('user-plus'),
 	};
 }

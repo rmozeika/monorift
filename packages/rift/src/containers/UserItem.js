@@ -9,7 +9,7 @@ import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
 
 const styles = StyleSheet.create({
 	listItem: {
-		margin: 8,
+		margin: 4,
 		borderRadius: 12,
 		boxShadow: `-8px 8px 16px #111522, 8px -8px 16px #334168;`,
 		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
@@ -21,16 +21,17 @@ const styles = StyleSheet.create({
 		flexWrap: 'wrap',
 		display: 'flex',
 		flexDirection: 'row',
-		overflow: 'hidden'
+		overflow: 'hidden',
 		// flexShrink: 1
 		// shadowColor: '#000',
 		// shadowOffset: { width: 0, height: 1 },
 		// shadowOpacity: 0.8,
 		// shadowRadius: 1,
+		padding: 0
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
-		flexBasis: '100%',
+		flexBasis: '80%',
 		zIndex: 10
 	},
 	listItemTitle: {
@@ -48,23 +49,30 @@ const styles = StyleSheet.create({
 	iconContainer: {
 		position: 'absolute',
 		// left: '-100px'
-		left: '-190px'
+		left: '-180px'
 	},
 	activityContainer: {
 		position: 'absolute',
 		// left: '-100px'
-		left: '50%',
-		top: '50%'
+		left: '1%',
+		// top: '50%',
+		backgroundColor: 'inherit',
+		zIndex: 20,
+		top: '40%'
+		// left:
 	},
 	button: {
 		flex: 1
 	},
 	buttonContainer: {
-		position: 'absolute',
+		// position: 'absolute',
 		// right: '0px
-		left: '70%',
-		top: '0%',
-		height: '100%'
+		// left: '70%',
+		// right: '-5%',
+		// top: '0%',
+		height: '100%',
+		// width: '25%'
+		flexBasis: '20%'
 	},
 	pseudoButtonGroup: {
 		maxWidth: '50%',
@@ -196,27 +204,30 @@ class UserItem extends React.PureComponent {
 					key={index}
 					// { ...otherProps }
 					// accessory={this.renderItemAccessory}
-					style={[styles.listItem, border]}
+					style={[styles.listItem, border, { padding: 0 }]}
 					onClick={checked ? this.removeUserFromCall : this.addUserToCall}
 				>
 					<Layout style={styles.listItemMain}>
 						<Text style={styles.listItemTitle}>{username}</Text>
 					</Layout>
-					<Layout style={styles.activityContainer}>
-						<Icon
-							style={{}} // CHANGE THIS
-							// {...style2}
-							// style={{ color: themedStyle.icons.color }}
-							name="activity"
-							solid
-							size={20}
-							color={themedStyle['iconOnline'].color}
-						/>
-					</Layout>
-
-					<Layout style={styles.iconContainer}>
-						{this.renderItemIcon(styles.icon)}
-					</Layout>
+					{user.online && (
+						<Layout style={styles.activityContainer}>
+							<Icon
+								style={{}} // CHANGE THIS
+								// {...style2}
+								// style={{ color: themedStyle.icons.color }}
+								name="activity"
+								solid
+								size={20}
+								color={'#8CFAC7'}
+							/>
+						</Layout>
+					)}
+					{user.online && (
+						<Layout style={styles.iconContainer}>
+							{this.renderItemIcon(styles.icon)}
+						</Layout>
+					)}
 					<Layout style={styles.buttonContainer}>
 						<AddRemoveFriendButton
 							onAdd={this.addFriend}

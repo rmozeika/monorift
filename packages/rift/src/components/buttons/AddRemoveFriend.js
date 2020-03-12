@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
 	button: {
 		flex: 1,
 		margin: 0,
-		marginRight: 4,
+		marginRight: 0,
 		minWidth: 10,
 		height: '100%'
 	}
@@ -30,7 +30,6 @@ export default ({ isFriend, onRemove, onAdd, style }) => {
 	return (
 		<Button
 			style={[style, styles.button]}
-			// appearance="ghost"
 			status="success"
 			icon={AddFriendIcon}
 		></Button>

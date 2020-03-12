@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
 	},
 	// REMOVe
 	listItem: {
-		margin: 8,
+		margin: 2,
 		borderRadius: 12,
 		boxShadow: `-8px 8px 16px #111522, 8px -8px 16px #334168;`,
 		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,

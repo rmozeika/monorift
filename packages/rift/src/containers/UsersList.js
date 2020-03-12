@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
 		// flexShrink: 1,
 		// flexDirection: 'row',
 		// flexWrap: 'wrap',
+		order: -1,
 		justifyContent: 'space-between'
 	},
 	// REMOVe
@@ -244,7 +245,7 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	iconOnline: {
 		backgroundColor: theme['color-primary-100'],
 		// color: theme['color-basic-800']
-		color: theme['color-success-500']
+		color: theme['color-success-transparent-500']
 	},
 	iconOffline: {
 		backgroundColor: theme['color-primary-100'],

@@ -4,10 +4,11 @@ import { StyleSheet } from 'react-native';
 const AddFriendIcon = style => <Icon name="friend" />;
 const styles = StyleSheet.create({
 	button: {
-		flex: 0,
+		flex: 1,
 		margin: 0,
 		marginRight: 4,
-		minWidth: 10
+		minWidth: 10,
+		height: '100%'
 	}
 });
 export default ({ isFriend, onRemove, onAdd, style }) => {
@@ -29,7 +30,7 @@ export default ({ isFriend, onRemove, onAdd, style }) => {
 	return (
 		<Button
 			style={[style, styles.button]}
-			appearance="ghost"
+			// appearance="ghost"
 			status="success"
 			icon={AddFriendIcon}
 		></Button>

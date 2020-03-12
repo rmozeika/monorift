@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { ListItem, Icon, Layout } from 'react-native-ui-kitten';
+import { ListItem, Icon, Layout, Text } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import { getUser } from '../selectors/users';
@@ -17,15 +17,54 @@ const styles = StyleSheet.create({
 
 		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
 		flexBasis: '45%',
-		flexGrow: 1
+		flexGrow: 1,
+		flexWrap: 'wrap',
+		display: 'flex',
+		flexDirection: 'row',
+		overflow: 'hidden'
 		// flexShrink: 1
 		// shadowColor: '#000',
 		// shadowOffset: { width: 0, height: 1 },
 		// shadowOpacity: 0.8,
 		// shadowRadius: 1,
 	},
+	listItemMain: {
+		backgroundColor: 'inherhit',
+		flexBasis: '100%',
+		zIndex: 10
+	},
+	listItemTitle: {
+		fontSize: 13,
+		fontWeight: 600,
+		textAlign: 'center'
+	},
+	icon: {
+		width: 24,
+		height: 24,
+		marginHorizontal: 8,
+		tintColor: '#8F9BB3'
+		// position: 'absolute'
+	},
+	iconContainer: {
+		position: 'absolute',
+		// left: '-100px'
+		left: '-190px'
+	},
+	activityContainer: {
+		position: 'absolute',
+		// left: '-100px'
+		left: '50%',
+		top: '50%'
+	},
 	button: {
 		flex: 1
+	},
+	buttonContainer: {
+		position: 'absolute',
+		// right: '0px
+		left: '70%',
+		top: '0%',
+		height: '100%'
 	},
 	pseudoButtonGroup: {
 		maxWidth: '50%',
@@ -119,10 +158,12 @@ class UserItem extends React.PureComponent {
 		const iconColor = themedStyle[iconKey].color;
 		return (
 			<Icon
+				style={style} // CHANGE THIS
 				{...style2}
 				// style={{ color: themedStyle.icons.color }}
 				name="circle"
 				solid
+				size={200}
 				color={iconColor}
 			/>
 		);
@@ -139,10 +180,58 @@ class UserItem extends React.PureComponent {
 		if (!user.isFriend) {
 			otherProps['accessory'] = this.renderItemAccessory;
 		}
+		const listHeader = () => (
+			<Layout>
+				<Text>Header</Text>
+			</Layout>
+		);
+		const renderAlt = true;
+		if (renderAlt) {
+			return (
+				<ListItem
+					// title={username}
+					// title={`${username}`}
+					// description={`${displayName}`}
+					// icon={this.renderItemIcon}
+					key={index}
+					// { ...otherProps }
+					// accessory={this.renderItemAccessory}
+					style={[styles.listItem, border]}
+					onClick={checked ? this.removeUserFromCall : this.addUserToCall}
+				>
+					<Layout style={styles.listItemMain}>
+						<Text style={styles.listItemTitle}>{username}</Text>
+					</Layout>
+					<Layout style={styles.activityContainer}>
+						<Icon
+							style={{}} // CHANGE THIS
+							// {...style2}
+							// style={{ color: themedStyle.icons.color }}
+							name="activity"
+							solid
+							size={20}
+							color={themedStyle['iconOnline'].color}
+						/>
+					</Layout>
+
+					<Layout style={styles.iconContainer}>
+						{this.renderItemIcon(styles.icon)}
+					</Layout>
+					<Layout style={styles.buttonContainer}>
+						<AddRemoveFriendButton
+							onAdd={this.addFriend}
+							removeFriend={this.removeFriend}
+							isFriend={user.isFriend}
+							// style={buttonStyleAlt}
+						/>
+					</Layout>
+				</ListItem>
+			);
+		}
 		return (
 			<ListItem
 				title={username}
-				// title={`${username}`}
+				title={`${username}`}
 				description={`${displayName}`}
 				icon={this.renderItemIcon}
 				key={index}

@@ -12,7 +12,10 @@ import {
 	IconRegistry,
 	Layout
 } from 'react-native-ui-kitten';
-import { AwesomeIconsPack } from './core/icons';
+import {
+	AwesomeIconsPack
+	// FeatherIconsPack
+} from './core/icons';
 
 import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';

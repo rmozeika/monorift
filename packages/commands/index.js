@@ -1,8 +1,8 @@
 const rp2 = require('../rp2/api.js');
 const UserCommands = require('./users');
 // { getFriends, acceptFriend, addFriend }
-const hardCodedArgs = { repo: false, cmd: false };
-// const hardCodedArgs = { repo: 'users', cmd: 'addAllMockToFriends' };
+// const hardCodedArgs = { repo: false, cmd: false };
+const hardCodedArgs = { repo: 'users', cmd: 'createGravatar' };
 
 rp2
 	.init({})
@@ -18,8 +18,8 @@ rp2
 			return repo[hardCodedArgs.cmd || commandArg];
 		};
 		const cmd = parseArgs();
-
-		cmd()
+		cmd('robertmozeika', 'robertmozeika@gmail.com')
+			// cmd()
 			.then(users => {
 				console.log(users);
 			})

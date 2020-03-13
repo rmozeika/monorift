@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Text, Button, withStyles } from 'react-native-ui-kitten';
+import { Layout, Text, Button, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -23,6 +23,13 @@ const styles = StyleSheet.create({
 	row: {
 		padding: 15,
 		width: '100%'
+	},
+	callButtonContainer: {
+		flexDirection: 'row',
+		width: '100%'
+	},
+	callButton: {
+		flexBasis: '50%'
 	},
 	video: {
 		width: '100%'
@@ -193,9 +200,9 @@ class Adapter extends React.Component {
 	render() {
 		const { peerStore, peerConnStatus, themedStyle } = this.props;
 		const audio = (ref, onPress, key) => (
-			<Layout key={key} style={[styles.row, { padding: 2 }]}>
+			<Layout key={key} style={[styles.callButton]}>
 				{onPress ? (
-					<Button appearance="outline" onPress={onPress}>
+					<Button styleappearance="outline" onPress={onPress}>
 						Audio Call
 					</Button>
 				) : null}
@@ -204,7 +211,7 @@ class Adapter extends React.Component {
 		);
 		const video = (ref, onPress, key) => {
 			return (
-				<Layout key={key} style={[styles.row, { padding: 2 }]}>
+				<Layout key={key} style={[styles.callButton]}>
 					{onPress ? <Button onPress={onPress}>Video Call</Button> : null}
 					{/* <video style={{ width: '100%' }} autoPlay muted playsInline ref={ref} /> */}
 				</Layout>
@@ -242,12 +249,12 @@ class Adapter extends React.Component {
 			return audioVideo;
 		};
 		const AudioFileFunc = () => (
-			<Layout style={styles.row}>
+			<Layout style={styles.callButton}>
 				<audio src="example.mp3"></audio>
 			</Layout>
 		);
 		const AudioFile = (
-			<Layout style={[styles.row, { padding: 0 }]}>
+			<Layout style={[styles.callButton, { padding: 0 }]}>
 				<audio style={{ margin: 'auto' }} src="example.mp3"></audio>
 			</Layout>
 		);
@@ -267,7 +274,8 @@ class Adapter extends React.Component {
 					<Layout style={[styles.row, { padding: 0 }]}>
 						<Media videoRef={this.videoRef} audioRef={this.audioRef} />
 					</Layout>
-					{toDisplay()}
+					<Layout style={styles.callButtonContainer}>{toDisplay()}</Layout>
+
 					<Layout style={[styles.row, { padding: 2 }]}>
 						<Button onPress={fileCall} appearance="outline" status="warning">
 							Stream Audio from File

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Icon } from 'react-native-ui-kitten';
+import { Button, Icon } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 const AddFriendIcon = style => <Icon name="friend" />;
 const styles = StyleSheet.create({
@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
 		margin: 0,
 		marginRight: 0,
 		minWidth: 10,
-		height: '100%'
+		height: '100%',
+		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`
 	}
 });
 export default ({ isFriend, onRemove, onAdd, style }) => {

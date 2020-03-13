@@ -48,15 +48,21 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(function(req, res, next) {
-	if (req.path.indexOf('.mp3') > -1) {
-		console.log(req);
-	}
+	const user =
+		req.session &&
+		req.session.passport &&
+		req.session.passport.user &&
+		req.session.passport.user.username;
+	console.log(user || 'anonymous', req.path);
 	console.log('Time:', Date.now());
 	next();
 });
-app.get('/test', (req, res, next) => {
-	res.sendFile(path.join(__dirname, 'public', 'example.mp3'));
-});
+
+app.get(
+	'/gravatar',
+	express.static(path.join(__dirname, 'public', 'gravatar'))
+);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
@@ -178,7 +184,7 @@ app.io.on('disconnect', async socket => {
 });
 
 app.io.on('message', function(msg) {
-	console.log(msg);
+	// console.log(msg);
 });
 const call = new Call(app.io, api);
 module.exports = app;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Button, Icon } from 'react-native-ui-kitten';
+import { Button, Icon } from '@ui-kitten/components';
 
 const style = StyleSheet.create({
 	flex: 1

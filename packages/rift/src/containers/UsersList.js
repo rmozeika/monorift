@@ -11,7 +11,7 @@ import {
 	ListItem,
 	withStyles,
 	Toggle
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
@@ -103,9 +103,10 @@ const styles = StyleSheet.create({
 		// shadowRadius: 1,
 	},
 	columnWrapper: {
-		flexBasis: 100,
+		flexBasis: 150,
 		flexGrow: 1,
-		flexShrink: 1
+		flexShrink: 1,
+		marginVertical: 4
 	}
 });
 class UsersList extends React.PureComponent {
@@ -242,10 +243,16 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
 	},
+	statusBar: {
+		backgroundcolor: theme['color-basic-transparent-disabled-border']
+	},
+	statusText: {
+		color: theme['color-success-500'] // CHANGE THIS!
+	},
 	iconOnline: {
 		backgroundColor: theme['color-primary-100'],
 		// color: theme['color-basic-800']
-		color: theme['color-success-transparent-500']
+		color: theme['color-success-500']
 	},
 	iconOffline: {
 		backgroundColor: theme['color-primary-100'],

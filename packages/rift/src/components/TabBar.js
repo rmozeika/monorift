@@ -8,7 +8,7 @@ import {
 	TabView,
 	Tab,
 	TabBar
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 
 //create your forceUpdate hook
 function useForceUpdate() {

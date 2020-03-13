@@ -8,7 +8,7 @@ import {
 	Button,
 	styled,
 	withStyles
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({

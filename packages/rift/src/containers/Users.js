@@ -5,7 +5,7 @@ import {
 	Button,
 	styled,
 	withStyles
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -22,7 +22,10 @@ const styles = StyleSheet.create({
 	loadingContainer: {
 		display: 'flex',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		width: '100%',
+		flexBasis: '50%',
+		flexGrow: 1
 	},
 	container: {
 		flex: 1,
@@ -106,10 +109,7 @@ class Users extends React.Component {
 
 		if (containerHeight == null) {
 			return (
-				<Layout
-					onLayout={this.onLayout}
-					style={[styles.userLayout, styles.loadingContainer]}
-				>
+				<Layout onLayout={this.onLayout} style={styles.loadingContainer}>
 					<Text>Loading</Text>
 				</Layout>
 			);

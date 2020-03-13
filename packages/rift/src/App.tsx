@@ -11,7 +11,7 @@ import {
 	Button,
 	IconRegistry,
 	Layout
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import {
 	AwesomeIconsPack
 	// FeatherIconsPack

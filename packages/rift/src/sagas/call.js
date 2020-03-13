@@ -296,7 +296,6 @@ function* incomingCallSaga(incomingCall) {
 	// socket.emit('message', desc, { users: [from] });
 }
 function* answerCallSaga({ payload: answered }) {
-	debugger; //remove
 	if (!answered) {
 		return; // reject call action
 	}

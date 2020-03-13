@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Text, Button, styled } from 'react-native-ui-kitten';
+import { Layout, Text, Button, styled } from '@ui-kitten/components';
 
 class Audio extends React.Component {
 	constructor(props) {

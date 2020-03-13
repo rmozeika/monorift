@@ -9,9 +9,9 @@ import iconFontSolid from 'react-native-vector-icons/Fonts/FontAwesome5_Solid.tt
 import iconFontFeather from 'react-native-vector-icons/Fonts/Feather.ttf';
 const font5fam = Icon.getFontFamily();
 console.log(font5fam);
-debugger;
+
 const FeatherFontFam = IconFeather.getFontFamily();
-debugger; //remove
+
 const iconFontStyles = `@font-face {
   src: url(${iconFont});
   font-family: FontAwesome5_Regular;
@@ -56,7 +56,7 @@ function FeatherIcon({
 	...iconProps
 }) {
 	const { ...iconStyle } = StyleSheet.flatten(style);
-	debugger; //remove
+
 	// const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 	// return (<IconFeather name="activity" size={20} color="#4F8EF7" />);
 	return (

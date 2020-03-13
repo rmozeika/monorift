@@ -7,7 +7,7 @@ import {
 	withStyles,
 	TabView,
 	Tab
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -33,10 +33,8 @@ const styles = StyleSheet.create({
 	},
 	tabContainer: {
 		minHeight: 64,
-		// CHANGE THIS! maybe need to reactivate
 		flexDirection: 'row',
-		// flexGrow: 1,
-		height: '100%'
+		flexGrow: 1
 	},
 	desktopTabContainer: {
 		minHeight: 64,
@@ -154,6 +152,7 @@ class CallContainer extends React.Component {
 						loggedIn={loggedIn}
 						tab={tab}
 						setTopTabsIndex={this.setTopTabsIndex}
+						style={{ backgroundColor: '#1A2237' }}
 					/>
 					<Layout style={[styles.tabContainer, { width: '100%' }]}>
 						{/* {tab == 2 ? <Talk audioRef={this.audioRef} /> : <Users />} */}

@@ -8,6 +8,7 @@ class UserCommands extends Command {
 		this.addFriend = this.addFriend.bind(this);
 		this.acceptFriend = this.acceptFriend.bind(this);
 		this.addAllMockToFriends = this.addAllMockToFriends.bind(this);
+		this.createGravatar = this.createGravatar.bind(this);
 	}
 	async createMockUsers() {
 		// mockUsers.forEach(user => {
@@ -53,6 +54,9 @@ class UserCommands extends Command {
 	}
 	getFriends() {
 		return this.repository.getFriendsForUser('robertmozeika');
+	}
+	createGravatar(username, email) {
+		return this.repository.createGravatar(username, email);
 	}
 }
 module.exports = UserCommands;

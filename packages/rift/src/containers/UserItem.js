@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { ListItem, Icon, Layout, Text } from 'react-native-ui-kitten';
+import { StyleSheet, Image } from 'react-native';
+import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import { getUser } from '../selectors/users';
@@ -11,7 +11,10 @@ const styles = StyleSheet.create({
 	listItem: {
 		margin: 4,
 		borderRadius: 12,
-		boxShadow: `-8px 8px 16px #111522, 8px -8px 16px #334168;`,
+		// boxShadow: `-8px 8px 5px #111522, 8px -8px 5px #334168;`,
+		boxShadow: ` 8px 8px 5px #161c30, 
+		-8px -8px 5px #1e2640`,
+
 		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
 		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
 
@@ -27,17 +30,54 @@ const styles = StyleSheet.create({
 		// shadowOffset: { width: 0, height: 1 },
 		// shadowOpacity: 0.8,
 		// shadowRadius: 1,
-		padding: 0
+		padding: 0,
+		paddingHorizontal: 0,
+		paddingVertical: 0,
+		zIndex: 9
+		// marginHorizontal: 0,
+		// marginVertical:0
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
-		flexBasis: '80%',
-		zIndex: 10
+		flexBasis: '100%',
+		zIndex: 10,
+		height: '55%',
+		justifyContent: 'center',
+		alignSelf: 'flex-end',
+		display: 'flex',
+		flexDirection: 'row',
+		alignContent: 'center',
+		justifyContent: 'center'
 	},
+	gravatarContainer: {
+		flexBasis: '40%',
+		backgroundColor: 'inherit',
+		// alignContent: 'center',
+		justifyContent: 'center',
+		alignItems: 'flex-end'
+	},
+	titleContainer: {
+		flexBasis: '50%',
+		flexGrow: 1,
+		backgroundColor: 'inherit',
+		alignContent: 'center',
+		justifyContent: 'center'
+	},
+
 	listItemTitle: {
 		fontSize: 13,
 		fontWeight: 600,
-		textAlign: 'center'
+		textAlign: 'start',
+		alignContent: 'center',
+		paddingLeft: 10
+	},
+	statusBar: {
+		height: '15%',
+		flexBasis: '100%',
+		textAlign: 'center',
+		borderTopRightRadius: 100,
+		borderTopRightRadius: 100,
+		alignSelf: 'flex-end'
 	},
 	icon: {
 		width: 24,
@@ -49,34 +89,46 @@ const styles = StyleSheet.create({
 	iconContainer: {
 		position: 'absolute',
 		// left: '-100px'
-		left: '-180px'
+		top: -140,
+		left: -150
+		// left: '-180px'
 	},
 	activityContainer: {
 		position: 'absolute',
 		// left: '-100px'
-		left: '1%',
+		left: '5%',
 		// top: '50%',
 		backgroundColor: 'inherit',
 		zIndex: 20,
-		top: '40%'
+		top: '5%'
 		// left:
 	},
 	button: {
 		flex: 1
 	},
+
 	buttonContainer: {
 		// position: 'absolute',
 		// right: '0px
 		// left: '70%',
 		// right: '-5%',
 		// top: '0%',
-		height: '100%',
+		height: '30%',
 		// width: '25%'
-		flexBasis: '20%'
+		flexBasis: '100%',
+		alignSelf: 'flex-end'
 	},
 	pseudoButtonGroup: {
 		maxWidth: '50%',
 		display: 'flex'
+	},
+	listItemContent: {
+		backgroundColor: 'inherhit',
+		position: 'relative',
+		margin: 0,
+		padding: 0,
+		zIndex: 15,
+		height: '50%'
 	}
 });
 class UserItem extends React.PureComponent {
@@ -183,7 +235,7 @@ class UserItem extends React.PureComponent {
 		const { src = {}, checked } = user;
 		const { displayName = '' } = src;
 		const iconColor = themedStyle['iconOnline'].color;
-		const border = user.checked ? { borderWidth: 2, borderColor: iconColor } : {};
+		const border = user.checked ? { borderWidth: 3, borderColor: iconColor } : {};
 		const otherProps = {};
 		if (!user.isFriend) {
 			otherProps['accessory'] = this.renderItemAccessory;
@@ -207,10 +259,32 @@ class UserItem extends React.PureComponent {
 					style={[styles.listItem, border, { padding: 0 }]}
 					onClick={checked ? this.removeUserFromCall : this.addUserToCall}
 				>
+					{/* <Layout style={styles.listItemContent}> */}
+
 					<Layout style={styles.listItemMain}>
-						<Text style={styles.listItemTitle}>{username}</Text>
+						<Layout style={styles.gravatarContainer}>
+							<Image
+								style={{
+									minWidth: 20,
+									minHeight: 20,
+									maxHeight: 40,
+									maxWidth: 40,
+									height: '100%',
+									width: '100%'
+								}}
+								source={{ uri: '/gravatar/robertmozeika.png' }}
+							/>
+						</Layout>
+						<Layout style={styles.titleContainer}>
+							<Text style={styles.listItemTitle}>{username}</Text>
+						</Layout>
 					</Layout>
-					{user.online && (
+					{(user.online || true) && (
+						<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+							<Text style={themedStyle.statusText}>online</Text>
+						</Layout>
+					)}
+					{/* {user.online && (
 						<Layout style={styles.activityContainer}>
 							<Icon
 								style={{}} // CHANGE THIS
@@ -222,12 +296,12 @@ class UserItem extends React.PureComponent {
 								color={'#8CFAC7'}
 							/>
 						</Layout>
-					)}
-					{user.online && (
+					)} */}
+					{/* {user.online && (
 						<Layout style={styles.iconContainer}>
 							{this.renderItemIcon(styles.icon)}
 						</Layout>
-					)}
+					)} */}
 					<Layout style={styles.buttonContainer}>
 						<AddRemoveFriendButton
 							onAdd={this.addFriend}
@@ -236,6 +310,7 @@ class UserItem extends React.PureComponent {
 							// style={buttonStyleAlt}
 						/>
 					</Layout>
+					{/* </Layout> */}
 				</ListItem>
 			);
 		}

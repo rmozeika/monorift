@@ -50,7 +50,7 @@ export const getVisibleUsers = createSelector(
 		const tabType = getTabType(tab + tabTypeOffset);
 		switch (tabType) {
 			case 'friends':
-				if (!didGetFriends || !didGetOnline) return usersOnlineOfflineBase;
+				if (!didGetFriends || !didGetOnline) return [];
 				if (true == true) {
 					return users;
 				}

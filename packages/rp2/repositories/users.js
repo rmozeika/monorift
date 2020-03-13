@@ -1,6 +1,10 @@
 var Repository = require('./repository.js');
-
+var gravatar = require('gravatar');
+const promisfy = require('util').promisify;
+const http = require('http');
+const fs = require('fs');
 const collection = 'users';
+const path = require('path');
 // friendship status
 // A = accepted
 // S = SENT
@@ -11,27 +15,51 @@ const friendStatus = {
 	pending: 'P',
 	rejected: 'R'
 };
+const promiseGet = url => {
+	return new Promise((resolve, reject) => {
+		http.get(url, response => {
+			resolve(response);
+		});
+	});
+};
 class UserRepository extends Repository {
 	constructor(api) {
 		super(api, collection);
 		this.findByUsername.bind(this);
 	}
-
+	async createGravatar(username, email) {
+		const gravatarUrl = gravatar.url(
+			email,
+			{ s: '100', r: 'x', d: 'retro' },
+			false
+		);
+		const getPromise = promisfy(http.get);
+		const gravatarPath = path.resolve(__dirname, 'gravatar', username);
+		const file = fs.createWriteStream(gravatarPath);
+		const response = await promiseGet(gravatarUrl);
+		response.pipe(file);
+		return { url: gravatarUrl, path: gravatarPath };
+	}
 	createUser(user, cb) {
 		return new Promise((resolve, reject) => {
 			// let user;
+			const userData = { ...user };
 			const { username, src, email } = user;
-
-			this.findByUsername(username)
+			this.createGravatar(username, email)
+				.then(gravatarData => {
+					userData.src['gravatar'] = gravatarData;
+					return;
+				})
+				.then(this.findByUsername(username))
 				.then(foundUser => {
 					if (foundUser) return false;
-					return this.mongoInstance.insertOne(this.collection, user);
+					return this.mongoInstance.insertOne(this.collection, userData);
 				})
 				.then(result => {
 					// user = user;
 					if (result == false) return false;
 					const _id = result.insertedId.toString();
-					return this.insertUserIntoPostgres(_id, user);
+					return this.insertUserIntoPostgres(_id, userData);
 				})
 				.then(result => {
 					if (cb) return cb(user);

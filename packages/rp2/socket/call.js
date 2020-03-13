@@ -43,12 +43,12 @@ class Call extends Socket {
 		}
 	}
 	async onMessage(redis, msg, secondArg) {
-		if (msg.type == 'answer') {
-			console.log(msg);
-		}
+		// if (msg.type == 'answer') {
+		// 	console.log(msg);
+		// }
 		if (secondArg) {
 			const { users, constraints } = secondArg;
-			console.log('GOT_MESSAGE', util.inspect(msg));
+			// console.log('GOT_MESSAGE', util.inspect(msg));
 			const mappedUsers = await Promise.all(
 				users.map(async user => {
 					try {
@@ -62,13 +62,13 @@ class Call extends Socket {
 					}
 				})
 			).then(res => {
-				console.log(`
-					Emitting to: ${res[0].id}
-					from: ${this.id}
-					msg: ${util.inspect(msg, true)}
-					users: ${util.inspect(users)}
-					constraints: ${constraints}
-				`);
+				// console.log(`
+				// 	Emitting to: ${res[0].id}
+				// 	from: ${this.id}
+				// 	msg: ${util.inspect(msg, true)}
+				// 	users: ${util.inspect(users)}
+				// 	constraints: ${constraints}
+				// `);
 				this.to(res[0].id).emit('message', msg, {
 					users,
 					constraints,
@@ -81,7 +81,6 @@ class Call extends Socket {
 			// .catch(e => {
 			// 	console.log(e);
 			// });
-			console.log(mappedUsers);
 		} else {
 			this.broadcast.emit('message', msg, secondArg);
 		}

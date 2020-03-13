@@ -57,8 +57,6 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { containerHeight: null };
-		// this.props.fetchOnlineUsers();
-		// this.props.fetchFriends();
 
 		this.goTalk = this.goTalk.bind(this);
 		this.answer = this.answer.bind(this);
@@ -85,7 +83,7 @@ class Users extends React.Component {
 		// const actionHeightMultiplier = incomingCall.received ? 0.15 : 0.1;
 		// const callActions = height * actionHeightMultiplier;
 		this.setState({
-			containerHeight: height - 32
+			containerHeight: height // - 32
 		});
 	}
 	answer() {
@@ -151,10 +149,7 @@ const UsersStyled = withStyles(Users, theme => ({
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		setTabView: tab => dispatch(Actions.setTabView(tab)),
-		fetchOnlineUsers: () => dispatch(Actions.fetchOnlineUsers()),
-		answer: answered => dispatch(Actions.answer(answered)),
-		fetchFriends: () => dispatch(Actions.fetchFriends()),
-		addFriend: friend => dispatch(Actions.addFriend(friend))
+		answer: answered => dispatch(Actions.answer(answered))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

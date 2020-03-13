@@ -186,9 +186,14 @@ export const setIncomingCall = from => ({
 export const ANSWER_INCOMING = 'ANSWER_INCOMING';
 export const answer = answered => ({
 	type: ANSWER_INCOMING,
-	payload: answered
+	payload: answered || true
 });
-
+// REMOVE
+// export const REJECT_INCOMING = 'ANSWER_INCOMING';
+// export const reject = answered => ({
+// 	type: REJECT_INCOMING,
+// 	payload: answered || false
+// });
 export const SET_TAB_VIEW = 'SET_TAB_VIEW';
 export const setTabView = index => ({
 	type: SET_TAB_VIEW,

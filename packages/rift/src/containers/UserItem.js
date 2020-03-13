@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import { getUser } from '../selectors/users';
 import AddToCallButton from '../components/buttons/AddToCall';
 import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
-
+import Gravatar from '../components/users/Gravatar';
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 4,
@@ -21,9 +21,9 @@ const styles = StyleSheet.create({
 		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
 		flexBasis: '45%',
 		flexGrow: 1,
-		flexWrap: 'wrap',
+		// flexWrap: 'wrap',
 		display: 'flex',
-		flexDirection: 'row',
+		flexDirection: 'column',
 		overflow: 'hidden',
 		// flexShrink: 1
 		// shadowColor: '#000',
@@ -33,21 +33,26 @@ const styles = StyleSheet.create({
 		padding: 0,
 		paddingHorizontal: 0,
 		paddingVertical: 0,
-		zIndex: 9
+		zIndex: 9,
+		// MAY NEED TO DIABLE -REACTIVATE FOR FLEX POSITION
+		alignContent: 'flex-end'
 		// marginHorizontal: 0,
 		// marginVertical:0
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
-		flexBasis: '100%',
+		flexBasis: '50%',
 		zIndex: 10,
-		height: '55%',
+		// MAY NEED TO REACTIVATE FOR FLEX POSITION
+		// height: '55%',
 		justifyContent: 'center',
-		alignSelf: 'flex-end',
+		alignSelf: 'center',
 		display: 'flex',
 		flexDirection: 'row',
 		alignContent: 'center',
-		justifyContent: 'center'
+		width: '100%',
+		flexGrow: 1
+		// justifyContent: 'center'
 	},
 	gravatarContainer: {
 		flexBasis: '40%',
@@ -55,7 +60,11 @@ const styles = StyleSheet.create({
 		// alignContent: 'center',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
+		// borderRadius: '50%',
 	},
+	// gravatarContainerOnline: {
+
+	// }
 	titleContainer: {
 		flexBasis: '50%',
 		flexGrow: 1,
@@ -63,7 +72,27 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		justifyContent: 'center'
 	},
-
+	buttonContainer: {
+		// position: 'absolute',
+		// right: '0px
+		// left: '70%',
+		// right: '-5%',
+		// top: '0%',
+		// height:'20%',
+		// width: '25%'
+		flexBasis: '25%',
+		justifySelf: 'flex-end',
+		width: '100%'
+	},
+	statusBar: {
+		flexBasis: '15%',
+		// flexBasis: '100%',
+		textAlign: 'center',
+		borderTopRightRadius: 4,
+		borderTopRightRadius: 4,
+		justifySelf: 'flex-end',
+		width: '100%'
+	},
 	listItemTitle: {
 		fontSize: 13,
 		fontWeight: 600,
@@ -71,14 +100,15 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		paddingLeft: 10
 	},
-	statusBar: {
-		height: '15%',
-		flexBasis: '100%',
-		textAlign: 'center',
-		borderTopRightRadius: 100,
-		borderTopRightRadius: 100,
-		alignSelf: 'flex-end'
+	listItemDetails: {
+		fontSize: 10,
+		fontWeight: 400,
+		textAlign: 'start',
+		alignContent: 'center',
+		paddingRight: 20
+		// paddingLeft: 10
 	},
+
 	icon: {
 		width: 24,
 		height: 24,
@@ -106,29 +136,16 @@ const styles = StyleSheet.create({
 	button: {
 		flex: 1
 	},
-
-	buttonContainer: {
-		// position: 'absolute',
-		// right: '0px
-		// left: '70%',
-		// right: '-5%',
-		// top: '0%',
-		height: '30%',
-		// width: '25%'
-		flexBasis: '100%',
-		alignSelf: 'flex-end'
+	listItemTouchable: {
+		height: '100%',
+		width: '100%',
+		display: 'flex',
+		flexDirection: 'row'
 	},
+	// REMOVE
 	pseudoButtonGroup: {
 		maxWidth: '50%',
 		display: 'flex'
-	},
-	listItemContent: {
-		backgroundColor: 'inherhit',
-		position: 'relative',
-		margin: 0,
-		padding: 0,
-		zIndex: 15,
-		height: '50%'
 	}
 });
 class UserItem extends React.PureComponent {
@@ -136,12 +153,11 @@ class UserItem extends React.PureComponent {
 		super(props);
 		this.addUserToCall = this.addUserToCall.bind(this);
 		this.removeUserFromCall = this.removeUserFromCall.bind(this);
-		this.renderItemAccessory = this.renderItemAccessory.bind(this);
-		this.renderItemIcon = this.renderItemIcon.bind(this);
 		this.addFriend = this.addFriend.bind(this);
 		this.removeFriend = this.removeFriend.bind(this);
 	}
-	addFriend() {
+	addFriend(e) {
+		e.stopPropogation();
 		const { addFriend, user } = this.props;
 		addFriend(user);
 	}
@@ -157,151 +173,49 @@ class UserItem extends React.PureComponent {
 		const { user, removeFromCall, index } = this.props;
 		removeFromCall(index, user);
 	}
-	renderItemAccessory(style, index) {
-		const { user, themedStyle } = this.props;
-		const buttonStyleAlt = [style, styles.button];
-		const renderButtons = [];
-		const { isFriend } = user;
-		// if (!user.isFriend) {
-		return (
-			<AddRemoveFriendButton
-				onAdd={this.addFriend}
-				removeFriend={this.removeFriend}
-				isFriend={isFriend}
-				style={buttonStyleAlt}
-			/>
-		);
-		// }
-		if (false == false) {
-			return <Layout></Layout>;
-		}
-		// if (user.isFriend || !user.isFriend) {
-		// 	renderButtons.push(
-		// 		<AddToCallButton
-		// 			checked={user.checked}
-		// 			onAdd={this.onAdd}
-		// 			onRemove={this.onRemove}
-		// 			otherStyles={style}
-		// 			key={`callbutton${index}`}
-		// 			index={index}
-		// 		/>
-		// 	);
-		// }
-		// else {
-		// 	renderButtons.push(
-		// 		<AddRemoveFriendButton
-		// 			friend={false}
 
-		// 		/>
-		// 	)
-		// }
-		return (
-			<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
-				{renderButtons.map(button => button)}
-			</Layout>
-		);
-	}
-	renderItemIcon(style, index) {
-		const { themedStyle, user } = this.props;
-		console.log(style, index);
-
-		const style2 = {
-			width: 5, //style.width, // CHANGE THIS
-			height: 5, //style.height, // CHANGE
-			// marginHorizontal: style.marginHorizontal
-			margin: 0
-			// color: 'black'
-			// color: themedStyle.icons.color,
-			// backgroundColor: themedStyle.icons.color,
-		};
-		const iconKey = user.online ? 'iconOnline' : 'iconOffline';
-		const iconColor = themedStyle[iconKey].color;
-		return (
-			<Icon
-				style={style} // CHANGE THIS
-				{...style2}
-				// style={{ color: themedStyle.icons.color }}
-				name="circle"
-				solid
-				size={200}
-				color={iconColor}
-			/>
-		);
-	}
 	render() {
 		const { username, index, themedStyle, user } = this.props;
 		console.log(username);
 		console.log('render item', username);
-		const { src = {}, checked } = user;
+		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
 		const iconColor = themedStyle['iconOnline'].color;
 		const border = user.checked ? { borderWidth: 3, borderColor: iconColor } : {};
 		const otherProps = {};
-		if (!user.isFriend) {
-			otherProps['accessory'] = this.renderItemAccessory;
-		}
+		// if (!user.isFriend) {
+		// 	otherProps['accessory'] = this.renderItemAccessory;
+		// }
 		const listHeader = () => (
 			<Layout>
 				<Text>Header</Text>
 			</Layout>
 		);
-		const renderAlt = true;
-		if (renderAlt) {
-			return (
-				<ListItem
-					// title={username}
-					// title={`${username}`}
-					// description={`${displayName}`}
-					// icon={this.renderItemIcon}
-					key={index}
-					// { ...otherProps }
-					// accessory={this.renderItemAccessory}
-					style={[styles.listItem, border, { padding: 0 }]}
-					onClick={checked ? this.removeUserFromCall : this.addUserToCall}
-				>
-					{/* <Layout style={styles.listItemContent}> */}
 
-					<Layout style={styles.listItemMain}>
-						<Layout style={styles.gravatarContainer}>
-							<Image
-								style={{
-									minWidth: 20,
-									minHeight: 20,
-									maxHeight: 40,
-									maxWidth: 40,
-									height: '100%',
-									width: '100%'
-								}}
-								source={{ uri: '/gravatar/robertmozeika.png' }}
-							/>
-						</Layout>
+		return (
+			<ListItem key={index} style={[styles.listItem, border, { padding: 0 }]}>
+				<Layout style={styles.listItemMain}>
+					<TouchableOpacity
+						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
+						style={styles.listItemTouchable}
+					>
+						<Gravatar
+							style={styles.gravatarContainer}
+							online={online}
+							username={username}
+						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
+							{/* <Text style={styles.listItemDetails}>online</Text> */}
 						</Layout>
+					</TouchableOpacity>
+				</Layout>
+				{user.online && (
+					<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+						<Text style={themedStyle.statusText}>online</Text>
 					</Layout>
-					{(user.online || true) && (
-						<Layout style={[styles.statusBar, themedStyle.statusBar]}>
-							<Text style={themedStyle.statusText}>online</Text>
-						</Layout>
-					)}
-					{/* {user.online && (
-						<Layout style={styles.activityContainer}>
-							<Icon
-								style={{}} // CHANGE THIS
-								// {...style2}
-								// style={{ color: themedStyle.icons.color }}
-								name="activity"
-								solid
-								size={20}
-								color={'#8CFAC7'}
-							/>
-						</Layout>
-					)} */}
-					{/* {user.online && (
-						<Layout style={styles.iconContainer}>
-							{this.renderItemIcon(styles.icon)}
-						</Layout>
-					)} */}
+				)}
+				{!user.isFriend && (
 					<Layout style={styles.buttonContainer}>
 						<AddRemoveFriendButton
 							onAdd={this.addFriend}
@@ -310,22 +224,9 @@ class UserItem extends React.PureComponent {
 							// style={buttonStyleAlt}
 						/>
 					</Layout>
-					{/* </Layout> */}
-				</ListItem>
-			);
-		}
-		return (
-			<ListItem
-				title={username}
-				title={`${username}`}
-				description={`${displayName}`}
-				icon={this.renderItemIcon}
-				key={index}
-				// { ...otherProps }
-				accessory={this.renderItemAccessory}
-				style={[styles.listItem, border]}
-				onClick={checked ? this.removeUserFromCall : this.addUserToCall}
-			/>
+				)}
+				{/* </Layout> */}
+			</ListItem>
 		);
 	}
 }

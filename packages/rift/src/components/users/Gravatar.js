@@ -6,12 +6,13 @@ export default function Gravatar({
 	style,
 	imageStyles = {},
 	online,
-	username
+	username,
+	onlineBorderColor
 }) {
 	const onlineGravatarBorder = online
 		? {
 				borderWidth: 2,
-				borderColor: iconColor
+				borderColor: onlineBorderColor
 		  }
 		: {};
 
@@ -29,8 +30,8 @@ export default function Gravatar({
 					...onlineGravatarBorder,
 					...imageStyles
 				}}
-				// source={{ uri: `/gravatar/${username}.png` }}
-				source={{ uri: `/gravatar/robertmozeika.png` }}
+				source={{ uri: `/gravatar/${username}.png` }}
+				// source={{ uri: `/gravatar/robertmozeika.png` }}
 			/>
 		</Layout>
 	);

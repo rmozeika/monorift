@@ -34,7 +34,12 @@ class UserRepository extends Repository {
 			false
 		);
 		const getPromise = promisfy(http.get);
-		const gravatarPath = path.resolve(__dirname, 'gravatar', username);
+		const gravatarPath = path.resolve(
+			__dirname,
+			'../public',
+			'gravatar',
+			`${username}.png`
+		);
 		const file = fs.createWriteStream(gravatarPath);
 		const response = await promiseGet(gravatarUrl);
 		response.pipe(file);
@@ -74,7 +79,12 @@ class UserRepository extends Repository {
 		const { username, src, email } = user;
 		const inserted = await this.postgresInstance
 			.knex('users')
-			.insert({ username: username, mongo_id: _id, src: { email, ...src } });
+			.insert({
+				username: username,
+				mongo_id: _id,
+				src: { email, ...src },
+				email
+			});
 		return inserted;
 	}
 
@@ -179,7 +189,8 @@ class UserRepository extends Repository {
 					.knex('users')
 					.where('username', username)
 					.select('id')
-			);
+			)
+			.select('users.id', 'users.username', 'friendship.status');
 		return friends;
 	}
 }

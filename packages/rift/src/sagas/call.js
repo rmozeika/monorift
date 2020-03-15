@@ -297,6 +297,7 @@ function* incomingCallSaga(incomingCall) {
 }
 function* answerCallSaga({ payload: answered }) {
 	if (!answered) {
+		// CHANGE THIS
 		return; // reject call action
 	}
 	const peerStore = yield select(selectPeerStore);

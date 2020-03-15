@@ -155,11 +155,26 @@ class UserItem extends React.PureComponent {
 		this.removeUserFromCall = this.removeUserFromCall.bind(this);
 		this.addFriend = this.addFriend.bind(this);
 		this.removeFriend = this.removeFriend.bind(this);
+		this.acceptFriend = this.acceptFriend.bind(this);
+		this.rejectFriend = this.rejectFriend.bind(this);
+		this.respondFriendRequest = this.respondFriendRequest.bind(this);
 	}
 	addFriend(e) {
 		e.stopPropogation();
 		const { addFriend, user } = this.props;
 		addFriend(user);
+	}
+	respondFriendRequest(didAccept) {
+		const { respondFriendRequest, user } = this.props;
+		respondFriendRequest(user, didAccept);
+	}
+	acceptFriend() {
+		e.stopPropogation();
+		this.respondFriendRequest(true);
+	}
+	rejectFriend() {
+		e.stopPropogation();
+		this.respondFriendRequest(false);
 	}
 	removeFriend() {
 		const { removeFriend, user } = this.props;
@@ -180,8 +195,10 @@ class UserItem extends React.PureComponent {
 		console.log('render item', username);
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
-		const iconColor = themedStyle['iconOnline'].color;
-		const border = user.checked ? { borderWidth: 3, borderColor: iconColor } : {};
+		const onlineBorderColor = themedStyle['iconOnline'].color;
+		const border = user.checked
+			? { borderWidth: 3, borderColor: onlineBorderColor }
+			: {};
 		const otherProps = {};
 		// if (!user.isFriend) {
 		// 	otherProps['accessory'] = this.renderItemAccessory;
@@ -201,8 +218,9 @@ class UserItem extends React.PureComponent {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							online={online}
+							online={true}
 							username={username}
+							onlineBorderColor={onlineBorderColor}
 						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
@@ -210,22 +228,22 @@ class UserItem extends React.PureComponent {
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{user.online && (
+				{(user.online || true) && (
 					<Layout style={[styles.statusBar, themedStyle.statusBar]}>
 						<Text style={themedStyle.statusText}>online</Text>
 					</Layout>
 				)}
-				{!user.isFriend && (
-					<Layout style={styles.buttonContainer}>
-						<AddRemoveFriendButton
-							onAdd={this.addFriend}
-							removeFriend={this.removeFriend}
-							isFriend={user.isFriend}
-							// style={buttonStyleAlt}
-						/>
-					</Layout>
+				{user.friendStatus !== 'A' && (
+					<AddRemoveFriendButton
+						onAdd={this.addFriend}
+						removeFriend={this.removeFriend}
+						isFriend={user.isFriend}
+						friendStatus={user.friendStatus}
+						acceptFriend={this.acceptFriend}
+						rejectFriend={this.rejectFriend}
+						// style={buttonStyleAlt}
+					/>
 				)}
-				{/* </Layout> */}
 			</ListItem>
 		);
 	}
@@ -242,7 +260,9 @@ const mapDispatchToProps = dispatch => {
 		removeFromCall: (index, user) =>
 			dispatch(Actions.removeFromCall(index, user)),
 		addFriend: user => dispatch(Actions.addFriend(user)),
-		removeFriend: user => dispatch(Actions.removeFriend(user))
+		removeFriend: user => dispatch(Actions.removeFriend(user)),
+		respondFriendRequest: (user, didAccept) =>
+			dispatch(Actions.respondFriendRequest(user, didAccept))
 		// dispatch(actionCreator)
 	};
 };

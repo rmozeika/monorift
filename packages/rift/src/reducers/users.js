@@ -117,6 +117,7 @@ export const byId = (state = {}, action) => {
 					draft[user.username] = {
 						...user,
 						isFriend: false,
+						friendStatus: null,
 						online: false,
 						checked: false
 					};
@@ -127,6 +128,7 @@ export const byId = (state = {}, action) => {
 					const { username } = user;
 					if (!draft[username]) return;
 					draft[username].isFriend = true;
+					draft[username].friendStatus = user.status;
 				});
 				break;
 			case SET_ONLINE_USERS:

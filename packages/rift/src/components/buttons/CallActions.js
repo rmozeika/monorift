@@ -50,19 +50,22 @@ const CallActions = ({
 			name: 'Talk',
 			onPress: onPress,
 			condition: mobile == true && incomingCall.pending == false,
-			status: 'primary'
+			status: 'primary',
+			key: 'button-talk'
 		},
 		{
 			name: 'Answer',
 			onPress: answer,
 			condition: incomingCall.pending == true,
-			status: 'success'
+			status: 'success',
+			key: 'button-answer'
 		},
 		{
 			name: 'Reject',
 			onPress: reject,
 			condition: incomingCall.pending == true,
-			status: 'danger'
+			status: 'danger',
+			key: 'button-reject'
 		}
 	];
 	// CHANGE THIS condense with func in Users
@@ -81,11 +84,12 @@ const CallActions = ({
 				<Layout
 					style={[styles.buttonRow, themedStyle, { height: baseHeight * 0.1 }]}
 				>
-					{activeButtons.map(({ name, onPress, status }) => (
+					{activeButtons.map(({ name, onPress, status, key }) => (
 						<Button
 							style={[styles.button, { height: baseHeight * 0.1 }]}
 							status={status}
 							onPress={onPress}
+							key={key}
 						>
 							{name}
 						</Button>

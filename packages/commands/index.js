@@ -1,9 +1,17 @@
 const rp2 = require('../rp2/api.js');
 const UserCommands = require('./users');
+const shortcuts = {
+	1: { cmd: 'createMockUsers', repo: 'users' },
+	2: { cmd: 'addAllMockToFriends', repo: 'users' }
+};
+const shortcut = 2;
 // { getFriends, acceptFriend, addFriend }
 // const hardCodedArgs = { repo: false, cmd: false };
-const hardCodedArgs = { repo: 'users', cmd: 'createGravatar' };
-
+const hardCodedShortcut = shortcuts[shortcut];
+const hardCodedArgs = {
+	repo: hardCodedShortcut.repo,
+	cmd: hardCodedShortcut.cmd
+};
 rp2
 	.init({})
 	.then(() => {

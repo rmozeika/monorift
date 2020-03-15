@@ -151,7 +151,7 @@ class UsersList extends React.PureComponent {
 	renderItem({ item: user, index, ...restProps }) {
 		return (
 			<UserItem
-				themedStyle={this.props.themedStyle}
+				themedStyle={this.props.themedStyle.userItem}
 				username={user}
 				index={index}
 				{...restProps}
@@ -246,19 +246,35 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	statusBar: {
 		backgroundcolor: theme['color-basic-transparent-disabled-border']
 	},
-	statusText: {
-		color: theme['color-success-500'] // CHANGE THIS!
+	// statusText: {
+	// 	color: theme['color-success-500'] // CHANGE THIS!
+	// },
+	// iconOnline: {
+	// 	backgroundColor: theme['color-primary-100'],
+	// 	// color: theme['color-basic-800']
+	// 	color: theme['color-success-500']
+	// },
+	userItem: {
+		onlineColor: theme['color-success-500'],
+		statusBar: {
+			backgroundcolor: theme['color-basic-transparent-disabled-border']
+		},
+		statusText: {
+			color: theme['color-success-500'] // CHANGE THIS!
+		},
+		iconOnline: {
+			backgroundColor: theme['color-primary-100'],
+			// color: theme['color-basic-800']
+			color: theme['color-success-500']
+		}
+		// REMOVE
+		// iconOffline: {
+		// 	backgroundColor: theme['color-primary-100'],
+		// 	// color: theme['color-basic-800']
+		// 	color: theme['color-success-500'] // CHANGE THIS!
+		// },
 	},
-	iconOnline: {
-		backgroundColor: theme['color-primary-100'],
-		// color: theme['color-basic-800']
-		color: theme['color-success-500']
-	},
-	iconOffline: {
-		backgroundColor: theme['color-primary-100'],
-		// color: theme['color-basic-800']
-		color: theme['color-success-500'] // CHANGE THIS!
-	},
+
 	container: { backgroundColor: '#1A2138' },
 	action: { marginHorizontal: 4 },
 	removeButton: {

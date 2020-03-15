@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button, Icon } from '@ui-kitten/components';
+import { Button, Icon, Layout } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-const AddFriendIcon = style => <Icon name="friend" />;
+
 const styles = StyleSheet.create({
 	button: {
 		flex: 1,
@@ -9,25 +9,115 @@ const styles = StyleSheet.create({
 		marginRight: 0,
 		minWidth: 10,
 		height: '100%',
-		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`
+		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`,
+		borderRadius: 0
+	},
+	buttonContainer: {
+		// position: 'absolute',
+		// right: '0px
+		// left: '70%',
+		// right: '-5%',
+		// top: '0%',
+		// height:'20%',
+		// width: '25%'
+		flexBasis: '25%',
+		justifySelf: 'flex-end',
+		width: '100%',
+		flexDirection: 'row'
+	},
+	acceptButton: {
+		borderRightWidth: 0
+	},
+	rejectButton: {
+		flexBasis: '20%',
+		flexGrow: 0,
+		borderRightWidth: 0
+	},
+	rejectIcon: {
+		textAlign: 'center'
 	}
 });
-export default ({ isFriend, onRemove, onAdd, style }) => {
-	const buttonProps = {
+
+const AddFriendIcon = style => <Icon name="friend" />;
+const FriendRequestIcon = style => <Icon name="friendRequest" />;
+const RejectFriendIcon = style => (
+	<Icon color={'white'} style={styles.rejectIcon} name="x" />
+);
+export const createBoxShadow = (colorPrimary, colorAlt) => {
+	// const color = #3366FF
+	const boxShadowVal = `inset 6px 6px 12px ${colorPrimary}, inset -6px -6px 12px ${colorAlt}`;
+	return { boxShadow: boxShadowVal };
+};
+export default ({
+	isFriend,
+	onRemove,
+	onAdd,
+	style,
+	friendStatus,
+	acceptFriend,
+	rejectFriend
+}) => {
+	const buttons = {
 		remove: {
 			onPress: onRemove,
 			status: 'danger',
-			text: 'Remove from Call'
+			text: 'Remove from Call',
+			condition: false
 		},
 		add: {
 			onPress: onAdd,
 			status: 'success',
-			text: 'Add To Call'
+			icon: AddFriendIcon,
+			text: 'Add Friend', // 'Add To Call',
+			condition: friendStatus == null,
+			boxShadowStyle: createBoxShadow('#1cac75', '#2cffbb')
+		},
+		accept: {
+			onPress: acceptFriend,
+			status: 'primary',
+			icon: FriendRequestIcon,
+			text: 'Accept Request',
+			condition: friendStatus == 'P',
+			boxShadowStyle: createBoxShadow('#2b57d9', '#3b75ff'),
+			customStyles: styles.acceptButton
+		},
+		reject: {
+			onPress: rejectFriend,
+			status: 'danger',
+			icon: RejectFriendIcon,
+			text: '', //'Reject',
+			condition: friendStatus == 'P',
+			boxShadowStyle: createBoxShadow('#d93460', '#ff4682'),
+			customStyles: styles.rejectButton
 		}
 	};
-	const { text, ...restProps } = isFriend
-		? buttonProps['remove']
-		: buttonProps['add'];
+	const buttonList = Object.keys(buttons).map(key => buttons[key]);
+	const activeButtons = buttonList.filter(({ condition }) => condition);
+
+	debugger; //remove
+	// const { text, ...restProps } = isFriend
+	// 	? buttonProps['remove']
+	// 	: buttonProps['add'];
+	return (
+		<Layout style={styles.buttonContainer}>
+			{activeButtons.map(
+				({
+					condition,
+					text = '',
+					boxShadowStyle,
+					customStyles = {},
+					...buttonProps
+				}) => (
+					<Button
+						style={[style, styles.button, boxShadowStyle, customStyles]}
+						{...buttonProps}
+					>
+						{text}
+					</Button>
+				)
+			)}
+		</Layout>
+	);
 	return (
 		<Button
 			style={[style, styles.button]}

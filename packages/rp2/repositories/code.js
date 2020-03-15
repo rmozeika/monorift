@@ -5,7 +5,6 @@ const esprima = require('esprima');
 const collection = 'code';
 const fs = require('fs');
 const util = require('util');
-const acorn = require('acorn');
 const parser = require('code-parser');
 const { ObjectId } = require('mongodb');
 const EventEmitter = require('events');

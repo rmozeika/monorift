@@ -8,7 +8,7 @@ import {
 	Button,
 	styled,
 	withStyles
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -50,21 +50,25 @@ const CallActions = ({
 			name: 'Talk',
 			onPress: onPress,
 			condition: mobile == true && incomingCall.pending == false,
-			status: 'primary'
+			status: 'primary',
+			key: 'button-talk'
 		},
 		{
 			name: 'Answer',
 			onPress: answer,
 			condition: incomingCall.pending == true,
-			status: 'success'
+			status: 'success',
+			key: 'button-answer'
 		},
 		{
 			name: 'Reject',
 			onPress: reject,
 			condition: incomingCall.pending == true,
-			status: 'danger'
+			status: 'danger',
+			key: 'button-reject'
 		}
 	];
+	// CHANGE THIS condense with func in Users
 	const heightMultiplier = incomingCall.pending ? 0.2 : 0.1;
 	const derivedHeight = baseHeight * heightMultiplier;
 	const activeButtons = buttons.filter(({ condition }) => condition);
@@ -80,11 +84,12 @@ const CallActions = ({
 				<Layout
 					style={[styles.buttonRow, themedStyle, { height: baseHeight * 0.1 }]}
 				>
-					{activeButtons.map(({ name, onPress, status }) => (
+					{activeButtons.map(({ name, onPress, status, key }) => (
 						<Button
 							style={[styles.button, { height: baseHeight * 0.1 }]}
 							status={status}
 							onPress={onPress}
+							key={key}
 						>
 							{name}
 						</Button>
@@ -93,22 +98,23 @@ const CallActions = ({
 			</Layout>
 		);
 	}
-	return (
-		<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
-			<Button style={styles.button} onPress={onPress}>
-				Talk
-			</Button>
-			{incomingCall && (
-				<Button style={styles.button} status="success" onPress={answer}>
-					Answer
-				</Button>
-			)}
-			{incomingCall && (
-				<Button style={styles.button} status="danger" onPress={reject}>
-					Reject
-				</Button>
-			)}
-		</Layout>
-	);
+	return null;
+	// return (
+	// 	<Layout style={[styles.buttonRow, themedStyle, { height: derivedHeight }]}>
+	// 		<Button style={styles.button} onPress={onPress}>
+	// 			Talk
+	// 		</Button>
+	// 		{incomingCall && (
+	// 			<Button style={styles.button} status="success" onPress={answer}>
+	// 				Answer
+	// 			</Button>
+	// 		)}
+	// 		{incomingCall && (
+	// 			<Button style={styles.button} status="danger" onPress={reject}>
+	// 				Reject
+	// 			</Button>
+	// 		)}
+	// 	</Layout>
+	// );
 };
 export default CallActions;

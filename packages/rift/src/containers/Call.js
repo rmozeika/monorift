@@ -6,9 +6,8 @@ import {
 	styled,
 	withStyles,
 	TabView,
-	Tab,
-	TabBar
-} from 'react-native-ui-kitten';
+	Tab
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
@@ -16,15 +15,17 @@ import * as Actions from '../actions';
 import UserList from './UsersList';
 import Talk from './Talk';
 import Users from './Users';
+import TabBar from '../components/TabBar';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexDirection: 'column',
 		alignItems: 'center',
-		maxWidth: 900,
-		margin: 'auto',
+		// maxWidth: 900,
+		margin: 0, // 'auto',
 		width: '100%',
-		height: '100%'
+		height: '100%',
+		alignItems: 'flex-start'
 	},
 	row: {
 		padding: 15,
@@ -32,9 +33,8 @@ const styles = StyleSheet.create({
 	},
 	tabContainer: {
 		minHeight: 64,
-		flexDirection: 'column',
-		flexGrow: 1,
-		height: '100%'
+		flexDirection: 'row',
+		flexGrow: 1
 	},
 	desktopTabContainer: {
 		minHeight: 64,
@@ -50,6 +50,17 @@ const styles = StyleSheet.create({
 		flexBasis: '50%',
 		flexGrow: 1,
 		height: '100%'
+	},
+	tabView: {
+		display: 'flex',
+		// width: '100%',
+		flexBasis: '50%',
+		flexGrow: 1
+	},
+	loadingContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
 	}
 });
 
@@ -87,45 +98,70 @@ class CallContainer extends React.Component {
 			containerHeight: height
 		});
 	}
+	getDisplayStyle() {
+		const { mobile, tab } = this.props;
+		const getVal = () => {
+			if (!mobile) return { users: 'flex', talk: 'flex' };
+			if (tab !== 2) return { users: 'flex', talk: 'none' };
+			if (tab == 2) return { users: 'none', talk: 'flex' };
+		};
+		const { users, talk } = getVal();
+
+		return {
+			users: { display: users }, //Display },
+			talk: { display: talk } // isplay }
+		};
+	}
 	setTopTabsIndex(index) {
 		console.log(index);
 		this.props.setTabView(index);
 	}
 	render() {
 		const { containerHeight } = this.state;
-		const { tab, mobile } = this.props;
-		const isMobile = window.innerWidth <= 500;
-		if (!mobile) {
+		const { tab, mobile, loggedIn, checked } = this.props;
+		// CHANGE THIS full view REMOVE
+		// if (!mobile) {
+		// 	return (
+		// 		<Layout style={styles.desktopLayout}>
+		// 			<Layout style={styles.column}>
+		// 				<Layout style={styles.desktopTabContainer}>
+		// 					<Users />
+		// 				</Layout>
+		// 			</Layout>
+		// 			<Layout style={styles.column}>
+		// 				<Layout style={styles.desktopTabContainer}>
+		// 					<Talk audioRef={this.audioRef} />
+		// 				</Layout>
+		// 			</Layout>
+		// 		</Layout>
+		// 	);
+		// }
+		const displayStyles = this.getDisplayStyle();
+		if (!checked) {
 			return (
-				<Layout style={styles.desktopLayout}>
-					<Layout style={styles.column}>
-						<Layout style={styles.desktopTabContainer}>
-							<Users />
-						</Layout>
-					</Layout>
-					<Layout style={styles.column}>
-						<Layout style={styles.desktopTabContainer}>
-							<Talk audioRef={this.audioRef} />
-						</Layout>
-					</Layout>
+				<Layout style={styles.loadingContainer}>
+					<Text>Loading</Text>
 				</Layout>
 			);
 		}
-
-		if (true == false) {
+		if (true == true) {
 			return (
 				<Layout style={styles.container}>
 					<TabBar
-						selectedIndex={tab}
-						onSelect={this.setTopTabsIndex}
-						style={{ width: '100vw', flexGrow: 1 }}
-					>
-						<Tab title="Friends" />
-						<Tab title="Users" />
-						<Tab title="Talk" />
-					</TabBar>
+						mobile={mobile}
+						loggedIn={loggedIn}
+						tab={tab}
+						setTopTabsIndex={this.setTopTabsIndex}
+						style={{ backgroundColor: '#1A2237' }}
+					/>
 					<Layout style={[styles.tabContainer, { width: '100%' }]}>
-						<Users friendList={true} containerHeight={containerHeight} />
+						{/* {tab == 2 ? <Talk audioRef={this.audioRef} /> : <Users />} */}
+						<Layout style={[styles.tabView, displayStyles.users]}>
+							<Users />
+						</Layout>
+						<Layout style={[styles.tabView, displayStyles.talk]}>
+							<Talk audioRef={this.audioRef} />
+						</Layout>
 					</Layout>
 				</Layout>
 			);
@@ -139,12 +175,12 @@ class CallContainer extends React.Component {
 				>
 					<Tab title="Friends">
 						<Layout style={styles.tabContainer}>
-							<Users friendList={true} containerHeight={containerHeight} />
+							<Users friendList={true} />
 						</Layout>
 					</Tab>
 					<Tab title="Users">
 						<Layout style={styles.tabContainer}>
-							<Users containerHeight={containerHeight} />
+							<Users />
 						</Layout>
 					</Tab>
 					<Tab title="Talk">
@@ -170,11 +206,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	};
 };
 const mapStateToProps = (state, ownProps) => {
-	const { view } = state;
+	const { view, auth } = state;
 	const { tab, mobile } = view;
+	const { loggedIn, checked } = auth;
 	return {
 		tab,
-		mobile
+		mobile,
+		loggedIn,
+		checked
 	};
 };
 

@@ -6,7 +6,7 @@ import {
 	StyleService,
 	useStyleSheet,
 	useTheme
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 const IncomingCall = ({ name, derivedHeight }) => {
 	const [fadeAnim] = React.useState(new Animated.Value(1));
 	const [colorAnim] = React.useState(new Animated.Value(0));

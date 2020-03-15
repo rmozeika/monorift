@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'react-native-ui-kitten';
+import { Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, ImageProps, Linking } from 'react-native';
 import {
@@ -16,7 +16,7 @@ import {
 	ThemedComponentProps,
 	ThemeType,
 	StyledComponentProps
-} from 'react-native-ui-kitten/theme';
+} from '@ui-kitten/components/theme';
 import {
 	Icon,
 	TopNavigation,
@@ -24,7 +24,7 @@ import {
 	TopNavigationActionProps,
 	TopNavigationProps,
 	IconProps
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 interface Auth {
 	loggedIn: boolean;
 	user: User;
@@ -104,6 +104,7 @@ class NavBar extends React.Component<NavProps, {}> {
 				title={title}
 				leftControl={this.renderLeftControls()}
 				rightControls={this.renderRightControls()}
+				style={{ backgroundColor: '#1A2237' }}
 			/>
 		);
 	}

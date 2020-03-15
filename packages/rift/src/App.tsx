@@ -11,8 +11,11 @@ import {
 	Button,
 	IconRegistry,
 	Layout
-} from 'react-native-ui-kitten';
-import { AwesomeIconsPack } from './core/icons';
+} from '@ui-kitten/components';
+import {
+	AwesomeIconsPack
+	// FeatherIconsPack
+} from './core/icons';
 
 import NavBar from './containers/NavBar';
 import Editor from './containers/Editor';
@@ -49,7 +52,7 @@ class App extends React.Component<Props, State> {
 	public constructor(props) {
 		super(props);
 		console.log(' setting mobile');
-		const isMobile = window.innerWidth <= 500;
+		const isMobile = window.innerWidth <= 600;
 		this.props.setIsMobile(isMobile);
 	}
 	public state: State = {

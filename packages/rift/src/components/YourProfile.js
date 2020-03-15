@@ -17,7 +17,7 @@ import {
 	ListItem,
 	withStyles,
 	Toggle
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { loadData } from '@src/actions';
 const styles = StyleSheet.create({
 	container: {

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: multi
-  labels:
-    app: node
+ name: multi
+ labels:
+  app: node
 spec:
-  selector:
-    matchLabels:
-      app: node
-  template:
-    metadata:
-      labels:
-        app: node
-    spec:
-      containers:
-      - name: node
-        image: node:10
-        ports:
-        - containerPort: 3000
+ selector:
+  matchLabels:
+   app: node
+ template:
+  metadata:
+   labels:
+    app: node
+  spec:
+   containers:
+    - name: node
+      image: node:10
+      ports:
+       - containerPort: 3000

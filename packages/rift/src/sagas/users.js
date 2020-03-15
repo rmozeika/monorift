@@ -63,7 +63,7 @@ function* loadFriendsSaga() {
 		console.log(err);
 	}
 }
-function* addFriend(action) {
+function* addFriendSaga(action) {
 	try {
 		const origin = originLink('addFriend');
 		console.log('origin link', origin);
@@ -142,10 +142,12 @@ function* initSocketSaga() {
 function* rootSaga() {
 	yield all([
 		initSocketSaga(),
+		// onlineUsersSaga(),
 		fetchUsers(),
 		takeLatest(Actions.FETCH_USERS, fetchUsers),
 		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
-		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga)
+		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
+		takeLatest(Actions.ADD_FRIEND, addFriendSaga)
 	]);
 }
 

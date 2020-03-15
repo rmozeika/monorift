@@ -5,13 +5,12 @@ import {
 	Button,
 	styled,
 	withStyles
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
-import UserList from './UsersList';
-import FriendList from './FriendList';
+import UsersList from './UsersList';
 
 import CallActions from '../components/buttons/CallActions';
 
@@ -23,13 +22,17 @@ const styles = StyleSheet.create({
 	loadingContainer: {
 		display: 'flex',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		width: '100%',
+		flexBasis: '50%',
+		flexGrow: 1
 	},
 	container: {
 		flex: 1,
 		alignItems: 'center',
 		display: 'flex',
 		width: '100%'
+		// flexBasis: '50%' // CHANGE THIS FULL VIEW
 	},
 	row: {
 		padding: 15,
@@ -54,8 +57,6 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { containerHeight: null };
-		// this.props.fetchOnlineUsers();
-		// this.props.fetchFriends();
 
 		this.goTalk = this.goTalk.bind(this);
 		this.answer = this.answer.bind(this);
@@ -82,7 +83,7 @@ class Users extends React.Component {
 		// const actionHeightMultiplier = incomingCall.received ? 0.15 : 0.1;
 		// const callActions = height * actionHeightMultiplier;
 		this.setState({
-			containerHeight: height
+			containerHeight: height // - 32
 		});
 	}
 	answer() {
@@ -93,28 +94,20 @@ class Users extends React.Component {
 		const { answer } = this.props;
 		answer(false);
 	}
-	calculateHeights() {
-		const { containerHeight, mobile, incomingCall } = this.props;
-		const callActions = containerHeight * actionHeightMultiplier;
-		const userList = containerHeight - callActions;
-		return { userList, callActions };
-	}
+	// REMOVE THIS
+	// calculateHeights() {
+	// 	const { containerHeight, mobile, incomingCall } = this.props;
+	// 	const callActions = containerHeight * actionHeightMultiplier;
+	// 	const userList = containerHeight - callActions;
+	// 	return { userList, callActions };
+	// }
 	render() {
-		const {
-			gotOnlineUsers,
-			online,
-			themedStyle,
-			mobile,
-			incomingCall
-		} = this.props;
+		const { gotOnlineUsers, themedStyle, mobile, incomingCall } = this.props;
 		const { containerHeight } = this.state;
 
 		if (containerHeight == null) {
 			return (
-				<Layout
-					onLayout={this.onLayout}
-					style={[styles.userLayout, styles.loadingContainer]}
-				>
+				<Layout onLayout={this.onLayout} style={styles.loadingContainer}>
 					<Text>Loading</Text>
 				</Layout>
 			);
@@ -129,17 +122,11 @@ class Users extends React.Component {
 				</Layout>
 			);
 		}
-		const userList = (
-			<UserList online={online} baseHeight={containerHeight}></UserList>
-		);
-		const friendList = (
-			<FriendList online={online} baseHeight={containerHeight}></FriendList>
-		);
-		const renderList = this.props.friendList ? friendList : userList; //userList;
+
 		return (
 			<Layout style={styles.container}>
 				<Layout style={styles.userLayout}>
-					{friendList}
+					<UsersList baseHeight={containerHeight}></UsersList>
 					<CallActions
 						onPress={this.goTalk}
 						themedStyle={themedStyle.buttonRow}
@@ -162,22 +149,19 @@ const UsersStyled = withStyles(Users, theme => ({
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		setTabView: tab => dispatch(Actions.setTabView(tab)),
-		fetchOnlineUsers: () => dispatch(Actions.fetchOnlineUsers()),
-		answer: answered => dispatch(Actions.answer(answered)),
-		fetchFriends: () => dispatch(Actions.fetchFriends()),
-		addFriend: friend => dispatch(Actions.addFriend(friend))
+		answer: answered => dispatch(Actions.answer(answered))
 	};
 };
 const mapStateToProps = (state, ownProps) => {
 	const { users, view, call } = state;
-	const { online } = users;
-	const { gotOnlineUsers } = online;
+	// const { online } = users;
+	const { gotOnlineUsers } = users.online;
 	const { mobile } = view;
 
 	const { incomingCall } = call.peerStore;
 
 	return {
-		online: online.users,
+		// online: online.users,
 		gotOnlineUsers,
 		mobile,
 		incomingCall

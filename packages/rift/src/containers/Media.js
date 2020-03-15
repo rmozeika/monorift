@@ -5,7 +5,7 @@ import {
 	Button,
 	styled,
 	ButtonGroup
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';

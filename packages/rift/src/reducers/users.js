@@ -22,7 +22,12 @@ export const initialState = {
 	},
 	friends: [],
 	byId: {},
-	allIds: []
+	allIds: {
+		master: [],
+		online: [],
+		offline: []
+	},
+	queued: []
 };
 const onlineUsers = (state, action) => {};
 export const status = (state = {}, action) => {
@@ -58,7 +63,7 @@ export const online = (state = {}, action) => {
 			return { ...state, users: usersRemoved };
 		case ADD_CALL:
 			let addUsers = state.users.map(({ checked, username }, index) => {
-				if (action.index == index) {
+				if (action.payload.index == index) {
 					return { username, checked: true };
 				}
 				return { checked, username };
@@ -66,7 +71,7 @@ export const online = (state = {}, action) => {
 			return { ...state, users: addUsers };
 		case REMOVE_CALL:
 			let removeUsers = state.users.map(({ checked, username }, index) => {
-				if (action.index == index) {
+				if (action.payload.index == index) {
 					return { username, checked: false };
 				}
 				return { checked, username };
@@ -80,16 +85,28 @@ export const online = (state = {}, action) => {
 export const friends = (state = {}, action) => {
 	switch (action.type) {
 		case SET_FRIENDS:
-			return [...state, ...action.payload];
+			return [...state, action.payload];
 		default:
 			return state;
 	}
 };
-export const queued = (state = {}, action) => {
-	switch (action.type) {
-		default:
-			return state;
-	}
+export const queued = (state = [], action) => {
+	const resultProduce = produce(state, draft => {
+		switch (action.type) {
+			case ADD_CALL:
+				draft.push({
+					...action.payload.user,
+					orderedUserIndex: action.payload.index
+				});
+				break;
+			case REMOVE_CALL:
+				draft.filter(user => user.username !== action.payload.user.username);
+				break;
+			default:
+				return draft;
+		}
+	});
+	return resultProduce;
 };
 
 export const byId = (state = {}, action) => {
@@ -100,6 +117,7 @@ export const byId = (state = {}, action) => {
 					draft[user.username] = {
 						...user,
 						isFriend: false,
+						friendStatus: null,
 						online: false,
 						checked: false
 					};
@@ -110,6 +128,7 @@ export const byId = (state = {}, action) => {
 					const { username } = user;
 					if (!draft[username]) return;
 					draft[username].isFriend = true;
+					draft[username].friendStatus = user.status;
 				});
 				break;
 			case SET_ONLINE_USERS:
@@ -130,6 +149,12 @@ export const byId = (state = {}, action) => {
 				if (!draft[usernameRemoveOnline]) return state;
 				draft[usernameRemoveOnline].online = true;
 				break;
+			case ADD_CALL:
+				draft[action.payload.user.username].checked = true;
+				break;
+			case REMOVE_CALL:
+				draft[action.payload.user.username].checked = false;
+				break;
 			default:
 				return draft;
 		}
@@ -139,20 +164,40 @@ export const byId = (state = {}, action) => {
 	return resultProduce;
 };
 
-export const allIds = (state = [], action) => {
+export const allIds = (state = {}, action) => {
 	switch (action.type) {
 		case SET_USERS:
 			const ids = action.payload.map(user => user.username);
-			return [...ids];
+			return { master: [...ids] };
+		// CHANGE THIS! MERGE THIS WITH ONLINE
+		case SET_ONLINE_USERS:
+			// action.payload.reduce((acc, onlineUser => {
+
+			// }));
+			const online = [];
+			const offline = [];
+			state.master.forEach(username => {
+				const isOnline = action.payload.some(
+					onlineUser => username == onlineUser.username
+				);
+				if (isOnline) {
+					online.push(username);
+					return;
+				}
+				offline.push(username);
+			});
+			return { ...state, online, offline };
 		default:
 			return state;
 	}
 };
+// orderedUsers()
 
 const usersReducer = combineReducers({
 	status,
 	online,
 	friends,
+	queued,
 	byId,
 	allIds
 });

@@ -65,7 +65,7 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/react-native-web'),
 					path.resolve(__dirname, 'node_modules/react-native-tab-view'),
 					path.resolve(__dirname, 'node_modules/static-container'),
-					path.resolve(__dirname, 'node_modules/react-native-ui-kitten')
+					path.resolve(__dirname, 'node_modules/@ui-kitten/components')
 				],
 				loader: require.resolve('babel-loader'),
 

@@ -52,14 +52,16 @@ function* initAuthSaga() {
 	while (true) {
 		const payload = yield take(socketChannel);
 		console.log('GOT MESSAGE, AUTH', payload);
+
 		try {
 			if (payload && payload.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload });
 			} else {
-				yield put({ type: AUTH.LOGIN.REQUEST }, payload);
+				yield put({ type: AUTH.LOGIN.REQUEST, payload });
 			}
 		} catch (e) {
 			yield put({ type: AUTH.LOGIN.FAILURE, payload });
+			console.log(e);
 		}
 	}
 }

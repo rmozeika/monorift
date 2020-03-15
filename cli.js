@@ -197,6 +197,16 @@ const argInterface = {
 				}
 			}
 		},
+		resetcontainers: {
+			val: 'resetcontainers',
+			func: async args => {
+				execFile('./dev.sh/docker/remove.sh', [], (error, stdout, stderr) => {
+					console.log(stdout);
+					console.log(stderr);
+					console.log(error);
+				});
+			}
+		},
 		transfer: {
 			val: 'transfer',
 			func: async ([type, files]) => {

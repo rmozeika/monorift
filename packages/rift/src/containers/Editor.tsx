@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Input, withStyles } from 'react-native-ui-kitten';
+import { Input, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { setCode } from '../actions';
-import { ThemedComponentProps, ThemeType } from 'react-native-ui-kitten/theme';
+import { ThemedComponentProps, ThemeType } from '@ui-kitten/components/theme';
 
 interface State {
 	inputValue: string;

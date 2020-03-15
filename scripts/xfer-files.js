@@ -30,6 +30,16 @@ const transferNginxConf = async () => {
 	const { stdout, stderr } = await execFile(nginxConf, { cwd: devopsPath });
 	console.log(stdout, stderr);
 };
+const backupNginxConf = async () => {
+	const nginxConf = path.resolve(devopsPath, '.bin', 'backup-nginx.sh');
+	const { stdout, stderr } = await execFile(nginxConf, { cwd: devopsPath });
+	console.log(stdout, stderr);
+};
+const backupCerts = async () => {
+	const certBackup = path.resolve(currentPath, 'dev.sh', 'backup-certs.sh');
+	const { stdout, stderr } = await execFile(certBackup, { cwd: currentPath });
+	console.log(stdout, stderr);
+};
 const transferPrivate = async () => {
 	const sendPrivate = path.resolve(devopsPath, '.bin', 'transfer-private.sh');
 	const { stdout, stderr } = await execFile(sendPrivate, {
@@ -82,6 +92,10 @@ module.exports = function(script) {
 			transferDockerConf();
 		case 'nginxconf':
 			transferNginxConf();
+		case 'backupnginx':
+			backupNginxConf();
+		case 'backupcerts':
+			backupCerts();
 		case 'service':
 			trasnferDeployService();
 			break;

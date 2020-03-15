@@ -8,7 +8,7 @@ import {
 	Input,
 	Card,
 	CardHeader
-} from 'react-native-ui-kitten';
+} from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 const styles = StyleSheet.create({

@@ -4,7 +4,7 @@ const shortcuts = {
 	1: { cmd: 'createMockUsers', repo: 'users' },
 	2: { cmd: 'addAllMockToFriends', repo: 'users' }
 };
-const shortcut = 2;
+const shortcut = 1;
 // { getFriends, acceptFriend, addFriend }
 // const hardCodedArgs = { repo: false, cmd: false };
 const hardCodedShortcut = shortcuts[shortcut];

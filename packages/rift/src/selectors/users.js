@@ -27,6 +27,7 @@ const usersOnlineOfflineBase = {
 	online: [],
 	offline: []
 };
+export const getSearchFilter = state => state.users.search.filter;
 
 export const sortOnline = createSelector([getUsers], users => {
 	return Object.keys(users);
@@ -40,31 +41,49 @@ export const getOnlineOfflineUsernames = createSelector(
 		return online.concat(offline);
 	}
 );
+
+export const filterUsers = (users, filter) => {
+	const filterRegex = new RegExp(filter, 'i');
+	return users.filter(user => user.match(filterRegex));
+};
 export const getVisibleUsers = createSelector(
 	// [getTab, getUsers, loggedIn],
 	// (tab, users, isLoggedIn) => {
-	[getTab, getOnlineOfflineUsernames, gotOnline, gotFriends, loggedIn],
-	(tab, users, didGetOnline, didGetFriends, isLoggedIn) => {
+	[
+		getSearchFilter,
+		getTab,
+		getOnlineOfflineUsernames,
+		gotOnline,
+		gotFriends,
+		loggedIn
+	],
+	(searchFilter, tab, users, didGetOnline, didGetFriends, isLoggedIn) => {
 		// CHANGE THIS spaghetti code
 		const tabTypeOffset = isLoggedIn ? 0 : 1;
 		const tabType = getTabType(tab + tabTypeOffset);
 		switch (tabType) {
 			case 'friends':
 				if (!didGetFriends || !didGetOnline) return [];
-				if (true == true) {
+				if (searchFilter == '') {
 					return users;
 				}
-				const friendsUsernames = Object.keys(users).filter(
-					username => users[username].isFriend
-				);
+				const filteredFriends = filterUsers(users, searchFilter);
+				return filteredFriends;
+			// const friendsUsernames = Object.keys(users).filter(
+			// 	username => users[username].isFriend
+			// );
 
-				const friendsOnlineOffline = sortOnlineOffline(users, friendsUsernames);
-				return friendsOnlineOffline;
+			// const friendsOnlineOffline = sortOnlineOffline(users, friendsUsernames);
+			// return friendsOnlineOffline;
 			case 'users':
 				if (!didGetOnline) {
 					return []; // usersOnlineOfflineBase;
 				}
-				return users;
+				if (searchFilter == '') {
+					return users;
+				}
+				const filtered = filterUsers(users, searchFilter);
+				return filtered;
 				// REMOVE
 				const nonFriendUsernames = isLoggedIn
 					? usernames.filter(username => !users[username].isFriend)
@@ -80,6 +99,7 @@ export const getVisibleUsers = createSelector(
 
 // }
 import createCachedSelector from 're-reselect';
+import { search } from '@src/reducers/users';
 const getUserByUsername = (state, props) => state.users.byId[props.username];
 
 // const getUserData = state => state.world;

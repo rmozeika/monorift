@@ -1,26 +1,17 @@
 import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import {
-	Layout,
-	Text,
-	Button,
-	ButtonGroup,
-	styled,
-	Icon,
-	List,
-	ListItem,
-	withStyles,
-	Toggle
-} from '@ui-kitten/components';
+import { Layout, List, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
 import * as CallSelectors from '../selectors/call';
 import * as UserSelectors from '../selectors/users';
-import UserItem from './UserItem';
+import * as AuthSelectors from '../selectors/auth';
 
-import { loadData } from '@src/actions';
-import AddRemoveFriend from '@src/components/buttons/AddRemoveFriend';
+import UserItem from './UserItem';
+import YourProfile from './YourProfile';
+import SearchBar from '../components/SearchBar';
+
 const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
@@ -64,17 +55,6 @@ const styles = StyleSheet.create({
 	button: {
 		flex: 1
 	},
-	// REMOVE
-	buttonBottom: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	// REMOVE
-	pseudoButtonGroup: {
-		maxWidth: '50%',
-		display: 'flex'
-	},
 	list: {
 		width: '100%'
 	},
@@ -84,23 +64,6 @@ const styles = StyleSheet.create({
 		// flexWrap: 'wrap',
 		order: -1,
 		justifyContent: 'space-between'
-	},
-	// REMOVe
-	listItem: {
-		margin: 2,
-		borderRadius: 12,
-		boxShadow: `-8px 8px 16px #111522, 8px -8px 16px #334168;`,
-		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
-		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
-
-		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		flexBasis: '45%',
-		flexGrow: 1
-		// flexShrink: 1
-		// shadowColor: '#000',
-		// shadowOffset: { width: 0, height: 1 },
-		// shadowOpacity: 0.8,
-		// shadowRadius: 1,
 	},
 	columnWrapper: {
 		flexBasis: 150,
@@ -118,29 +81,6 @@ class UsersList extends React.PureComponent {
 		console.log('UsersList');
 		this.props.setTabView(2);
 	}
-	onRemove(index) {
-		const { removeFromCall } = this.props;
-		const user = this.getUserFromIndex(index);
-		removeFromCall(index, user);
-	}
-	// REMOVE
-	addFriend(index) {
-		const { addFriend } = this.props;
-		const user = this.getUserFromIndex(index);
-		addFriend(user);
-	}
-	// REMOVE
-
-	removeFriend(index) {
-		const { removeFriend } = this.props;
-		const user = this.getUserFromIndex(index);
-		removeFriend(user);
-	}
-	// REMOVE
-
-	getUserFromIndex(index) {
-		return this.props.users[index];
-	}
 	calculateHeights() {
 		const { mobile, baseHeight, incomingCallPending } = this.props;
 		const extraSpace = incomingCallPending ? 0.1 : 0;
@@ -149,6 +89,10 @@ class UsersList extends React.PureComponent {
 		return baseHeight * heightMultiplier;
 	}
 	renderItem({ item: user, index, ...restProps }) {
+		// IF REACTIVATE PROFILE
+		// if (user == 'self') {
+		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
+		// }
 		return (
 			<UserItem
 				themedStyle={this.props.themedStyle.userItem}
@@ -158,70 +102,19 @@ class UsersList extends React.PureComponent {
 			/>
 		);
 	}
-	// // REMOVE
-	// renderItemAccessory(style, index) {
-	// 	const buttonStyleAlt = [style, styles.button];
-	// 	const { checked } = this.state;
-	// 	const renderButtons = [];
-	// 	const user = this.getUserFromIndex(index);
-	// 	if (user.isFriend || !user.isFriend) {
-	// 		renderButtons.push(
-	// 			<AddToCallButton
-	// 				checked={user.checked}
-	// 				onRemove={this.onRemove}
-	// 				otherStyles={style}
-	// 				key={`callbutton${index}`}
-	// 				index={index}
-	// 			/>
-	// 		);
-	// 	}
-	// 	// else {
-	// 	// 	renderButtons.push(
-	// 	// 		<AddRemoveFriendButton
-	// 	// 			friend={false}
 
-	// 	// 		/>
-	// 	// 	)
-	// 	// }
-	// 	return (
-	// 		<Layout style={[themedStyle.pseudoButtonGroup, styles.pseudoButtonGroup]}>
-	// 			{renderButtons.map(button => button)}
-	// 		</Layout>
-	// 	);
-	// }
-	// // REMOVE
-	// renderItemIcon(style, index) {
-	// 	const { themedStyle } = this.props;
-	// 	console.log(style, index);
-	// 	const user = this.getUserFromIndex(index);
-
-	// 	const style2 = {
-	// 		width: 5, //style.width, // CHANGE THIS
-	// 		height: 5, //style.height, // CHANGE
-	// 		// marginHorizontal: style.marginHorizontal
-	// 		margin: 0
-	// 		// color: 'black'
-	// 		// color: themedStyle.icons.color,
-	// 		// backgroundColor: themedStyle.icons.color,
-	// 	};
-	// 	const iconKey = user.online ? 'iconOnline' : 'iconOffline';
-	// 	const iconColor = themedStyle[iconKey].color;
-	// 	return (
-	// 		<Icon
-	// 			{...style2}
-	// 			// style={{ color: themedStyle.icons.color }}
-	// 			name="circle"
-	// 			solid
-	// 			color={iconColor}
-	// 		/>
-	// 	);
-	// }
 	render() {
 		const { themedStyle, baseHeight, incomingCallPending, users } = this.props;
 
 		const derivedHeight = this.calculateHeights();
+		// IF REACTIVATE PROFILE
+
+		// if (self !== null) {
+		// 	users.unshift('self');
+		// }
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
+				<SearchBar />
 				<List
 					data={users}
 					renderItem={this.renderItem}
@@ -243,17 +136,6 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
 	},
-	statusBar: {
-		backgroundcolor: theme['color-basic-transparent-disabled-border']
-	},
-	// statusText: {
-	// 	color: theme['color-success-500'] // CHANGE THIS!
-	// },
-	// iconOnline: {
-	// 	backgroundColor: theme['color-primary-100'],
-	// 	// color: theme['color-basic-800']
-	// 	color: theme['color-success-500']
-	// },
 	userItem: {
 		onlineColor: theme['color-success-500'],
 		statusBar: {
@@ -267,23 +149,9 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 			// color: theme['color-basic-800']
 			color: theme['color-success-500']
 		}
-		// REMOVE
-		// iconOffline: {
-		// 	backgroundColor: theme['color-primary-100'],
-		// 	// color: theme['color-basic-800']
-		// 	color: theme['color-success-500'] // CHANGE THIS!
-		// },
 	},
 
-	container: { backgroundColor: '#1A2138' },
-	action: { marginHorizontal: 4 },
-	removeButton: {
-		color: theme['color-danger-500']
-	},
-	pseudoButtonGroup: {
-		display: 'flex',
-		flexDirection: 'row'
-	}
+	container: { backgroundColor: '#1A2138' }
 }));
 
 const mapDispatchToProps = dispatch => {
@@ -300,6 +168,8 @@ const mapStateToProps = state => {
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
 		users: visibleUsers
+		// IF REACTIVATE PROFILE
+		// self: AuthSelectors.getSelfUser(state)
 	};
 };
 export default connect(

@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		width: '90%',
-		margin: 'auto'
+		margin: 'auto',
+		height: '40%'
 	}
 });
 function ShowHideButton(props) {

@@ -9,7 +9,7 @@ export const originLink = type => {
 		users: '/users',
 		userList: '/users/all',
 		friends: '/users/friends',
-		addFriend: 'users/friends/add'
+		addFriend: '/users/friends/add'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;

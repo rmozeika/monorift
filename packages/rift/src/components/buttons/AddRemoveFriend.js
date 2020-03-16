@@ -94,10 +94,6 @@ export default ({
 	const buttonList = Object.keys(buttons).map(key => buttons[key]);
 	const activeButtons = buttonList.filter(({ condition }) => condition);
 
-	debugger; //remove
-	// const { text, ...restProps } = isFriend
-	// 	? buttonProps['remove']
-	// 	: buttonProps['add'];
 	return (
 		<Layout style={styles.buttonContainer}>
 			{activeButtons.map(

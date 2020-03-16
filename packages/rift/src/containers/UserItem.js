@@ -160,7 +160,7 @@ class UserItem extends React.PureComponent {
 		this.respondFriendRequest = this.respondFriendRequest.bind(this);
 	}
 	addFriend(e) {
-		e.stopPropogation();
+		// e.stopPropagation();
 		const { addFriend, user } = this.props;
 		addFriend(user);
 	}
@@ -169,11 +169,11 @@ class UserItem extends React.PureComponent {
 		respondFriendRequest(user, didAccept);
 	}
 	acceptFriend() {
-		e.stopPropogation();
+		// e.stopPropagation();
 		this.respondFriendRequest(true);
 	}
 	rejectFriend() {
-		e.stopPropogation();
+		// e.stopPropagation();
 		this.respondFriendRequest(false);
 	}
 	removeFriend() {
@@ -192,6 +192,9 @@ class UserItem extends React.PureComponent {
 	render() {
 		const { username, index, themedStyle, user } = this.props;
 		console.log(username);
+		if (username == 'vtulln') {
+			debugger; //remove
+		}
 		console.log('render item', username);
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;

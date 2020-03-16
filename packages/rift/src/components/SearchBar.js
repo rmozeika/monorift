@@ -14,10 +14,12 @@ import * as AuthSelectors from '../selectors/auth';
 const styles = StyleSheet.create({
 	searchContainer: {
 		height: 50,
-		padding: 8
+		padding: 8,
+		display: 'flex',
+		flexDirection: 'row'
 	},
 	searchInput: {
-		width: '100%'
+		flexBasis: '80%'
 	}
 });
 
@@ -25,11 +27,19 @@ class SearchBar extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.search = this.search.bind(this);
+		this.setFilterText = this.setFilterText.bind(this);
+		// this.setState({ filterText: '' });
+		this.state = { filterText: '' };
+	}
+	setFilterText(input) {
+		this.setState({ filterText: input });
 	}
 	search(input) {
 		const { search } = this.props;
 		debugger;
 		search(input);
+		// const { filterText } = this.state;
+		// this.props.search(filterText);
 	}
 	render() {
 		const { filter } = this.props;
@@ -39,8 +49,13 @@ class SearchBar extends React.PureComponent {
 					placeholder="Search Users"
 					value={filter}
 					onChangeText={this.search}
+					// value={this.state.filterText}
+					// onChangeText={this.setFilterText}
 					style={styles.searchInput}
 				/>
+				<Button style={{ flexBasis: '15%' }} onPress={this.search}>
+					Search
+				</Button>
 			</Layout>
 		);
 	}

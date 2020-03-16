@@ -17,9 +17,9 @@ const authReducer = createReducer(
 	{
 		[LOGIN.SUCCESS]: (authState, action) => {
 			const { src, username } = action.payload;
-			const { picture, displayName } = src;
+			const { picture, displayName, ...restSrc } = src;
 			return {
-				user: { picture, username, displayName },
+				user: { picture, username, displayName, src: restSrc },
 				loggedIn: true,
 				checked: true
 			};

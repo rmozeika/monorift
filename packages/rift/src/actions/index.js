@@ -206,3 +206,9 @@ export const setIsMobile = isMobile => ({
 	type: SET_IS_MOBILE,
 	payload: isMobile
 });
+
+export const SET_SEARCH_FILTER = 'SET_SEARCH_FILTER';
+export const search = input => ({
+	type: SET_SEARCH_FILTER,
+	payload: input
+});

@@ -8,7 +8,8 @@ import {
 	ADD_CALL,
 	REMOVE_CALL,
 	ADD_ONLINE_USER,
-	REMOVE_ONLINE_USER
+	REMOVE_ONLINE_USER,
+	SET_SEARCH_FILTER
 } from '../actions';
 
 export const initialState = {
@@ -27,7 +28,8 @@ export const initialState = {
 		online: [],
 		offline: []
 	},
-	queued: []
+	queued: [],
+	search: { filter: '' }
 };
 const onlineUsers = (state, action) => {};
 export const status = (state = {}, action) => {
@@ -191,7 +193,14 @@ export const allIds = (state = {}, action) => {
 			return state;
 	}
 };
-// orderedUsers()
+export const search = (state = {}, action) => {
+	switch (action.type) {
+		case SET_SEARCH_FILTER:
+			return { ...state, filter: action.payload };
+		default:
+			return state;
+	}
+};
 
 const usersReducer = combineReducers({
 	status,
@@ -199,6 +208,7 @@ const usersReducer = combineReducers({
 	friends,
 	queued,
 	byId,
-	allIds
+	allIds,
+	search
 });
 export default usersReducer;

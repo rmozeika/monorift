@@ -18,18 +18,33 @@ const outerButtonGroupBoxShadow = {
 			5px 5px 10px rgba(0, 0, 0, 0.4)
 		`
 };
+const workspace = `inset 10px 10px 10px rgba(0,0,0,.1), inset -10px -10px 5px rgba(0,0,0,.1), inset -10px 10px 5px rgba(0,0,0,.1), inset 10px -10px 10px rgba(0,0,0,.1)`;
 const buttonGroupBoxShadow = {
-	boxShadow: `
-	inset 5px 5px 5px -15px rgba(0,0,0,0.1), 
-	inset -5px -5px 7px -15px rgba(255, 255, 255, 0.4), 
-	5px 5px 16px rgba(255,255,255,0.5), 
-	5px 5px 10px rgba(0, 0, 0, 0.4)
-		`
+	boxShadow:
+		// `
+		// rgba(0, 0, 0, 0.9) 5px 5px 5px -15px inset,
+		// rgba(0,0,0, 0.9) -5px -5px 7px -15px inset,
+		// rgba(0,0,0, 0.3) 5px 5px 16px,
+		// rgba(0, 0, 0, 0.4) 5px 5px 6px
+		// `,
+		`rgba(0, 0, 0, 0.9) 5px 5px 5px -15px, 
+	rgba(0, 0, 0, 0.9) -5px -6px 7px -14px, 
+	rgba(0, 0, 0, 4) 5px 5px 16px, 
+	rgba(0, 0, 0, 9) 5px 5px 6px`,
+	//  `
+	// inset 5px 5px 5px -15px rgba(0,0,0,0.9),
+	// inset -5px -5px 7px -15px rgba(255, 255, 255, 0.9),
+	// 5px 5px 16px rgba(255,255,255,0.5),
+	// 5px 5px 10px rgba(0, 0, 0, 0.4)
+	// 	`,
+
+	borderWidth: 0
 };
 const innerButtonBoxShadow = {
 	boxShadow: `
-	inset 5px 5px 5px -1px rgba(255,255,255,0.3), 
-	inset -5px -5px 5px -1px rgba(0, 0, 0, 0.2)
+	inset 5px 5px 5px -1px rgba(255,255,255,0.1), 
+	inset -5px -5px 5px -1px rgba(0, 0, 0, 0.2),
+	rgba(0,0, 0, 0.3) 5px 5px 5px -1px, rgba(0, 0, 0, 0.2) -5px -5px 5px -1px, rgba(0,0, 0, 0.3) -5px 5px 5px -1px, rgba(0, 0, 0, 0.2) 5px -5px 5px 2px
 	`
 };
 const styles = StyleSheet.create({
@@ -49,7 +64,8 @@ const styles = StyleSheet.create({
 	},
 	controlButton: {
 		flexGrow: 1,
-		flexBasis: 40
+		flexBasis: 40,
+		boxShadow: workspace
 	},
 	buttonGroup: {
 		display: 'flex',

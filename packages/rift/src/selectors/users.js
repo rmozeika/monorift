@@ -46,16 +46,7 @@ export const filterUsers = (users, filter) => {
 	const filterRegex = new RegExp(filter, 'i');
 	return users.filter(user => user.match(filterRegex));
 };
-export const getVisibleUsersFiltered = createSelector(
-	[getSearchFilter, getVisibleUsers],
-	(filter, users) => {
-		if (filter == '') {
-			return users;
-		}
-		const filtered = filterUsers(users, searchFilter);
-		return filtered;
-	}
-);
+
 export const getVisibleUsers = createSelector(
 	// [getTab, getUsers, loggedIn],
 	// (tab, users, isLoggedIn) => {
@@ -148,6 +139,18 @@ export const getVisibleUsersOld = createSelector(
 				const visibleUsers = sortOnlineOffline(users, nonFriendUsernames);
 				return visibleUsers.online.concat(visibleUsers.offline);
 		}
+	}
+);
+export const getVisibleUsersFiltered = createSelector(
+	[getSearchFilter, getVisibleUsers],
+	(filter, users) => {
+		if (filter == '') {
+			return users;
+		}
+		console.log('FILTER', 'filtered started');
+		const filtered = filterUsers(users, filter);
+		console.log('FILTER', 'filtered done');
+		return filtered;
 	}
 );
 // const getAllIds = state => state.users.allIds;

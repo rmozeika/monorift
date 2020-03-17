@@ -10,7 +10,28 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
-
+const outerButtonGroupBoxShadow = {
+	boxShadow: `
+			inset 5px 5px 5px -15px rgba(0,0,0,0.1), 
+			inset -5px -5px 7px -15px rgba(255, 255, 255, 0.4), 
+			5px 5px 16px rgba(255,255,255,0.5), 
+			5px 5px 10px rgba(0, 0, 0, 0.4)
+		`
+};
+const buttonGroupBoxShadow = {
+	boxShadow: `
+	inset 5px 5px 5px -15px rgba(0,0,0,0.1), 
+	inset -5px -5px 7px -15px rgba(255, 255, 255, 0.4), 
+	5px 5px 16px rgba(255,255,255,0.5), 
+	5px 5px 10px rgba(0, 0, 0, 0.4)
+		`
+};
+const innerButtonBoxShadow = {
+	boxShadow: `
+	inset 5px 5px 5px -1px rgba(255,255,255,0.3), 
+	inset -5px -5px 5px -1px rgba(0, 0, 0, 0.2)
+	`
+};
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -33,9 +54,51 @@ const styles = StyleSheet.create({
 	buttonGroup: {
 		display: 'flex',
 		flexDirection: 'row',
-		width: '90%',
-		margin: 'auto',
-		height: '40%'
+		// width: '90%',
+		// margin: 'auto',
+		// boxShadow: `inset 4px 4px 6px -1px #2c58db, inset -4px -4px 6px -1px #3a74ff`,
+		// boxShadow: `inset 4px 4px 6px -1px rgb(0, 0, 0, .5), inset -4px -4px 6px -1px rgb(255, 255, 255, .5)`,
+		// boxShadow: `26px 26px 53px #2b56d6,
+		// -26px -26px 53px #3b76ff`,
+		boxShadow: `
+			inset 5px 5px 5px -15px #2851c9, 
+			inset -5px -5px 7px -15px #3e7bff, 
+			5px 5px 4px #2851c9, 
+			5px 5px 10px #3e7bff
+		`,
+		margin: 0,
+		padding: 0,
+		height: '70%',
+		width: '88%',
+		borderRadius: 4,
+		...buttonGroupBoxShadow,
+		backgroundColor: 'white'
+	},
+	innerButtonGroup: {
+		display: 'flex',
+		height: '100%',
+		width: '100%',
+		justifyContent: 'center',
+		justifySelf: 'center',
+		alignSelf: 'center',
+		alignItems: 'center',
+		// margin: 10,
+		...innerButtonBoxShadow
+	},
+	outerButtonGroup: {
+		// boxShadow: `30px 30px 30px -10px #2c58db, -30px -30px 30px -10px #3a74ff, -0.5px -0.5px 0 #2c58db, 0.5px 0.5px 0 rgba(0,0,0,0.02)`,
+		// backgroundColor: 'rgb(51, 102, 255)',
+		backgroundColor: 'inherit',
+		height: 200,
+		width: 500,
+		display: 'flex',
+		justifyContent: 'center',
+		justifySelf: 'center',
+		alignSelf: 'center',
+		alignItems: 'center',
+		borderRadius: 4,
+		padding: 15,
+		...outerButtonGroupBoxShadow
 	}
 });
 function ShowHideButton(props) {
@@ -50,10 +113,10 @@ function ShowHideButton(props) {
 		</Button>
 	);
 }
-class Media extends React.Component {
+export class Media extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { audioControl: null, audioControlsHidden: false };
+		this.state = { audioControl: null, audioControlsHidden: true };
 	}
 	showHideProps(isHidden) {
 		const showHideSettings = {
@@ -119,18 +182,22 @@ class Media extends React.Component {
 					<audio style={audioStyle} id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>
 				<Layout style={styles.buttonRow}>
-					<ButtonGroup style={styles.buttonGroup} appearance="outline">
-						{/* <Button onPress={this.createAudioContext.bind(this)}>Start</Button> */}
-						<Button style={styles.controlButton} onPress={this.play.bind(this)}>
-							Play
-						</Button>
-						<Button style={styles.controlButton} onPress={this.stop.bind(this)}>
-							Stop
-						</Button>
-						<ShowHideButton
-							{...this.showHideProps(audioControlsHidden)}
-						></ShowHideButton>
-					</ButtonGroup>
+					<Layout style={styles.outerButtonGroup}>
+						<Layout style={styles.innerButtonGroup}>
+							<ButtonGroup style={styles.buttonGroup}>
+								{/* <Button onPress={this.createAudioContext.bind(this)}>Start</Button> */}
+								<Button style={styles.controlButton} onPress={this.play.bind(this)}>
+									Play
+								</Button>
+								<Button style={styles.controlButton} onPress={this.stop.bind(this)}>
+									Stop
+								</Button>
+								<ShowHideButton
+									{...this.showHideProps(audioControlsHidden)}
+								></ShowHideButton>
+							</ButtonGroup>
+						</Layout>
+					</Layout>
 				</Layout>
 			</Layout>
 		);

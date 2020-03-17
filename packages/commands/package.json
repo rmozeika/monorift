@@ -6,9 +6,11 @@
 		"start": "node ./index.js"
 	},
 	"dependencies": {
+		"@storybook/react-native": "^5.3.17",
 		"connect-redis": "^4.0.3",
 		"express": "4.17.1",
 		"moment": "^2.24.0",
-		"node-env-file": "^0.1.8"
+		"node-env-file": "^0.1.8",
+		"storybook": "^5.3.17"
 	}
 }

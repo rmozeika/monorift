@@ -99,11 +99,12 @@ class CallContainer extends React.Component {
 		});
 	}
 	getDisplayStyle() {
-		const { mobile, tab } = this.props;
+		const { mobile, tab, loggedIn } = this.props;
 		const getVal = () => {
 			if (!mobile) return { users: 'flex', talk: 'flex' };
-			if (tab !== 2) return { users: 'flex', talk: 'none' };
-			if (tab == 2) return { users: 'none', talk: 'flex' };
+			const totalTabs = loggedIn ? 2 : 1; // -1
+			if (totalTabs > tab) return { users: 'flex', talk: 'none' };
+			return { users: 'none', talk: 'flex' };
 		};
 		const { users, talk } = getVal();
 

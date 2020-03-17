@@ -32,7 +32,7 @@ import {
 	themes,
 	ThemeStore,
 	ThemeService
-} from './core/themes';
+} from './core/themes/index';
 
 const styles = StyleSheet.create({
 	parentView: {

@@ -192,9 +192,10 @@ class UserItem extends React.PureComponent {
 	render() {
 		const { username, index, themedStyle, user } = this.props;
 		console.log(username);
-		if (username == 'vtulln') {
-			debugger; //remove
-		}
+		// REMOVE: debuggin
+		// if (username == 'vtulln') {
+		// 	debugger; //remove
+		// }
 		console.log('render item', username);
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;

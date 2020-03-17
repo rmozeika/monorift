@@ -112,6 +112,7 @@ class UsersList extends React.PureComponent {
 		// if (self !== null) {
 		// 	users.unshift('self');
 		// }
+		console.log('FILTER', 'rendering list');
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<SearchBar />
@@ -125,6 +126,7 @@ class UsersList extends React.PureComponent {
 					// horizontal={true}
 					numColumns={2}
 					columnWrapperStyle={styles.columnWrapper}
+					initialNumToRender={8}
 				/>
 			</Layout>
 		);
@@ -162,7 +164,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
 	const { view } = state;
 	const { tab, mobile } = view;
-	const visibleUsers = UserSelectors.getVisibleUsers(state) || [];
+	const visibleUsers = UserSelectors.getVisibleUsersFiltered(state) || [];
 	return {
 		tab,
 		mobile,

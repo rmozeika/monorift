@@ -19,11 +19,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	searchInput: {
-		flexBasis: '80%'
+		flexBasis: '80%',
+		flex: 1
 	}
 });
 
-class SearchBar extends React.PureComponent {
+export class SearchBar extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.search = this.search.bind(this);
@@ -36,7 +37,8 @@ class SearchBar extends React.PureComponent {
 	}
 	search(input) {
 		const { search } = this.props;
-		debugger;
+		console.log('FILTER', 'search changed');
+
 		search(input);
 		// const { filterText } = this.state;
 		// this.props.search(filterText);
@@ -53,9 +55,9 @@ class SearchBar extends React.PureComponent {
 					// onChangeText={this.setFilterText}
 					style={styles.searchInput}
 				/>
-				<Button style={{ flexBasis: '15%' }} onPress={this.search}>
+				{/* <Button style={{ flexBasis: '15%' }} onPress={this.search}>
 					Search
-				</Button>
+				</Button> */}
 			</Layout>
 		);
 	}

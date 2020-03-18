@@ -13,7 +13,6 @@ const sortOnlineOffline = (users, usernames) => {
 		offline: []
 	};
 	usernames.forEach(username => {
-		// console.log(acc);
 		const user = users[username];
 		if (user.online) {
 			onlineOffline.online.push(username);
@@ -38,7 +37,6 @@ export const onlineFriendUsernames = state => {
 	return state.users.allIds.friends.online;
 };
 export const offlineFriendUsernames = state => {
-	debugger; //remove
 	return state.users.allIds.friends.offline;
 };
 

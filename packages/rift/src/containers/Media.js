@@ -8,7 +8,6 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 const outerButtonGroupBoxShadow = {
 	boxShadow: `
@@ -181,6 +180,9 @@ export class Media extends React.Component {
 	}
 	stop() {
 		this.props.audioRef.current.pause();
+	}
+	live() {
+		this.props.audioRef.current.seekable.end();
 	}
 	hide() {
 		this.setState({ audioControlsHidden: true });

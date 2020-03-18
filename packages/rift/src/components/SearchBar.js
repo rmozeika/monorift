@@ -37,7 +37,6 @@ export class SearchBar extends React.PureComponent {
 	}
 	search(input) {
 		const { search } = this.props;
-		console.log('FILTER', 'search changed');
 
 		search(input);
 		// const { filterText } = this.state;

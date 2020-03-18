@@ -10,7 +10,6 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
-import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import UserList from './UsersList';
 import Talk from './Talk';
@@ -77,7 +76,6 @@ class CallContainer extends React.Component {
 		this.setTopTabsIndex = this.setTopTabsIndex.bind(this);
 	}
 	goToTalk() {
-		console.log('Call talk func');
 		this.setState({ topTabsIndex: 1 });
 	}
 	onLayout({ nativeEvent, timeStamp }) {

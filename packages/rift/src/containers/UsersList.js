@@ -78,7 +78,6 @@ class UsersList extends React.PureComponent {
 		this.renderItem = this.renderItem.bind(this);
 	}
 	goTalk() {
-		console.log('UsersList');
 		this.props.setTabView(2);
 	}
 	calculateHeights() {
@@ -112,7 +111,7 @@ class UsersList extends React.PureComponent {
 		// if (self !== null) {
 		// 	users.unshift('self');
 		// }
-		console.log('FILTER', 'rendering list');
+
 		return (
 			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
 				<SearchBar />

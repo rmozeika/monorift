@@ -20,6 +20,3 @@ const codeReducer = createReducer([], {
 	}
 });
 export default codeReducer;
-function test() {
-	console.log(test);
-}

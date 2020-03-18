@@ -144,7 +144,6 @@ export const byId = (state = {}, action) => {
 			// 	});
 			// 	break;
 			case SET_ONLINE_USERS:
-				console.log(state); //remove
 				action.payload.forEach(user => {
 					const { username } = user;
 					if (!draft[username]) return;
@@ -171,7 +170,6 @@ export const byId = (state = {}, action) => {
 				return draft;
 		}
 	});
-	console.log(resultProduce);
 
 	return resultProduce;
 };

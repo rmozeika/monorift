@@ -191,12 +191,7 @@ class UserItem extends React.PureComponent {
 
 	render() {
 		const { username, index, themedStyle, user } = this.props;
-		console.log(username);
-		// REMOVE: debuggin
-		// if (username == 'vtulln') {
-		// 	debugger; //remove
-		// }
-		console.log('render item', username);
+
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
 		const onlineBorderColor = themedStyle['iconOnline'].color;
@@ -204,9 +199,7 @@ class UserItem extends React.PureComponent {
 			? { borderWidth: 3, borderColor: onlineBorderColor }
 			: {};
 		const otherProps = {};
-		// if (!user.isFriend) {
-		// 	otherProps['accessory'] = this.renderItemAccessory;
-		// }
+
 		const listHeader = () => (
 			<Layout>
 				<Text>Header</Text>

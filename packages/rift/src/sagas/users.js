@@ -23,58 +23,84 @@ const selectUsers = state => {
 function* fetchUsers() {
 	try {
 		const origin = originLink('userList');
-		console.log('origin link', origin);
+
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
 
 		yield put(Actions.fetchOnlineUsers());
-	} catch (err) {
-		console.log(err);
-	}
+	} catch (err) {}
 }
 function* onlineUsersSaga() {
 	yield (data = call(loadOnlineUsersSaga, 'online', Actions.setOnlineUsers));
-	console.log(data);
+
 	// yield put = put(Actions.setOnlineUsers);
 	// yield put(setUsersSuccess(Users));
 }
 function* loadOnlineUsersSaga(nsp, onComplete) {
 	try {
 		const origin = originLink(nsp || 'online');
-		console.log('origin link', origin);
+
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));
-	} catch (err) {
-		console.log(err);
-	}
+	} catch (err) {}
 }
 function* loadFriendsSaga() {
 	try {
 		const origin = originLink('friends');
-		console.log('origin link', origin);
+
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(Actions.setFriends(data));
-	} catch (err) {
-		console.log(err);
-	}
+	} catch (err) {}
 }
 function* addFriendSaga(action) {
 	try {
 		const origin = originLink('addFriend');
-		console.log('origin link', origin);
+
 		const res = yield fetch(origin, {
+			headers: {
+				'Content-Type': 'application/json'
+				// 'Content-Type': 'application/x-www-form-urlencoded',
+			},
 			method: 'POST',
-			body: { friend: action.payload }
+			body: JSON.stringify({ friend: action.payload })
 		});
-		console.log(res);
-	} catch (err) {
-		console.log(err);
+	} catch (err) {}
+}
+function* respondFriendRequestSaga(action) {
+	const { friend, didAccept } = action.payload;
+	// can combine these
+	if (didAccept) {
+		try {
+			const origin = originLink('acceptFriend');
+
+			const res = yield fetch(origin, {
+				headers: {
+					'Content-Type': 'application/json'
+					// 'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				method: 'POST',
+				body: JSON.stringify({ friend })
+			});
+		} catch (err) {}
+		return;
 	}
+	try {
+		const origin = originLink('rejectFriend');
+
+		const res = yield fetch(origin, {
+			headers: {
+				'Content-Type': 'application/json'
+				// 'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'POST',
+			body: JSON.stringify({ friend })
+		});
+	} catch (err) {}
 }
 const connect = () => {
 	socket = io(socketServerURL);
@@ -87,7 +113,6 @@ const connect = () => {
 const createSocketChannel = socket =>
 	eventChannel(emit => {
 		const handler = (data, secondArg) => {
-			console.log('emitting message from socketchannel');
 			let msg = { message: data }; //from: this._id };
 			if (secondArg) {
 				const { constraints, users, from } = secondArg;
@@ -101,7 +126,6 @@ const createSocketChannel = socket =>
 		socket.on('message', handler);
 		socket.on('broadcast', handler);
 		socket.on('disconnect', reason => {
-			console.log('disconnected');
 			socket.connect();
 		});
 		const oldOnMsg = (msg, secondArg) => {
@@ -134,7 +158,6 @@ function* initSocketSaga() {
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {
-			console.log('Call Saga Error', e);
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 		}
 	}
@@ -147,7 +170,8 @@ function* rootSaga() {
 		takeLatest(Actions.FETCH_USERS, fetchUsers),
 		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
 		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
-		takeLatest(Actions.ADD_FRIEND, addFriendSaga)
+		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
+		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga)
 	]);
 }
 

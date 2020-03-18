@@ -8,7 +8,6 @@ import iconFont from 'react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf';
 import iconFontSolid from 'react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf';
 import iconFontFeather from 'react-native-vector-icons/Fonts/Feather.ttf';
 const font5fam = Icon.getFontFamily();
-console.log(font5fam);
 
 const FeatherFontFam = IconFeather.getFontFamily();
 
@@ -34,7 +33,6 @@ if (Platform.OS == 'web') {
 		style.appendChild(document.createTextNode(iconFontStyles));
 	}
 	document.head.appendChild(style);
-	console.log(Icon);
 }
 
 function IconProvider(name) {
@@ -73,7 +71,6 @@ function AwesomeIcon(
 	{ name, style, children, buttonProps, color, ...iconProps },
 	props
 ) {
-	console.log(props);
 	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
 
 	if (children || buttonProps) {

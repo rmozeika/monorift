@@ -11,7 +11,9 @@ import {
 	REMOVE_ONLINE_USER,
 	SET_SEARCH_FILTER
 } from '../actions';
-
+const isFriendFromStatus = friendStatus => {
+	return ['A', 'P', 'S'].some(key => key == friendStatus);
+};
 export const initialState = {
 	status: {
 		gotOnline: false,
@@ -21,12 +23,20 @@ export const initialState = {
 		users: [],
 		gotOnlineUsers: false
 	},
+	// remove this
 	friends: [],
 	byId: {},
 	allIds: {
 		master: [],
-		online: [],
-		offline: []
+		friends: {
+			all: [],
+			online: [],
+			offline: []
+		},
+		nonFriends: {
+			online: [],
+			offline: []
+		}
 	},
 	queued: [],
 	search: { filter: '' }
@@ -115,26 +125,25 @@ export const byId = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
 			case SET_USERS:
-				const users = action.payload.forEach(user => {
+				const users = action.payload.forEach(({ status, ...user }) => {
 					draft[user.username] = {
 						...user,
-						isFriend: false,
-						friendStatus: null,
+						isFriend: status == 'P' || status == 'A' || status == 'S',
+						friendStatus: status,
 						online: false,
 						checked: false
 					};
 				}, {});
 				break;
-			case SET_FRIENDS:
-				action.payload.forEach(user => {
-					const { username } = user;
-					if (!draft[username]) return;
-					draft[username].isFriend = true;
-					draft[username].friendStatus = user.status;
-				});
-				break;
+			// case SET_FRIENDS:
+			// 	action.payload.forEach(user => {
+			// 		const { username } = user;
+			// 		if (!draft[username]) return;
+			// 		draft[username].isFriend = true;
+			// 		draft[username].friendStatus = user.status;
+			// 	});
+			// 	break;
 			case SET_ONLINE_USERS:
-				console.log(state); //remove
 				action.payload.forEach(user => {
 					const { username } = user;
 					if (!draft[username]) return;
@@ -161,37 +170,53 @@ export const byId = (state = {}, action) => {
 				return draft;
 		}
 	});
-	console.log(resultProduce);
 
 	return resultProduce;
 };
 
 export const allIds = (state = {}, action) => {
-	switch (action.type) {
-		case SET_USERS:
-			const ids = action.payload.map(user => user.username);
-			return { master: [...ids] };
-		// CHANGE THIS! MERGE THIS WITH ONLINE
-		case SET_ONLINE_USERS:
-			// action.payload.reduce((acc, onlineUser => {
+	const resultProduce = produce(state, draft => {
+		switch (action.type) {
+			case SET_USERS:
+				const ids = action.payload.map(user => user.username);
 
-			// }));
-			const online = [];
-			const offline = [];
-			state.master.forEach(username => {
-				const isOnline = action.payload.some(
-					onlineUser => username == onlineUser.username
+				const addedFriends = action.payload.filter(user =>
+					isFriendFromStatus(user.status)
 				);
-				if (isOnline) {
-					online.push(username);
-					return;
-				}
-				offline.push(username);
-			});
-			return { ...state, online, offline };
-		default:
-			return state;
-	}
+				draft['master'] = ids;
+				draft['friends'].all = addedFriends.map(friend => friend.username);
+				break;
+			// return { ...state, master: [...ids], friends: { online: [], offline: [ ...addedFriends ] } };
+			// CHANGE THIS! MERGE THIS WITH ONLIN
+			case SET_ONLINE_USERS:
+				// action.payload.reduce((acc, onlineUser => {
+
+				// }));
+				// const listOf = draft.
+				//
+				state.master.forEach(username => {
+					const isOnline = action.payload.some(
+						onlineUser => username == onlineUser.username
+					);
+					let isFriend =
+						state.friends.all.length > 0 &&
+						state.friends.all.some(friend => username == friend);
+
+					const listKey = isFriend ? 'friends' : 'nonFriends';
+					const listToPushTo = draft[listKey];
+					if (isOnline) {
+						draft[listKey].online.push(username);
+						return;
+					}
+					draft[listKey].offline.push(username);
+				});
+				break;
+			// return { ...state, ...listOf };
+			default:
+				return draft;
+		}
+	});
+	return resultProduce;
 };
 export const search = (state = {}, action) => {
 	switch (action.type) {

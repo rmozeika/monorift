@@ -10,7 +10,6 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
-import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import UserList from './UsersList';
 import Talk from './Talk';
@@ -77,7 +76,6 @@ class CallContainer extends React.Component {
 		this.setTopTabsIndex = this.setTopTabsIndex.bind(this);
 	}
 	goToTalk() {
-		console.log('Call talk func');
 		this.setState({ topTabsIndex: 1 });
 	}
 	onLayout({ nativeEvent, timeStamp }) {
@@ -99,11 +97,12 @@ class CallContainer extends React.Component {
 		});
 	}
 	getDisplayStyle() {
-		const { mobile, tab } = this.props;
+		const { mobile, tab, loggedIn } = this.props;
 		const getVal = () => {
 			if (!mobile) return { users: 'flex', talk: 'flex' };
-			if (tab !== 2) return { users: 'flex', talk: 'none' };
-			if (tab == 2) return { users: 'none', talk: 'flex' };
+			const totalTabs = loggedIn ? 2 : 1; // -1
+			if (totalTabs > tab) return { users: 'flex', talk: 'none' };
+			return { users: 'none', talk: 'flex' };
 		};
 		const { users, talk } = getVal();
 
@@ -119,23 +118,6 @@ class CallContainer extends React.Component {
 	render() {
 		const { containerHeight } = this.state;
 		const { tab, mobile, loggedIn, checked } = this.props;
-		// CHANGE THIS full view REMOVE
-		// if (!mobile) {
-		// 	return (
-		// 		<Layout style={styles.desktopLayout}>
-		// 			<Layout style={styles.column}>
-		// 				<Layout style={styles.desktopTabContainer}>
-		// 					<Users />
-		// 				</Layout>
-		// 			</Layout>
-		// 			<Layout style={styles.column}>
-		// 				<Layout style={styles.desktopTabContainer}>
-		// 					<Talk audioRef={this.audioRef} />
-		// 				</Layout>
-		// 			</Layout>
-		// 		</Layout>
-		// 	);
-		// }
 		const displayStyles = this.getDisplayStyle();
 		if (!checked) {
 			return (
@@ -144,51 +126,23 @@ class CallContainer extends React.Component {
 				</Layout>
 			);
 		}
-		if (true == true) {
-			return (
-				<Layout style={styles.container}>
-					<TabBar
-						mobile={mobile}
-						loggedIn={loggedIn}
-						tab={tab}
-						setTopTabsIndex={this.setTopTabsIndex}
-						style={{ backgroundColor: '#1A2237' }}
-					/>
-					<Layout style={[styles.tabContainer, { width: '100%' }]}>
-						{/* {tab == 2 ? <Talk audioRef={this.audioRef} /> : <Users />} */}
-						<Layout style={[styles.tabView, displayStyles.users]}>
-							<Users />
-						</Layout>
-						<Layout style={[styles.tabView, displayStyles.talk]}>
-							<Talk audioRef={this.audioRef} />
-						</Layout>
-					</Layout>
-				</Layout>
-			);
-		}
 		return (
 			<Layout style={styles.container}>
-				<TabView
-					selectedIndex={tab}
-					onSelect={this.setTopTabsIndex}
-					style={{ width: '100%', flexGrow: 1 }}
-				>
-					<Tab title="Friends">
-						<Layout style={styles.tabContainer}>
-							<Users friendList={true} />
-						</Layout>
-					</Tab>
-					<Tab title="Users">
-						<Layout style={styles.tabContainer}>
-							<Users />
-						</Layout>
-					</Tab>
-					<Tab title="Talk">
-						<Layout style={styles.tabContainer}>
-							<Talk audioRef={this.audioRef} />
-						</Layout>
-					</Tab>
-				</TabView>
+				<TabBar
+					mobile={mobile}
+					loggedIn={loggedIn}
+					tab={tab}
+					setTopTabsIndex={this.setTopTabsIndex}
+					style={{ backgroundColor: '#1A2237' }}
+				/>
+				<Layout style={[styles.tabContainer, { width: '100%' }]}>
+					<Layout style={[styles.tabView, displayStyles.users]}>
+						<Users />
+					</Layout>
+					<Layout style={[styles.tabView, displayStyles.talk]}>
+						<Talk audioRef={this.audioRef} />
+					</Layout>
+				</Layout>
 			</Layout>
 		);
 	}

@@ -77,14 +77,12 @@ class UserRepository extends Repository {
 	}
 	async insertUserIntoPostgres(_id, user) {
 		const { username, src, email } = user;
-		const inserted = await this.postgresInstance
-			.knex('users')
-			.insert({
-				username: username,
-				mongo_id: _id,
-				src: { email, ...src },
-				email
-			});
+		const inserted = await this.postgresInstance.knex('users').insert({
+			username: username,
+			mongo_id: _id,
+			src: { email, ...src },
+			email
+		});
 		return inserted;
 	}
 
@@ -124,6 +122,28 @@ class UserRepository extends Repository {
 			.knex('users')
 			// .whereIn('username', usernames)
 			.select('*');
+		return users;
+	}
+	async getUsersPostgresByFriendStatus(username) {
+		console.log(username);
+		const [{ id }] = await this.postgresInstance.client
+			.select('id')
+			.from('users')
+			.where('username', '=', username);
+		const users = await this.postgresInstance.client
+			.select('users.username', 'users.src', 'friendship.status')
+			.from('users')
+			.leftJoin('friendship', function() {
+				this.on('friendship.member2_id', '=', 'users.id').andOn(
+					'friendship.member1_id',
+					'=',
+					id
+				);
+			})
+			.orderBy('friendship.status')
+			.catch(e => {
+				console.log(e);
+			});
 		return users;
 	}
 	async getUsersIdsByUsername(usernames) {

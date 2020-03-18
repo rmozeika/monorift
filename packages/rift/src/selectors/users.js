@@ -13,7 +13,6 @@ const sortOnlineOffline = (users, usernames) => {
 		offline: []
 	};
 	usernames.forEach(username => {
-		// console.log(acc);
 		const user = users[username];
 		if (user.online) {
 			onlineOffline.online.push(username);
@@ -32,8 +31,14 @@ export const getSearchFilter = state => state.users.search.filter;
 export const sortOnline = createSelector([getUsers], users => {
 	return Object.keys(users);
 });
-export const onlineUsernames = state => state.users.allIds.online;
-export const offlineUsernames = state => state.users.allIds.offline;
+export const onlineUsernames = state => state.users.allIds.nonFriends.online;
+export const offlineUsernames = state => state.users.allIds.nonFriends.offline;
+export const onlineFriendUsernames = state => {
+	return state.users.allIds.friends.online;
+};
+export const offlineFriendUsernames = state => {
+	return state.users.allIds.friends.offline;
+};
 
 export const getOnlineOfflineUsernames = createSelector(
 	[onlineUsernames, offlineUsernames],
@@ -41,12 +46,80 @@ export const getOnlineOfflineUsernames = createSelector(
 		return online.concat(offline);
 	}
 );
+export const getFriendsOnlineOfflineUsernames = createSelector(
+	[onlineFriendUsernames, offlineFriendUsernames],
+	(online, offline) => {
+		return online.concat(offline);
+	}
+);
+
+export const getOnlineOffline = createSelector(
+	[getTab, getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],
+	(tab, friends, nonFriends) => {
+		// const tabTypeOffset = isLoggedIn ? 0 : 1;
+		const tabType = getTabType(tab);
+		switch (tabType) {
+			case 'friends':
+				return friends;
+			case 'users':
+				return nonFriends;
+		}
+	}
+);
 
 export const filterUsers = (users, filter) => {
 	const filterRegex = new RegExp(filter, 'i');
 	return users.filter(user => user.match(filterRegex));
 };
+
 export const getVisibleUsers = createSelector(
+	// [getTab, getUsers, loggedIn],
+	// (tab, users, isLoggedIn) => {
+	[
+		// getSearchFilter,
+		getTab,
+		getOnlineOffline,
+		gotOnline,
+		gotFriends,
+		loggedIn
+	],
+	(tab, users, didGetOnline, didGetFriends, isLoggedIn) => {
+		// CHANGE THIS spaghetti code
+		const tabTypeOffset = isLoggedIn ? 0 : 1;
+		const tabType = getTabType(tab + tabTypeOffset);
+		switch (tabType) {
+			case 'friends':
+				if (!didGetFriends || !didGetOnline) return [];
+				// if (searchFilter == '') {
+				return users;
+			// }
+			// const filteredFriends = filterUsers(users, searchFilter);
+			// return filteredFriends;
+			// const friendsUsernames = Object.keys(users).filter(
+			// 	username => users[username].isFriend
+			// );
+
+			// const friendsOnlineOffline = sortOnlineOffline(users, friendsUsernames);
+			// return friendsOnlineOffline;
+			case 'users':
+				if (!didGetOnline) {
+					return []; // usersOnlineOfflineBase;
+				}
+				// if (searchFilter == '') {
+				return users;
+			// }
+			// const filtered = filterUsers(users, searchFilter);
+			// return filtered;
+			// REMOVE
+			// const nonFriendUsernames = isLoggedIn
+			// 	? usernames.filter(username => !users[username].isFriend)
+			// 	: usernames;
+			// const visibleUsers = sortOnlineOffline(users, nonFriendUsernames);
+			// return visibleUsers.online.concat(visibleUsers.offline);
+		}
+	}
+);
+export const getVisibleUsersOld = createSelector(
 	// [getTab, getUsers, loggedIn],
 	// (tab, users, isLoggedIn) => {
 	[
@@ -91,6 +164,18 @@ export const getVisibleUsers = createSelector(
 				const visibleUsers = sortOnlineOffline(users, nonFriendUsernames);
 				return visibleUsers.online.concat(visibleUsers.offline);
 		}
+	}
+);
+export const getVisibleUsersFiltered = createSelector(
+	[getSearchFilter, getVisibleUsers],
+	(filter, users) => {
+		if (filter == '') {
+			return users;
+		}
+		console.log('FILTER', 'filtered started');
+		const filtered = filterUsers(users, filter);
+		console.log('FILTER', 'filtered done');
+		return filtered;
 	}
 );
 // const getAllIds = state => state.users.allIds;

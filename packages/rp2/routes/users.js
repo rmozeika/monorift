@@ -20,6 +20,8 @@ class UserRoute extends Route {
 			this.router.post('/online', this.fetchOnlineUsers.bind(this));
 			this.router.post('/friends', this.fetchFriends.bind(this));
 			this.router.post('/friends/add', this.addFriend.bind(this));
+			this.router.post('/friends/accept', this.acceptFriend.bind(this));
+			this.router.post('/friends/reject', this.rejectFriend.bind(this));
 			this.router.get('/username', secured(), this.getUser.bind(this));
 		});
 	}
@@ -67,7 +69,13 @@ class UserRoute extends Route {
 	}
 	// users postgres
 	async fetchUserList(req, res) {
-		const users = await this.repository.getUsersPostgres();
+		const username = this.getUserNameFromReq(req);
+		if (!username) {
+			const users = await this.repository.getUsersPostgres();
+			res.send(users);
+			return;
+		}
+		const users = await this.repository.getUsersPostgresByFriendStatus(username);
 		res.send(users);
 	}
 	fetchOnlineUsers(req, res) {
@@ -94,6 +102,19 @@ class UserRoute extends Route {
 		const username = this.getUserNameFromReq(req);
 		const { friend } = req.body;
 		console.log(username);
+		this.repository.addFriend(username, friend.username);
+	}
+	async acceptFriend(req, res) {
+		const username = this.getUserNameFromReq(req);
+		const { friend } = req.body;
+		console.log(username);
+		this.repository.acceptFriend(username, friend.username);
+	}
+	async rejectFriend(req, res) {
+		const username = this.getUserNameFromReq(req);
+		const { friend } = req.body;
+		console.log(username);
+		this.repository.rejectFriend(username, friend.username);
 	}
 }
 

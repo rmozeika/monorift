@@ -27,6 +27,7 @@ class PostgresService {
 	async connectToServer(cb) {
 		const knexInstance = knex(config.staging);
 		this.knex = knexInstance.bind(knexInstance);
+		this.client = knexInstance;
 	}
 	async insert(table, user, columns) {
 		await client.query('INSERT INTO users(data) VALUES($1)', [newUser]);

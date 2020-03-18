@@ -5,10 +5,12 @@
 	"license": "MIT",
 	"dependencies": {
 		"@babel/parser": "^7.6.0",
+		"@storybook/react-native": "^5.3.17",
 		"eslint": "^6.4.0",
 		"eslint-config-prettier": "^6.3.0",
 		"eslint-plugin-prettier": "^3.1.1",
 		"prettier": "^1.18.2",
+		"storybook": "^5.3.17",
 		"tail": "^2.0.3",
 		"textract": "^2.5.0"
 	}

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Layout, Text, Button, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
-import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import Media from './Media';
 
@@ -56,49 +55,54 @@ class Adapter extends React.Component {
 		window.videoRef = this.videoRef;
 		// this.getDisplayStyle = this.get
 	}
-	componentDidMount() {
-		// this.props.createPeerConn({
-		// 	iceServers: [
-		// 		{
-		// 			urls: 'stun:stun.l.google.com:19302'
-		// 		},
-		// 		{
-		// 			urls: 'turn:monorift:78?transport=udp',
-		// 			credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
-		// 			username: 'rtcpeer'
-		// 		}
-		// 	]
-		// });
-	}
 	componentDidUpdate() {
 		const { peerStore, peerConnStatus } = this.props;
 		const { audioRef, videoRef } = this;
 		const { conn } = peerStore;
+		let inboundStream = null;
+
 		const onTrack = e => {
 			const { mediaStreamConstraints } = this.props;
 			console.log('ONTRACK called', e);
 			console.log('on track ID', e.track.id);
 
-			if (mediaStreamConstraints.video) {
+			if (mediaStreamConstraints.video && e.track.kind == 'video') {
 				if (!(videoRef && videoRef.current)) {
 					return;
 				}
-				if (videoRef.current.srcObject !== null) {
-					return;
+				if (e.streams && e.streams[0]) {
+					videoRef.current.srcObject = e.streams[0];
+				} else {
+					if (!inboundStream) {
+						inboundStream = new MediaStream();
+						videoRef.current.srcObject = inboundStream;
+					}
+					inboundStream.addTrack(e.track);
 				}
-				videoRef.current.srcObject = e.streams[0];
+				// if (videoRef.current.srcObject !== null) {
+				// 	return;
+				// }
+				// videoRef.current.srcObject = e.streams[0];
+				// return;
 				return;
 			}
 			if (!(audioRef && audioRef.current)) {
 				return;
 			}
-			if (audioRef.current.srcObject) return;
-			if (e.track.kind == 'audio') {
+			if (e.streams && e.streams[0]) {
 				audioRef.current.srcObject = e.streams[0];
-				this.props.setStream(e.streams[0]);
-			}
-			let audio = audioRef.current;
-			audio.play();
+			} else {
+				if (!inboundStream) {
+					inboundStream = new MediaStream();
+					videoRef.current.srcObject = inboundStream;
+				}
+				inboundStream.addTrack(e.track);
+			} // if (e.track.kind == 'audio') {
+			// 	audioRef.current.srcObject = e.streams[0];
+			// 	this.props.setStream(e.streams[0]);
+			// }
+			// let audio = audioRef.current;
+			// audio.play();
 		};
 
 		if (peerConnStatus.created === true && conn.ontrack == null) {
@@ -126,6 +130,7 @@ class Adapter extends React.Component {
 		stream.getTracks().forEach(track => {
 			console.log('adding track', 'from getMedia after call');
 			console.log('added track ID', track.id);
+			console.log('track');
 			conn.addTrack(track, stream);
 		});
 	}
@@ -201,11 +206,7 @@ class Adapter extends React.Component {
 		const { peerStore, peerConnStatus, themedStyle } = this.props;
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={[styles.callButton]}>
-				{onPress ? (
-					<Button styleappearance="outline" onPress={onPress}>
-						Audio Call
-					</Button>
-				) : null}
+				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
 				{/* <audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio> */}
 			</Layout>
 		);
@@ -260,6 +261,10 @@ class Adapter extends React.Component {
 		);
 		const audioElem = <audio src="example.mp3"></audio>;
 		const fileCall = this.fileCall.bind(this);
+		const callFunctions = {
+			audio: this.call.bind(this),
+			video: this.videoCall.bind(this)
+		};
 		return (
 			<ScrollView
 				style={{
@@ -271,12 +276,14 @@ class Adapter extends React.Component {
 				contentContainerStyle={{ flexGrow: 1 }}
 			>
 				<Layout style={styles.container}>
-					<Layout style={[styles.row, { padding: 0 }]}>
-						<Media videoRef={this.videoRef} audioRef={this.audioRef} />
+					<Layout style={[styles.row, { padding: 0, height: '100%' }]}>
+						<Media
+							callFunctions={callFunctions}
+							videoRef={this.videoRef}
+							audioRef={this.audioRef}
+						/>
 					</Layout>
-					<Layout style={styles.callButtonContainer}>{toDisplay()}</Layout>
-
-					<Layout style={[styles.row, { padding: 2 }]}>
+					{/* <Layout style={[styles.row, { padding: 2 }]}>
 						<Button onPress={fileCall} appearance="outline" status="warning">
 							Stream Audio from File
 						</Button>
@@ -289,7 +296,7 @@ class Adapter extends React.Component {
 							controls
 							style={{ margin: 'auto' }}
 						></audio>
-					</Layout>
+					</Layout> */}
 				</Layout>
 			</ScrollView>
 		);

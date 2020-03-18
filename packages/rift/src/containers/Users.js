@@ -8,7 +8,6 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import * as rtcUtils from '../core/utils/rtc';
 import * as Actions from '../actions';
 import UsersList from './UsersList';
 

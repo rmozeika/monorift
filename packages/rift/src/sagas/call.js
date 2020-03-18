@@ -224,6 +224,7 @@ function* gotMessageSaga({ message, constraints, from }) {
 			const stream = yield navigator.mediaDevices.getUserMedia(constraints);
 			stream.getTracks().forEach(track => {
 				console.log('adding track', 'from message start func');
+
 				conn.addTrack(track, stream);
 			});
 		}

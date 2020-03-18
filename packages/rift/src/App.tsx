@@ -32,7 +32,7 @@ import {
 	themes,
 	ThemeStore,
 	ThemeService
-} from './core/themes';
+} from './core/themes/index';
 
 const styles = StyleSheet.create({
 	parentView: {
@@ -51,7 +51,6 @@ interface Props {
 class App extends React.Component<Props, State> {
 	public constructor(props) {
 		super(props);
-		console.log(' setting mobile');
 		const isMobile = window.innerWidth <= 600;
 		this.props.setIsMobile(isMobile);
 	}

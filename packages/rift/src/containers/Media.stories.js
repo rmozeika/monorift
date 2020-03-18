@@ -7,7 +7,11 @@ import createStore from '../store';
 const store = createStore({});
 export const defaultSearchData = {
 	audioRef: React.createRef(),
-	videoRef: React.createRef()
+	videoRef: React.createRef(),
+	callFunctions: {
+		audio: () => true,
+		video: () => true
+	}
 };
 
 // export const actionsData = {
@@ -33,4 +37,9 @@ export default {
 	excludeStories: /.*Data$/
 };
 
-export const Default = () => <Media tasks={defaultSearchData} />;
+export const Default = () => (
+	<Media
+		tasks={defaultSearchData}
+		callFunctions={defaultSearchData.callFunctions}
+	/>
+);

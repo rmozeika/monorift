@@ -68,8 +68,49 @@ function* addFriendSaga(action) {
 		const origin = originLink('addFriend');
 		console.log('origin link', origin);
 		const res = yield fetch(origin, {
+			headers: {
+				'Content-Type': 'application/json'
+				// 'Content-Type': 'application/x-www-form-urlencoded',
+			},
 			method: 'POST',
-			body: { friend: action.payload }
+			body: JSON.stringify({ friend: action.payload })
+		});
+		console.log(res);
+	} catch (err) {
+		console.log(err);
+	}
+}
+function* respondFriendRequestSaga(action) {
+	const { friend, didAccept } = action.payload;
+	// can combine these
+	if (didAccept) {
+		try {
+			const origin = originLink('acceptFriend');
+			console.log('origin link', origin);
+			const res = yield fetch(origin, {
+				headers: {
+					'Content-Type': 'application/json'
+					// 'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				method: 'POST',
+				body: JSON.stringify({ friend })
+			});
+			console.log(res);
+		} catch (err) {
+			console.log(err);
+		}
+		return;
+	}
+	try {
+		const origin = originLink('rejectFriend');
+		console.log('origin link', origin);
+		const res = yield fetch(origin, {
+			headers: {
+				'Content-Type': 'application/json'
+				// 'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			method: 'POST',
+			body: JSON.stringify({ friend })
 		});
 		console.log(res);
 	} catch (err) {
@@ -147,7 +188,8 @@ function* rootSaga() {
 		takeLatest(Actions.FETCH_USERS, fetchUsers),
 		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
 		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
-		takeLatest(Actions.ADD_FRIEND, addFriendSaga)
+		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
+		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga)
 	]);
 }
 

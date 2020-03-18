@@ -14,24 +14,19 @@ const outerButtonGroupBoxShadow = {
 	boxShadow: `
 			inset 5px 5px 5px -15px rgba(0,0,0,0.1), 
 			inset -5px -5px 7px -15px rgba(255, 255, 255, 0.4), 
-			5px 5px 16px rgba(255,255,255,0.5), 
-			5px 5px 10px rgba(0, 0, 0, 0.4)
+			-5px -5px 16px rgba(255, 255,255, 0.1), 
+			15px 15px 10px rgba(0,0,0,0.5)
 		`
 };
-const workspace = `inset 10px 10px 10px rgba(0,0,0,.1), inset -10px -10px 5px rgba(0,0,0,.1), inset -10px 10px 5px rgba(0,0,0,.1), inset 10px -10px 10px rgba(0,0,0,.1)`;
+const controlButtonBoxShadow = `inset 10px 10px 10px rgba(0,0,0,.1), inset -10px -10px 5px rgba(0,0,0,.1), inset -10px 10px 5px rgba(0,0,0,.1), inset 10px -10px 10px rgba(0,0,0,.1)`;
 const buttonGroupBoxShadow = {
-	boxShadow:
-		// `
-		// rgba(0, 0, 0, 0.9) 5px 5px 5px -15px inset,
-		// rgba(0,0,0, 0.9) -5px -5px 7px -15px inset,
-		// rgba(0,0,0, 0.3) 5px 5px 16px,
-		// rgba(0, 0, 0, 0.4) 5px 5px 6px
-		// `,
-		`rgba(0, 0, 0, 0.9) 5px 5px 5px -15px, 
-	rgba(0, 0, 0, 0.9) -5px -6px 7px -14px, 
-	rgba(0, 0, 0, 4) 5px 5px 16px, 
-	rgba(0, 0, 0, 9) 5px 5px 6px`,
-	//  `
+	boxShadow: `
+		rgba(0, 0, 0, 0.9) 5px 5px 5px -15px, 
+		rgba(255, 255, 255, 0.2) -7px -7px 16px -10px, 
+		rgba(0, 0, 0, 4) 10px 10px 16px 0px
+		`,
+	//		rgba(0, 0, 0, 9) 5px 5px 6px`,
+
 	// inset 5px 5px 5px -15px rgba(0,0,0,0.9),
 	// inset -5px -5px 7px -15px rgba(255, 255, 255, 0.9),
 	// 5px 5px 16px rgba(255,255,255,0.5),
@@ -42,22 +37,27 @@ const buttonGroupBoxShadow = {
 };
 const innerButtonBoxShadow = {
 	boxShadow: `
-	inset 5px 5px 5px -1px rgba(255,255,255,0.1), 
-	inset -5px -5px 5px -1px rgba(0, 0, 0, 0.2),
-	rgba(0,0, 0, 0.3) 5px 5px 5px -1px, rgba(0, 0, 0, 0.2) -5px -5px 5px -1px, rgba(0,0, 0, 0.3) -5px 5px 5px -1px, rgba(0, 0, 0, 0.2) 5px -5px 5px 2px
+	rgba(255, 255, 255, 0.1) -5px -5px 5px -1px inset, 
+	rgba(0, 0, 0, 0.2) 5px 5px 5px -1px inset
 	`
 };
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center'
+		alignItems: 'center',
+		height: '100%',
+		justifyContent: 'space-between'
 	},
 	row: {
-		width: '100%'
+		width: '100%',
+		flexGrow: 1
 	},
 	buttonRow: {
 		width: '100%',
-		margin: 8
+		margin: 8,
+		flexGrow: 1,
+		flexBasis: '45%',
+		maxHeight: '50%'
 	},
 	video: {
 		width: '100%'
@@ -65,48 +65,58 @@ const styles = StyleSheet.create({
 	controlButton: {
 		flexGrow: 1,
 		flexBasis: 40,
-		boxShadow: workspace
+		boxShadow: controlButtonBoxShadow
+	},
+	callButtonContainer: {
+		height: '100%',
+		width: '100%',
+		flexDirection: 'row',
+		justifyContent: 'space-between'
+	},
+	callButtons: {
+		flexGrow: 1,
+		flexBasis: '40%',
+		boxShadow: controlButtonBoxShadow,
+		borderRadius: 10
+	},
+	callButtonLeft: {
+		borderTopRightRadius: 0,
+		borderBottomRightRadius: 0
+	},
+	callButtonRight: {
+		borderTopLeftRadius: 0,
+		borderBottomLeftRadius: 0
 	},
 	buttonGroup: {
 		display: 'flex',
 		flexDirection: 'row',
-		// width: '90%',
-		// margin: 'auto',
-		// boxShadow: `inset 4px 4px 6px -1px #2c58db, inset -4px -4px 6px -1px #3a74ff`,
-		// boxShadow: `inset 4px 4px 6px -1px rgb(0, 0, 0, .5), inset -4px -4px 6px -1px rgb(255, 255, 255, .5)`,
-		// boxShadow: `26px 26px 53px #2b56d6,
-		// -26px -26px 53px #3b76ff`,
-		boxShadow: `
-			inset 5px 5px 5px -15px #2851c9, 
-			inset -5px -5px 7px -15px #3e7bff, 
-			5px 5px 4px #2851c9, 
-			5px 5px 10px #3e7bff
-		`,
 		margin: 0,
 		padding: 0,
 		height: '70%',
 		width: '88%',
-		borderRadius: 4,
+		borderRadius: 10,
 		...buttonGroupBoxShadow,
 		backgroundColor: 'white'
 	},
 	innerButtonGroup: {
 		display: 'flex',
-		height: '100%',
+		// height: '100%',
+		flexBasis: '30%',
 		width: '100%',
 		justifyContent: 'center',
 		justifySelf: 'center',
 		alignSelf: 'center',
 		alignItems: 'center',
-		// margin: 10,
+		margin: 10,
+		borderRadius: 10,
 		...innerButtonBoxShadow
 	},
 	outerButtonGroup: {
-		// boxShadow: `30px 30px 30px -10px #2c58db, -30px -30px 30px -10px #3a74ff, -0.5px -0.5px 0 #2c58db, 0.5px 0.5px 0 rgba(0,0,0,0.02)`,
-		// backgroundColor: 'rgb(51, 102, 255)',
 		backgroundColor: 'inherit',
-		height: 200,
-		width: 500,
+		// flexGrow: 1,
+		// flexBasis: '40%',
+		width: '95%',
+		height: '95%',
 		display: 'flex',
 		justifyContent: 'center',
 		justifySelf: 'center',
@@ -212,6 +222,22 @@ export class Media extends React.Component {
 									{...this.showHideProps(audioControlsHidden)}
 								></ShowHideButton>
 							</ButtonGroup>
+						</Layout>
+						<Layout style={[styles.innerButtonGroup, { flexBasis: '50%' }]}>
+							<Layout style={[styles.callButtonContainer, { boxShadow: 'none' }]}>
+								<Button
+									style={[styles.callButtons, styles.callButtonLeft]}
+									onPress={this.props.callFunctions.audio}
+								>
+									Audio Call
+								</Button>
+								<Button
+									style={[styles.callButtons, styles.callButtonRight]}
+									onPress={this.props.callFunctions.video}
+								>
+									Video Call
+								</Button>
+							</Layout>
 						</Layout>
 					</Layout>
 				</Layout>

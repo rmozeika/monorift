@@ -32,13 +32,40 @@ export const getSearchFilter = state => state.users.search.filter;
 export const sortOnline = createSelector([getUsers], users => {
 	return Object.keys(users);
 });
-export const onlineUsernames = state => state.users.allIds.online;
-export const offlineUsernames = state => state.users.allIds.offline;
+export const onlineUsernames = state => state.users.allIds.nonFriends.online;
+export const offlineUsernames = state => state.users.allIds.nonFriends.offline;
+export const onlineFriendUsernames = state => {
+	return state.users.allIds.friends.online;
+};
+export const offlineFriendUsernames = state => {
+	debugger; //remove
+	return state.users.allIds.friends.offline;
+};
 
 export const getOnlineOfflineUsernames = createSelector(
 	[onlineUsernames, offlineUsernames],
 	(online, offline) => {
 		return online.concat(offline);
+	}
+);
+export const getFriendsOnlineOfflineUsernames = createSelector(
+	[onlineFriendUsernames, offlineFriendUsernames],
+	(online, offline) => {
+		return online.concat(offline);
+	}
+);
+
+export const getOnlineOffline = createSelector(
+	[getTab, getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],
+	(tab, friends, nonFriends) => {
+		// const tabTypeOffset = isLoggedIn ? 0 : 1;
+		const tabType = getTabType(tab);
+		switch (tabType) {
+			case 'friends':
+				return friends;
+			case 'users':
+				return nonFriends;
+		}
 	}
 );
 
@@ -53,7 +80,7 @@ export const getVisibleUsers = createSelector(
 	[
 		// getSearchFilter,
 		getTab,
-		getOnlineOfflineUsernames,
+		getOnlineOffline,
 		gotOnline,
 		gotFriends,
 		loggedIn

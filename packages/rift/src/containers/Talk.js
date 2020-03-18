@@ -201,11 +201,7 @@ class Adapter extends React.Component {
 		const { peerStore, peerConnStatus, themedStyle } = this.props;
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={[styles.callButton]}>
-				{onPress ? (
-					<Button styleappearance="outline" onPress={onPress}>
-						Audio Call
-					</Button>
-				) : null}
+				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
 				{/* <audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio> */}
 			</Layout>
 		);
@@ -260,6 +256,10 @@ class Adapter extends React.Component {
 		);
 		const audioElem = <audio src="example.mp3"></audio>;
 		const fileCall = this.fileCall.bind(this);
+		const callFunctions = {
+			audio: this.call.bind(this),
+			video: this.videoCall.bind(this)
+		};
 		return (
 			<ScrollView
 				style={{
@@ -271,12 +271,14 @@ class Adapter extends React.Component {
 				contentContainerStyle={{ flexGrow: 1 }}
 			>
 				<Layout style={styles.container}>
-					<Layout style={[styles.row, { padding: 0 }]}>
-						<Media videoRef={this.videoRef} audioRef={this.audioRef} />
+					<Layout style={[styles.row, { padding: 0, height: '100%' }]}>
+						<Media
+							callFunctions={callFunctions}
+							videoRef={this.videoRef}
+							audioRef={this.audioRef}
+						/>
 					</Layout>
-					<Layout style={styles.callButtonContainer}>{toDisplay()}</Layout>
-
-					<Layout style={[styles.row, { padding: 2 }]}>
+					{/* <Layout style={[styles.row, { padding: 2 }]}>
 						<Button onPress={fileCall} appearance="outline" status="warning">
 							Stream Audio from File
 						</Button>
@@ -289,7 +291,7 @@ class Adapter extends React.Component {
 							controls
 							style={{ margin: 'auto' }}
 						></audio>
-					</Layout>
+					</Layout> */}
 				</Layout>
 			</ScrollView>
 		);

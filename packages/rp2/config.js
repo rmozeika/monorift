@@ -26,7 +26,7 @@ exports.auth0Config = {
 	callbackURL
 };
 exports.psqlConfig = {
-	usser: env.psqlUser,
+	user: env.psqlUser,
 	password: env.psqlPassword,
 	host: env.psqlHost || 'localhost',
 	port: env.psqlPort || '5432'

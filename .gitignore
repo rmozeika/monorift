@@ -17,7 +17,7 @@ packages/cli/**
 .vscode/settings.json
 **/history
 **/yarn-error.log
-**/gravatar
+packages/rp2/public/gravatar
 packages/deploy/history
 logs/compose
 package-lock.json

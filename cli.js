@@ -114,8 +114,6 @@ async function goToPath() {
 const argInterface = {
 	main: {
 		cm: {
-			name: 'commit',
-			val: 'cm',
 			func: async () => {
 				console.log('test');
 				const child = execFile('./.bin/mr.sh', ['cm'], (error, stdout, stderr) => {
@@ -127,8 +125,6 @@ const argInterface = {
 			}
 		},
 		start: {
-			name: 'start',
-			val: 'start',
 			func: async () => {
 				const isRunning = await isDockerContainersRunning();
 				if (isRunning) {
@@ -143,8 +139,6 @@ const argInterface = {
 			}
 		},
 		stop: {
-			name: 'stop',
-			val: 'stop',
 			func: async (...args) => {
 				const isRunning = await isDockerContainersRunning();
 				if (isRunning) {
@@ -155,16 +149,22 @@ const argInterface = {
 				}
 			}
 		},
+		clean: {
+			func: async (...args) => {
+				execFile('./dev.sh/clean.sh', [], (error, stdout, stderr) => {
+					console.log(stdout);
+					console.log(stderr);
+					console.log(error);
+				});
+			}
+		},
 		test: {
-			name: 'test',
-			val: 'test',
 			func: async () => {
 				var lib = path.join(path.dirname(fs.realpathSync(__filename)));
 				console.log(lib);
 			}
 		},
 		logs: {
-			val: 'logs',
 			func: async ([roll]) => {
 				if (roll == 'roll') {
 					const rolled = await util.promisify(
@@ -175,7 +175,6 @@ const argInterface = {
 			}
 		},
 		kill: {
-			val: 'kill',
 			func: async args => {
 				execFile('./dev.sh/docker-kill.sh', [], (error, stdout, stderr) => {
 					console.log(stdout);
@@ -185,7 +184,6 @@ const argInterface = {
 			}
 		},
 		build: {
-			val: 'build',
 			func: async ([buildType, ...args]) => {
 				if (buildType === 'docker') {
 					isMonorift();
@@ -198,7 +196,6 @@ const argInterface = {
 			}
 		},
 		resetcontainers: {
-			val: 'resetcontainers',
 			func: async args => {
 				execFile('./dev.sh/docker/remove.sh', [], (error, stdout, stderr) => {
 					console.log(stdout);
@@ -208,7 +205,6 @@ const argInterface = {
 			}
 		},
 		transfer: {
-			val: 'transfer',
 			func: async ([type, files]) => {
 				transferFiles(files);
 				console.log('done');

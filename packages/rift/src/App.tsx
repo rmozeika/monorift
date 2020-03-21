@@ -1,5 +1,5 @@
 import React from 'react';
-import 'babel-polyfill';
+import '@babel/polyfill';
 import { Provider } from 'react-redux';
 import { applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
@@ -18,6 +18,7 @@ import {
 } from './core/icons';
 
 import NavBar from './containers/NavBar';
+// import Navigation from './containers/Navigation';
 import Editor from './containers/Editor';
 import About from './containers/About';
 
@@ -74,14 +75,7 @@ class App extends React.Component<Props, State> {
 					<View style={styles.parentView}>
 						<Router>
 							<NavBar />
-							<Switch>
-								<Route path="/about">
-									<About />
-								</Route>
-								<Route path="/">
-									<Call />
-								</Route>
-							</Switch>
+							{/* <Navigation></Navigation> */}
 						</Router>
 					</View>
 				</ApplicationProvider>

@@ -54,7 +54,7 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.(js|jsx|mjs)$/,
+				test: /\.(js|jsx|mjs|ts|tsx)$/,
 				include: [
 					path.resolve(__dirname, 'node_modules/react-native-elements'),
 					path.resolve(__dirname, 'node_modules/react-native-elements/src'),
@@ -75,18 +75,19 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/static-container'),
 					path.resolve(__dirname, 'node_modules/@ui-kitten/components'),
 					path.resolve(__dirname, 'node_modules/@ui-kitten/eva-icons')
+					// path.resolve(__dirname, 'node_modules/react-native-screens/screens.web.js')
 				],
-				loader: require.resolve('babel-loader'),
-				options: {
-					presets: ['module:metro-react-native-babel-preset', '@babel/react'],
+				loader: require.resolve('babel-loader')
+				// options: {
+				// 	presets: ['module:metro-react-native-babel-preset', '@babel/react'],
 
-					plugins: [
-						'react-native-web',
-						'@babel/plugin-syntax-dynamic-import',
-						'@babel/plugin-proposal-object-rest-spread'
-					],
-					cacheDirectory: true
-				}
+				// 	plugins: [
+				// 		'react-native-web',
+				// 		'@babel/plugin-syntax-dynamic-import',
+				// 		'@babel/plugin-proposal-object-rest-spread'
+				// 	],
+				// 	cacheDirectory: true
+				// }
 			}
 		]
 	},
@@ -95,6 +96,7 @@ module.exports = {
 			'react-native': 'react-native-web',
 			'@src': path.resolve(__dirname, './packages/rift/src'),
 			'react-native-svg': 'react-native-svg-web'
+			// 'react-native-screens': 'react-native-screens/src/screens.web.js'
 		},
 		extensions: ['.ts', '.tsx', '.js']
 	},

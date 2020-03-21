@@ -5,7 +5,17 @@ import createSagaMiddleware from 'redux-saga';
 import { AppRegistry, StyleSheet, Text, View } from 'react-native';
 import '@babel/polyfill';
 // import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { enableScreens } from './extraModules/screens.web.js'; //react-native-screens';
+// import { enableScreens } from './extraModules/screens.web.js';
+
+import { enableScreens } from 'react-native-screens';
+
+declare global {
+	interface Window {
+		__DEV__: boolean;
+	}
+}
+
+window.__DEV__ = false;
 enableScreens();
 
 import App from './App';

@@ -1,7 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-
 var src = path.join(__dirname, './packages/rift/src');
 
 module.exports = {
@@ -63,6 +62,8 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/native-base-shoutem-theme'),
 					path.resolve(__dirname, 'node_modules/react-navigation'),
 					path.resolve(__dirname, 'node_modules/react-native-easy-grid'),
+					path.resolve(__dirname, 'node_modules/react-native-reanimated'),
+					path.resolve(__dirname, 'node_modules/react-native-gesture-handler'),
 					path.resolve(__dirname, 'node_modules/react-native-drawer'),
 					path.resolve(__dirname, 'node_modules/react-native-safe-area-view'),
 					path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
@@ -78,8 +79,8 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/@react-navigation/core'),
 					path.resolve(__dirname, 'node_modules/@react-navigation/native'),
 					path.resolve(__dirname, 'node_modules/@react-navigation/routers'),
-					path.resolve(__dirname, 'node_modules/@react-navigation/stack')
-					// path.resolve(__dirname, 'node_modules/react-native-screens/screens.web.js')
+					path.resolve(__dirname, 'node_modules/@react-navigation/stack'),
+					path.resolve(__dirname, 'node_modules/react-native-screens')
 				],
 				loader: require.resolve('babel-loader')
 				// options: {
@@ -96,13 +97,40 @@ module.exports = {
 		]
 	},
 	resolve: {
+		mainFields: ['browser', 'module', 'main'],
+		extensions: [
+			// '.web.expo.ts',  '.web.expo.tsx',
+			// '.web.expo.mjs', '.web.expo.js',
+			// '.web.expo.jsx', '.expo.ts',
+			// '.expo.tsx',     '.expo.mjs',
+			// '.expo.js',      '.expo.jsx',
+			'.web.ts',
+			'.web.tsx',
+			'.web.mjs',
+			'.web.js',
+			'.web.jsx',
+			'.ts',
+			'.tsx',
+			'.mjs',
+			'.js',
+			'.jsx',
+			'.json',
+			'.wasm'
+		],
 		alias: {
-			'react-native': 'react-native-web',
+			// 'react-native': 'react-native-web',
+			'@babel/runtime': path.resolve(__dirname, './node_modules/@babel/runtime'),
+			react: path.resolve(__dirname, './node_modules/react'),
+			'react-native': path.resolve(__dirname, './node_modules/react-native-web'),
+			'react-native-web': path.resolve(
+				__dirname,
+				'./node_modules/react-native-web'
+			),
 			'@src': path.resolve(__dirname, './packages/rift/src'),
 			'react-native-svg': 'react-native-svg-web'
 			// 'react-native-screens': 'react-native-screens/src/screens.web.js'
-		},
-		extensions: ['.ts', '.tsx', '.js']
+		}
+		// extensions: ['.ts', '.tsx', '.js']
 	},
 	plugins: [
 		new HtmlWebPackPlugin({

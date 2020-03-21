@@ -18,7 +18,7 @@ import {
 } from './core/icons';
 
 import NavBar from './containers/NavBar';
-// import Navigation from './containers/Navigation';
+import Navigation from './containers/Navigation';
 import Editor from './containers/Editor';
 import About from './containers/About';
 
@@ -75,7 +75,7 @@ class App extends React.Component<Props, State> {
 					<View style={styles.parentView}>
 						<Router>
 							<NavBar />
-							{/* <Navigation></Navigation> */}
+							<Navigation></Navigation>
 						</Router>
 					</View>
 				</ApplicationProvider>

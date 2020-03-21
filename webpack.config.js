@@ -74,7 +74,11 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/react-native-tab-view'),
 					path.resolve(__dirname, 'node_modules/static-container'),
 					path.resolve(__dirname, 'node_modules/@ui-kitten/components'),
-					path.resolve(__dirname, 'node_modules/@ui-kitten/eva-icons')
+					path.resolve(__dirname, 'node_modules/@ui-kitten/eva-icons'),
+					path.resolve(__dirname, 'node_modules/@react-navigation/core'),
+					path.resolve(__dirname, 'node_modules/@react-navigation/native'),
+					path.resolve(__dirname, 'node_modules/@react-navigation/routers'),
+					path.resolve(__dirname, 'node_modules/@react-navigation/stack')
 					// path.resolve(__dirname, 'node_modules/react-native-screens/screens.web.js')
 				],
 				loader: require.resolve('babel-loader')

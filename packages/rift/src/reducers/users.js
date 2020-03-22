@@ -177,7 +177,7 @@ export const byId = (state = {}, action) => {
 export const allIds = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
-			case SET_USERS:
+			case SET_USERS: {
 				const ids = action.payload.map(user => user.username);
 
 				const addedFriends = action.payload.filter(user =>
@@ -186,9 +186,10 @@ export const allIds = (state = {}, action) => {
 				draft['master'] = ids;
 				draft['friends'].all = addedFriends.map(friend => friend.username);
 				break;
-			// return { ...state, master: [...ids], friends: { online: [], offline: [ ...addedFriends ] } };
-			// CHANGE THIS! MERGE THIS WITH ONLIN
-			case SET_ONLINE_USERS:
+				// return { ...state, master: [...ids], friends: { online: [], offline: [ ...addedFriends ] } };
+				// CHANGE THIS! MERGE THIS WITH ONLIN
+			}
+			case SET_ONLINE_USERS: {
 				// action.payload.reduce((acc, onlineUser => {
 
 				// }));
@@ -211,6 +212,31 @@ export const allIds = (state = {}, action) => {
 					draft[listKey].offline.push(username);
 				});
 				break;
+			}
+			case ADD_ONLINE_USER: {
+				let isFriend =
+					state.friends.all.length > 0 &&
+					state.friends.all.some(friend => action.payload.name == friend);
+				const listKey = isFriend ? 'friends' : 'nonFriends';
+				const newOfflineUsers = state[listKey].offline.filter(
+					username => username !== action.payload.name
+				);
+				draft[listKey].offline = newOfflineUsers;
+				draft[listKey].online.push(action.payload.name);
+				break;
+			}
+			case REMOVE_ONLINE_USER: {
+				let isFriend =
+					state.friends.all.length > 0 &&
+					state.friends.all.some(friend => action.payload.name == friend);
+				const listKey = isFriend ? 'friends' : 'nonFriends';
+				const newOnlineUsers = state[listKey].online.filter(
+					username => username !== action.payload.name
+				);
+				draft[listKey].online = newOnlineUsers;
+				draft[listKey].offline.push(action.payload.name);
+				break;
+			}
 			// return { ...state, ...listOf };
 			default:
 				return draft;

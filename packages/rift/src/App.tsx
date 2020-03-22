@@ -19,10 +19,7 @@ import {
 
 import NavBar from './containers/NavBar';
 import Navigation from './containers/Navigation';
-import Editor from './containers/Editor';
 import About from './containers/About';
-
-import Call from './containers/Call';
 
 import { setCode, setIsMobile } from './actions';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';

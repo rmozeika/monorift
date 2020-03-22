@@ -215,7 +215,7 @@ class UserItem extends React.PureComponent {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							online={true}
+							online={online}
 							username={username}
 							onlineBorderColor={onlineBorderColor}
 						/>
@@ -225,7 +225,7 @@ class UserItem extends React.PureComponent {
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{(user.online || true) && (
+				{user.online && (
 					<Layout style={[styles.statusBar, themedStyle.statusBar]}>
 						<Text style={themedStyle.statusText}>online</Text>
 					</Layout>

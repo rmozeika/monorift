@@ -80,6 +80,7 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/@react-navigation/native'),
 					path.resolve(__dirname, 'node_modules/@react-navigation/routers'),
 					path.resolve(__dirname, 'node_modules/@react-navigation/stack'),
+					path.resolve(__dirname, 'node_modules/@react-navigation/bottom-tabs'),
 					path.resolve(__dirname, 'node_modules/react-native-screens')
 				],
 				loader: require.resolve('babel-loader')

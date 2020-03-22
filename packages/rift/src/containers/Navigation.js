@@ -2,8 +2,11 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
+import TabNavigation from './TabNavigation';
+import Talk from './Talk';
+import UserScreen from './UserScreen';
+import UserList from './UsersList';
 
-import Call from './Call';
 const Stack = createStackNavigator();
 
 export default class NavigationContiner extends React.Component {
@@ -15,7 +18,8 @@ export default class NavigationContiner extends React.Component {
 		return (
 			<NavigationContainer>
 				<Stack.Navigator>
-					<Stack.Screen name="Home" component={Call} />
+					<Stack.Screen name={'Friends'} component={TabNavigation} />
+					<Stack.Screen name={'Talk'} component={Talk} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		);

@@ -113,7 +113,7 @@ class UsersList extends React.PureComponent {
 		// }
 
 		return (
-			<Layout style={[styles.userListLayout, { height: derivedHeight }]}>
+			<Layout style={[styles.userListLayout, { height: '100%' }]}>
 				<SearchBar />
 				<List
 					data={users}
@@ -160,10 +160,27 @@ const mapDispatchToProps = dispatch => {
 		setTabView: tab => dispatch(Actions.setTabView(tab))
 	};
 };
-const mapStateToProps = state => {
+// const makeMapStateToProps = () => {
+
+// 	const getVisibleUsers = UserSelectors.makeGetVisibleUsersFiltered();
+// 	const mapStateToProps = (state, props) => {
+// 		const { view } = state;
+// 		const { tab, mobile } = view;
+// 		return {
+// 			tab,
+// 			mobile,
+// 			incomingCallPending: CallSelectors.incomingCallPending(state),
+// 			users: getVisibleUsers(state, props)
+// 			// IF REACTIVATE PROFILE
+// 			// self: AuthSelectors.getSelfUser(state)
+// 		};
+// 	return mapStateToProps
+//   }
+// };
+const mapStateToProps = (state, props) => {
 	const { view } = state;
 	const { tab, mobile } = view;
-	const visibleUsers = UserSelectors.getVisibleUsersFiltered(state) || [];
+	const visibleUsers = UserSelectors.getVisibleUserlist(state, props);
 	return {
 		tab,
 		mobile,
@@ -177,10 +194,3 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(UsersListWithStyles);
-
-// RMEMOVE THIS, change talk button to this
-// const = `border-radius: 50px;
-// background: linear-gradient(315deg, #376dff, #2e5ce6);
-// box-shadow:  -14px -14px 28px #1f3e9c,
-//              14px 14px 28px #478eff;
-// `

@@ -8,20 +8,12 @@ import viewReducer, * as fromView from './view';
 import { combineReducers } from 'redux';
 export const initialState = {
 	config: {},
-	code: { file1: 'beforeafter' },
-	auth: { loggedIn: false, user: {}, checked: false },
-	// call: {
-	//   peerStore: {
-	//     conn: null, created: false, config: {}, handlersAttached: false
-	//   },
-	//   candidate: {},
-	//   constraints: {
-	//     mediaStream: { audio: true, video: false }
-	//   }
-	// },
+	auth: { ...fromAuth.initialState },
 	call: { ...fromCall.initialState },
 	users: { ...fromUsers.initialState },
-	view: { ...fromView.initialState }
+	view: { ...fromView.initialState },
+	// currently unused
+	code: { ...fromCode.initialState }
 };
 
 export default combineReducers({

@@ -23,6 +23,3 @@ logs/compose
 package-lock.json
 packages/deploy/package-lock.json
 lerna-debug.log
-lib/
-librnc2
-librnc

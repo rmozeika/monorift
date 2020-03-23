@@ -19,6 +19,18 @@ module.exports = function(api) {
 			'@babel/plugin-proposal-object-rest-spread'
 		]
 	];
+	if (true) {
+		return {
+			presets: ['module:metro-react-native-babel-preset', '@babel/react'],
+			plugins: [
+				['module-resolver', moduleResolverConfig],
+				'react-native-web',
+				'@babel/plugin-syntax-dynamic-import',
+				'@babel/plugin-proposal-object-rest-spread',
+				'transform-class-properties'
+			]
+		};
+	}
 	if (true)
 		return {
 			plugins,

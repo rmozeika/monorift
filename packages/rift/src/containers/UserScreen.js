@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-class CallContainer extends React.Component {
+class UserScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.audioRef = React.createRef();
@@ -72,7 +72,7 @@ class CallContainer extends React.Component {
 			setTopTabsIndex: 0,
 			containerHeight: null
 		};
-		this.callContainerRef = React.createRef();
+		this.UserScreenRef = React.createRef();
 		this.setTopTabsIndex = this.setTopTabsIndex.bind(this);
 	}
 	goToTalk() {
@@ -148,7 +148,7 @@ class CallContainer extends React.Component {
 	}
 }
 
-const CallContainerStyled = withStyles(CallContainer, theme => ({
+const UserScreenStyled = withStyles(UserScreen, theme => ({
 	container: {
 		backgroundColor: theme['color-primary-100']
 	}
@@ -171,7 +171,4 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(CallContainerStyled);
+export default connect(mapStateToProps, mapDispatchToProps)(UserScreenStyled);

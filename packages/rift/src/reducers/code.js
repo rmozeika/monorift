@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { ActionTypes } from '../actions';
 import { CODE } from '../actions';
 const { SET_CODE, GET_CODE, LOAD_CODE } = CODE;
-
+export const initialState = {};
 const createReducer = (initialState, handlers) => {
 	return function reducer(state = initialState, action) {
 		if (handlers.hasOwnProperty(action.type)) {

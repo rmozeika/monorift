@@ -98,7 +98,8 @@ const styles = StyleSheet.create({
 		fontWeight: 600,
 		textAlign: 'start',
 		alignContent: 'center',
-		paddingLeft: 10
+		paddingLeft: 10,
+		color: '#EDF1F7'
 	},
 	listItemDetails: {
 		fontSize: 10,
@@ -215,7 +216,7 @@ class UserItem extends React.PureComponent {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							online={true}
+							online={online}
 							username={username}
 							onlineBorderColor={onlineBorderColor}
 						/>
@@ -225,7 +226,7 @@ class UserItem extends React.PureComponent {
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{(user.online || true) && (
+				{user.online && (
 					<Layout style={[styles.statusBar, themedStyle.statusBar]}>
 						<Text style={themedStyle.statusText}>online</Text>
 					</Layout>

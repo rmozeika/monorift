@@ -197,6 +197,64 @@ export const getUser = createCachedSelector([getUserByUsername], users => {
 	 */
 	(state, props) => props.username
 );
+const getVis = (state, props) =>
+	createSelector(
+		[getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],
+		(friends, users) => {}
+	);
+const getVisOnline = (state, props) => {
+	return state.users.allIds[props.route.params.listType].online;
+};
+const getVisOffline = (state, props) =>
+	state.users.allIds[props.route.params.listType].offline;
+// REMOVE
+const getVisibleUsersByFilter = (state, props) => {
+	if (props.listType == 'friends') {
+		const onlineFriends = onlineFriendUsernames(state);
+		const offlineFriends = offlineFriendUsernames(state);
+		return onlineFriends.concat(offlineFriends);
+	}
+	const online = onlineUsernames(state);
+	const offline = offlineUsernames(state);
+	return online.concat(offline);
+};
+
+export const getVisibleUserlist = createCachedSelector(
+	// [getVisibleUsersByFilter],
+	[getVisOnline, getVisOffline],
+	(online, offline) => online.concat(offline)
+)((state, props) => props.route.params.listType);
+
+// export const makeVisibleUsers = () => {
+// 	return createSelector(
+// 		[getTab, getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],
+// 		(tab, friends, nonFriends) => {
+// 			// const tabTypeOffset = isLoggedIn ? 0 : 1;
+// 			const tabType = getTabType(tab);
+// 			switch (tabType) {
+// 				case 'friends':
+// 					return friends;
+// 				case 'users':
+// 					return nonFriends;
+// 			}
+// 		}
+// 	);
+// 	// return createSelector(
+// 	// 	[ getVisibilityFilter, getTodos ],
+// 	// 	(visibilityFilter, todos) => {
+// 	// 		switch (visibilityFilter) {
+// 	// 		case 'friends':
+// 	// 			return todos.filter(todo => todo.completed)
+// 	// 		case 'users':
+// 	// 			return todos.filter(todo => !todo.completed)
+// 	// 		default:
+// 	// 			return todos
+// 	// 		}
+// 	// 	}
+// 	// )
+// };
+
+// export default makeGetVisibleTodos;
 // const getCountryData = createCachedSelector(
 //   getUsers,
 //   (state, country) => country,

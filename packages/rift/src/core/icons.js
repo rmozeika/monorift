@@ -7,10 +7,6 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import iconFont from 'react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf';
 import iconFontSolid from 'react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf';
 import iconFontFeather from 'react-native-vector-icons/Fonts/Feather.ttf';
-const font5fam = Icon.getFontFamily();
-
-const FeatherFontFam = IconFeather.getFontFamily();
-
 const iconFontStyles = `@font-face {
   src: url(${iconFont});
   font-family: FontAwesome5_Regular;
@@ -68,7 +64,7 @@ function FeatherIcon({
 	);
 }
 function AwesomeIcon(
-	{ name, style, children, buttonProps, color, ...iconProps },
+	{ name, style, children, size, buttonProps, color, ...iconProps },
 	props
 ) {
 	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
@@ -88,7 +84,7 @@ function AwesomeIcon(
 	return (
 		<Icon5
 			name={name}
-			size={height}
+			size={size || height}
 			color={color || tintColor}
 			style={iconStyle}
 			{...iconProps}
@@ -119,12 +115,16 @@ function createIconsMap() {
 		'sign-out-alt': IconProvider('sign-out-alt'),
 		bars: IconProvider('bars'),
 		user: IconProvider('user'),
+		users: IconProvider('users'),
 		circle: IconProvider('circle'),
 		friend: IconProvider('user-plus'),
+		friends: IconProvider('user-friends'),
+
 		// activity: FeatherIconProvider('activity')
 		activity: FeatherIconProvider('smartphone'),
 		x: FeatherIconProvider('x'),
-		friendRequest: IconProvider('user-check')
+		friendRequest: IconProvider('user-check'),
+		pointedRight: IconProvider('angle-double-right')
 
 		// activity: IconProvider('user-plus'),
 	};

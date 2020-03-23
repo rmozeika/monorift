@@ -6,6 +6,7 @@
 		"start": "node ./index.js"
 	},
 	"dependencies": {
+		"@react-navigation/bottom-tabs": "^5.2.2",
 		"@storybook/react-native": "^5.3.17",
 		"connect-redis": "^4.0.3",
 		"express": "4.17.1",

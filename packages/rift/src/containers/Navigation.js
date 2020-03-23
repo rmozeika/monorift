@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '@ui-kitten/components';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
@@ -17,9 +18,33 @@ export default class NavigationContiner extends React.Component {
 		const { children, ...props } = this.props;
 		return (
 			<NavigationContainer>
-				<Stack.Navigator>
-					<Stack.Screen name={'Friends'} component={TabNavigation} />
-					<Stack.Screen name={'Talk'} component={Talk} />
+				<Stack.Navigator
+					screenOptions={{
+						headerStyle: {
+							backgroundColor: 'rgb(26, 34, 55)'
+						},
+						headerTintColor: '#fff',
+						headerTitleStyle: {
+							fontFamily: `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif`,
+							fontWeight: '600'
+						}
+					}}
+				>
+					<Stack.Screen
+						key={'friends'}
+						name={'Friends'}
+						component={TabNavigation}
+						options={{
+							headerRight: () => (
+								<Button
+									onPress={() => alert('This is a button!')}
+									title="Call"
+									color="#fff"
+								/>
+							)
+						}}
+					/>
+					<Stack.Screen key={'talk'} name={'Talk'} component={Talk} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		);

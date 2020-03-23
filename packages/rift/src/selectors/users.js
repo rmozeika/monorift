@@ -202,10 +202,11 @@ const getVis = (state, props) =>
 		[getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],
 		(friends, users) => {}
 	);
-const getVisOnline = (state, props) =>
-	state.users.allIds[props.listType].online;
+const getVisOnline = (state, props) => {
+	return state.users.allIds[props.route.params.listType].online;
+};
 const getVisOffline = (state, props) =>
-	state.users.allIds[props.listType].offline;
+	state.users.allIds[props.route.params.listType].offline;
 // REMOVE
 const getVisibleUsersByFilter = (state, props) => {
 	if (props.listType == 'friends') {
@@ -222,7 +223,7 @@ export const getVisibleUserlist = createCachedSelector(
 	// [getVisibleUsersByFilter],
 	[getVisOnline, getVisOffline],
 	(online, offline) => online.concat(offline)
-)((state, props) => props.listType);
+)((state, props) => props.route.params.listType);
 
 // export const makeVisibleUsers = () => {
 // 	return createSelector(

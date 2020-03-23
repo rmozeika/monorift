@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import { Layout, List, withStyles } from '@ui-kitten/components';
+import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import * as Selectors from '../selectors';
@@ -10,7 +10,8 @@ import * as AuthSelectors from '../selectors/auth';
 
 import UserItem from './UserItem';
 import YourProfile from './YourProfile';
-import SearchBar from '../components/SearchBar';
+import SearchBar from '@components/SearchBar';
+import EmptyFriendsPrompt from '@components/EmptyFriendsPrompt';
 
 const styles = StyleSheet.create({
 	container: {
@@ -19,6 +20,11 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		flexDirection: 'row',
 		flexWrap: 'wrap'
+	},
+	loadingContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
 	},
 	userListLayout: {
 		width: '100%',
@@ -76,9 +82,13 @@ class UsersList extends React.PureComponent {
 	constructor(props) {
 		super();
 		this.renderItem = this.renderItem.bind(this);
+		this.goToUsers = this.goToUsers.bind(this);
 	}
 	goTalk() {
 		this.props.setTabView(2);
+	}
+	goToUsers() {
+		this.props.navigation.navigate('Users');
 	}
 	calculateHeights() {
 		const { mobile, baseHeight, incomingCallPending } = this.props;
@@ -103,7 +113,15 @@ class UsersList extends React.PureComponent {
 	}
 
 	render() {
-		const { themedStyle, baseHeight, incomingCallPending, users } = this.props;
+		const {
+			themedStyle,
+			baseHeight,
+			incomingCallPending,
+			users,
+			listType,
+			loggedIn,
+			checked
+		} = this.props;
 
 		const derivedHeight = this.calculateHeights();
 		// IF REACTIVATE PROFILE
@@ -111,7 +129,17 @@ class UsersList extends React.PureComponent {
 		// if (self !== null) {
 		// 	users.unshift('self');
 		// }
-
+		const emptyFriends = users.length == 0;
+		// if ((listType == 'friends' && !loggedIn) || emptyFriends) {
+		if (listType == 'friends' && emptyFriends) {
+			return (
+				<EmptyFriendsPrompt
+					loggedIn={loggedIn}
+					checked={checked}
+					goToUsers={this.goToUsers}
+				/>
+			);
+		}
 		return (
 			<Layout style={[styles.userListLayout, { height: '100%' }]}>
 				<SearchBar />
@@ -178,14 +206,20 @@ const mapDispatchToProps = dispatch => {
 //   }
 // };
 const mapStateToProps = (state, props) => {
-	const { view } = state;
+	const { view, auth } = state;
+	const { listType } = props.route.params;
 	const { tab, mobile } = view;
-	const visibleUsers = UserSelectors.getVisibleUserlist(state, props);
+	const { loggedIn, checked } = auth;
+	// const listType = route.initialParams.listType;
+	const visibleUsers = UserSelectors.getVisibleUserlist(state, props); //props);
 	return {
 		tab,
 		mobile,
 		incomingCallPending: CallSelectors.incomingCallPending(state),
-		users: visibleUsers
+		users: visibleUsers,
+		loggedIn,
+		checked,
+		listType
 		// IF REACTIVATE PROFILE
 		// self: AuthSelectors.getSelfUser(state)
 	};

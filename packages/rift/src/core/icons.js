@@ -7,14 +7,15 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import iconFont from 'react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf';
 import iconFontSolid from 'react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf';
 import iconFontFeather from 'react-native-vector-icons/Fonts/Feather.ttf';
-const font5fam = Icon.getFontFamily();
-
-const FeatherFontFam = IconFeather.getFontFamily();
-
+import HNowFont from '../static/HelveticaNowDisplayXBlk.otf';
 const iconFontStyles = `@font-face {
   src: url(${iconFont});
   font-family: FontAwesome5_Regular;
 }
+@font-face {
+	src: url(${HNowFont});
+	font-family: HNow;
+  }
 @font-face {
   src: url(${iconFontSolid});
   font-family: FontAwesome5_Solid;
@@ -127,7 +128,8 @@ function createIconsMap() {
 		// activity: FeatherIconProvider('activity')
 		activity: FeatherIconProvider('smartphone'),
 		x: FeatherIconProvider('x'),
-		friendRequest: IconProvider('user-check')
+		friendRequest: IconProvider('user-check'),
+		pointedRight: IconProvider('angle-double-right')
 
 		// activity: IconProvider('user-plus'),
 	};

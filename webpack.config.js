@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 var path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-var src = path.join(__dirname, './packages/rift/src');
+const src = path.join(__dirname, './packages/rift/src');
 
 module.exports = {
 	context: path.resolve(__dirname),
@@ -40,9 +40,12 @@ module.exports = {
 				]
 			},
 			{
-				test: /\.ttf$/,
+				test: /\.(ttf|otf)$/,
 				loader: require.resolve('url-loader'),
-				include: path.resolve(__dirname, 'node_modules/react-native-vector-icons')
+				include: [
+					path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
+					path.resolve(src, 'static')
+				]
 			},
 			{
 				test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
@@ -127,8 +130,10 @@ module.exports = {
 				__dirname,
 				'./node_modules/react-native-web'
 			),
-			'@src': path.resolve(__dirname, './packages/rift/src'),
-			'react-native-svg': 'react-native-svg-web'
+			'react-native-svg': 'react-native-svg-web',
+			'@src': src,
+			'@components': path.resolve(src, 'components'),
+			'@containers': path.resolve(src, 'containers')
 			// 'react-native-screens': 'react-native-screens/src/screens.web.js'
 		}
 		// extensions: ['.ts', '.tsx', '.js']

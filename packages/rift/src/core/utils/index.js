@@ -18,3 +18,15 @@ export const originLink = type => {
 	let link = `${host}${path}`;
 	return link;
 };
+
+export const navigateToSignin = () => {
+	Linking.openURL(originLink('login')).catch(err => {
+		console.error('An error occurred', err);
+	});
+};
+
+export const navigateToSignout = () => {
+	Linking.openURL(originLink('logout')).catch(err => {
+		console.error('An error occurred', err);
+	});
+};

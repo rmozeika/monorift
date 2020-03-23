@@ -133,7 +133,11 @@ module.exports = {
 			'react-native-svg': 'react-native-svg-web',
 			'@src': src,
 			'@components': path.resolve(src, 'components'),
-			'@containers': path.resolve(src, 'containers')
+			'@containers': path.resolve(src, 'containers'),
+			'@selectors': path.resolve(src, 'selectors'),
+			'@reducers': path.resolve(src, 'reducers'),
+			'@actions': path.resolve(src, 'actions', 'index.js')
+
 			// 'react-native-screens': 'react-native-screens/src/screens.web.js'
 		}
 		// extensions: ['.ts', '.tsx', '.js']

@@ -146,11 +146,11 @@ export class Media extends React.Component {
 	showHideProps(isHidden) {
 		const showHideSettings = {
 			hide: {
-				onPress: this.hide.bind(this),
+				onPress: this.hide,
 				text: 'Hide'
 			},
 			show: {
-				onPress: this.show.bind(this),
+				onPress: this.show,
 				text: 'Show'
 			}
 		};
@@ -175,21 +175,21 @@ export class Media extends React.Component {
 		source.connect(audioCtx.destination);
 		audioCtx.suspend();
 	}
-	play() {
+	play = () => {
 		this.props.audioRef.current.play();
-	}
-	stop() {
+	};
+	stop = () => {
 		this.props.audioRef.current.pause();
-	}
-	live() {
+	};
+	live = () => {
 		this.props.audioRef.current.seekable.end();
-	}
-	hide() {
+	};
+	hide = () => {
 		this.setState({ audioControlsHidden: true });
-	}
-	show() {
+	};
+	show = () => {
 		this.setState({ audioControlsHidden: false });
-	}
+	};
 	render() {
 		const { videoRef, audioRef } = this.props;
 		const { audioControlsHidden } = this.state;
@@ -213,11 +213,11 @@ export class Media extends React.Component {
 					<Layout style={styles.outerButtonGroup}>
 						<Layout style={styles.innerButtonGroup}>
 							<ButtonGroup style={styles.buttonGroup}>
-								{/* <Button onPress={this.createAudioContext.bind(this)}>Start</Button> */}
-								<Button style={styles.controlButton} onPress={this.play.bind(this)}>
+								{/* <Button onPress={this.createAudioContext}>Start</Button> */}
+								<Button style={styles.controlButton} onPress={this.play}>
 									Play
 								</Button>
-								<Button style={styles.controlButton} onPress={this.stop.bind(this)}>
+								<Button style={styles.controlButton} onPress={this.stop}>
 									Stop
 								</Button>
 								<ShowHideButton

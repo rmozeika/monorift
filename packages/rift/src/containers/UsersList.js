@@ -82,9 +82,9 @@ class UsersList extends React.PureComponent {
 	constructor(props) {
 		super();
 	}
-	goTalk() {
+	goTalk = () => {
 		this.props.setTabView(2);
-	}
+	};
 	goToUsers = () => {
 		this.props.navigation.navigate('Users');
 	};

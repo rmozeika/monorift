@@ -71,7 +71,7 @@ class App extends React.Component<Props, State> {
 				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
 					<View style={styles.parentView}>
 						<Router>
-							<NavBar />
+							{/* <NavBar /> */}
 							<Navigation></Navigation>
 						</Router>
 					</View>

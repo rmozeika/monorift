@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Button, Icon } from '@ui-kitten/components';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+	createStackNavigator,
+	CardStyleInterpolators,
+	TransitionPresets
+} from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import TabNavigation from './TabNavigation';
 import Talk from './Talk';
@@ -63,10 +67,30 @@ export default class NavigationContiner extends React.Component {
 								>
 									Call
 								</Button>
-							)
+							),
+							// ...TransitionPresets.forModalPresentationIOS,
+							...TransitionPresets.ModalSlideFromBottomIOS
 						})}
 					/>
-					<Stack.Screen key={'talk'} name={'Talk'} component={Talk} />
+					<Stack.Screen
+						key={'talk'}
+						name={'Talk'}
+						component={Talk}
+						options={{
+							title: 'Talk',
+							headerTitleStyle: {
+								backgroundColor: tabColor
+							},
+							headerTitleContainerStyle: {
+								left: 50,
+								backgroundColor: tabColor
+							},
+							showLabel: false,
+							headerRightContainerStyle: { showLabel: false },
+							// cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+							...TransitionPresets.ModalSlideFromBottomIOS
+						}}
+					/>
 				</Stack.Navigator>
 			</NavigationContainer>
 		);

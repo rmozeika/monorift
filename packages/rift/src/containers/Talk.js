@@ -67,10 +67,10 @@ class Adapter extends React.Component {
 			console.log('on track ID', e.track.id);
 
 			if (mediaStreamConstraints.video && e.track.kind == 'video') {
-				if (!(videoRef && videoRef.current)) {
+				if (videoRef?.current) {
 					return;
 				}
-				if (e.streams && e.streams[0]) {
+				if (e.streams?.[0]) {
 					videoRef.current.srcObject = e.streams[0];
 				} else {
 					if (!inboundStream) {
@@ -86,10 +86,10 @@ class Adapter extends React.Component {
 				// return;
 				return;
 			}
-			if (!(audioRef && audioRef.current)) {
+			if (audioRef?.current) {
 				return;
 			}
-			if (e.streams && e.streams[0]) {
+			if (e.streams?.[0]) {
 				audioRef.current.srcObject = e.streams[0];
 			} else {
 				if (!inboundStream) {

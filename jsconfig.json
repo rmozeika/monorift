@@ -5,10 +5,10 @@
 	"compilerOptions": {
 		"baseUrl": "./",
 		"paths": {
-			"@selectors": ["packages/rift/src/selectors/index.js"],
 			"@components/*": ["packages/rift/src/components/*"],
 			"@selectors/*": ["packages/rift/src/selectors/*"],
-			"@containers/*": ["packages/rift/src/containers/*"]
+			"@containers/*": ["packages/rift/src/containers/*"],
+			"@selectors": ["packages/rift/src/selectors/index.js"]
 		}
 	}
 }

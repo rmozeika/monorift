@@ -80,6 +80,7 @@ class TabNavigation extends React.Component {
 							/>
 						);
 					}
+					// cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 				})}
 				tabBarOptions={{
 					// inactiveBackgroundColor: 'rgba(255, 255, 255, 0.1)',

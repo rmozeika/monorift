@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 });
 
 const AddFriendIcon = style => <Icon name="friend" />;
-const FriendRequestIcon = style => <Icon name="friendRequest" />;
+const FriendRequestIcon = style => <Icon name="friend-request" />;
 const RejectFriendIcon = style => (
 	<Icon color={'white'} style={styles.rejectIcon} name="x" />
 );

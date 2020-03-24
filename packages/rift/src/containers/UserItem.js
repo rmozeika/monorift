@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
 class UserItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.addUserToCall = this.addUserToCall.bind(this);
+		// this.addUserToCall = this.addUserToCall.bind(this);
 		this.removeUserFromCall = this.removeUserFromCall.bind(this);
 		this.addFriend = this.addFriend.bind(this);
 		this.removeFriend = this.removeFriend.bind(this);
@@ -181,10 +181,10 @@ class UserItem extends React.PureComponent {
 		const { removeFriend, user } = this.props;
 		removeFriend(user);
 	}
-	addUserToCall() {
+	addUserToCall = () => {
 		const { user, addToCall, index } = this.props;
 		addToCall(index, user);
-	}
+	};
 	removeUserFromCall() {
 		const { user, removeFromCall, index } = this.props;
 		removeFromCall(index, user);

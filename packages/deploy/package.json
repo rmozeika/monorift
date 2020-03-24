@@ -8,6 +8,7 @@
 	"dependencies": {
 		"@react-navigation/bottom-tabs": "^5.2.2",
 		"@storybook/react-native": "^5.3.17",
+		"babel-eslint": "^10.1.0",
 		"connect-redis": "^4.0.3",
 		"express": "4.17.1",
 		"moment": "^2.24.0",

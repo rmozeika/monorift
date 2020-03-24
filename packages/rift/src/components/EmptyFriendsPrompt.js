@@ -39,7 +39,7 @@ const signIn = () => {
 	});
 };
 
-const GoToUsersIcon = () => <Icon name={'pointedRight'}></Icon>;
+const GoToUsersIcon = () => <Icon name={'pointed-right'}></Icon>;
 export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 	if (!checked) {
 		return (

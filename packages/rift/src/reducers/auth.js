@@ -1,7 +1,11 @@
 import { combineReducers } from 'redux';
 import { AUTH } from '../actions';
 const { LOGIN } = AUTH;
-export const intitialState = { loggedIn: false, user: {}, checked: false };
+export const initialState = {
+	loggedIn: false,
+	user: {},
+	checked: false
+};
 const createReducer = (initialState, handlers) => {
 	return function reducer(state = initialState, action) {
 		if (handlers.hasOwnProperty(action.type)) {

@@ -54,7 +54,7 @@ function* initAuthSaga() {
 		console.log('GOT MESSAGE, AUTH', payload);
 
 		try {
-			if (payload && payload.username) {
+			if (payload?.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload });
 			} else {
 				yield put({ type: AUTH.LOGIN.REQUEST, payload });

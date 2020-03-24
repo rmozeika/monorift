@@ -123,8 +123,9 @@ function createIconsMap() {
 		// activity: FeatherIconProvider('activity')
 		activity: FeatherIconProvider('smartphone'),
 		x: FeatherIconProvider('x'),
-		friendRequest: IconProvider('user-check'),
-		pointedRight: IconProvider('angle-double-right')
+		'friend-request': IconProvider('user-check'),
+		'pointed-right': IconProvider('angle-double-right'),
+		'caret-down': IconProvider('caret-down')
 
 		// activity: IconProvider('user-plus'),
 	};

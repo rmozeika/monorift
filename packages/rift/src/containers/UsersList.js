@@ -81,15 +81,13 @@ const styles = StyleSheet.create({
 class UsersList extends React.PureComponent {
 	constructor(props) {
 		super();
-		this.renderItem = this.renderItem.bind(this);
-		this.goToUsers = this.goToUsers.bind(this);
 	}
 	goTalk() {
 		this.props.setTabView(2);
 	}
-	goToUsers() {
+	goToUsers = () => {
 		this.props.navigation.navigate('Users');
-	}
+	};
 	calculateHeights() {
 		const { mobile, baseHeight, incomingCallPending } = this.props;
 		const extraSpace = incomingCallPending ? 0.1 : 0;
@@ -97,7 +95,7 @@ class UsersList extends React.PureComponent {
 		const heightMultiplier = baseHeightMultiplier - extraSpace;
 		return baseHeight * heightMultiplier;
 	}
-	renderItem({ item: user, index, ...restProps }) {
+	renderItem = ({ item: user, index, ...restProps }) => {
 		// IF REACTIVATE PROFILE
 		// if (user == 'self') {
 		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
@@ -110,7 +108,7 @@ class UsersList extends React.PureComponent {
 				{...restProps}
 			/>
 		);
-	}
+	};
 
 	render() {
 		const {

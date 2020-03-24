@@ -152,43 +152,36 @@ const styles = StyleSheet.create({
 class UserItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		// this.addUserToCall = this.addUserToCall.bind(this);
-		this.removeUserFromCall = this.removeUserFromCall.bind(this);
-		this.addFriend = this.addFriend.bind(this);
-		this.removeFriend = this.removeFriend.bind(this);
-		this.acceptFriend = this.acceptFriend.bind(this);
-		this.rejectFriend = this.rejectFriend.bind(this);
-		this.respondFriendRequest = this.respondFriendRequest.bind(this);
 	}
-	addFriend(e) {
+	addFriend = e => {
 		// e.stopPropagation();
 		const { addFriend, user } = this.props;
 		addFriend(user);
-	}
-	respondFriendRequest(didAccept) {
+	};
+	respondFriendRequest = didAccept => {
 		const { respondFriendRequest, user } = this.props;
 		respondFriendRequest(user, didAccept);
-	}
-	acceptFriend() {
+	};
+	acceptFriend = () => {
 		// e.stopPropagation();
 		this.respondFriendRequest(true);
-	}
-	rejectFriend() {
+	};
+	rejectFriend = () => {
 		// e.stopPropagation();
 		this.respondFriendRequest(false);
-	}
-	removeFriend() {
+	};
+	removeFriend = () => {
 		const { removeFriend, user } = this.props;
 		removeFriend(user);
-	}
+	};
 	addUserToCall = () => {
 		const { user, addToCall, index } = this.props;
 		addToCall(index, user);
 	};
-	removeUserFromCall() {
+	removeUserFromCall = () => {
 		const { user, removeFromCall, index } = this.props;
 		removeFromCall(index, user);
-	}
+	};
 
 	render() {
 		const { username, index, themedStyle, user } = this.props;

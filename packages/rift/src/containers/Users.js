@@ -56,16 +56,13 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { containerHeight: null };
-
-		this.goTalk = this.goTalk.bind(this);
-		this.answer = this.answer.bind(this);
-		this.reject = this.reject.bind(this);
-		this.onLayout = this.onLayout.bind(this);
 	}
-	goTalk() {
+	// remove
+	goTalk = () => {
 		this.props.setTabView(1);
-	}
-	onLayout({ nativeEvent, timeStamp }) {
+	};
+	// remove
+	onLayout = ({ nativeEvent, timeStamp }) => {
 		const { mobile, incomingCall } = this.props;
 		const { layout } = nativeEvent;
 		const { width, height } = layout;
@@ -84,15 +81,15 @@ class Users extends React.Component {
 		this.setState({
 			containerHeight: height // - 32
 		});
-	}
-	answer() {
+	};
+	answer = () => {
 		const { answer } = this.props;
 		answer(true);
-	}
-	reject() {
+	};
+	reject = () => {
 		const { answer } = this.props;
 		answer(false);
-	}
+	};
 	// REMOVE THIS
 	// calculateHeights() {
 	// 	const { containerHeight, mobile, incomingCall } = this.props;

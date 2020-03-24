@@ -13,9 +13,8 @@ const Tab = createBottomTabNavigator();
 class TabNavigation extends React.Component {
 	constructor(props) {
 		super(props);
-		this.getActiveTabs = this.getActiveTabs.bind(this);
 	}
-	getActiveTabs() {
+	getActiveTabs = () => {
 		const { loggedIn, checked } = this.props;
 		const tabs = [
 			{
@@ -39,7 +38,7 @@ class TabNavigation extends React.Component {
 			}
 		];
 		return tabs.filter(({ condition }) => condition);
-	}
+	};
 	createFriendComponent({ initialParams: { listType } }) {
 		// const listType = props.route.name.toLowerCase();
 		return <UserList listType={'friends'} containerHeight={500}></UserList>;

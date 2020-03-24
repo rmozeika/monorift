@@ -27,21 +27,18 @@ const styles = StyleSheet.create({
 export class SearchBar extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.search = this.search.bind(this);
-		this.setFilterText = this.setFilterText.bind(this);
-		// this.setState({ filterText: '' });
 		this.state = { filterText: '' };
 	}
-	setFilterText(input) {
+	setFilterText = input => {
 		this.setState({ filterText: input });
-	}
-	search(input) {
+	};
+	search = input => {
 		const { search } = this.props;
 
 		search(input);
 		// const { filterText } = this.state;
 		// this.props.search(filterText);
-	}
+	};
 	render() {
 		const { filter } = this.props;
 		return (

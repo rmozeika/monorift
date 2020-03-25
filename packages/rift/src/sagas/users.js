@@ -151,10 +151,10 @@ function* initSocketSaga() {
 
 		try {
 			if (message.online == true) {
-				const user = { name: message.name };
+				const user = { username: message.username };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { name: message.name };
+				const user = { username: message.username };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {

@@ -12,6 +12,7 @@ import Talk from './Talk';
 import UserScreen from './UserScreen';
 import UserList from './UsersList';
 import NavBarHeader from './NavBarHeader';
+import NavUserControls from '@components/NavUserControls';
 const Stack = createStackNavigator();
 const tabColor = 'rgb(26, 34, 55)';
 
@@ -60,13 +61,7 @@ export default class NavigationContiner extends React.Component {
 						options={({ navigation, route }) => ({
 							headerTitle: () => <NavBarHeader></NavBarHeader>,
 							headerRight: () => (
-								<Button
-									onPress={() => this.toCall(navigation)}
-									title="Call"
-									color="#fff"
-								>
-									Call
-								</Button>
+								<NavUserControls toCall={this.toCall} navigation={navigation} />
 							),
 							// ...TransitionPresets.forModalPresentationIOS,
 							...TransitionPresets.ModalSlideFromBottomIOS

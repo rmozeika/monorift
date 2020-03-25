@@ -57,31 +57,7 @@ class Users extends React.Component {
 		super(props);
 		this.state = { containerHeight: null };
 	}
-	// remove
-	goTalk = () => {
-		this.props.setTabView(1);
-	};
-	// remove
-	onLayout = ({ nativeEvent, timeStamp }) => {
-		const { mobile, incomingCall } = this.props;
-		const { layout } = nativeEvent;
-		const { width, height } = layout;
-		// if (!mobile) {
-		// 	this.setState({
-		// 		containerHeight: {
-		// 			container: height,
-		// 			userList: height,
-		// 			callButton: 0
-		// 		}
-		// 	});
-		// 	return;
-		// }
-		// const actionHeightMultiplier = incomingCall.received ? 0.15 : 0.1;
-		// const callActions = height * actionHeightMultiplier;
-		this.setState({
-			containerHeight: height // - 32
-		});
-	};
+
 	answer = () => {
 		const { answer } = this.props;
 		answer(true);
@@ -90,13 +66,7 @@ class Users extends React.Component {
 		const { answer } = this.props;
 		answer(false);
 	};
-	// REMOVE THIS
-	// calculateHeights() {
-	// 	const { containerHeight, mobile, incomingCall } = this.props;
-	// 	const callActions = containerHeight * actionHeightMultiplier;
-	// 	const userList = containerHeight - callActions;
-	// 	return { userList, callActions };
-	// }
+
 	render() {
 		const { gotOnlineUsers, themedStyle, mobile, incomingCall } = this.props;
 		const { containerHeight } = this.state;

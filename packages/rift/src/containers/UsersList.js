@@ -12,6 +12,7 @@ import UserItem from './UserItem';
 import YourProfile from './YourProfile';
 import SearchBar from '@components/SearchBar';
 import EmptyFriendsPrompt from '@components/EmptyFriendsPrompt';
+import CallActions from '@components/buttons/CallActions';
 
 const styles = StyleSheet.create({
 	container: {
@@ -29,7 +30,8 @@ const styles = StyleSheet.create({
 	userListLayout: {
 		width: '100%',
 		// overflowY: 'scroll',
-		height: '80vh'
+		// height: '80vh',
+		height: '100%'
 	},
 	row: {
 		padding: 15,
@@ -88,13 +90,18 @@ class UsersList extends React.PureComponent {
 	goToUsers = () => {
 		this.props.navigation.navigate('Users');
 	};
-	calculateHeights() {
-		const { mobile, baseHeight, incomingCallPending } = this.props;
-		const extraSpace = incomingCallPending ? 0.1 : 0;
-		const baseHeightMultiplier = mobile ? 0.9 : 1;
-		const heightMultiplier = baseHeightMultiplier - extraSpace;
-		return baseHeight * heightMultiplier;
-	}
+	answer = () => {
+		const { answer } = this.props;
+		answer(true);
+		this.props.navigation.navigate('Talk');
+	};
+	reject = () => {
+		const { answer } = this.props;
+		answer(false);
+	};
+	_keyExtractor = item => {
+		return item;
+	};
 	renderItem = ({ item: user, index, ...restProps }) => {
 		// IF REACTIVATE PROFILE
 		// if (user == 'self') {
@@ -104,31 +111,26 @@ class UsersList extends React.PureComponent {
 			<UserItem
 				themedStyle={this.props.themedStyle.userItem}
 				username={user}
-				index={index}
-				{...restProps}
+				// key={user}
 			/>
 		);
 	};
 
 	render() {
 		const {
-			themedStyle,
-			baseHeight,
-			incomingCallPending,
+			incomingCall,
 			users,
 			listType,
 			loggedIn,
-			checked
+			checked,
+			themedStyle
 		} = this.props;
-
-		const derivedHeight = this.calculateHeights();
 		// IF REACTIVATE PROFILE
 
 		// if (self !== null) {
 		// 	users.unshift('self');
 		// }
 		const emptyFriends = users.length == 0;
-		// if ((listType == 'friends' && !loggedIn) || emptyFriends) {
 		if (listType == 'friends' && emptyFriends) {
 			return (
 				<EmptyFriendsPrompt
@@ -139,19 +141,24 @@ class UsersList extends React.PureComponent {
 			);
 		}
 		return (
-			<Layout style={[styles.userListLayout, { height: '100%' }]}>
+			<Layout style={[styles.userListLayout, {}]}>
 				<SearchBar />
 				<List
 					data={users}
 					renderItem={this.renderItem}
-					// renderItem={UserItem}
 					style={styles.list}
 					showsVerticalScrollIndicator={false}
 					contentContainerStyle={styles.listContentContainer}
-					// horizontal={true}
-					numColumns={2}
-					columnWrapperStyle={styles.columnWrapper}
+					// numColumns={2}
+					// columnWrapperStyle={styles.columnWrapper}
 					initialNumToRender={8}
+					keyExtractor={this._keyExtractor}
+				/>
+				<CallActions
+					themedStyle={themedStyle.callActions}
+					incomingCall={incomingCall}
+					answer={this.answer}
+					reject={this.reject}
 				/>
 			</Layout>
 		);
@@ -162,6 +169,9 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	buttonGroup: {
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
+	},
+	callActions: {
+		backgroundColor: theme['color-primary-500']
 	},
 	userItem: {
 		onlineColor: theme['color-success-500'],
@@ -186,34 +196,21 @@ const mapDispatchToProps = dispatch => {
 		setTabView: tab => dispatch(Actions.setTabView(tab))
 	};
 };
-// const makeMapStateToProps = () => {
 
-// 	const getVisibleUsers = UserSelectors.makeGetVisibleUsersFiltered();
-// 	const mapStateToProps = (state, props) => {
-// 		const { view } = state;
-// 		const { tab, mobile } = view;
-// 		return {
-// 			tab,
-// 			mobile,
-// 			incomingCallPending: CallSelectors.incomingCallPending(state),
-// 			users: getVisibleUsers(state, props)
-// 			// IF REACTIVATE PROFILE
-// 			// self: AuthSelectors.getSelfUser(state)
-// 		};
-// 	return mapStateToProps
-//   }
-// };
 const mapStateToProps = (state, props) => {
 	const { view, auth } = state;
 	const { listType } = props.route.params;
 	const { tab, mobile } = view;
 	const { loggedIn, checked } = auth;
 	// const listType = route.initialParams.listType;
-	const visibleUsers = UserSelectors.getVisibleUserlist(state, props); //props);
+	// const visibleUsers = UserSelectors.getVisibleUserlist(state, props); //props);
+	// const visibleUsers = UserSelectors.getUserMasterlist(state); //props);
+	const visibleUsers = UserSelectors.getVisibleOnline(state, props);
+
 	return {
 		tab,
 		mobile,
-		incomingCallPending: CallSelectors.incomingCallPending(state),
+		incomingCall: CallSelectors.incomingCall(state),
 		users: visibleUsers,
 		loggedIn,
 		checked,

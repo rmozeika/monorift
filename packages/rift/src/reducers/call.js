@@ -25,7 +25,7 @@ export const initialState = {
 		incomingCall: { received: false, from: null, answered: null, pending: false }
 		// incomingCall: {
 		// 	received: true,
-		// 	from: { id: 'bullshit', name: 'robertmozeika' },
+		// 	from: { id: 'bullshit', username: 'robertmozeika' },
 		// 	answered: false,
 		// 	pending: true
 		// }

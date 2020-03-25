@@ -218,13 +218,20 @@ const getVisibleUsersByFilter = (state, props) => {
 	const offline = offlineUsernames(state);
 	return online.concat(offline);
 };
-
+export const getVisibleOnline = createCachedSelector([getVisOnline], online => {
+	return online;
+})((state, props) => props.route.params.listType);
 export const getVisibleUserlist = createCachedSelector(
 	// [getVisibleUsersByFilter],
 	[getVisOnline, getVisOffline],
 	(online, offline) => online.concat(offline)
 )((state, props) => props.route.params.listType);
-
+const getAllUsers = state => {
+	return state.users.allIds.master;
+};
+export const getUserMasterlist = createSelector([getAllUsers], users => {
+	return users;
+});
 // export const makeVisibleUsers = () => {
 // 	return createSelector(
 // 		[getTab, getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],

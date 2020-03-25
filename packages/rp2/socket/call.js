@@ -27,7 +27,7 @@ class Call extends Socket {
 		this.redis.set(user.username, socket.id);
 		const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
 		if (user) {
-			userSock.emit('broadcast', { name: user.username, online: true });
+			userSock.emit('broadcast', { username: user.username, online: true });
 		}
 		socket.on('message', this.onMessage.bind(socket, this.redis));
 		socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
@@ -39,7 +39,7 @@ class Call extends Socket {
 		// const { user = false } = passport;
 		// const userSock = io.of('/users'); //.broadcast.emit('message', username);
 		if (user) {
-			userSock.emit('broadcast', { name: user.username, online: false });
+			userSock.emit('broadcast', { username: user.username, online: false });
 		}
 	}
 	async onMessage(redis, msg, secondArg) {
@@ -55,7 +55,6 @@ class Call extends Socket {
 						const getAsync = util.promisify(redis.get).bind(redis);
 						// if (user.id) return user;
 						const id = await getAsync(user.username);
-						// Promise.resolve({ name: user.username, _id })
 						return { username: user.username, id };
 					} catch (e) {
 						console.log(e);

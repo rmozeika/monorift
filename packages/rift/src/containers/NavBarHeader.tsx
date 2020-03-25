@@ -68,6 +68,11 @@ const styles = StyleSheet.create({
 		width: gravatarDimensions
 		// maxHeight: gravatarDimensions || '10vh',
 		// maxWidth: gravatarDimensions || '10vh'
+	},
+	popoverLayout: {
+		flexDirection: 'row',
+		backgroundColor: 'rgb(26, 34, 55)',
+		padding: 10
 	}
 });
 
@@ -109,6 +114,9 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	private renderProfileIcon = (style): React.ReactElement<ImageProps> => {
 		return <Icon name="caret-down" color={'#fff'} style={{ ...style }} solid />;
 	};
+	private renderProfileCloseIcon = (style): React.ReactElement<ImageProps> => {
+		return <Icon name="x" color={'#fff'} style={{ ...style }} solid />;
+	};
 	private renderMenuIcon = (style): React.ReactElement<ImageProps> => {
 		const { themedStyle } = this.props;
 		return <Icon name="bars" color={'#fff'} style={{ ...style }} solid />;
@@ -133,8 +141,16 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 
 	private renderProfilePopover = (): React.ReactElement<ImageProps> => {
 		return (
-			<Layout>
-				<Button></Button>
+			<Layout style={styles.popoverLayout}>
+				<Button size={'small'} status={'danger'} onPress={this.onSignout}>
+					Sign out
+				</Button>
+				<Button
+					size={'tiny'}
+					appearance={'ghost'}
+					onPress={this.toggleProfilePopover}
+					icon={this.renderProfileCloseIcon}
+				/>
 			</Layout>
 		);
 	};

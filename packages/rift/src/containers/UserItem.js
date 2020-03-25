@@ -184,7 +184,7 @@ class UserItem extends React.PureComponent {
 	};
 
 	render() {
-		const { username, index, themedStyle, user } = this.props;
+		const { username, index, themedStyle, user, key } = this.props;
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
@@ -201,7 +201,7 @@ class UserItem extends React.PureComponent {
 		);
 
 		return (
-			<ListItem key={index} style={[styles.listItem, border, { padding: 0 }]}>
+			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
 				<Layout style={styles.listItemMain}>
 					<TouchableOpacity
 						onClick={checked ? this.removeUserFromCall : this.addUserToCall}

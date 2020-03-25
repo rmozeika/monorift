@@ -150,16 +150,18 @@ export const byId = (state = {}, action) => {
 					draft[username].online = true;
 				});
 				break;
-			case ADD_ONLINE_USER:
-				const { usernameAddOnline } = action.payload;
-				if (!draft[usernameAddOnline]) return state;
-				draft[usernameAddOnline].online = true;
+			case ADD_ONLINE_USER: {
+				const { username } = action.payload;
+				// if (!draft[username]) return state;
+				draft[username].online = true;
 				break;
-			case REMOVE_ONLINE_USER:
-				const { usernameRemoveOnline } = action.payload;
-				if (!draft[usernameRemoveOnline]) return state;
-				draft[usernameRemoveOnline].online = true;
+			}
+			case REMOVE_ONLINE_USER: {
+				const { username } = action.payload;
+				// if (!draft[username]) return state;
+				draft[username].online = true;
 				break;
+			}
 			case ADD_CALL:
 				draft[action.payload.user.username].checked = true;
 				break;

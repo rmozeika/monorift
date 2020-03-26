@@ -78,6 +78,11 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 		flexShrink: 1,
 		marginVertical: 4
+	},
+	floatingButtonContainer: {
+		position: 'fixed',
+		right: '10%',
+		bottom: '10%'
 	}
 });
 class UsersList extends React.PureComponent {
@@ -154,6 +159,9 @@ class UsersList extends React.PureComponent {
 					initialNumToRender={8}
 					keyExtractor={this._keyExtractor}
 				/>
+				{/* <Layout style={styles.floatingButtonContainer}>
+					<Button style={{}}>Call</Button>
+				</Layout> */}
 				<CallActions
 					themedStyle={themedStyle.callActions}
 					incomingCall={incomingCall}

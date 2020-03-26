@@ -11,7 +11,8 @@ const styles = StyleSheet.create({
 		height: '100%',
 		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`,
 		borderRadius: 0,
-		color: '#EDF1F7'
+		color: '#EDF1F7',
+		flexDirection: 'column'
 	},
 	buttonContainer: {
 		// position: 'absolute',

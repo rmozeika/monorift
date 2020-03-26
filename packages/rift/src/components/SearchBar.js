@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
 	},
 	searchInput: {
 		flexBasis: '80%',
-		flex: 1
+		flex: 1,
+		backgroundColor: `linear-gradient(344.2deg, #2C333A -71.57%, #1C1E22 59.28%, #121416 59.28%)`
 	}
 });
 

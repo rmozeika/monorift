@@ -221,11 +221,38 @@ const getVisibleUsersByFilter = (state, props) => {
 export const getVisibleOnline = createCachedSelector([getVisOnline], online => {
 	return online;
 })((state, props) => props.route.params.listType);
+
 export const getVisibleUserlist = createCachedSelector(
 	// [getVisibleUsersByFilter],
 	[getVisOnline, getVisOffline],
 	(online, offline) => online.concat(offline)
 )((state, props) => props.route.params.listType);
+
+// const getVisOnlineWithSearch = createSelector(
+// 	[getSearchFilter, getVisOnline],
+
+// 	state, props) => {
+
+// 	return state.users.allIds[props.route.params.listType].online;
+// };
+const getVisOfflineWithSearch = (state, props) =>
+	state.users.allIds[props.route.params.listType].offline;
+
+export const getVisibleUserlistSearch = createCachedSelector(
+	// [getVisibleUsersByFilter],
+	[getSearchFilter, getVisOnline, getVisOffline],
+	(filter, online, offline) => {
+		const usersOrderedByOnlineOffline = online.concat(offline);
+		if (!filter) {
+			return usersOrderedByOnlineOffline;
+		}
+		return filterUsers(usersOrderedByOnlineOffline, filter);
+		// const usersFiltered = usersOrderedByOnlineOffline.filter(username => {
+		// 	return username
+		// });
+	}
+)((state, props) => props.route.params.listType);
+
 const getAllUsers = state => {
 	return state.users.allIds.master;
 };

@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 });
 class UsersList extends React.PureComponent {
 	constructor(props) {
-		super();
+		super(props);
 	}
 	goTalk = () => {
 		this.props.setTabView(2);
@@ -205,7 +205,7 @@ const mapStateToProps = (state, props) => {
 	// const listType = route.initialParams.listType;
 	// const visibleUsers = UserSelectors.getVisibleUserlist(state, props); //props);
 	// const visibleUsers = UserSelectors.getUserMasterlist(state); //props);
-	const visibleUsers = UserSelectors.getVisibleOnline(state, props);
+	const visibleUsers = UserSelectors.getVisibleUserlistSearch(state, props);
 
 	return {
 		tab,

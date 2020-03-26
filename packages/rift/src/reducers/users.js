@@ -107,8 +107,7 @@ export const queued = (state = [], action) => {
 		switch (action.type) {
 			case ADD_CALL:
 				draft.push({
-					...action.payload.user,
-					orderedUserIndex: action.payload.index
+					...action.payload.user
 				});
 				break;
 			case REMOVE_CALL:
@@ -135,14 +134,6 @@ export const byId = (state = {}, action) => {
 					};
 				}, {});
 				break;
-			// case SET_FRIENDS:
-			// 	action.payload.forEach(user => {
-			// 		const { username } = user;
-			// 		if (!draft[username]) return;
-			// 		draft[username].isFriend = true;
-			// 		draft[username].friendStatus = user.status;
-			// 	});
-			// 	break;
 			case SET_ONLINE_USERS:
 				action.payload.forEach(user => {
 					const { username } = user;
@@ -152,13 +143,11 @@ export const byId = (state = {}, action) => {
 				break;
 			case ADD_ONLINE_USER: {
 				const { username } = action.payload;
-				// if (!draft[username]) return state;
 				draft[username].online = true;
 				break;
 			}
 			case REMOVE_ONLINE_USER: {
 				const { username } = action.payload;
-				// if (!draft[username]) return state;
 				draft[username].online = true;
 				break;
 			}
@@ -188,15 +177,9 @@ export const allIds = (state = {}, action) => {
 				draft['master'] = ids;
 				draft['friends'].all = addedFriends.map(friend => friend.username);
 				break;
-				// return { ...state, master: [...ids], friends: { online: [], offline: [ ...addedFriends ] } };
 				// CHANGE THIS! MERGE THIS WITH ONLIN
 			}
 			case SET_ONLINE_USERS: {
-				// action.payload.reduce((acc, onlineUser => {
-
-				// }));
-				// const listOf = draft.
-				//
 				state.master.forEach(username => {
 					const isOnline = action.payload.some(
 						onlineUser => username == onlineUser.username
@@ -218,25 +201,25 @@ export const allIds = (state = {}, action) => {
 			case ADD_ONLINE_USER: {
 				let isFriend =
 					state.friends.all.length > 0 &&
-					state.friends.all.some(friend => action.payload.name == friend);
+					state.friends.all.some(friend => action.payload.username == friend);
 				const listKey = isFriend ? 'friends' : 'nonFriends';
 				const newOfflineUsers = state[listKey].offline.filter(
-					username => username !== action.payload.name
+					username => username !== action.payload.username
 				);
 				draft[listKey].offline = newOfflineUsers;
-				draft[listKey].online.push(action.payload.name);
+				draft[listKey].online.push(action.payload.username);
 				break;
 			}
 			case REMOVE_ONLINE_USER: {
 				let isFriend =
 					state.friends.all.length > 0 &&
-					state.friends.all.some(friend => action.payload.name == friend);
+					state.friends.all.some(friend => action.payload.username == friend);
 				const listKey = isFriend ? 'friends' : 'nonFriends';
 				const newOnlineUsers = state[listKey].online.filter(
-					username => username !== action.payload.name
+					username => username !== action.payload.username
 				);
 				draft[listKey].online = newOnlineUsers;
-				draft[listKey].offline.push(action.payload.name);
+				draft[listKey].offline.push(action.payload.username);
 				break;
 			}
 			// return { ...state, ...listOf };

@@ -157,15 +157,15 @@ export const removeFriend = friend => ({
 	payload: friend
 });
 export const ADD_CALL = 'ADD_CALL';
-export const addToCall = (index, user) => ({
+export const addToCall = user => ({
 	type: ADD_CALL,
-	payload: { user, index }
+	payload: { user }
 });
 
 export const REMOVE_CALL = 'REMOVE_CALL';
-export const removeFromCall = (index, user) => ({
+export const removeFromCall = user => ({
 	type: REMOVE_CALL,
-	payload: { user, index }
+	payload: { user }
 });
 export const ADD_ONLINE_USER = 'ADD_ONLINE_USER';
 export const REMOVE_ONLINE_USER = 'REMOVE_ONLINE_USER';

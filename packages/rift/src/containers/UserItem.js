@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
 		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
 
 		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		flexBasis: '45%',
+		// flexBasis: '45%',
+		flexBasis: 150,
 		flexGrow: 1,
 		// flexWrap: 'wrap',
 		display: 'flex',
@@ -149,15 +150,34 @@ const styles = StyleSheet.create({
 		display: 'flex'
 	}
 });
-class UserItem extends React.PureComponent {
+class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
+		// remove
+		console.log(`created ${props.username}`);
+		if (props.username == 'ehappertq') {
+			console.log('rendered ehap');
+			debugger;
+		}
+		this.state = {
+			originalUser: this.props.username
+		};
+	}
+	shouldComponentUpdate(nextProps) {
+		if (this.props.user !== nextProps.user) {
+			console.log(`user not equal ${this.props.username}`);
+			return true;
+		}
+		// console.log(`user not equal ${props.username}`);
+
+		return false;
 	}
 	addFriend = e => {
 		// e.stopPropagation();
 		const { addFriend, user } = this.props;
 		addFriend(user);
 	};
+	// componentWillReceiveProps()
 	respondFriendRequest = didAccept => {
 		const { respondFriendRequest, user } = this.props;
 		respondFriendRequest(user, didAccept);
@@ -175,16 +195,17 @@ class UserItem extends React.PureComponent {
 		removeFriend(user);
 	};
 	addUserToCall = () => {
-		const { user, addToCall, index } = this.props;
-		addToCall(index, user);
+		const { user, addToCall } = this.props;
+		addToCall(user);
 	};
 	removeUserFromCall = () => {
-		const { user, removeFromCall, index } = this.props;
-		removeFromCall(index, user);
+		const { user, removeFromCall } = this.props;
+		removeFromCall(user);
 	};
 
 	render() {
-		const { username, index, themedStyle, user, key } = this.props;
+		const { username, themedStyle, user, key } = this.props;
+		console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
@@ -192,13 +213,6 @@ class UserItem extends React.PureComponent {
 		const border = user.checked
 			? { borderWidth: 3, borderColor: onlineBorderColor }
 			: {};
-		const otherProps = {};
-
-		const listHeader = () => (
-			<Layout>
-				<Text>Header</Text>
-			</Layout>
-		);
 
 		return (
 			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
@@ -247,9 +261,8 @@ const mapStateToProps = (state, props) => {
 };
 const mapDispatchToProps = dispatch => {
 	return {
-		addToCall: (index, user) => dispatch(Actions.addToCall(index, user)),
-		removeFromCall: (index, user) =>
-			dispatch(Actions.removeFromCall(index, user)),
+		addToCall: user => dispatch(Actions.addToCall(0, user)),
+		removeFromCall: user => dispatch(Actions.removeFromCall(0, user)),
 		addFriend: user => dispatch(Actions.addFriend(user)),
 		removeFriend: user => dispatch(Actions.removeFriend(user)),
 		respondFriendRequest: (user, didAccept) =>

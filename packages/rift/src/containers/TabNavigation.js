@@ -5,7 +5,6 @@ import 'react-native-gesture-handler';
 
 // import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import UserList from './UsersList';
 import UsersList from './UsersList';
 
 const Tab = createBottomTabNavigator();
@@ -41,11 +40,11 @@ class TabNavigation extends React.Component {
 	};
 	createFriendComponent({ initialParams: { listType } }) {
 		// const listType = props.route.name.toLowerCase();
-		return <UserList listType={'friends'} containerHeight={500}></UserList>;
+		return <UsersList listType={'friends'} containerHeight={500}></UsersList>;
 	}
 	createUserComponent({ initialParams: { listType } }) {
 		// const listType = props.route.name.toLowerCase();
-		return <UserList listType={'nonFriends'} containerHeight={500}></UserList>;
+		return <UsersList listType={'nonFriends'} containerHeight={500}></UsersList>;
 	}
 	render() {
 		const tabColor = '#161c30';

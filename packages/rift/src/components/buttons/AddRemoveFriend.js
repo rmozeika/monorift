@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 		// width: '25%'
 		flexBasis: '25%',
 		justifySelf: 'flex-end',
-		width: '100%',
+		// width: '100%',
 		flexDirection: 'row'
 	},
 	acceptButton: {

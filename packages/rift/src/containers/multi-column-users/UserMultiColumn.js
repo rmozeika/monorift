@@ -2,11 +2,11 @@ import * as React from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import { getUser } from '../selectors/users';
-import AddToCallButton from '../components/buttons/AddToCall';
-import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
-import Gravatar from '../components/users/Gravatar';
+import * as Actions from '../../actions';
+import { getUser } from '../../selectors/users';
+import AddToCallButton from '../../components/buttons/AddToCall';
+import AddRemoveFriendButton from '../../components/buttons/AddRemoveFriend';
+import Gravatar from '../../components/users/Gravatar';
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 4,
@@ -19,12 +19,12 @@ const styles = StyleSheet.create({
 		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
 
 		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		// flexBasis: '45%',
-		flexBasis: 100,
+		flexBasis: '45%', // multi column
+		// flexBasis: 100,
 		flexGrow: 1,
 		// flexWrap: 'wrap',
 		display: 'flex',
-		flexDirection: 'row',
+		flexDirection: 'column',
 		overflow: 'hidden',
 		// flexShrink: 1
 		// shadowColor: '#000',
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
-		flexBasis: '25%',
+		flexBasis: '50%',
 		zIndex: 10,
 		// MAY NEED TO REACTIVATE FOR FLEX POSITION
 		// height: '55%',
@@ -51,15 +51,12 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		alignContent: 'center',
-		alignItems: 'center',
 		width: '100%',
-		flexGrow: 1,
-		flexShrink: 1,
-		height: 50
+		flexGrow: 1
 		// justifyContent: 'center'
 	},
 	gravatarContainer: {
-		flexBasis: '48%',
+		flexBasis: '40%',
 		backgroundColor: 'inherit',
 		// alignContent: 'center',
 		justifyContent: 'center',
@@ -85,7 +82,9 @@ const styles = StyleSheet.create({
 		// height:'20%',
 		// width: '25%'
 		flexBasis: '25%',
-		justifySelf: 'flex-end'
+		justifySelf: 'flex-end',
+		width: '100%'
+
 		// width: '100%'
 	},
 	statusBar: {

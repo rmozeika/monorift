@@ -84,7 +84,8 @@ module.exports = {
 					path.resolve(__dirname, 'node_modules/@react-navigation/routers'),
 					path.resolve(__dirname, 'node_modules/@react-navigation/stack'),
 					path.resolve(__dirname, 'node_modules/@react-navigation/bottom-tabs'),
-					path.resolve(__dirname, 'node_modules/react-native-screens')
+					path.resolve(__dirname, 'node_modules/react-native-screens'),
+					path.resolve(__dirname, 'node_modules/expo-linear-gradient')
 				],
 				loader: require.resolve('babel-loader')
 				// options: {

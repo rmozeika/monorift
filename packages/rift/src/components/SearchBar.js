@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { Layout, Text, Button, styled, Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
@@ -13,15 +14,28 @@ import * as AuthSelectors from '../selectors/auth';
 // }
 const styles = StyleSheet.create({
 	searchContainer: {
-		height: 50,
+		height: 60,
 		padding: 8,
 		display: 'flex',
-		flexDirection: 'row'
+		flexDirection: 'column'
 	},
 	searchInput: {
-		flexBasis: '80%',
+		flexBasis: '100%',
 		flex: 1,
 		backgroundColor: `linear-gradient(344.2deg, #2C333A -71.57%, #1C1E22 59.28%, #121416 59.28%)`
+	},
+	gradient: {
+		flexBasis: 40,
+		minHeight: 40,
+		padding: 0,
+		alignItems: 'stretch',
+		borderRadius: 5,
+		alignSelf: 'stretch',
+		boxShadow: `inset 2px 3px 10px #070709, inset -2px -2px 10px rgba(255, 255, 255, 0.05)`
+	},
+	borderContainer: {
+		flexBasis: 43,
+		padding: 3
 	}
 });
 
@@ -44,14 +58,21 @@ export class SearchBar extends React.PureComponent {
 		const { filter } = this.props;
 		return (
 			<Layout style={styles.searchContainer}>
-				<Input
-					placeholder="Search Users"
-					value={filter}
-					onChangeText={this.search}
-					// value={this.state.filterText}
-					// onChangeText={this.setFilterText}
-					style={styles.searchInput}
-				/>
+				{/* <Layout style={styles.borderContaainer}> */}
+				<LinearGradient
+					colors={['#2C333A', '#1C1E22', '#121416']}
+					style={styles.gradient}
+				>
+					<Input
+						placeholder="Search Users"
+						value={filter}
+						onChangeText={this.search}
+						// value={this.state.filterText}
+						// onChangeText={this.setFilterText}
+						style={styles.searchInput}
+					/>
+				</LinearGradient>
+				{/* </Layout> */}
 				{/* <Button style={{ flexBasis: '15%' }} onPress={this.search}>
 					Search
 				</Button> */}

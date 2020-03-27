@@ -10,11 +10,11 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import UserList from './UsersList';
-import Talk from './Talk';
+import Talk from '../talk/Talk';
 import Users from './Users';
-import TabBar from '../components/TabBar';
+import TabBar from '@components/users/TabBar';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,

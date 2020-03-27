@@ -8,10 +8,10 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import UsersList from './UsersList';
 
-import CallActions from '../components/buttons/CallActions';
+import CallActions from '@components/buttons/CallActions';
 
 const styles = StyleSheet.create({
 	userLayout: {

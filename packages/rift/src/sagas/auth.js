@@ -13,7 +13,7 @@ import { eventChannel } from 'redux-saga';
 import { originLink } from '../core/utils';
 import 'isomorphic-unfetch';
 
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 
 const { AUTH } = Actions;
 import io from 'socket.io-client';

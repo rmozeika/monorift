@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import Gravatar from '../components/users/Gravatar';
+import * as Actions from '@actions';
+import Gravatar from '@components/users/Gravatar';
 
-import * as Selectors from '../selectors';
-import * as CallSelectors from '../selectors/call';
+import * as Selectors from '@selectors';
+import * as CallSelectors from '@selectors/call';
 import { useSelector } from 'react-redux';
-import * as AuthSelectors from '../selectors/auth';
+import * as AuthSelectors from '@selectors/auth';
 
 import {
 	Layout,

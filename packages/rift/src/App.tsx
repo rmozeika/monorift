@@ -17,9 +17,9 @@ import {
 	// FeatherIconsPack
 } from './core/icons';
 
-import NavBar from './containers/NavBar';
-import Navigation from './containers/Navigation';
-import About from './containers/About';
+import NavBar from './containers/navigation/NavBar';
+import Navigation from './containers/navigation/Navigation';
+import About from './containers/misc/About';
 
 import { setCode, setIsMobile } from './actions';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';

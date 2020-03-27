@@ -10,7 +10,7 @@ import {
 	ADD_ONLINE_USER,
 	REMOVE_ONLINE_USER,
 	SET_SEARCH_FILTER
-} from '../actions';
+} from '@actions';
 const isFriendFromStatus = friendStatus => {
 	return ['A', 'P', 'S'].some(key => key == friendStatus);
 };

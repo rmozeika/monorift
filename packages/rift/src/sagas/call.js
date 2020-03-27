@@ -16,7 +16,7 @@ import { originLink } from '../core/utils';
 // import es6promise from 'es6-promise'
 import 'isomorphic-unfetch';
 
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 
 let mediaStreamConstraints = {
 	audio: true,

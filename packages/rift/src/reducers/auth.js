@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { AUTH } from '../actions';
+import { AUTH } from '@actions';
 const { LOGIN } = AUTH;
 export const initialState = {
 	loggedIn: false,

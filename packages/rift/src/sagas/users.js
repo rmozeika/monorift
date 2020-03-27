@@ -13,7 +13,7 @@ import { eventChannel } from 'redux-saga';
 import 'isomorphic-unfetch';
 import io from 'socket.io-client';
 
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import { originLink } from '../core/utils';
 const socketServerURL = originLink('users');
 let socket;

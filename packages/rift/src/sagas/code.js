@@ -9,7 +9,7 @@ import {
 } from 'redux-saga/effects';
 import 'isomorphic-unfetch';
 
-import { CODE } from '../actions';
+import { CODE } from '@actions';
 const { REQUEST } = CODE;
 
 function* loadCode(action) {

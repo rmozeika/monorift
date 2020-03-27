@@ -9,7 +9,7 @@ import {
 } from 'redux-saga/effects';
 import 'isomorphic-unfetch';
 
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 // import { setConfig } from './constants/ActionTypes';
 const { ActionTypes } = Actions;
 //

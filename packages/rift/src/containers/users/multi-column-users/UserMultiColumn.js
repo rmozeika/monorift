@@ -2,15 +2,14 @@ import * as React from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import { getUser } from '../selectors/users';
-import AddToCallButton from '../components/buttons/AddToCall';
-import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
-import Gravatar from '../components/users/Gravatar';
-import QuickCall from '@components/buttons/QuickCall';
+import * as Actions from '../@actions';
+import { getUser } from '../@selectors/users';
+import AddToCallButton from '../@components/buttons/AddToCall';
+import AddRemoveFriendButton from '../@components/buttons/AddRemoveFriend';
+import Gravatar from '../@components/users/Gravatar';
 const styles = StyleSheet.create({
 	listItem: {
-		margin: 10,
+		margin: 4,
 		borderRadius: 12,
 		// boxShadow: `-8px 8px 5px #111522, 8px -8px 5px #334168;`,
 		boxShadow: ` 8px 8px 5px #161c30, 
@@ -20,13 +19,12 @@ const styles = StyleSheet.create({
 		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
 
 		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		// flexBasis: '45%',
-		flexBasis: 75,
+		flexBasis: '45%', // multi column
+		// flexBasis: 100,
 		flexGrow: 1,
-		alignItems: 'stretch',
 		// flexWrap: 'wrap',
 		display: 'flex',
-		flexDirection: 'row',
+		flexDirection: 'column',
 		overflow: 'hidden',
 		// flexShrink: 1
 		// shadowColor: '#000',
@@ -36,40 +34,33 @@ const styles = StyleSheet.create({
 		padding: 0,
 		paddingHorizontal: 0,
 		paddingVertical: 0,
-		zIndex: 9
+		zIndex: 9,
 		// MAY NEED TO DIABLE -REACTIVATE FOR FLEX POSITION
-		// alignContent: 'stretch'
+		alignContent: 'flex-end'
 		// marginHorizontal: 0,
 		// marginVertical:0
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
-		flexBasis: '25%',
+		flexBasis: '50%',
 		zIndex: 10,
 		// MAY NEED TO REACTIVATE FOR FLEX POSITION
 		// height: '55%',
 		justifyContent: 'center',
-		// alignSelf: 'center',
+		alignSelf: 'center',
 		display: 'flex',
 		flexDirection: 'row',
-		// alignContent: 'center',
-		// alignItems: 'center',
+		alignContent: 'center',
 		width: '100%',
-		flexGrow: 1,
-		flexShrink: 1
-		// height: 50
-
+		flexGrow: 1
 		// justifyContent: 'center'
 	},
 	gravatarContainer: {
-		flexBasis: 50,
-		flex: 0,
-		marginLeft: 10,
+		flexBasis: '40%',
 		backgroundColor: 'inherit',
 		// alignContent: 'center',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
-		// alignItems: 'flex-end'
 		// borderRadius: '50%',
 	},
 	// gravatarContainerOnline: {
@@ -91,26 +82,25 @@ const styles = StyleSheet.create({
 		// height:'20%',
 		// width: '25%'
 		flexBasis: '25%',
-		justifySelf: 'flex-end'
+		justifySelf: 'flex-end',
+		width: '100%'
+
 		// width: '100%'
 	},
 	statusBar: {
 		flexBasis: '15%',
 		// flexBasis: '100%',
-		// alignItems: 'center',
-		alignItems: 'stretch',
 		textAlign: 'center',
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
-		// justifySelf: 'flex-end',
-		justifyContent: 'center'
-		// width: '100%'
+		justifySelf: 'flex-end',
+		width: '100%'
 	},
 	listItemTitle: {
 		fontSize: 13,
 		fontWeight: 600,
 		textAlign: 'start',
-		// alignContent: 'center',
+		alignContent: 'center',
 		paddingLeft: 10,
 		color: '#EDF1F7'
 	},
@@ -119,8 +109,8 @@ const styles = StyleSheet.create({
 		fontWeight: 400,
 		textAlign: 'start',
 		alignContent: 'center',
-		paddingRight: 20,
-		paddingLeft: 10
+		paddingRight: 20
+		// paddingLeft: 10
 	},
 
 	icon: {
@@ -167,9 +157,12 @@ class UserItem extends React.Component {
 		super(props);
 		// remove
 		console.log(`created ${props.username}`);
+		if (props.username == 'ehappertq') {
+			console.log('rendered ehap');
+			debugger;
+		}
 		this.state = {
 			originalUser: this.props.username
-			// quickCalling: this.prop
 		};
 	}
 	shouldComponentUpdate(nextProps) {
@@ -186,6 +179,7 @@ class UserItem extends React.Component {
 		const { addFriend, user } = this.props;
 		addFriend(user);
 	};
+	// componentWillReceiveProps()
 	respondFriendRequest = didAccept => {
 		const { respondFriendRequest, user } = this.props;
 		respondFriendRequest(user, didAccept);
@@ -237,20 +231,15 @@ class UserItem extends React.Component {
 						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
-							<Text style={[styles.listItemDetails, themedStyle.statusText]}>
-								online
-							</Text>
+							{/* <Text style={styles.listItemDetails}>online</Text> */}
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{/* <QuickCall></QuickCall> */}
-				{/* {user.online && ( */}
-				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
-					<QuickCall checked={user.checked}></QuickCall>
-
-					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
-				</Layout>
-				{/* )} */}
+				{user.online && (
+					<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+						<Text style={themedStyle.statusText}>online</Text>
+					</Layout>
+				)}
 				{user.friendStatus !== 'A' && (
 					<AddRemoveFriendButton
 						onAdd={this.addFriend}

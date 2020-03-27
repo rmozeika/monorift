@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Input, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import { setCode } from '../actions';
+import { setCode } from '@actions';
 import { ThemedComponentProps, ThemeType } from '@ui-kitten/components/theme';
 
 interface State {

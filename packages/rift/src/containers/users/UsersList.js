@@ -2,16 +2,16 @@ import * as React from 'react';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import * as Selectors from '../selectors';
-import * as CallSelectors from '../selectors/call';
-import * as UserSelectors from '../selectors/users';
-import * as AuthSelectors from '../selectors/auth';
+import * as Actions from '@actions';
+import * as Selectors from '@selectors';
+import * as CallSelectors from '@selectors/call';
+import * as UserSelectors from '@selectors/users';
+import * as AuthSelectors from '@selectors/auth';
 
 import UserItem from './UserItem';
 import YourProfile from './YourProfile';
-import SearchBar from '@components/SearchBar';
-import EmptyFriendsPrompt from '@components/EmptyFriendsPrompt';
+import SearchBar from '@components/users/SearchBar';
+import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
 import CallActions from '@components/buttons/CallActions';
 
 const styles = StyleSheet.create({

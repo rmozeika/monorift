@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import { ActionTypes } from '../actions';
-import { CODE } from '../actions';
+import { ActionTypes } from '@actions';
+import { CODE } from '@actions';
 const { SET_CODE, GET_CODE, LOAD_CODE } = CODE;
 export const initialState = {};
 const createReducer = (initialState, handlers) => {

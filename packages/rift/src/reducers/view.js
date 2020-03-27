@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 export const initialState = {
 	tab: 0,
 	mobile: true

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Text, Button, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import Media from './Media';
 
 const trace = msg => {

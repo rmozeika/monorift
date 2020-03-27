@@ -11,7 +11,7 @@ import {
 	SET_STREAM,
 	CALL_INCOMING,
 	ANSWER_INCOMING
-} from '../actions';
+} from '@actions';
 export const initialState = {
 	peerStore: {
 		conn: null,

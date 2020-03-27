@@ -17,8 +17,8 @@ import {
 	themes,
 	ThemeStore,
 	ThemeService
-} from '../core/themes';
-import { originLink } from '../core/utils';
+} from '../../core/themes';
+import { originLink } from '../../core/utils';
 import {
 	withStyles,
 	ThemedComponentProps,

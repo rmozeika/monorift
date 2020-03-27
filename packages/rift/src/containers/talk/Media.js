@@ -8,7 +8,7 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 const outerButtonGroupBoxShadow = {
 	boxShadow: `
 			inset 5px 5px 5px -15px rgba(0,0,0,0.1), 

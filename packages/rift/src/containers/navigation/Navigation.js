@@ -8,11 +8,11 @@ import {
 } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import TabNavigation from './TabNavigation';
-import Talk from './Talk';
-import UserScreen from './UserScreen';
-import UserList from './UsersList';
+import Talk from '../talk/Talk';
+import UserScreen from '../users/UserScreen';
+import UserList from '../users/UsersList';
 import NavBarHeader from './NavBarHeader';
-import NavUserControls from '@components/NavUserControls';
+import NavUserControls from '@components/navigation/NavUserControls';
 const Stack = createStackNavigator();
 const tabColor = 'rgb(26, 34, 55)';
 

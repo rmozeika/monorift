@@ -8,7 +8,7 @@ import {
 	Button,
 	Icon
 } from '@ui-kitten/components';
-import { originLink } from '../core/utils';
+import { originLink } from '../../core/utils';
 
 const styles = StyleSheet.create({
 	container: {

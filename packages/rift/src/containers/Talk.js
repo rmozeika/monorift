@@ -41,7 +41,7 @@ function getPeerName(peerConnection) {
 
 let connName = 'peerStore';
 
-class Adapter extends React.Component {
+class Adapter extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		let audioRef = this.props.audioRef || React.createRef();
@@ -55,6 +55,15 @@ class Adapter extends React.Component {
 		window.videoRef = this.videoRef;
 		// this.getDisplayStyle = this.get
 	}
+	// remove just for debugging
+	componentWillMount() {
+		debugger;
+		console.log('didmount');
+	}
+	componentWillUnmount() {
+		debugger;
+		console.log('unmount');
+	}
 	componentDidUpdate() {
 		const { peerStore, peerConnStatus } = this.props;
 		const { audioRef, videoRef } = this;
@@ -67,7 +76,7 @@ class Adapter extends React.Component {
 			console.log('on track ID', e.track.id);
 
 			if (mediaStreamConstraints.video && e.track.kind == 'video') {
-				if (videoRef?.current) {
+				if (!videoRef?.current) {
 					return;
 				}
 				if (e.streams?.[0]) {
@@ -86,7 +95,7 @@ class Adapter extends React.Component {
 				// return;
 				return;
 			}
-			if (audioRef?.current) {
+			if (!audioRef?.current) {
 				return;
 			}
 			if (e.streams?.[0]) {
@@ -203,7 +212,7 @@ class Adapter extends React.Component {
 		}
 	}
 	render() {
-		const { peerStore, peerConnStatus, themedStyle } = this.props;
+		const { peerStore, peerConnStatus } = this.props;
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={[styles.callButton]}>
 				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
@@ -302,11 +311,7 @@ class Adapter extends React.Component {
 		);
 	}
 }
-const AdapterWithStyles = withStyles(Adapter, theme => ({
-	container: {
-		backgroundColor: theme['color-basic-500']
-	}
-}));
+
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),
@@ -333,4 +338,4 @@ const mapStateToProps = (state, ownProps) => {
 		tab
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(AdapterWithStyles);
+export default connect(mapStateToProps, mapDispatchToProps)(Adapter);

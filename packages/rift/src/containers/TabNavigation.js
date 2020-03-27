@@ -104,7 +104,7 @@ class TabNavigation extends React.Component {
 							initialParams={initialParams}
 							key={key}
 							name={name}
-							component={render}
+							component={UsersList}
 						/>
 					);
 				})}

@@ -22,9 +22,11 @@ export default class NavigationContiner extends React.Component {
 		// this.toCall = this.toCall.bind(this);
 	}
 	toCall(navigation) {
-		debugger;
 		navigation.navigate('Talk');
 		// this.props.navigation.
+	}
+	toFriends(navigation) {
+		navigation.navigate('Friends');
 	}
 	renderSigninIcon(style = { height: 24 }) {
 		return <Icon name="sign-in-alt" style={{ ...style }} solid />;
@@ -71,7 +73,10 @@ export default class NavigationContiner extends React.Component {
 						key={'talk'}
 						name={'Talk'}
 						component={Talk}
-						options={{
+						options={({ navigation, route }) => ({
+							headerRight: () => (
+								<Button onPress={() => this.toFriends(navigation)}> to other</Button>
+							),
 							title: 'Talk',
 							headerTitleStyle: {
 								backgroundColor: tabColor
@@ -84,7 +89,7 @@ export default class NavigationContiner extends React.Component {
 							headerRightContainerStyle: { showLabel: false },
 							// cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 							...TransitionPresets.ModalSlideFromBottomIOS
-						}}
+						})}
 					/>
 				</Stack.Navigator>
 			</NavigationContainer>

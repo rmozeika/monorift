@@ -16,12 +16,12 @@ const styles = StyleSheet.create({
 		height: 50,
 		padding: 8,
 		display: 'flex',
-		flexDirection: 'row'
+		flexDirection: 'row',
+		backgroundColor: 'rgb(26, 33, 56)'
 	},
 	searchInput: {
 		flexBasis: '80%',
-		flex: 1,
-		backgroundColor: `linear-gradient(344.2deg, #2C333A -71.57%, #1C1E22 59.28%, #121416 59.28%)`
+		flex: 1
 	}
 });
 

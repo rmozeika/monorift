@@ -7,6 +7,7 @@ import { getUser } from '../selectors/users';
 import AddToCallButton from '../components/buttons/AddToCall';
 import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
 import Gravatar from '../components/users/Gravatar';
+import QuickCall from '@components/buttons/QuickCall';
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 10,
@@ -96,7 +97,8 @@ const styles = StyleSheet.create({
 	statusBar: {
 		flexBasis: '15%',
 		// flexBasis: '100%',
-		alignItems: 'center',
+		// alignItems: 'center',
+		alignItems: 'stretch',
 		textAlign: 'center',
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
@@ -117,8 +119,8 @@ const styles = StyleSheet.create({
 		fontWeight: 400,
 		textAlign: 'start',
 		alignContent: 'center',
-		paddingRight: 20
-		// paddingLeft: 10
+		paddingRight: 20,
+		paddingLeft: 10
 	},
 
 	icon: {
@@ -165,12 +167,9 @@ class UserItem extends React.Component {
 		super(props);
 		// remove
 		console.log(`created ${props.username}`);
-		if (props.username == 'ehappertq') {
-			console.log('rendered ehap');
-			debugger;
-		}
 		this.state = {
 			originalUser: this.props.username
+			// quickCalling: this.prop
 		};
 	}
 	shouldComponentUpdate(nextProps) {
@@ -238,15 +237,20 @@ class UserItem extends React.Component {
 						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
-							{/* <Text style={styles.listItemDetails}>online</Text> */}
+							<Text style={[styles.listItemDetails, themedStyle.statusText]}>
+								online
+							</Text>
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{user.online && (
-					<Layout style={[styles.statusBar, themedStyle.statusBar]}>
-						<Text style={themedStyle.statusText}>online</Text>
-					</Layout>
-				)}
+				{/* <QuickCall></QuickCall> */}
+				{/* {user.online && ( */}
+				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+					<QuickCall checked={user.checked}></QuickCall>
+
+					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
+				</Layout>
+				{/* )} */}
 				{user.friendStatus !== 'A' && (
 					<AddRemoveFriendButton
 						onAdd={this.addFriend}

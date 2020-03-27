@@ -31,10 +31,12 @@ const {
 	GOT_MESSAGE,
 	SET_REMOTE,
 	ANSWER_INCOMING,
+	START_CALL,
 	setRemote,
 	setConstraints,
 	sendOffer,
-	setIncomingCall
+	setIncomingCall,
+	setPeerInitiator
 } = Actions;
 
 import io from 'socket.io-client';
@@ -171,7 +173,7 @@ function* createPeerConnSaga(action) {
 		console.log(error);
 	}
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions }) {
+function* sendOfferSaga({ altConstraints, altOfferOptions, username = false }) {
 	console.log('Sending offer');
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
@@ -184,8 +186,14 @@ function* sendOfferSaga({ altConstraints, altOfferOptions }) {
 		debugger; //error
 	});
 	conn.setLocalDescription(offer);
+	// REMOVE THIS
 	yield put(Actions.setPeerInitiator(true));
-	const users = yield select(selectCheckedUsers);
+	let users;
+	if (username) {
+		users = [username];
+	} else {
+		users = yield select(selectCheckedUsers);
+	}
 	const from = yield select(selectMe);
 
 	socket.emit('message', offer, { constraints, users });
@@ -296,6 +304,32 @@ function* incomingCallSaga(incomingCall) {
 	// const sendBackTo = from;
 	// socket.emit('message', desc, { users: [from] });
 }
+const getUserMedia = async constraints => {
+	stream = await navigator.mediaDevices.getUserMedia(constraints);
+	window.stream = stream; // make variable available to browser console
+	return stream;
+	// this.gotMedia(stream);
+};
+function* startCallSaga({ payload }) {
+	const { type, username } = payload;
+	yield put(setPeerInitiator(true));
+	const constraints = { audio: true, video: type == 'video' };
+	yield put(setConstraints(constraints));
+	// get set media constraints here CHANGE THIS
+	// let stream = null;
+	const { peerStore } = this.props;
+	const { conn } = peerStore;
+	try {
+		const stream = yield getUserMedia(constraints);
+		yield put(sendOffer({ username }));
+		// stream = await navigator.mediaDevices.getUserMedia(constraints);
+		// window.stream = stream; // make variable available to browser console
+		// this.gotMedia(stream);
+	} catch (err) {
+		console.log(err);
+		/* handle the error */
+	}
+}
 function* answerCallSaga({ payload: answered }) {
 	if (!answered) {
 		// CHANGE THIS
@@ -332,6 +366,8 @@ function* rootSaga() {
 		takeLatest(CREATE_PEER_CONN, createPeerConnSaga),
 		takeLatest(SEND_OFFER, sendOfferSaga),
 		takeEvery(GOT_MESSAGE, gotMessageSaga),
+		takeEvery(START_CALL, startCallSaga),
+
 		// takeLatest(CALL_INCOMING, incomingCallSaga)
 		takeLatest(ANSWER_INCOMING, answerCallSaga)
 	]);

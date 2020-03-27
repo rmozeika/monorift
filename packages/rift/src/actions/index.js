@@ -81,11 +81,22 @@ export const setPeerInitiator = initiator => ({
 	type: SET_PEER_STARTED,
 	initiator
 });
+export const START_CALL = 'START_CALL';
+// if user false, send offer from checked (user for quick call mostly)
+export const startCall = (username = false, type = 'audio') => ({
+	type: START_CALL,
+	payload: {
+		type,
+		username
+	}
+});
 export const SEND_OFFER = 'SEND_OFFER';
-export const sendOffer = message => ({
+//probably remove other than user
+export const sendOffer = ({ username = false }) => ({
 	type: SEND_OFFER,
-	offer: message.desc,
-	constraints: message.constraints
+	// offer: message.desc,
+	// constraints: message.constraints,
+	username
 });
 export const GOT_MESSAGE = 'GOT_MESSAGE';
 export const HANDLERS_SET = 'HANDLERS_SET';

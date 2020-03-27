@@ -201,7 +201,8 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 
 const mapDispatchToProps = dispatch => {
 	return {
-		setTabView: tab => dispatch(Actions.setTabView(tab))
+		setTabView: tab => dispatch(Actions.setTabView(tab)),
+		answer: answered => dispatch(Actions.answer(answered))
 	};
 };
 

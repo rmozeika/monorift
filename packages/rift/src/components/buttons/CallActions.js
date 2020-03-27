@@ -61,12 +61,12 @@ const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
 			key: 'button-reject'
 		}
 	];
-	const callHeight = '5%';
-	return (
-		<Layout style={[styles.container, { height: callHeight }]}>
-			<Button>Call</Button>
-		</Layout>
-	);
+	// const callHeight = '5%';
+	// return (
+	// 	<Layout style={[styles.container, { height: callHeight }]}>
+	// 		<Button>Call</Button>
+	// 	</Layout>
+	// );
 	// CHANGE THIS condense with func in Users
 	// const heightMultiplier = incomingCall.pending ? 0.2 : 0.1;
 	const derivedHeight = '15%'; //baseHeight * heightMultiplier;

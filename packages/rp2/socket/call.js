@@ -15,7 +15,7 @@ class UserItem extends SocketItem {
 					try {
 						const getAsync = util.promisify(redis.get).bind(redis);
 						// if (user.id) return user;
-						const id = await getAsync(user.username);
+						const id = await getAsync(user.oauth_id);
 						return { username: user.username, id };
 					} catch (e) {
 						console.log(e);
@@ -30,13 +30,15 @@ class UserItem extends SocketItem {
 			// 	users: ${util.inspect(users)}
 			// 	constraints: ${constraints}
 			// `);
+			const user = socket.request.session.passport.user;
 			const actions = mappedUsers.map(async targetUser => {
 				const emitted = await socket.to(targetUser.id).emit('message', msg, {
 					users,
 					constraints,
 					from: {
 						id: socket.id,
-						username: socket.request.session.passport.user.username
+						username: user.username,
+						oauth_id: user.oauth_id
 					}
 				});
 				return emitted;
@@ -87,10 +89,14 @@ class Call extends Socket {
 			User: ${user.username}
 			SocketId: ${socket.id}
 		`);
-		this.redis.set(user.username, socket.id);
+		this.redis.set(user.oauth_id, socket.id);
 		const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
 		if (user) {
-			userSock.emit('broadcast', { username: user.username, online: true });
+			userSock.emit('broadcast', {
+				oauth_id: user.oauth_id,
+				username: user.username,
+				online: true
+			});
 		}
 		this.createSocketItem(socket, this.redis);
 		// socket.on('message', this.onMessage.bind(socket, this.redis));
@@ -104,7 +110,11 @@ class Call extends Socket {
 		// const { user = false } = passport;
 		// const userSock = io.of('/users'); //.broadcast.emit('message', username);
 		if (user) {
-			userSock.emit('broadcast', { username: user.username, online: false });
+			userSock.emit('broadcast', {
+				oauth_id: user.oauth_id,
+				username: user.username,
+				online: false
+			});
 		}
 	}
 	async makeListener(func, ...args) {

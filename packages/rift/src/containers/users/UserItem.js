@@ -13,11 +13,6 @@ class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
 		// remove
-		console.log(`created ${props.username}`);
-		this.state = {
-			originalUser: this.props.username
-			// quickCalling: this.prop
-		};
 	}
 	shouldComponentUpdate(nextProps) {
 		if (this.props.user !== nextProps.user) {
@@ -59,7 +54,8 @@ class UserItem extends React.Component {
 	};
 
 	render() {
-		const { username, themedStyle, user, key } = this.props;
+		const { id, themedStyle, user, key } = this.props;
+		const { username } = user;
 		console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
@@ -79,7 +75,7 @@ class UserItem extends React.Component {
 						<Gravatar
 							style={styles.gravatarContainer}
 							online={online}
-							id={user.oauth_id}
+							id={id}
 							onlineBorderColor={onlineBorderColor}
 						/>
 						<Layout style={styles.titleContainer}>

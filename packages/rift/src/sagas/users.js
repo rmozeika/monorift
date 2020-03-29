@@ -70,7 +70,7 @@ function* addFriendSaga(action) {
 			body: JSON.stringify({ friend: action.payload })
 		});
 		yield put(
-			Actions.updateUser(action.payload.username, {
+			Actions.updateUser(action.payload.oauth_id, {
 				friendStatus: 'S',
 				isFriend: true
 			})
@@ -94,7 +94,7 @@ function* respondFriendRequestSaga(action) {
 			});
 			const friendStatuKey = didAccept ? 'A' : 'R';
 			yield put(
-				Actions.updateUser(friend.username, {
+				Actions.updateUser(friend.oauth_id, {
 					friendStatus: friendStatuKey,
 					isFriend: didAccept
 				})
@@ -164,10 +164,10 @@ function* initSocketSaga() {
 
 		try {
 			if (message.online == true) {
-				const user = { username: message.username };
+				const user = { username: message.username, oauth_id: oauth_id };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { username: message.username };
+				const user = { username: message.username, oauth_id: oauth_id };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {

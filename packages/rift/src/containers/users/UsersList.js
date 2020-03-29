@@ -39,9 +39,7 @@ class UsersList extends React.PureComponent {
 		// if (user == 'self') {
 		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
 		// }
-		return (
-			<UserItem themedStyle={this.props.themedStyle.userItem} username={user} />
-		);
+		return <UserItem themedStyle={this.props.themedStyle.userItem} id={user} />;
 	};
 
 	render() {
@@ -57,11 +55,19 @@ class UsersList extends React.PureComponent {
 		const emptyFriends = users.length == 0;
 		if (listType == 'friends' && emptyFriends) {
 			return (
-				<EmptyFriendsPrompt
-					loggedIn={loggedIn}
-					checked={checked}
-					goToUsers={this.goToUsers}
-				/>
+				<Layout style={[styles.userListLayout, {}]}>
+					<EmptyFriendsPrompt
+						loggedIn={loggedIn}
+						checked={checked}
+						goToUsers={this.goToUsers}
+					/>
+					<CallActions
+						themedStyle={themedStyle.callActions}
+						incomingCall={incomingCall}
+						answer={this.answer}
+						reject={this.reject}
+					/>
+				</Layout>
 			);
 		}
 		return (

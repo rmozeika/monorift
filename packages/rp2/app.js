@@ -152,13 +152,13 @@ app.io.on('connection', async socket => {
 	const { user = false } = passport;
 	const isUser = user && user.username;
 	if (isUser) {
-		const key = client.sadd('online_users', user.username);
-		client.set(user.username, socket.id);
+		const key = client.sadd('online_users', user.oauth_id);
+		client.set(user.oauth_id, socket.id);
 		client.hmset(`user:${user.username}`, [
 			'socketid',
 			socket.id,
 			'key',
-			user._id
+			user.oauth_id
 		]);
 	}
 	app.api.repositories.users
@@ -176,7 +176,7 @@ app.io.on('connection', async socket => {
 	socket.on('disconnect', socket => {
 		console.log('disconnected');
 		if (user.username) {
-			client.srem('online_users', user.username);
+			client.srem('online_users', user.oauth_id);
 		}
 	});
 });

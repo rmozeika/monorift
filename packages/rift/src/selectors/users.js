@@ -185,17 +185,17 @@ export const getVisibleUsersFiltered = createSelector(
 // }
 import createCachedSelector from 're-reselect';
 import { search } from '@src/reducers/users';
-const getUserByUsername = (state, props) => state.users.byId[props.username];
+const getUserById = (state, props) => state.users.byId[props.id];
 
 // const getUserData = state => state.world;
-export const getUser = createCachedSelector([getUserByUsername], users => {
+export const getUser = createCachedSelector([getUserById], users => {
 	return users;
 })(
 	/*
 	 * Re-reselect resolver function.
 	 * Cache/call a new selector for each different "listId"
 	 */
-	(state, props) => props.username
+	(state, props) => props.id
 );
 const getVis = (state, props) =>
 	createSelector(

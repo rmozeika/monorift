@@ -39,7 +39,7 @@ export const initialState = {
 			offline: []
 		}
 	},
-	queued: [],
+	queued: {},
 	search: { filter: '' }
 };
 const onlineUsers = (state, action) => {};
@@ -106,13 +106,19 @@ export const friends = (state = {}, action) => {
 export const queued = (state = [], action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
-			case ADD_CALL:
-				draft.push({
+			case ADD_CALL: {
+				const { user } = action.payload;
+				const { username } = user;
+				draft[username] = {
 					...action.payload.user
-				});
+				};
 				break;
+			}
 			case REMOVE_CALL:
-				draft.filter(user => user.username !== action.payload.user.username);
+				const { user } = action.payload;
+				const { username } = user;
+				delete draft[username];
+				// draft.filter(user => user.username !== action.payload.user.username);
 				break;
 			default:
 				return draft;

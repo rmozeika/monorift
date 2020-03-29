@@ -128,7 +128,9 @@ console.log('App ready!');
 app.api = api;
 const socketIO = io();
 app.io = socketIO;
+// api.redis = client;
 api.redis = client;
+
 app.io.use(function(socket, next) {
 	sessionMiddleware(socket.request, {}, next);
 });

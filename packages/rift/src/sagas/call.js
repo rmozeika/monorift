@@ -192,7 +192,10 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, username = false }) {
 	if (username) {
 		users = [username];
 	} else {
-		users = yield select(selectCheckedUsers);
+		const checked = yield select(selectCheckedUsers);
+		users = Object.values(checked).map(({ oauth_id }) => {
+			return oauth_id;
+		});
 	}
 	const from = yield select(selectMe);
 

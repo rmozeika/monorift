@@ -13,6 +13,110 @@ import YourProfile from './YourProfile';
 import SearchBar from '@components/users/SearchBar';
 import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
 import CallActions from '@components/buttons/CallActions';
+import UpdateTempUsername from '@components/users/UpdateTempUsername';
+
+class UsersList extends React.PureComponent {
+	constructor(props) {
+		super(props);
+	}
+	goToUsers = () => {
+		this.props.navigation.navigate('Users');
+	};
+	answer = () => {
+		const { answer } = this.props;
+		answer(true);
+		this.props.navigation.navigate('Talk');
+	};
+	reject = () => {
+		const { answer } = this.props;
+		answer(false);
+	};
+	_keyExtractor = item => {
+		return item;
+	};
+	renderItem = ({ item: user, index, ...restProps }) => {
+		// IF REACTIVATE PROFILE
+		// if (user == 'self') {
+		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
+		// }
+		return (
+			<UserItem themedStyle={this.props.themedStyle.userItem} username={user} />
+		);
+	};
+
+	render() {
+		const {
+			incomingCall,
+			users,
+			listType,
+			loggedIn,
+			checked,
+			themedStyle
+		} = this.props;
+
+		const emptyFriends = users.length == 0;
+		if (listType == 'friends' && emptyFriends) {
+			return (
+				<EmptyFriendsPrompt
+					loggedIn={loggedIn}
+					checked={checked}
+					goToUsers={this.goToUsers}
+				/>
+			);
+		}
+		return (
+			<Layout style={[styles.userListLayout, {}]}>
+				<SearchBar />
+				<List
+					data={users}
+					renderItem={this.renderItem}
+					style={styles.list}
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={styles.listContentContainer}
+					// numColumns={2}
+					// columnWrapperStyle={styles.columnWrapper}
+					initialNumToRender={8}
+					keyExtractor={this._keyExtractor}
+				/>
+				{/* <Layout style={styles.floatingButtonContainer}>
+					<Button style={{}}>Call</Button>
+				</Layout> */}
+				<CallActions
+					themedStyle={themedStyle.callActions}
+					incomingCall={incomingCall}
+					answer={this.answer}
+					reject={this.reject}
+				/>
+			</Layout>
+		);
+	}
+}
+
+export const UsersListWithStyles = withStyles(UsersList, theme => ({
+	buttonGroup: {
+		backgroundColor: theme['color-primary-100'],
+		marginHorizontal: 0
+	},
+	callActions: {
+		backgroundColor: theme['color-primary-500']
+	},
+	userItem: {
+		onlineColor: theme['color-success-500'],
+		statusBar: {
+			backgroundcolor: theme['color-basic-transparent-disabled-border']
+		},
+		statusText: {
+			color: theme['color-success-500'] // CHANGE THIS!
+		},
+		iconOnline: {
+			backgroundColor: theme['color-primary-100'],
+			// color: theme['color-basic-800']
+			color: theme['color-success-500']
+		}
+	},
+
+	container: { backgroundColor: '#1A2138' }
+}));
 
 const styles = StyleSheet.create({
 	container: {
@@ -85,119 +189,6 @@ const styles = StyleSheet.create({
 		bottom: '10%'
 	}
 });
-class UsersList extends React.PureComponent {
-	constructor(props) {
-		super(props);
-	}
-	goTalk = () => {
-		this.props.setTabView(2);
-	};
-	goToUsers = () => {
-		this.props.navigation.navigate('Users');
-	};
-	answer = () => {
-		const { answer } = this.props;
-		answer(true);
-		this.props.navigation.navigate('Talk');
-	};
-	reject = () => {
-		const { answer } = this.props;
-		answer(false);
-	};
-	_keyExtractor = item => {
-		return item;
-	};
-	renderItem = ({ item: user, index, ...restProps }) => {
-		// IF REACTIVATE PROFILE
-		// if (user == 'self') {
-		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
-		// }
-		return (
-			<UserItem
-				themedStyle={this.props.themedStyle.userItem}
-				username={user}
-				// key={user}
-			/>
-		);
-	};
-
-	render() {
-		const {
-			incomingCall,
-			users,
-			listType,
-			loggedIn,
-			checked,
-			themedStyle
-		} = this.props;
-		// IF REACTIVATE PROFILE
-
-		// if (self !== null) {
-		// 	users.unshift('self');
-		// }
-		const emptyFriends = users.length == 0;
-		if (listType == 'friends' && emptyFriends) {
-			return (
-				<EmptyFriendsPrompt
-					loggedIn={loggedIn}
-					checked={checked}
-					goToUsers={this.goToUsers}
-				/>
-			);
-		}
-		return (
-			<Layout style={[styles.userListLayout, {}]}>
-				<SearchBar />
-				<List
-					data={users}
-					renderItem={this.renderItem}
-					style={styles.list}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.listContentContainer}
-					// numColumns={2}
-					// columnWrapperStyle={styles.columnWrapper}
-					initialNumToRender={8}
-					keyExtractor={this._keyExtractor}
-				/>
-				{/* <Layout style={styles.floatingButtonContainer}>
-					<Button style={{}}>Call</Button>
-				</Layout> */}
-				<CallActions
-					themedStyle={themedStyle.callActions}
-					incomingCall={incomingCall}
-					answer={this.answer}
-					reject={this.reject}
-				/>
-			</Layout>
-		);
-	}
-}
-
-export const UsersListWithStyles = withStyles(UsersList, theme => ({
-	buttonGroup: {
-		backgroundColor: theme['color-primary-100'],
-		marginHorizontal: 0
-	},
-	callActions: {
-		backgroundColor: theme['color-primary-500']
-	},
-	userItem: {
-		onlineColor: theme['color-success-500'],
-		statusBar: {
-			backgroundcolor: theme['color-basic-transparent-disabled-border']
-		},
-		statusText: {
-			color: theme['color-success-500'] // CHANGE THIS!
-		},
-		iconOnline: {
-			backgroundColor: theme['color-primary-100'],
-			// color: theme['color-basic-800']
-			color: theme['color-success-500']
-		}
-	},
-
-	container: { backgroundColor: '#1A2138' }
-}));
 
 const mapDispatchToProps = dispatch => {
 	return {

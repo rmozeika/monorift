@@ -27,7 +27,7 @@ class UserRepository extends Repository {
 		super(api, collection);
 		this.findByUsername.bind(this);
 	}
-	async createGravatar(username, email) {
+	async createGravatar(filename, email) {
 		const gravatarUrl = gravatar.url(
 			email,
 			{ s: '100', r: 'x', d: 'retro' },
@@ -38,7 +38,7 @@ class UserRepository extends Repository {
 			__dirname,
 			'../public',
 			'gravatar',
-			`${username}.png`
+			`${filename}.png`
 		);
 		const file = fs.createWriteStream(gravatarPath);
 		const response = await promiseGet(gravatarUrl);
@@ -49,8 +49,8 @@ class UserRepository extends Repository {
 		return new Promise((resolve, reject) => {
 			// let user;
 			const userData = { ...user };
-			const { username, src, email } = user;
-			this.createGravatar(username, email)
+			const { username, src, email, oauth_id } = user;
+			this.createGravatar(oauth_id, email)
 				.then(gravatarData => {
 					userData.src['gravatar'] = gravatarData;
 					return;
@@ -76,12 +76,13 @@ class UserRepository extends Repository {
 		});
 	}
 	async insertUserIntoPostgres(_id, user) {
-		const { username, src, email } = user;
+		const { username, src, email, oauth_id } = user;
 		const inserted = await this.postgresInstance.knex('users').insert({
 			username: username,
 			mongo_id: _id,
 			src: { email, ...src },
-			email
+			email,
+			oauth_id
 		});
 		return inserted;
 	}
@@ -89,8 +90,9 @@ class UserRepository extends Repository {
 	async findByUsername(username, cb) {
 		return this.findOne({ username }, cb);
 	}
-	importProfile(profile, cb) {
-		const { email, emails, username, nickname, mocked = false } = profile;
+	async importProfile(profile, cb) {
+		const { id: oauth_id, email, emails, nickname, mocked = false } = profile;
+		const username = nickname || profile.username;
 		let emailVal;
 		if (email) {
 			emailVal = email;
@@ -98,10 +100,14 @@ class UserRepository extends Repository {
 			const [{ value }] = emails;
 			emailVal = value;
 		}
-
+		const existingUser = await this.findOne({ username });
+		// need to add random to stop breaking upon multiple temps
+		const tempUsername = existingUser && username + '_temp';
 		const obj = {
 			email: emailVal,
-			username: username || nickname,
+			username: tempUsername || username,
+			usingTempUsername: !!tempUsername,
+			oauth_id,
 			src: profile,
 			mocked
 		};
@@ -117,6 +123,33 @@ class UserRepository extends Repository {
 			opts
 		});
 	}
+	async updateUserByUsernamePostgres(username, column, value) {
+		const [userId] = await this.getUsersIdsByUsername([username]);
+		const update = await this.postgresInstance
+			.knex('users')
+			.update(column, value)
+			.where({ id: userId });
+		return update;
+	}
+	async updateTempUsername(tempUsername, username) {
+		const existing = await this.findOne({ username });
+		if (existing) return { taken: true, success: false };
+		const updateOperation = await this.updateByUsername(tempUsername, {
+			usingTempUsername: false,
+			username,
+			usingTempUsername: false
+		}).catch(e => {
+			console.log('update temp username error');
+			// CHANGE THIS
+			return { taken: false, success: false };
+		});
+		const updatePostgres = await this.updateUserByUsernamePostgres(
+			tempUsername,
+			'username',
+			username
+		);
+		return { taken: false, success: true };
+	}
 	async getUsersPostgres() {
 		const users = await this.postgresInstance
 			.knex('users')
@@ -131,8 +164,9 @@ class UserRepository extends Repository {
 			.from('users')
 			.where('username', '=', username);
 		const users = await this.postgresInstance.client
-			.select('users.username', 'users.src', 'friendship.status')
+			.select('users.username', 'users.src', 'friendship.status', 'users.oauth_id')
 			.from('users')
+			.where('id', '!=', id)
 			.leftJoin('friendship', function() {
 				this.on('friendship.member2_id', '=', 'users.id').andOn(
 					'friendship.member1_id',
@@ -147,11 +181,16 @@ class UserRepository extends Repository {
 		return users;
 	}
 	async getUsersIdsByUsername(usernames) {
+		// could use ordanality instead
 		const users = await this.postgresInstance
 			.knex('users')
 			.whereIn('username', usernames)
-			.select('id');
-		const ids = users.map(({ id }) => id);
+			.select('id', 'username');
+		const ids = usernames.map(name => {
+			const { id } = users.find(({ id, username }) => name == username);
+			return id;
+		});
+		// const ids = users.map(({ id }) => id);
 		return ids;
 	}
 	async acceptFriend(username, friend) {
@@ -167,6 +206,7 @@ class UserRepository extends Repository {
 		console.log(accepted);
 		return accepted;
 	}
+
 	async rejectFriend(username, friend) {
 		const [userId, friendId] = await this.getUsersIdsByUsername([
 			username,
@@ -183,7 +223,13 @@ class UserRepository extends Repository {
 			username,
 			friend
 		]);
+		const existing = await this.postgresInstance
+			.knex('friendship')
+			.select('status')
+			.where('member1_id', '=', userId)
+			.andWhere('member2_id', '=', friendId);
 		// console.log(userIds);
+		if (existing.length > 0) return {};
 		const inserted1 = await this.postgresInstance.knex('friendship').insert({
 			member1_id: userId,
 			member2_id: friendId,
@@ -213,6 +259,9 @@ class UserRepository extends Repository {
 			.select('users.id', 'users.username', 'friendship.status');
 		return friends;
 	}
+	// resetUsers() {
+
+	// }
 }
 
 module.exports = UserRepository;

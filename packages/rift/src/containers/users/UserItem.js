@@ -8,6 +8,118 @@ import AddToCallButton from '@components/buttons/AddToCall';
 import AddRemoveFriendButton from '@components/buttons/AddRemoveFriend';
 import Gravatar from '@components/users/Gravatar';
 import QuickCall from '@components/buttons/QuickCall';
+
+class UserItem extends React.Component {
+	constructor(props) {
+		super(props);
+		// remove
+		console.log(`created ${props.username}`);
+		this.state = {
+			originalUser: this.props.username
+			// quickCalling: this.prop
+		};
+	}
+	shouldComponentUpdate(nextProps) {
+		if (this.props.user !== nextProps.user) {
+			console.log(`user not equal ${this.props.username}`);
+			return true;
+		}
+		// console.log(`user not equal ${props.username}`);
+
+		return false;
+	}
+	addFriend = e => {
+		// e.stopPropagation();
+		const { addFriend, user } = this.props;
+		addFriend(user);
+	};
+	respondFriendRequest = didAccept => {
+		const { respondFriendRequest, user } = this.props;
+		respondFriendRequest(user, didAccept);
+	};
+	acceptFriend = () => {
+		// e.stopPropagation();
+		this.respondFriendRequest(true);
+	};
+	rejectFriend = () => {
+		// e.stopPropagation();
+		this.respondFriendRequest(false);
+	};
+	removeFriend = () => {
+		const { removeFriend, user } = this.props;
+		removeFriend(user);
+	};
+	addUserToCall = () => {
+		const { user, addToCall } = this.props;
+		addToCall(user);
+	};
+	removeUserFromCall = () => {
+		const { user, removeFromCall } = this.props;
+		removeFromCall(user);
+	};
+
+	render() {
+		const { username, themedStyle, user, key } = this.props;
+		console.log(`rendered ${username}`);
+
+		const { src = {}, checked, online } = user;
+		const { displayName = '' } = src;
+		const onlineBorderColor = themedStyle['iconOnline'].color;
+		const border = user.checked
+			? { borderWidth: 3, borderColor: onlineBorderColor }
+			: {};
+
+		return (
+			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
+				<Layout style={styles.listItemMain}>
+					<TouchableOpacity
+						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
+						style={styles.listItemTouchable}
+					>
+						<Gravatar
+							style={styles.gravatarContainer}
+							online={online}
+							id={user.oauth_id}
+							onlineBorderColor={onlineBorderColor}
+						/>
+						<Layout style={styles.titleContainer}>
+							<Text style={styles.listItemTitle}>{username}</Text>
+							<Text style={[styles.listItemDetails, themedStyle.statusText]}>
+								online
+							</Text>
+						</Layout>
+					</TouchableOpacity>
+				</Layout>
+				{/* <QuickCall></QuickCall> */}
+				{/* {user.online && ( */}
+				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+					<QuickCall checked={user.checked}></QuickCall>
+
+					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
+				</Layout>
+				{/* )} */}
+				{user.friendStatus !== 'A' && (
+					<AddRemoveFriendButton
+						onAdd={this.addFriend}
+						removeFriend={this.removeFriend}
+						isFriend={user.isFriend}
+						friendStatus={user.friendStatus}
+						acceptFriend={this.acceptFriend}
+						rejectFriend={this.rejectFriend}
+						// style={buttonStyleAlt}
+					/>
+				)}
+			</ListItem>
+		);
+	}
+}
+const mapStateToProps = (state, props) => {
+	// const { }
+	return {
+		user: getUser(state, props)
+	};
+};
+
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 10,
@@ -162,116 +274,7 @@ const styles = StyleSheet.create({
 		display: 'flex'
 	}
 });
-class UserItem extends React.Component {
-	constructor(props) {
-		super(props);
-		// remove
-		console.log(`created ${props.username}`);
-		this.state = {
-			originalUser: this.props.username
-			// quickCalling: this.prop
-		};
-	}
-	shouldComponentUpdate(nextProps) {
-		if (this.props.user !== nextProps.user) {
-			console.log(`user not equal ${this.props.username}`);
-			return true;
-		}
-		// console.log(`user not equal ${props.username}`);
 
-		return false;
-	}
-	addFriend = e => {
-		// e.stopPropagation();
-		const { addFriend, user } = this.props;
-		addFriend(user);
-	};
-	respondFriendRequest = didAccept => {
-		const { respondFriendRequest, user } = this.props;
-		respondFriendRequest(user, didAccept);
-	};
-	acceptFriend = () => {
-		// e.stopPropagation();
-		this.respondFriendRequest(true);
-	};
-	rejectFriend = () => {
-		// e.stopPropagation();
-		this.respondFriendRequest(false);
-	};
-	removeFriend = () => {
-		const { removeFriend, user } = this.props;
-		removeFriend(user);
-	};
-	addUserToCall = () => {
-		const { user, addToCall } = this.props;
-		addToCall(user);
-	};
-	removeUserFromCall = () => {
-		const { user, removeFromCall } = this.props;
-		removeFromCall(user);
-	};
-
-	render() {
-		const { username, themedStyle, user, key } = this.props;
-		console.log(`rendered ${username}`);
-
-		const { src = {}, checked, online } = user;
-		const { displayName = '' } = src;
-		const onlineBorderColor = themedStyle['iconOnline'].color;
-		const border = user.checked
-			? { borderWidth: 3, borderColor: onlineBorderColor }
-			: {};
-
-		return (
-			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
-				<Layout style={styles.listItemMain}>
-					<TouchableOpacity
-						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
-						style={styles.listItemTouchable}
-					>
-						<Gravatar
-							style={styles.gravatarContainer}
-							online={online}
-							username={username}
-							onlineBorderColor={onlineBorderColor}
-						/>
-						<Layout style={styles.titleContainer}>
-							<Text style={styles.listItemTitle}>{username}</Text>
-							<Text style={[styles.listItemDetails, themedStyle.statusText]}>
-								online
-							</Text>
-						</Layout>
-					</TouchableOpacity>
-				</Layout>
-				{/* <QuickCall></QuickCall> */}
-				{/* {user.online && ( */}
-				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
-					<QuickCall checked={user.checked}></QuickCall>
-
-					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
-				</Layout>
-				{/* )} */}
-				{user.friendStatus !== 'A' && (
-					<AddRemoveFriendButton
-						onAdd={this.addFriend}
-						removeFriend={this.removeFriend}
-						isFriend={user.isFriend}
-						friendStatus={user.friendStatus}
-						acceptFriend={this.acceptFriend}
-						rejectFriend={this.rejectFriend}
-						// style={buttonStyleAlt}
-					/>
-				)}
-			</ListItem>
-		);
-	}
-}
-const mapStateToProps = (state, props) => {
-	// const { }
-	return {
-		user: getUser(state, props)
-	};
-};
 const mapDispatchToProps = dispatch => {
 	return {
 		addToCall: user => dispatch(Actions.addToCall(user)),

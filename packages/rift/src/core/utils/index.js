@@ -11,7 +11,8 @@ export const originLink = type => {
 		friends: '/users/friends',
 		addFriend: '/users/friends/add',
 		acceptFriend: '/users/friends/accept',
-		rejectFriend: '/users/friends/reject'
+		rejectFriend: '/users/friends/reject',
+		updateUsername: '/users/username/temp'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;

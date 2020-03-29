@@ -6,7 +6,7 @@ export default function Gravatar({
 	style = {},
 	imageStyles = {},
 	online = false,
-	username,
+	id,
 	onlineBorderColor = {},
 	square = false,
 	height = 40,
@@ -46,7 +46,7 @@ export default function Gravatar({
 					...onlineGravatarBorder,
 					...imageStyles
 				}}
-				source={{ uri: `/gravatar/${username}.png` }}
+				source={{ uri: `/gravatar/${id}.png` }}
 				// source={{ uri: `/gravatar/robertmozeika.png` }}
 			/>
 		</Layout>
@@ -66,7 +66,7 @@ export default function Gravatar({
 	// 					...onlineGravatarBorder,
 	// 					...imageStyles
 	// 				}}
-	// 				source={{ uri: `/gravatar/${username}.png` }}
+	// 				source={{ uri: `/gravatar/${id}.png` }}
 	// 				// source={{ uri: `/gravatar/robertmozeika.png` }}
 	// 			/>
 	// 		</Layout>
@@ -86,7 +86,7 @@ export default function Gravatar({
 	// 				...onlineGravatarBorder,
 	// 				...imageStyles
 	// 			}}
-	// 			source={{ uri: `/gravatar/${username}.png` }}
+	// 			source={{ uri: `/gravatar/${id}.png` }}
 	// 			// source={{ uri: `/gravatar/robertmozeika.png` }}
 	// 		/>
 	// 	</Layout>

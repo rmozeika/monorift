@@ -9,7 +9,8 @@ import {
 	REMOVE_CALL,
 	ADD_ONLINE_USER,
 	REMOVE_ONLINE_USER,
-	SET_SEARCH_FILTER
+	SET_SEARCH_FILTER,
+	UPDATE_USER
 } from '@actions';
 const isFriendFromStatus = friendStatus => {
 	return ['A', 'P', 'S'].some(key => key == friendStatus);
@@ -123,7 +124,7 @@ export const queued = (state = [], action) => {
 export const byId = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
-			case SET_USERS:
+			case SET_USERS: {
 				const users = action.payload.forEach(({ status, ...user }) => {
 					draft[user.username] = {
 						...user,
@@ -134,6 +135,15 @@ export const byId = (state = {}, action) => {
 					};
 				}, {});
 				break;
+			}
+			case UPDATE_USER: {
+				const { username, data } = action.payload;
+				const entries = Object.entries(data);
+				entries.forEach(([key, value]) => {
+					draft[username][key] = value;
+				});
+				break;
+			}
 			case SET_ONLINE_USERS:
 				action.payload.forEach(user => {
 					const { username } = user;

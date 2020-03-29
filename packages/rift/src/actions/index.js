@@ -134,6 +134,15 @@ export const setUsers = users => ({
 	type: SET_USERS,
 	payload: users
 });
+
+export const UPDATE_USER = 'UPDATE_USER';
+export const updateUser = (username, data) => ({
+	type: UPDATE_USER,
+	payload: {
+		username,
+		data
+	}
+});
 export const fetchOnlineUsers = () => ({
 	type: FETCH_ONLINE_USERS
 });
@@ -167,6 +176,24 @@ export const removeFriend = friend => ({
 	type: REMOVE_FRIEND,
 	payload: friend
 });
+export const UPDATE_USERNAME = 'UPDATE_USERNAME';
+export const updateUsername = username => ({
+	type: UPDATE_USERNAME,
+	payload: username
+});
+
+export const UPDATE_USERNAME_SUCCESS = 'UPDATE_USERNAME_SUCCESS';
+export const updateUsernameSuccess = username => ({
+	type: UPDATE_USERNAME_SUCCESS,
+	payload: username
+});
+
+export const UPDATE_USERNAME_FAILURE = 'UPDATE_USERNAME_FAILURE';
+export const updateUsernameFailure = username => ({
+	type: UPDATE_USERNAME_FAILURE,
+	payload: username
+});
+
 export const ADD_CALL = 'ADD_CALL';
 export const addToCall = user => ({
 	type: ADD_CALL,

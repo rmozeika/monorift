@@ -9,7 +9,7 @@ import {
 	select
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-
+import * as AuthSelectors from '@selectors/auth';
 import 'isomorphic-unfetch';
 import io from 'socket.io-client';
 
@@ -69,6 +69,12 @@ function* addFriendSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend: action.payload })
 		});
+		yield put(
+			Actions.updateUser(action.payload.username, {
+				friendStatus: 'S',
+				isFriend: true
+			})
+		);
 	} catch (err) {}
 }
 function* respondFriendRequestSaga(action) {
@@ -86,6 +92,13 @@ function* respondFriendRequestSaga(action) {
 				method: 'POST',
 				body: JSON.stringify({ friend })
 			});
+			const friendStatuKey = didAccept ? 'A' : 'R';
+			yield put(
+				Actions.updateUser(friend.username, {
+					friendStatus: friendStatuKey,
+					isFriend: didAccept
+				})
+			);
 		} catch (err) {}
 		return;
 	}
@@ -162,6 +175,27 @@ function* initSocketSaga() {
 		}
 	}
 }
+
+function* updateUsernameSaga({ payload }) {
+	debugger; //remove
+	const currentUsername = yield select(AuthSelectors.getSelfUsername);
+	const origin = originLink('updateUsername');
+
+	const res = yield fetch(origin, {
+		headers: {
+			'Content-Type': 'application/json'
+			// 'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'POST',
+		body: JSON.stringify({ username: payload })
+	});
+	const data = yield res.json();
+	if (data.success) {
+		yield put(Actions.updateUsernameSuccess(payload));
+	} else {
+		yield put(Actions.updateUsernameFailure(payload));
+	}
+}
 function* rootSaga() {
 	yield all([
 		initSocketSaga(),
@@ -171,7 +205,8 @@ function* rootSaga() {
 		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
 		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
 		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
-		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga)
+		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga),
+		takeLatest(Actions.UPDATE_USERNAME, updateUsernameSaga)
 	]);
 }
 

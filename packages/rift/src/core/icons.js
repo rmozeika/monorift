@@ -126,7 +126,8 @@ function createIconsMap() {
 		'friend-request': IconProvider('user-check'),
 		'pointed-right': IconProvider('angle-double-right'),
 		'caret-down': IconProvider('caret-down'),
-		phone: IconProvider('phone')
+		phone: IconProvider('phone'),
+		alert: IconProvider('info-circle')
 
 		// activity: IconProvider('user-plus'),
 	};

@@ -18,7 +18,8 @@ const strategy = new Auth0Strategy(
 		// profile has all the information from the user
 		const users = api.repositories['users'];
 		users
-			.findOne({ username: profile.nickname })
+			// .findOne({ username: profile.nickname })
+			.findOne({ oauth_id: profile.id })
 			.then(user => {
 				if (!user) {
 					users.importProfile(profile).then(res => {

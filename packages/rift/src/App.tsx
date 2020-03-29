@@ -1,9 +1,6 @@
 import React from 'react';
 import '@babel/polyfill';
-import { Provider } from 'react-redux';
-import { applyMiddleware } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import { AppRegistry, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import {
@@ -17,10 +14,8 @@ import {
 	// FeatherIconsPack
 } from './core/icons';
 
-import NavBar from './containers/navigation/NavBar';
 import Navigation from './containers/navigation/Navigation';
 import About from './containers/misc/About';
-
 import { setCode, setIsMobile } from './actions';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import {
@@ -65,13 +60,13 @@ class App extends React.Component<Props, State> {
 			currentTheme: this.state.theme,
 			toggleTheme: this.onSwitchTheme
 		};
+		// CHANGE THIS REMOVE ROUTER
 		return (
 			<ThemeContext.Provider value={contextValue}>
 				<IconRegistry icons={[AwesomeIconsPack]} />
 				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
 					<View style={styles.parentView}>
 						<Router>
-							{/* <NavBar /> */}
 							<Navigation></Navigation>
 						</Router>
 					</View>

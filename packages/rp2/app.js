@@ -10,7 +10,6 @@ const passport = require('./auth0');
 const redis = require('redis');
 
 const session = require('express-session');
-var MongoDBStore = require('connect-mongodb-session')(session);
 
 const config = require('./config.js');
 const {

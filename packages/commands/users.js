@@ -1,6 +1,7 @@
 const Command = require('./Command.js');
 const repositoryName = 'users';
 const mockUsers = require('./mock-data/mock-users.js');
+const { promisify } = require('util');
 class UserCommands extends Command {
 	constructor(rp2) {
 		super(rp2, repositoryName);
@@ -9,6 +10,7 @@ class UserCommands extends Command {
 		this.acceptFriend = this.acceptFriend.bind(this);
 		this.addAllMockToFriends = this.addAllMockToFriends.bind(this);
 		this.createGravatar = this.createGravatar.bind(this);
+		this.deleteAll = this.deleteAll.bind(this);
 	}
 	async createMockUsers() {
 		// mockUsers.forEach(user => {
@@ -57,6 +59,12 @@ class UserCommands extends Command {
 	}
 	createGravatar(username, email) {
 		return this.repository.createGravatar(username, email);
+	}
+	async deleteAll() {
+		const mongo = await this.repository.deleteMany({});
+		const postgres = await this.repository.postgresInstance.knex('users').del();
+		const redis = await this.repository.api.redisAsync('flushdb');
+		return { mongo, postgres, redis };
 	}
 }
 module.exports = UserCommands;

@@ -7,17 +7,11 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Input, Layout, Button, Popover } from '@ui-kitten/components';
+import { Input, Layout, Button, Popover, Text } from '@ui-kitten/components';
 import { authSelectors } from '@selectors';
 import Gravatar from '@components/users/Gravatar';
-import {
-	ThemeContext,
-	ThemeContextType,
-	ThemeKey,
-	themes,
-	ThemeStore,
-	ThemeService
-} from '../../core/themes';
+import UpdateTempUsername from '@components/users/UpdateTempUsername';
+
 import { originLink } from '../../core/utils';
 import {
 	withStyles,
@@ -27,54 +21,11 @@ import {
 } from '@ui-kitten/components/theme';
 import {
 	Icon,
-	TopNavigation,
 	TopNavigationAction,
-	TopNavigationActionProps,
-	TopNavigationProps,
-	IconProps
+	TopNavigationActionProps
 } from '@ui-kitten/components';
 import 'react-native-gesture-handler';
 const gravatarDimensions = '5vh';
-const styles = StyleSheet.create({
-	container: {
-		flexDirection: 'row'
-		// height: '90%'
-	},
-	topNavigation: { backgroundColor: 'rgb(26, 34, 55)' },
-	title: { color: '#EDF1F7' },
-	subtitle: { color: '#C5CEE0' },
-	buttonText: {
-		// color: '#EDF1F7',
-		color: '#fff',
-		fontSize: 15,
-		fontWeight: '600',
-		marginLeft: 0,
-		marginHorizontal: 0
-	},
-	button: {
-		backgroundColor: '#1A2138',
-		padding: 0,
-		paddingHorizontal: 0
-	},
-	openProfile: {
-		flexDirection: 'row',
-		alignItems: 'center'
-		// height: '90%'
-	},
-	gravatarContainer: {
-		marginHorizontal: 8,
-		marginRight: 4,
-		height: gravatarDimensions,
-		width: gravatarDimensions
-		// maxHeight: gravatarDimensions || '10vh',
-		// maxWidth: gravatarDimensions || '10vh'
-	},
-	popoverLayout: {
-		flexDirection: 'row',
-		backgroundColor: 'rgb(26, 34, 55)',
-		padding: 10
-	}
-});
 
 interface Auth {
 	loggedIn: boolean;
@@ -91,6 +42,8 @@ interface NavBarProps {
 	loggedIn: boolean;
 	// user: User;
 	username: string;
+	alert?: string | null;
+	id?: string;
 }
 
 type NavProps = NavBarProps & ThemedComponentProps;
@@ -111,8 +64,11 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	private renderSignoutIcon = (style): React.ReactElement<ImageProps> => {
 		return <Icon name="sign-out-alt" color={'#fff'} style={{ ...style }} solid />;
 	};
+	private renderAlertIcon = (style): React.ReactElement<ImageProps> => {
+		return <Icon name="alert" color={'#FF3D71'} style={style} solid />;
+	};
 	private renderProfileIcon = (style): React.ReactElement<ImageProps> => {
-		return <Icon name="caret-down" color={'#fff'} style={{ ...style }} solid />;
+		return <Icon name="caret-down" color={'#fff'} style={style} solid />;
 	};
 	private renderProfileCloseIcon = (style): React.ReactElement<ImageProps> => {
 		return <Icon name="x" color={'#fff'} style={{ ...style }} solid />;
@@ -142,20 +98,28 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	private renderProfilePopover = (): React.ReactElement<ImageProps> => {
 		return (
 			<Layout style={styles.popoverLayout}>
-				<Button size={'small'} status={'danger'} onPress={this.onSignout}>
-					Sign out
-				</Button>
-				<Button
-					size={'tiny'}
-					appearance={'ghost'}
-					onPress={this.toggleProfilePopover}
-					icon={this.renderProfileCloseIcon}
-				/>
+				<Layout style={styles.signoutPopoverItem}>
+					<Button
+						style={{ flexGrow: 1 }}
+						size={'small'}
+						status={'danger'}
+						onPress={this.onSignout}
+					>
+						Sign out
+					</Button>
+					<Button
+						size={'small'}
+						appearance={'ghost'}
+						onPress={this.toggleProfilePopover}
+						icon={this.renderProfileCloseIcon}
+					/>
+				</Layout>
+				<UpdateTempUsername />
 			</Layout>
 		);
 	};
 	private renderLeftControls(): React.ReactElement<TopNavigationActionProps> {
-		const { themedStyle, loggedIn, username = '' } = this.props;
+		const { themedStyle, loggedIn, username = '', alert, id } = this.props;
 		// let icon = this.renderMenuIcon;
 		// let onPress = this.openMenu;
 		const configs = {
@@ -195,9 +159,14 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 							style={styles.gravatarContainer}
 							heightVh={gravatarDimensions}
 							square={true}
-							username={username}
+							id={id}
 						/>
-						{this.renderProfileIcon({})}
+						<Layout style={styles.userIconContainer}>
+							{alert && this.renderAlertIcon(styles.userIcons)}
+							{this.renderProfileIcon(styles.userIcons)}
+						</Layout>
+
+						<Text style={styles.myUsername}>{username}</Text>
 					</TouchableOpacity>
 				</Popover>
 			);
@@ -240,12 +209,74 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 		);
 	}
 }
+const styles = StyleSheet.create({
+	container: {
+		flexDirection: 'row'
+		// height: '90%'
+	},
+	topNavigation: { backgroundColor: 'rgb(26, 34, 55)' },
+	title: { color: '#EDF1F7' },
+	subtitle: { color: '#C5CEE0' },
+	buttonText: {
+		// color: '#EDF1F7',
+		color: '#fff',
+		fontSize: 15,
+		fontWeight: '600',
+		marginLeft: 0,
+		marginHorizontal: 0
+	},
+	button: {
+		backgroundColor: '#1A2138',
+		padding: 0,
+		paddingHorizontal: 0
+	},
+	openProfile: {
+		flexDirection: 'row',
+		alignItems: 'center'
+		// height: '90%'
+	},
+	gravatarContainer: {
+		marginHorizontal: 8,
+		marginRight: 4,
+		height: gravatarDimensions,
+		width: gravatarDimensions
+		// maxHeight: gravatarDimensions || '10vh',
+		// maxWidth: gravatarDimensions || '10vh'
+	},
+	popoverLayout: {
+		flexDirection: 'column',
+		backgroundColor: 'rgb(26, 34, 55)',
+		// padding: 10,
+		minWidth: 300,
+		padding: 10
+	},
+	signoutPopoverItem: {
+		flexDirection: 'row',
+		marginVertical: 15,
+		backgroundColor: 'inherit'
+	},
+	myUsername: {
+		fontWeight: '600',
+		padding: 5,
+		fontSize: 12
+	},
+	userIconContainer: {
+		flexDirection: 'column',
+		backgroundColor: 'inherit'
+	},
+	userIcons: {
+		alignItems: 'center',
+		textAlign: 'center'
+	}
+});
 
 const mapStateToProps = state => {
 	const { auth } = state;
 	return {
 		loggedIn: authSelectors.loggedIn(state),
-		username: authSelectors.getSelfUsername(state)
+		username: authSelectors.getSelfUsername(state),
+		id: authSelectors.getSelfId(state),
+		alert: authSelectors.getAlert(state)
 	};
 };
 

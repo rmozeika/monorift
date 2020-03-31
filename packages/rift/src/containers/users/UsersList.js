@@ -22,15 +22,7 @@ class UsersList extends React.PureComponent {
 	goToUsers = () => {
 		this.props.navigation.navigate('Users');
 	};
-	answer = () => {
-		const { answer } = this.props;
-		answer(true);
-		this.props.navigation.navigate('Talk');
-	};
-	reject = () => {
-		const { answer } = this.props;
-		answer(false);
-	};
+
 	_keyExtractor = item => {
 		return item;
 	};
@@ -61,12 +53,7 @@ class UsersList extends React.PureComponent {
 						checked={checked}
 						goToUsers={this.goToUsers}
 					/>
-					<CallActions
-						themedStyle={themedStyle.callActions}
-						incomingCall={incomingCall}
-						answer={this.answer}
-						reject={this.reject}
-					/>
+					<CallActions themedStyle={themedStyle.callActions} />
 				</Layout>
 			);
 		}
@@ -87,12 +74,7 @@ class UsersList extends React.PureComponent {
 				{/* <Layout style={styles.floatingButtonContainer}>
 					<Button style={{}}>Call</Button>
 				</Layout> */}
-				<CallActions
-					themedStyle={themedStyle.callActions}
-					incomingCall={incomingCall}
-					answer={this.answer}
-					reject={this.reject}
-				/>
+				<CallActions themedStyle={themedStyle.callActions} />
 			</Layout>
 		);
 	}
@@ -198,8 +180,7 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => {
 	return {
-		setTabView: tab => dispatch(Actions.setTabView(tab)),
-		answer: answered => dispatch(Actions.answer(answered))
+		setTabView: tab => dispatch(Actions.setTabView(tab))
 	};
 };
 
@@ -216,7 +197,6 @@ const mapStateToProps = (state, props) => {
 	return {
 		tab,
 		mobile,
-		incomingCall: CallSelectors.incomingCall(state),
 		users: visibleUsers,
 		loggedIn,
 		checked,

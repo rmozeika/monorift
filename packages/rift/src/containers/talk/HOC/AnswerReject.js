@@ -1,0 +1,55 @@
+import * as React from 'react';
+import { StyleSheet, Linking, Platform } from 'react-native';
+import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
+import { connect } from 'react-redux';
+import * as Actions from '@actions';
+import * as Selectors from '@selectors';
+import * as CallSelectors from '@selectors/call';
+import * as UserSelectors from '@selectors/users';
+import * as AuthSelectors from '@selectors/auth';
+
+export default function withAnswerReject(WrappedComponent) {
+	class Base extends React.Component {
+		constructor(props) {
+			super(props);
+		}
+		answer = () => {
+			const { answer } = this.props;
+			answer(true);
+			// CHANGE THIS
+			// this.props.navigation.navigate('Talk');
+		};
+		reject = () => {
+			const { answer } = this.props;
+			answer(false);
+		};
+		render() {
+			const { incomingCall, answer, ...restProps } = this.props;
+			return (
+				<WrappedComponent
+					incomingCall={incomingCall}
+					answer={this.answer}
+					reject={this.reject}
+					{...restProps}
+				/>
+			);
+		}
+	}
+	const mapStateToProps = (state, ownProps) => {
+		return {
+			incomingCall: CallSelectors.incomingCall(state)
+		};
+	};
+	const mapDispatchToProps = (dispatch, ownProps) => {
+		return {
+			answer: answered => dispatch(Actions.answer(answered))
+		};
+	};
+	const connected = connect(mapStateToProps, mapDispatchToProps)(Base);
+	// return withStyles(connected, theme => ({
+	//     callActions: {
+	//         backgroundColor: theme['color-primary-500']
+	//     }
+	// }));
+	return connected;
+}

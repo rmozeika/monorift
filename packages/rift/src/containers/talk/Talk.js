@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as Actions from '@actions';
 import Media from './Media';
-
+import CallActions from '@components/buttons/CallActions';
 const trace = msg => {
 	console.log(msg);
 };
@@ -51,19 +51,19 @@ class Adapter extends React.PureComponent {
 		this.videoRef = videoRef;
 		this.selfRef = selfRef;
 		this.audioFileRef = React.createRef();
+		this.canvasRef = React.createRef();
 		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
 		// this.getDisplayStyle = this.get
 	}
 	// remove just for debugging
 	componentWillMount() {
-		debugger;
 		console.log('didmount');
 	}
 	componentWillUnmount() {
-		debugger;
 		console.log('unmount');
 	}
+
 	componentDidUpdate() {
 		const { peerStore, peerConnStatus } = this.props;
 		const { audioRef, videoRef } = this;
@@ -81,6 +81,7 @@ class Adapter extends React.PureComponent {
 				}
 				if (e.streams?.[0]) {
 					videoRef.current.srcObject = e.streams[0];
+					videoRef.current.muted = true;
 				} else {
 					if (!inboundStream) {
 						inboundStream = new MediaStream();
@@ -99,16 +100,43 @@ class Adapter extends React.PureComponent {
 				return;
 			}
 			if (e.streams?.[0]) {
-				audioRef.current.srcObject = e.streams[0];
+				const stream = e.streams[0];
+				// audioRef.current.srcObject = e.streams[0];
+				const audioTag = new Audio();
+				audioTag.srcObject = stream;
+				var audioCtx = new AudioContext();
+				const source = audioCtx.createMediaElementSource(audioTag);
+				var analyser = audioCtx.createAnalyser();
+				analyser.minDecibels = -90;
+				analyser.maxDecibels = -10;
+				analyser.smoothingTimeConstant = 0.85;
+				source.connect(analyser);
+				analyser.connect(audioCtx.destination);
+				var distortion = audioCtx.createWaveShaper();
+				var gainNode = audioCtx.createGain();
+				// var wavesurfer = WaveSurfer.create({
+				// 	container: document.querySelector('#wave'),
+				// 	backend: 'MediaElementWebAudio'
+				// });
+				audioTag.play();
+				this.visualize(analyser);
+				if (1 == '1') return;
+				debugger; // remove
+				// var source = audioCtx.createMediaStreamSource(stream);
+				// source.connect(audioCtx.destination);
+				// audioRef.current.play();
+				debugger; // remove
 			} else {
 				if (!inboundStream) {
 					inboundStream = new MediaStream();
 					videoRef.current.srcObject = inboundStream;
 				}
 				inboundStream.addTrack(e.track);
-			} // if (e.track.kind == 'audio') {
+			}
+
+			// if (e.track.kind == 'audio') {
 			// 	audioRef.current.srcObject = e.streams[0];
-			// 	this.props.setStream(e.streams[0]);
+			// this.props.setStream(e.streams[0]);
 			// }
 			// let audio = audioRef.current;
 			// audio.play();
@@ -292,6 +320,7 @@ class Adapter extends React.PureComponent {
 							audioRef={this.audioRef}
 						/>
 					</Layout>
+					<CallActions />
 					{/* <Layout style={[styles.row, { padding: 2 }]}>
 						<Button onPress={fileCall} appearance="outline" status="warning">
 							Stream Audio from File

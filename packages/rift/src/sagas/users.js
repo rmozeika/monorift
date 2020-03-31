@@ -177,7 +177,6 @@ function* initSocketSaga() {
 }
 
 function* updateUsernameSaga({ payload }) {
-	debugger; //remove
 	const currentUsername = yield select(AuthSelectors.getSelfUsername);
 	const origin = originLink('updateUsername');
 

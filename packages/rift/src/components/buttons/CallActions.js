@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import IncomingCall from '../talk/IncomingCall';
-
+import AnswerReject from '@containers/talk/HOC/AnswerReject';
 import {
 	Layout,
 	Text,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
+export const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
 	const mobile = useSelector(state => state.view.mobile);
 	const buttons = [
 		// {
@@ -69,6 +69,7 @@ const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
 	// );
 	// CHANGE THIS condense with func in Users
 	// const heightMultiplier = incomingCall.pending ? 0.2 : 0.1;
+	const buttonContainerStyle = themedStyle || { backgroundColor: '#3366FF' };
 	const derivedHeight = '15%'; //baseHeight * heightMultiplier;
 	const activeButtons = buttons.filter(({ condition }) => condition);
 	if (activeButtons.length > 0) {
@@ -78,7 +79,7 @@ const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
 					<IncomingCall derivedHeight={'50%'} name={incomingCall.from.username} />
 				)}
 
-				<Layout style={[styles.buttonRow, themedStyle, { height: '50%' }]}>
+				<Layout style={[styles.buttonRow, buttonContainerStyle, { height: '50%' }]}>
 					{activeButtons.map(({ name, onPress, status, key }) => (
 						<Button
 							style={[styles.button, { height: '100%' }]}
@@ -112,4 +113,4 @@ const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
 	// 	</Layout>
 	// );
 };
-export default CallActions;
+export default AnswerReject(CallActions);

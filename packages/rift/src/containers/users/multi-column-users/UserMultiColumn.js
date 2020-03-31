@@ -2,11 +2,11 @@ import * as React from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import * as Actions from '../@actions';
-import { getUser } from '../@selectors/users';
-import AddToCallButton from '../@components/buttons/AddToCall';
-import AddRemoveFriendButton from '../@components/buttons/AddRemoveFriend';
-import Gravatar from '../@components/users/Gravatar';
+import * as Actions from '../../../actions';
+import { getUser } from '../../../selectors/users';
+import AddToCallButton from '../../../components/buttons/AddToCall';
+import AddRemoveFriendButton from '../../../components/buttons/AddRemoveFriend';
+import Gravatar from '../../../components/users/Gravatar';
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 4,
@@ -159,7 +159,6 @@ class UserItem extends React.Component {
 		console.log(`created ${props.username}`);
 		if (props.username == 'ehappertq') {
 			console.log('rendered ehap');
-			debugger;
 		}
 		this.state = {
 			originalUser: this.props.username

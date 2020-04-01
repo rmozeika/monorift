@@ -8,7 +8,9 @@
 			"@components/*": ["packages/rift/src/components/*"],
 			"@selectors/*": ["packages/rift/src/selectors/*"],
 			"@selectors": ["packages/rift/src/selectors/index.js"],
-			"@containers/*": ["packages/rift/src/containers/*"]
+			"@containers/*": ["packages/rift/src/containers/*"],
+			"@actions/*": ["packages/rift/src/actions/*"],
+			"@actions": ["packages/rift/src/actions/index.js"]
 		}
 	}
 	// "exclude": ["node_modules", "dist"]

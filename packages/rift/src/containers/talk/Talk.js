@@ -144,11 +144,13 @@ class Adapter extends React.PureComponent {
 
 		if (peerConnStatus.created === true && conn.ontrack == null) {
 			console.log('handlers added: ontrack and onice');
-			conn.ontrack = onTrack.bind(this);
-			conn.addEventListener('track', e => {
-				console.log('on EVENT track');
-			});
-			conn.addEventListener('icecandidate', this.handleConnection.bind(this));
+			// conn.ontrack = onTrack.bind(this);
+			// conn.ontrack = onTrack.bind(this);
+
+			// conn.addEventListener('track', e => {
+			// 	console.log('on EVENT track');
+			// });
+			// conn.addEventListener('icecandidate', this.handleConnection.bind(this));
 		}
 	}
 	setMediaStreamConstraints(audio, video) {
@@ -221,12 +223,13 @@ class Adapter extends React.PureComponent {
 		this.props.sendOffer({});
 	}
 	call() {
-		const audioConstraints = { audio: true, video: false };
+		this.props.startCallSaga('audio');
+		// const audioConstraints = { audio: true, video: false };
 
-		const { peerStore } = this.props;
-		this.setMediaStreamConstraints(true, false);
-		peerStore.onicecandidate = e => {};
-		this.startCall(audioConstraints);
+		// const { peerStore } = this.props;
+		// this.setMediaStreamConstraints(true, false);
+		// peerStore.onicecandidate = e => {};
+		// this.startCall(audioConstraints);
 	}
 	handleConnection(event) {
 		console.log('got candidate onicecandidate event');
@@ -350,7 +353,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 			dispatch(Actions.setConstraints({ mediaStream })),
 		setPeerInitiator: isInitiator =>
 			dispatch(Actions.setPeerInitiator(isInitiator)),
-		setStream: stream => dispatch(Actions.setStream(stream))
+		setStream: stream => dispatch(Actions.setStream(stream)),
+		startCallSaga: type => dispatch(Actions.startCall('audio'))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

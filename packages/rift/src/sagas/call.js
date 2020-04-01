@@ -9,7 +9,8 @@ import {
 	takeLatest,
 	takeEvery,
 	actionChannel,
-	select
+	select,
+	fork
 } from 'redux-saga/effects';
 import { eventChannel, runSaga } from 'redux-saga';
 import { originLink } from '../core/utils';
@@ -115,21 +116,21 @@ const createSocketChannel = socket =>
 
 function* initCallSaga() {
 	const socket = yield call(connect);
-	yield put(
-		// CHANGE THIS TO NEW URL
-		Actions.createPeerConn({
-			iceServers: [
-				{
-					urls: 'stun:stun.l.google.com:19302'
-				},
-				{
-					urls: 'turn:monorift:78?transport=udp',
-					credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
-					username: 'rtcpeer'
-				}
-			]
-		})
-	);
+	// yield put(
+	// 	// CHANGE THIS TO NEW URL
+	// 	Actions.createPeerConn({
+	// 		iceServers: [
+	// 			{
+	// 				urls: 'stun:stun.l.google.com:19302'
+	// 			},
+	// 			{
+	// 				urls: 'turn:monorift:78?transport=udp',
+	// 				credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
+	// 				username: 'rtcpeer'
+	// 			}
+	// 		]
+	// 	})
+	// );
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
 		const { message, constraints, users, from } = yield take(socketChannel);
@@ -149,6 +150,7 @@ function* sendCandidateSaga(action) {
 	socket.emit('message', candidateToSend);
 }
 function* createPeerConnSaga(action) {
+	if (true == true) return;
 	const { config } = action;
 	try {
 		const conn = new RTCPeerConnection(config);
@@ -165,15 +167,28 @@ function* createPeerConnSaga(action) {
 			return () => {};
 		});
 		for (let i = 0; i < 5; i++) {
+			debugger; //remove
 			yield take(tickChannel);
-			yield put(sendOffer({}));
+			// yield put(sendOffer({}));
 		}
 		console.log(conn);
 	} catch (error) {
 		console.log(error);
 	}
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions, username = false }) {
+function* peerCaller(offerOpts) {
+	let config = {};
+	const conn = new RTCPeerConnection(config);
+	console.log('createdPeerconn');
+	let result;
+	while (true) {
+		const data = yield conn.createOffer(offerOpts);
+		return new Promise((resolve, reject) => {
+			resolve(data);
+		});
+	}
+}
+function* sendOfferSaga({ altConstraints, altOfferOptions, oauth_id = false }) {
 	console.log('Sending offer');
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
@@ -181,16 +196,27 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, username = false }) {
 	const offerOpts = { ...offerOptions, ...altOfferOptions };
 
 	const { conn } = yield select(selectPeerStore);
-	const offer = yield conn.createOffer(offerOpts).catch(e => {
-		console.log(e);
-		debugger; //error
-	});
-	conn.setLocalDescription(offer);
+	// const callResult = yield fork(peerCaller, offerOpts);
+	// debugger;
+	// const call2 = yield fork(peerCaller, offerOpts);
+	// debugger;
+	// console.log(callResult, call2);
+	yield put(Actions.peerAction('createOffer', offerOpts));
+	// yield put({ type: 'PEER_ACTION', payload: { method: 'createOffer', args: [offerOpts] } });
+	const { payload: offer } = yield take('PEER_ACTION_DONE');
+	// yield put({ type: 'PEER_ACTION', payload: { method: 'setLocalDescription', args: [offer] }});
+	yield put(Actions.peerAction('setLocalDescription', offer));
+	yield take('PEER_ACTION_DONE');
+	// const offer = yield conn.createOffer(offerOpts).catch(e => {
+	// 	console.log(e);
+	// 	debugger; //error
+	// });
+	// conn.setLocalDescription(offer);
 	// REMOVE THIS
 	yield put(Actions.setPeerInitiator(true));
 	let users;
-	if (username) {
-		users = [username];
+	if (oauth_id) {
+		users = [oauth_id];
 	} else {
 		const checked = yield select(selectCheckedUsers);
 		users = Object.keys(checked).map(id => checked[id]);
@@ -210,12 +236,13 @@ const start = async (conn, peerConstraints) => {
 	console.log('getting user media');
 
 	const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
-	stream.getTracks().forEach(track => {
-		console.log('adding track', 'from message start func');
-		conn.addTrack(track, stream);
-	});
+	return stream; //.getTracks();
+	// stream.getTracks().forEach(track => {
+	// 	console.log('adding track', 'from message start func');
+	// 	conn.addTrack(track, stream);
+	// });
 	console.log('finished adding tracks');
-	return;
+	// return;
 };
 function addCandidate(candidate) {}
 function* gotMessageSaga({ message, constraints, from }) {
@@ -226,19 +253,37 @@ function* gotMessageSaga({ message, constraints, from }) {
 		if (constraints) {
 			yield put(setConstraints({ mediaStream: constraints }));
 		}
-
-		yield conn.setRemoteDescription(new RTCSessionDescription(message));
+		// const resolved = yield put({ type: 'PEER_ACTION', payload: { method: setRemoteDescription, args: [new RTCSessionDescription(message)]}});
+		yield put(
+			Actions.peerAction(
+				'setRemoteDescription',
+				new RTCSessionDescription(message)
+			)
+		);
+		const result = yield take('PEER_ACTION_DONE');
+		// yield conn.setRemoteDescription(new RTCSessionDescription(message));
 
 		if (!isInitiator && !isStarted) {
-			const starter = yield call(start, conn, constraints);
+			const stream = yield call(start, conn, constraints);
+			const tracks = stream.getTracks();
+			// const tracks = stream.getTracks();
+			for (i = 0; i < tracks.length; i++) {
+				// yield put({ type: 'PEER_ACTION', payload: { method: 'addTrack', args: [ track[i], stream ] }})
+				yield put(Actions.peerAction('addTrack', tracks[i], stream));
+			}
 		} else {
 			console.log('getting user media');
 			const stream = yield navigator.mediaDevices.getUserMedia(constraints);
-			stream.getTracks().forEach(track => {
-				console.log('adding track', 'from message start func');
-
-				conn.addTrack(track, stream);
-			});
+			const tracks = stream.getTracks();
+			for (i = 0; i < tracks.length; i++) {
+				// yield put({ type: 'PEER_ACTION', payload: { method: 'addTrack', args: [ track[i], stream ] }})
+				yield put(Actions.peerAction('addTrack', tracks[i], stream));
+			}
+			// stream.getTracks().forEach(track => {
+			// 	console.log('adding track', 'from message start func');
+			// 	// yield put({ type: 'PEER_ACTION', payload: { method: 'addTrack', args: [ track, stream ] }})
+			// 	conn.addTrack(track, stream);
+			// });
 		}
 		console.log('GOT_MESSAGE', 'setting remote desc');
 		yield put(setRemote(true));
@@ -263,12 +308,18 @@ function* gotMessageSaga({ message, constraints, from }) {
 		// ^ ADD REMOVE LATER
 	} else if (message.type === 'answer') {
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
-		yield conn
-			.setRemoteDescription(new RTCSessionDescription(message))
-			.catch(e => {
-				console.log(e);
-				debugger; //error
-			});
+		yield put(
+			Actions.peerAction(
+				'setRemoteDescription',
+				new RTCSessionDescription(message)
+			)
+		);
+		// yield conn
+		// 	.setRemoteDescription(new RTCSessionDescription(message))
+		// 	.catch(e => {
+		// 		console.log(e);
+		// 		debugger; //error
+		// 	});
 		yield put(setRemote(true));
 		const { mediaStream } = yield select(selectConstraints);
 
@@ -285,10 +336,11 @@ function* gotMessageSaga({ message, constraints, from }) {
 		const altCandid = new RTCIceCandidate({
 			...message.candidate
 		});
-		conn.addIceCandidate(altCandid).catch(e => {
-			console.log(e);
-			debugger; //error
-		});
+		yield put(Actions.peerAction('addIceCandidate', altCandid));
+		// conn.addIceCandidate(altCandid).catch(e => {
+		// 	console.log(e);
+		// 	debugger; //error
+		// });
 		// conn.addIceCandidate({candidate: ''});
 		// }
 	}
@@ -301,7 +353,7 @@ function* incomingCallSaga(incomingCall) {
 	// 	debugger; //error
 	// });
 	// console.log('GOT_MESSAGE', 'setting local desc');
-	// yield conn.setLocalDescription(answer);
+	// yield = username.setLocalDescription(answer);
 	// // socket.emit('message', conn.localDescription);
 	// console.log('GOT_MESSAGE', 'sending answer');
 	// const desc = conn.localDescription;
@@ -315,17 +367,23 @@ const getUserMedia = async constraints => {
 	// this.gotMedia(stream);
 };
 function* startCallSaga({ payload }) {
-	const { type, username } = payload;
+	const { type, oauth_id } = payload;
 	yield put(setPeerInitiator(true));
 	const constraints = { audio: true, video: type == 'video' };
-	yield put(setConstraints(constraints));
+	yield put(setConstraints({ mediaStream: constraints }));
 	// get set media constraints here CHANGE THIS
 	// let stream = null;
-	const { peerStore } = this.props;
-	const { conn } = peerStore;
+	// const { peerStore } = this.props;
+	// const { conn } = peerStore;
 	try {
 		const stream = yield getUserMedia(constraints);
-		yield put(sendOffer({ username }));
+		// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
+		const tracks = stream.getTracks();
+		for (i = 0; i < tracks.length; i++) {
+			// yield put({ type: 'PEER_ACTION', payload: { method: 'addTrack', args: [ track[i], stream ] }})
+			yield put(Actions.peerAction('addTrack', tracks[i], stream));
+		}
+		yield put(sendOffer({ oauth_id }));
 		// stream = await navigator.mediaDevices.getUserMedia(constraints);
 		// window.stream = stream; // make variable available to browser console
 		// this.gotMedia(stream);
@@ -342,17 +400,19 @@ function* answerCallSaga({ payload: answered }) {
 	const peerStore = yield select(selectPeerStore);
 	const { conn, isStarted, isInitiator, incomingCall } = peerStore;
 	const { from } = incomingCall;
-	const answer = yield conn.createAnswer().catch(e => {
-		console.log(e);
-		debugger; //error
-	});
+	yield put(Actions.peerAction('createAnswer'));
+	// yield conn.createAnswer().catch(e => {
+	// 	console.log(e);
+	// 	debugger; //error
+	// });
+	const { payload: answer } = yield take('PEER_ACTION_DONE');
 	console.log('GOT_MESSAGE', 'setting local desc');
-
-	yield conn.setLocalDescription(answer);
+	yield put(Actions.peerAction('setLocalDescription', answer));
+	// yield conn.setLocalDescription(answer);
 	console.log('GOT_MESSAGE', 'sending answer');
-	const desc = conn.localDescription;
+	// const desc = conn.localDescription;
 	const sendBackTo = from;
-	socket.emit('message', desc, { users: [from] });
+	socket.emit('message', answer, { users: [from] });
 	// put(Actions.)
 
 	// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
@@ -367,6 +427,7 @@ function* rootSaga() {
 	yield all([
 		initCallSaga(),
 		takeLatest(SEND_CANDIDATE, sendCandidateSaga),
+		// unused;
 		takeLatest(CREATE_PEER_CONN, createPeerConnSaga),
 		takeLatest(SEND_OFFER, sendOfferSaga),
 		takeEvery(GOT_MESSAGE, gotMessageSaga),

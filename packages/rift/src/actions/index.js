@@ -83,7 +83,7 @@ export const setPeerInitiator = initiator => ({
 });
 export const START_CALL = 'START_CALL';
 // if user false, send offer from checked (user for quick call mostly)
-export const startCall = (oauth_id = false, type = 'audio') => ({
+export const startCall = (type = 'audio', oauth_id = false) => ({
 	type: START_CALL,
 	payload: {
 		type,
@@ -249,4 +249,12 @@ export const SET_SEARCH_FILTER = 'SET_SEARCH_FILTER';
 export const search = input => ({
 	type: SET_SEARCH_FILTER,
 	payload: input
+});
+
+export const peerAction = (method, ...args) => ({
+	type: 'PEER_ACTION',
+	payload: {
+		method,
+		args: args || []
+	}
 });

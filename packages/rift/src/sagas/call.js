@@ -167,7 +167,6 @@ function* createPeerConnSaga(action) {
 			return () => {};
 		});
 		for (let i = 0; i < 5; i++) {
-			debugger; //remove
 			yield take(tickChannel);
 			// yield put(sendOffer({}));
 		}
@@ -196,23 +195,12 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, oauth_id = false }) {
 	const offerOpts = { ...offerOptions, ...altOfferOptions };
 
 	const { conn } = yield select(selectPeerStore);
-	// const callResult = yield fork(peerCaller, offerOpts);
-	// debugger;
-	// const call2 = yield fork(peerCaller, offerOpts);
-	// debugger;
-	// console.log(callResult, call2);
+
 	yield put(Actions.peerAction('createOffer', offerOpts));
-	// yield put({ type: 'PEER_ACTION', payload: { method: 'createOffer', args: [offerOpts] } });
 	const { payload: offer } = yield take('PEER_ACTION_DONE');
-	// yield put({ type: 'PEER_ACTION', payload: { method: 'setLocalDescription', args: [offer] }});
 	yield put(Actions.peerAction('setLocalDescription', offer));
 	yield take('PEER_ACTION_DONE');
-	// const offer = yield conn.createOffer(offerOpts).catch(e => {
-	// 	console.log(e);
-	// 	debugger; //error
-	// });
-	// conn.setLocalDescription(offer);
-	// REMOVE THIS
+
 	yield put(Actions.setPeerInitiator(true));
 	let users;
 	if (oauth_id) {
@@ -314,37 +302,22 @@ function* gotMessageSaga({ message, constraints, from }) {
 				new RTCSessionDescription(message)
 			)
 		);
-		// yield conn
-		// 	.setRemoteDescription(new RTCSessionDescription(message))
-		// 	.catch(e => {
-		// 		console.log(e);
-		// 		debugger; //error
-		// 	});
+
 		yield put(setRemote(true));
 		const { mediaStream } = yield select(selectConstraints);
 
-		// HERE!!
-		// const stream = yield navigator.mediaDevices.getUserMedia(mediaStream);
-		// stream.getTracks().forEach(track => {
-		// 	conn.addTrack(track, stream);
-		// });
 		console.log('ADDED TRACK');
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {
-		const action = yield take(SET_REMOTE);
+		// before needed to wait for set remote, however the order seems to be fixed
+		// no need for take
+		// const action = yield take(SET_REMOTE);
 		console.log('GOT_MESSAGE', 'candidate');
 		const altCandid = new RTCIceCandidate({
 			...message.candidate
 		});
 		yield put(Actions.peerAction('addIceCandidate', altCandid));
-		// conn.addIceCandidate(altCandid).catch(e => {
-		// 	console.log(e);
-		// 	debugger; //error
-		// });
-		// conn.addIceCandidate({candidate: ''});
-		// }
 	}
-	//}
 }
 function* incomingCallSaga(incomingCall) {
 	// const incomingCall =

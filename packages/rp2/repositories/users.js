@@ -66,9 +66,13 @@ class UserRepository extends Repository {
 					const _id = result.insertedId.toString();
 					return this.insertUserIntoPostgres(_id, userData);
 				})
+				.then(async bit_id => {
+					const updateOp = await this.updateByOAuthId(oauth_id, { bit_id });
+					return { ...userData, bit_id };
+				})
 				.then(result => {
-					if (cb) return cb(user);
-					resolve(user);
+					if (cb) return cb(result);
+					resolve(result);
 				})
 				.catch(e => {
 					console.log(e);
@@ -77,21 +81,25 @@ class UserRepository extends Repository {
 	}
 	async insertUserIntoPostgres(_id, user) {
 		const { username, src, email, oauth_id } = user;
-		const inserted = await this.postgresInstance.knex('users').insert({
-			username: username,
-			mongo_id: _id,
-			src: { email, ...src },
-			email,
-			oauth_id
-		});
-		return inserted;
+		const [id] = await this.postgresInstance
+			.knex('users')
+			.returning('id')
+			.insert({
+				username: username,
+				mongo_id: _id,
+				src: { email, ...src },
+				email,
+				oauth_id
+			});
+		return id;
 	}
 
 	async findByUsername(username, cb) {
 		return this.findOne({ username }, cb);
 	}
 	async importProfile(profile, cb) {
-		const { id: oauth_id, email, emails, nickname, mocked = false } = profile;
+		const { id, email, emails, nickname, mocked = false } = profile;
+		const oauth_id = profile.oauth_id || id;
 		const username = nickname || profile.username;
 		let emailVal;
 		if (email) {
@@ -115,6 +123,13 @@ class UserRepository extends Repository {
 	}
 	update({ doc, filter }, opts = {}) {
 		return this.update({ filter, doc: { $set: doc }, opts }, type);
+	}
+	updateByOAuthId(id, doc, opts) {
+		return this.updateOne({
+			filter: { oauth_id: id },
+			doc: { $set: doc },
+			opts
+		});
 	}
 	updateByUsername(username, doc, opts = {}) {
 		return this.updateOne({

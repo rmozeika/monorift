@@ -153,6 +153,7 @@ app.io.on('connection', async socket => {
 	const isUser = user && user.username;
 	if (isUser) {
 		const key = client.sadd('online_users', user.oauth_id);
+		client.setbit('online_bit', user.bit_id, 1);
 		client.set(user.oauth_id, socket.id);
 		client.hmset(`user:${user.username}`, [
 			'socketid',
@@ -174,6 +175,8 @@ app.io.on('connection', async socket => {
 		ack({ user: false });
 	});
 	socket.on('disconnect', socket => {
+		// client.setbit('online_bit', user.bit_id, 1);
+
 		console.log('disconnected');
 		if (user.username) {
 			client.srem('online_users', user.oauth_id);

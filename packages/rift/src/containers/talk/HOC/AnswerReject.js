@@ -14,14 +14,17 @@ export default function withAnswerReject(WrappedComponent) {
 			super(props);
 		}
 		answer = () => {
-			const { answer } = this.props;
-			answer(true);
+			const { answer, incomingCall } = this.props;
+			const { from } = incomingCall;
+			answer(true, from);
 			// CHANGE THIS
 			// this.props.navigation.navigate('Talk');
 		};
 		reject = () => {
 			const { answer } = this.props;
-			answer(false);
+			const { from } = incomingCall;
+
+			answer(false, from);
 		};
 		render() {
 			const { incomingCall, answer, ...restProps } = this.props;
@@ -42,7 +45,7 @@ export default function withAnswerReject(WrappedComponent) {
 	};
 	const mapDispatchToProps = (dispatch, ownProps) => {
 		return {
-			answer: answered => dispatch(Actions.answer(answered))
+			answer: (answered, from) => dispatch(Actions.answer(answered, from))
 		};
 	};
 	const connected = connect(mapStateToProps, mapDispatchToProps)(Base);

@@ -161,13 +161,12 @@ function* initSocketSaga() {
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
 		const { message } = yield take(socketChannel);
-
 		try {
 			if (message.online == true) {
-				const user = { username: message.username, oauth_id: oauth_id };
+				const user = { username: message.username, oauth_id: message.oauth_id };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { username: message.username, oauth_id: oauth_id };
+				const user = { username: message.username, oauth_id: message.oauth_id };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {

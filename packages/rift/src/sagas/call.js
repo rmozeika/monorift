@@ -187,15 +187,12 @@ function* peerCaller(offerOpts) {
 		});
 	}
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions, oauth_id = false }) {
+function* sendOfferSaga({ altConstraints, altOfferOptions, id = false, user }) {
 	console.log('Sending offer');
 
 	const { mediaStream, offerOptions } = yield select(selectConstraints);
 	const constraints = { ...mediaStream, ...altConstraints };
 	const offerOpts = { ...offerOptions, ...altOfferOptions };
-
-	const { conn } = yield select(selectPeerStore);
-
 	yield put(Actions.peerAction('createOffer', offerOpts));
 	const { payload: offer } = yield take('PEER_ACTION_DONE');
 	yield put(Actions.peerAction('setLocalDescription', offer));
@@ -203,8 +200,8 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, oauth_id = false }) {
 
 	yield put(Actions.setPeerInitiator(true));
 	let users;
-	if (oauth_id) {
-		users = [oauth_id];
+	if (id) {
+		users = [user];
 	} else {
 		const checked = yield select(selectCheckedUsers);
 		users = Object.keys(checked).map(id => checked[id]);
@@ -212,6 +209,10 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, oauth_id = false }) {
 		// 	return oauth_id;
 		// });
 	}
+	for (let i = 0; i < users.length; i++) {
+		yield put(Actions.addConnection(users[i].oauth_id));
+	}
+
 	const from = yield select(selectMe);
 
 	socket.emit('message', offer, { constraints, users });
@@ -305,7 +306,7 @@ function* gotMessageSaga({ message, constraints, from }) {
 
 		yield put(setRemote(true));
 		const { mediaStream } = yield select(selectConstraints);
-
+		yield put(Actions.setCallActive(from.oauth_id, true));
 		console.log('ADDED TRACK');
 		console.log('set remote desc');
 	} else if (message.type == 'candidate') {
@@ -339,7 +340,7 @@ const getUserMedia = async constraints => {
 	return stream;
 	// this.gotMedia(stream);
 };
-function* startCallSaga({ payload }) {
+function* startCallSaga({ id, user }) {
 	const { type, oauth_id } = payload;
 	yield put(setPeerInitiator(true));
 	const constraints = { audio: true, video: type == 'video' };
@@ -356,7 +357,7 @@ function* startCallSaga({ payload }) {
 			// yield put({ type: 'PEER_ACTION', payload: { method: 'addTrack', args: [ track[i], stream ] }})
 			yield put(Actions.peerAction('addTrack', tracks[i], stream));
 		}
-		yield put(sendOffer({ oauth_id }));
+		yield put(sendOffer({ id, user }));
 		// stream = await navigator.mediaDevices.getUserMedia(constraints);
 		// window.stream = stream; // make variable available to browser console
 		// this.gotMedia(stream);

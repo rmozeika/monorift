@@ -1,6 +1,9 @@
 const Command = require('./Command.js');
 const repositoryName = 'users';
 const mockUsers = require('./mock-data/mock-users.js');
+const path = require('path');
+// const data = require('./mock-data/mock.json')
+var fs = require('fs');
 const { promisify } = require('util');
 class UserCommands extends Command {
 	constructor(rp2) {
@@ -16,7 +19,11 @@ class UserCommands extends Command {
 		// mockUsers.forEach(user => {
 		//     this.repository.importProfile(user)
 		// });
-		const promises = mockUsers.map(user => {
+		// const users = JSON.parse(data);
+		const jsonPath = path.resolve(__dirname, 'mock-data', 'mock.json');
+		var users = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+
+		const promises = users.map(user => {
 			return this.repository.importProfile({ ...user, mocked: true });
 		});
 		let res;

@@ -87,7 +87,8 @@ export const startCall = (type = 'audio', oauth_id = false) => ({
 	type: START_CALL,
 	payload: {
 		type,
-		oauth_id
+		id: oauth_id,
+		user
 	}
 });
 export const SEND_OFFER = 'SEND_OFFER';
@@ -96,7 +97,7 @@ export const sendOffer = ({ oauth_id = false }) => ({
 	type: SEND_OFFER,
 	// offer: message.desc,
 	// constraints: message.constraints,
-	oauth_id
+	id: oauth_id
 });
 export const GOT_MESSAGE = 'GOT_MESSAGE';
 export const HANDLERS_SET = 'HANDLERS_SET';
@@ -116,6 +117,29 @@ export const setConstraints = ({ mediaStream, optionalOfferOptions = {} }) => {
 		constraints: { mediaStream, offerOptions }
 	};
 };
+export const ADD_CONNECTION = 'ADD_CONNECTION';
+export const addConnection = user_id => ({
+	type: ADD_CONNECTION,
+	id: user_id
+});
+
+export const EDIT_CONNECTION = 'EDIT_CONNECTION';
+export const editConnection = (user_id, data) => ({
+	type: EDIT_CONNECTION,
+	payload: data,
+	id: user_id
+});
+export const CALL_ACTIVE = 'CALL_ACTIVE';
+export const setCallActive = (user_id, active) => ({
+	type: CALL_ACTIVE,
+	id: user_id,
+	payload: { active }
+});
+// export const setCallActive = (user_id, active) => ({
+// 	type: EDIT_CONNECTION,
+// 	id: user_id,
+// 	payload: { active }
+// });
 
 export const SET_REMOTE = 'SET_REMOTE';
 export const setRemote = (remoteIsSet = true) => ({
@@ -209,10 +233,12 @@ export const ADD_ONLINE_USER = 'ADD_ONLINE_USER';
 export const REMOVE_ONLINE_USER = 'REMOVE_ONLINE_USER';
 export const addOnlineUser = user => ({
 	type: ADD_ONLINE_USER,
+	id: user.oauth_id,
 	payload: user
 });
 export const removeOnlineUser = user => ({
 	type: REMOVE_ONLINE_USER,
+	id: user.oauth_id,
 	payload: user
 });
 export const SET_STREAM = 'SET_STREAM';
@@ -224,13 +250,16 @@ export const setStream = stream => ({
 export const CALL_INCOMING = 'CALL_INCOMING';
 export const setIncomingCall = from => ({
 	type: CALL_INCOMING,
-	payload: from
+	payload: from,
+	id: from.oauth_id
+	// socket_id:
 });
 
 export const ANSWER_INCOMING = 'ANSWER_INCOMING';
-export const answer = answered => ({
+export const answer = (answered, from) => ({
 	type: ANSWER_INCOMING,
-	payload: answered || true
+	payload: answered || true,
+	id: from.oauth_id
 });
 
 export const SET_TAB_VIEW = 'SET_TAB_VIEW';

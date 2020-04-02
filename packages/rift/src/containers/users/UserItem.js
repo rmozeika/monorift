@@ -23,6 +23,10 @@ class UserItem extends React.Component {
 
 		return false;
 	}
+	startCall = () => {
+		const { user } = this.props;
+		this.props.startCall('audio', user);
+	};
 	addFriend = e => {
 		// e.stopPropagation();
 		const { addFriend, user } = this.props;
@@ -80,16 +84,23 @@ class UserItem extends React.Component {
 						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
-							<Text style={[styles.listItemDetails, themedStyle.statusText]}>
-								online
-							</Text>
+							{online && (
+								<Text style={[styles.listItemDetails, themedStyle.statusText]}>
+									online
+								</Text>
+							)}
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
 				{/* <QuickCall></QuickCall> */}
 				{/* {user.online && ( */}
 				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
-					<QuickCall checked={user.checked}></QuickCall>
+					<QuickCall
+						startCall={this.startCall}
+						calling={user.calling}
+						connected={user.connected}
+						checked={user.checked}
+					></QuickCall>
 
 					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
 				</Layout>
@@ -273,6 +284,7 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => {
 	return {
+		startCall: (type = 'audio', user) => dispatch(Actions.startCall(type, user)),
 		addToCall: user => dispatch(Actions.addToCall(user)),
 		removeFromCall: user => dispatch(Actions.removeFromCall(user)),
 		addFriend: user => dispatch(Actions.addFriend(user)),

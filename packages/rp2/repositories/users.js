@@ -5,6 +5,17 @@ const http = require('http');
 const fs = require('fs');
 const collection = 'users';
 const path = require('path');
+const { PerformanceObserver, performance } = require('perf_hooks');
+const obs = new PerformanceObserver(items => {
+	console.log(`
+		BEFORE:
+		users.js:10
+		0.052421855`);
+	console.log('PERFORMANCE: FUNCTION TOOK');
+	console.log(items.getEntries()[0].duration * 0.001);
+	performance.clearMarks();
+});
+obs.observe({ entryTypes: ['measure'] });
 // friendship status
 // A = accepted
 // S = SENT
@@ -84,6 +95,7 @@ class UserRepository extends Repository {
 		const [id] = await this.postgresInstance
 			.knex('users')
 			.returning('id')
+			// .returning('id').as('BIT_ID')
 			.insert({
 				username: username,
 				mongo_id: _id,
@@ -173,13 +185,23 @@ class UserRepository extends Repository {
 		return users;
 	}
 	async getUsersPostgresByFriendStatus(username) {
+		performance.mark('A');
+		console.log('mark a');
+
 		console.log(username);
+		// console.log
 		const [{ id }] = await this.postgresInstance.client
 			.select('id')
 			.from('users')
 			.where('username', '=', username);
 		const users = await this.postgresInstance.client
-			.select('users.username', 'users.src', 'friendship.status', 'users.oauth_id')
+			.select(
+				'users.id',
+				'users.username',
+				'users.src',
+				'friendship.status',
+				'users.oauth_id'
+			)
 			.from('users')
 			.where('id', '!=', id)
 			.leftJoin('friendship', function() {
@@ -193,7 +215,17 @@ class UserRepository extends Repository {
 			.catch(e => {
 				console.log(e);
 			});
-		return users;
+		console.log('mark b');
+
+		const usersWithOnlineStatus = await Promise.all(
+			users.map(async user => {
+				const online = await this.api.redisAsync('getbit', 'online_bit', user.id);
+				return { ...user, online: online == 1 };
+			})
+		);
+		performance.mark('B');
+		performance.measure('A to B', 'A', 'B');
+		return usersWithOnlineStatus;
 	}
 	async getUsersIdsByUsername(usernames) {
 		// could use ordanality instead

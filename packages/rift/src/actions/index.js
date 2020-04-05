@@ -83,11 +83,11 @@ export const setPeerInitiator = initiator => ({
 });
 export const START_CALL = 'START_CALL';
 // if user false, send offer from checked (user for quick call mostly)
-export const startCall = (type = 'audio', oauth_id = false) => ({
+export const startCall = (type = 'audio', user) => ({
 	type: START_CALL,
 	payload: {
 		type,
-		id: oauth_id,
+		id: user.id,
 		user
 	}
 });
@@ -160,11 +160,12 @@ export const setUsers = users => ({
 });
 
 export const UPDATE_USER = 'UPDATE_USER';
-export const updateUser = (oauth_id, data) => ({
+export const updateUser = (oauth_id, data, user = {}) => ({
 	type: UPDATE_USER,
 	payload: {
-		oauth_id,
-		data
+		id: oauth_id || user.oauth_id,
+		data,
+		user
 	}
 });
 export const fetchOnlineUsers = () => ({

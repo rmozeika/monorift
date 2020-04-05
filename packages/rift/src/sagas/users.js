@@ -15,7 +15,7 @@ import io from 'socket.io-client';
 
 import * as Actions from '@actions';
 import { originLink } from '../core/utils';
-const socketServerURL = originLink('users');
+const socketServerURL = originLink();
 let socket;
 const selectUsers = state => {
 	return state.users.list;
@@ -116,7 +116,8 @@ function* respondFriendRequestSaga(action) {
 	} catch (err) {}
 }
 const connect = () => {
-	socket = io(socketServerURL);
+	// socket = io(socketServerURL);
+	socket = io('/users');
 	return new Promise(resolve => {
 		socket.on('connect', () => {
 			resolve(socket);
@@ -125,12 +126,14 @@ const connect = () => {
 };
 const createSocketChannel = socket =>
 	eventChannel(emit => {
-		const handler = (data, secondArg) => {
-			let msg = { message: data }; //from: this._id };
-			if (secondArg) {
-				const { constraints, users, from } = secondArg;
-				msg = { ...msg, ...secondArg };
-			}
+		console.log('created user socket event channel');
+		const handler = (msg, secondArg) => {
+			// let msg = { message: data }; //from: this._id };
+			// if (secondArg) {
+			// 	const { constraints, users, from } = secondArg;
+			// 	msg = { ...msg, ...secondArg };
+			// }
+			console.log('USER SOCKET MESSAGE', msg);
 			emit(msg);
 		};
 		const onCandidateHandler = candidate => {
@@ -156,17 +159,25 @@ const createSocketChannel = socket =>
 	});
 
 function* initSocketSaga() {
-	const socket = yield call(connect);
+	try {
+		const socket = yield call(connect);
+	} catch (e) {
+		console.log('init socket error', e);
+	}
+	console.log('create user socket channel');
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
+	console.log('take channel');
 	while (true) {
-		const { message } = yield take(socketChannel);
+		const message = yield take(socketChannel);
 		try {
-			if (message.online == true) {
-				const user = { username: message.username, oauth_id: message.oauth_id };
+			const { id, data, user } = message;
+			yield put(Actions.updateUser(id, data, user));
+			if (data.online == true) {
+				const user = { username: message.username, oauth_id: id };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { username: message.username, oauth_id: message.oauth_id };
+				const user = { username: message.username, oauth_id: id };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {

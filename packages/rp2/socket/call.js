@@ -1,9 +1,9 @@
 const { Socket, SocketItem } = require('./index');
-const nameSpace = 'call';
+const nameSpace = '/call';
 const util = require('util');
 class UserItem extends SocketItem {
-	constructor(socket, redis) {
-		super(socket, redis);
+	constructor(...args) {
+		super(...args);
 	}
 	async onMessage(msg, secondArg) {
 		const { socket, redis } = this;
@@ -76,7 +76,7 @@ class Call extends Socket {
 	];
 	constructor(io, api) {
 		super(io, nameSpace, api, UserItem);
-		this.createListeners(this.listeners);
+		// this.createListeners(this.listeners);
 		this.onMessage = this.onMessage.bind(this);
 		this.makeListener = this.makeListener.bind(this);
 	}
@@ -89,34 +89,35 @@ class Call extends Socket {
 			User: ${user.username}
 			SocketId: ${socket.id}
 		`);
-		this.redis.set(user.oauth_id, socket.id);
-		const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
-		if (user) {
-			userSock.emit('broadcast', {
-				oauth_id: user.oauth_id,
-				username: user.username,
-				online: true
-			});
-		}
-		this.createSocketItem(socket, this.redis);
+		this.redis.set(`call:${user.oauth_id}`, socket.id);
+		// const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
+		// if (user) {
+		// 	userSock.emit('broadcast', {
+		// 		oauth_id: user.oauth_id,
+		// 		username: user.username,
+		// 		online: true
+		// 	});
+		// }
+		this.createSocketItem(socket);
 		// socket.on('message', this.onMessage.bind(socket, this.redis));
 		// socket.on('message', this.makeListener(userSock))
-		socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
+		// REMOVE BELOW
+		// socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
 	}
-	async onUserDisconnect(userSock, user) {
-		// console.log(this);
-		// const { session = {} } = this.request;
-		// const { passport = {} } = session;
-		// const { user = false } = passport;
-		// const userSock = io.of('/users'); //.broadcast.emit('message', username);
-		if (user) {
-			userSock.emit('broadcast', {
-				oauth_id: user.oauth_id,
-				username: user.username,
-				online: false
-			});
-		}
-	}
+	// async onUserDisconnect(userSock, user) {
+	// 	// console.log(this);
+	// 	// const { session = {} } = this.request;
+	// 	// const { passport = {} } = session;
+	// 	// const { user = false } = passport;
+	// 	// const userSock = io.of('/users'); //.broadcast.emit('message', username);
+	// 	if (user) {
+	// 		userSock.emit('broadcast', {
+	// 			oauth_id: user.oauth_id,
+	// 			username: user.username,
+	// 			online: false
+	// 		});
+	// 	}
+	// }
 	async makeListener(func, ...args) {
 		// return this[func]()
 		return socket => {
@@ -166,9 +167,6 @@ class Call extends Socket {
 		} else {
 			this.broadcast.emit('message', msg, secondArg);
 		}
-	}
-	onMessage1(msg) {
-		this.nsp.emit('message', msg);
 	}
 
 	// onDisconnect() {

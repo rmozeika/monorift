@@ -190,10 +190,10 @@ const mapStateToProps = (state, props) => {
 	const { tab, mobile } = view;
 	const { loggedIn, checked } = auth;
 	// const listType = route.initialParams.listType;
-	// const visibleUsers = UserSelectors.getVisibleUserlist(state, props); //props);
-	// const visibleUsers = UserSelectors.getUserMasterlist(state); //props);
-	const visibleUsers = UserSelectors.getVisibleUserlistSearch(state, props);
 
+	// const visibleUsers = UserSelectors.getVisibleUserlistSearch(state, props);
+	// const visibleUsers = UserSelectors.getVisUsersAlt(state, props);
+	const visibleUsers = UserSelectors.getUsersByOnline(state, props);
 	return {
 		tab,
 		mobile,

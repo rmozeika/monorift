@@ -30,7 +30,7 @@ class TabNavigation extends React.Component {
 				name: 'Users',
 				key: 'users',
 				initialParams: {
-					listType: 'nonFriends'
+					listType: 'master'
 				},
 				condition: true, //checked,
 				render: UsersList
@@ -44,7 +44,7 @@ class TabNavigation extends React.Component {
 	}
 	createUserComponent({ initialParams: { listType } }) {
 		// const listType = props.route.name.toLowerCase();
-		return <UsersList listType={'nonFriends'} containerHeight={500}></UsersList>;
+		return <UsersList listType={'master'} containerHeight={500}></UsersList>;
 	}
 	render() {
 		const tabColor = '#161c30';

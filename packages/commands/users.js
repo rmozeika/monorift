@@ -69,6 +69,9 @@ class UserCommands extends Command {
 	}
 	async deleteAll() {
 		const mongo = await this.repository.deleteMany({});
+		const friends = await this.repository.postgresInstance
+			.knex('friendship')
+			.del();
 		const postgres = await this.repository.postgresInstance.knex('users').del();
 		const redis = await this.repository.api.redisAsync('flushdb');
 		return { mongo, postgres, redis };

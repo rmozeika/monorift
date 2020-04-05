@@ -3,20 +3,25 @@
 const ioType = require('socket.io');
 
 exports.SocketItem = class SocketItem {
-	constructor(socket, redis, additionalMethods = []) {
+	constructor(socket, api, redis, flush, additionalMethods = []) {
 		this.socket = socket;
+		this.api = api;
 		this.redis = redis;
+		this.flush = flush;
 		if (this.onMessage) {
 			socket.on('message', this.onMessage.bind(this));
 		}
 		if (this.onDisconnect) {
-			socket.on('message', this.onDisconnect.bind(this));
+			socket.on('disconnect', this.onDisconnect.bind(this));
 		}
 		if (additionalMethods.length > 0) {
 			additionalMethods.forEach(({ name, method }) => {
 				socket.on(name, method.bind(this));
 			});
 		}
+	}
+	onDisconnect() {
+		this.flush(this.socket);
 	}
 };
 exports.Socket = class Socket {
@@ -38,13 +43,28 @@ exports.Socket = class Socket {
 			this.nsp.on('connection', this.onConnect);
 		}
 		this.SocketItemConstructor = SocketItemConstructor;
-		this.socketItems = [];
-		this.createSocketItem.bind(this);
+		this.socketItems = {};
+		// this.createSocketItem = this.createSocketItem.bind(this);
+		this.deleteSocketItem = this.deleteSocketItem.bind(this);
 		// this.nsp.on('message', this.onMessage);
 	}
-	createSocketItem(socket) {
-		const item = new this.SocketItemConstructor(socket, this.redis);
-		this.socketItems.push(item);
+	createSocketItem(socket, ...customArgs) {
+		const item = new this.SocketItemConstructor(
+			...customArgs,
+			socket,
+			this.api,
+			this.redis,
+			this.deleteSocketItem,
+			this.additionalMethods
+		);
+		this.socketItems[socket.id] = item;
+		console.log(`
+		Created Socket Item:
+			socket_id: ${socket.id}	
+		`);
+	}
+	deleteSocketItem(socket) {
+		delete this.socketItems[socket.id];
 	}
 	createDefaultListeners() {
 		const { nsp } = this;

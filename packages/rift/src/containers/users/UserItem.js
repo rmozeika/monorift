@@ -24,8 +24,8 @@ class UserItem extends React.Component {
 		return false;
 	}
 	startCall = () => {
-		const { user } = this.props;
-		this.props.startCall('audio', user);
+		const { user, id } = this.props;
+		this.props.startCall('audio', { ...user, id });
 	};
 	addFriend = e => {
 		// e.stopPropagation();

@@ -223,7 +223,7 @@ class Adapter extends React.PureComponent {
 		this.props.sendOffer({});
 	}
 	call() {
-		this.props.startCallSaga('audio');
+		this.props.startCallSaga('audio', {});
 		// const audioConstraints = { audio: true, video: false };
 
 		// const { peerStore } = this.props;

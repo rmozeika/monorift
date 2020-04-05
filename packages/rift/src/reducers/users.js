@@ -38,6 +38,7 @@ export const initialState = {
 			offline: []
 		},
 		nonFriends: {
+			all: [],
 			online: [],
 			offline: []
 		}
@@ -125,31 +126,73 @@ export const queued = (state = [], action) => {
 	});
 	return resultProduce;
 };
-
+const userData = (state = {}, action) => {
+	switch (action.type) {
+		case SET_USERS: {
+			const { status, online } = state;
+			const added = {
+				...state,
+				isFriend: status == 'P' || status == 'A' || status == 'S',
+				friendStatus: status,
+				online,
+				checked: false,
+				calling: false,
+				connected: false
+			};
+			console.log(added);
+			return added;
+		}
+		// fallinback, this shouldn't be happening, upsert if doesnt exisst
+		case UPDATE_USER: {
+			const { user, data } = action.payload;
+			const status = data.status || user.status;
+			return {
+				...user,
+				isFriend: status == 'P' || status == 'A' || status == 'S',
+				friendStatus: status,
+				online: false,
+				checked: false,
+				calling: false,
+				connected: false,
+				...data
+			};
+		}
+		default:
+			return state;
+	}
+};
 export const byId = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
 			case SET_USERS: {
-				const users = action.payload.forEach(({ status, ...user }) => {
-					draft[user.oauth_id] = {
-						...user,
-						isFriend: status == 'P' || status == 'A' || status == 'S',
-						friendStatus: status,
-						online: false,
-						checked: false,
-						calling: false,
-						connected: false
-					};
-				}, {});
+				const users = action.payload.forEach(user => {
+					draft[user.oauth_id] = userData(user, action);
+				});
+
+				// const users = action.payload.forEach(({ status, online, ...user }) => {
+				// 	draft[user.oauth_id] = {
+				// 		...user,
+				// 		isFriend: status == 'P' || status == 'A' || status == 'S',
+				// 		friendStatus: status,
+				// 		online,
+				// 		checked: false,
+				// 		calling: false,
+				// 		connected: false
+				// 	};
+				// }, {});
 				break;
 			}
 			case UPDATE_USER: {
-				const { oauth_id, data } = action.payload;
-				const entries = Object.entries(data);
-				entries.forEach(([key, value]) => {
-					draft[oauth_id][key] = value;
-				});
-				break;
+				const { id, data, user } = action.payload;
+				if (state[id]) {
+					const entries = Object.entries(data);
+					entries.forEach(([key, value]) => {
+						draft[id][key] = value;
+					});
+					break;
+				} else {
+					draft[id] = userData({}, action);
+				}
 			}
 			case ADD_CONNECTION: {
 				draft[action.id].calling = true;
@@ -176,21 +219,21 @@ export const byId = (state = {}, action) => {
 				// 	incoming: false,
 				// };
 			}
-			case SET_ONLINE_USERS:
-				action.payload.forEach(user => {
-					const { oauth_id } = user;
-					if (!draft[oauth_id]) return;
-					draft[oauth_id].online = true;
-				});
-				break;
-			case ADD_ONLINE_USER: {
-				draft[action.id].online = true;
-				break;
-			}
-			case REMOVE_ONLINE_USER: {
-				draft[action.id].online = false;
-				break;
-			}
+			// case SET_ONLINE_USERS:
+			// 	action.payload.forEach(user => {
+			// 		const { oauth_id } = user;
+			// 		if (!draft[oauth_id]) return;
+			// 		draft[oauth_id].online = true;
+			// 	});
+			// 	break;
+			// case ADD_ONLINE_USER: {
+			// 	draft[action.id].online = true;
+			// 	break;
+			// }
+			// case REMOVE_ONLINE_USER: {
+			// 	draft[action.id].online = false;
+			// 	break;
+			// }
 			case ADD_CALL:
 				draft[action.payload.user.oauth_id].checked = true;
 				break;
@@ -247,6 +290,10 @@ export const allIds = (state = {}, action) => {
 					oauth_id => oauth_id !== action.id
 				);
 				draft[listKey].offline = newOfflineUsers;
+				const doNotUpdate = draft[listKey].online.some(oauth_id => oauth_id =>
+					oauth_id !== action.id
+				);
+				if (doNotUpdate) break;
 				draft[listKey].online.push(action.id);
 				break;
 			}
@@ -259,6 +306,10 @@ export const allIds = (state = {}, action) => {
 					oauth_id => oauth_id !== action.id
 				);
 				draft[listKey].online = newOnlineUsers;
+				const doNotUpdate = draft[listKey].online.some(oauth_id => oauth_id =>
+					oauth_id !== action.id
+				);
+				if (doNotUpdate) break;
 				draft[listKey].offline.push(action.id);
 				break;
 			}

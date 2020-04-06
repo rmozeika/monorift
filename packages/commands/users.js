@@ -76,6 +76,11 @@ class UserCommands extends Command {
 		const redis = await this.repository.api.redisAsync('flushdb');
 		return { mongo, postgres, redis };
 	}
+	deleteUser = async () => {
+		const delOp = await this.repository.deleteUser('santaclauseoldsaintnick');
+		console.log(delOp);
+		return delOp;
+	};
 }
 module.exports = UserCommands;
 const acceptFriend = () => {

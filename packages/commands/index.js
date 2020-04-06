@@ -3,9 +3,10 @@ const UserCommands = require('./users');
 const shortcuts = {
 	1: { cmd: 'createMockUsers', repo: 'users' },
 	2: { cmd: 'addAllMockToFriends', repo: 'users' },
-	3: { cmd: 'deleteAll', repo: 'users' }
+	3: { cmd: 'deleteAll', repo: 'users' },
+	4: { cmd: 'deleteUser', repo: 'users' }
 };
-const shortcut = 3;
+const shortcut = 4;
 // { getFriends, acceptFriend, addFriend }
 // const hardCodedArgs = { repo: false, cmd: false };
 const hardCodedShortcut = shortcuts[shortcut];

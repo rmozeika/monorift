@@ -183,16 +183,17 @@ export const byId = (state = {}, action) => {
 				break;
 			}
 			case UPDATE_USER: {
-				const { id, data, user } = action.payload;
+				const { payload, id } = action;
+				const { data, user } = payload;
 				if (state[id]) {
 					const entries = Object.entries(data);
 					entries.forEach(([key, value]) => {
 						draft[id][key] = value;
 					});
-					break;
 				} else {
 					draft[id] = userData({}, action);
 				}
+				break;
 			}
 			case ADD_CONNECTION: {
 				draft[action.id].calling = true;
@@ -262,6 +263,15 @@ export const allIds = (state = {}, action) => {
 				break;
 				// CHANGE THIS! MERGE THIS WITH ONLIN
 			}
+			case UPDATE_USER: {
+				if (
+					action.payload.data?.isFriend &&
+					!state.friends.all.some(id => id == action.id)
+				) {
+					draft['friends'].all.push(action.id);
+				}
+				break;
+			}
 			case SET_ONLINE_USERS: {
 				state.master.forEach(oauth_id => {
 					const isOnline = action.payload.some(
@@ -281,6 +291,8 @@ export const allIds = (state = {}, action) => {
 				});
 				break;
 			}
+
+			// can remove now
 			case ADD_ONLINE_USER: {
 				let isFriend =
 					state.friends.all.length > 0 &&

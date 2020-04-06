@@ -35,7 +35,6 @@ exports.Socket = class Socket {
 		this.nsp = nsp ? io.of(nsp) : io;
 		this.api = api;
 		this.redis = api.redis;
-		console.log(io);
 		this.onConnect = this.onConnect.bind(this);
 		// this.onMessage = this.onMessage.bind(this);
 		// this.createDefaultListeners();

@@ -69,12 +69,12 @@ function* addFriendSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend: action.payload })
 		});
-		yield put(
-			Actions.updateUser(action.payload.oauth_id, {
-				friendStatus: 'S',
-				isFriend: true
-			})
-		);
+		// yield put(
+		// 	Actions.updateUser(action.payload.oauth_id, {
+		// 		friendStatus: 'S',
+		// 		isFriend: true
+		// 	})
+		// );
 	} catch (err) {}
 }
 function* respondFriendRequestSaga(action) {
@@ -92,13 +92,13 @@ function* respondFriendRequestSaga(action) {
 				method: 'POST',
 				body: JSON.stringify({ friend })
 			});
-			const friendStatuKey = didAccept ? 'A' : 'R';
-			yield put(
-				Actions.updateUser(friend.oauth_id, {
-					friendStatus: friendStatuKey,
-					isFriend: didAccept
-				})
-			);
+			// const friendStatuKey = didAccept ? 'A' : 'R';
+			// yield put(
+			// 	Actions.updateUser(friend.oauth_id, {
+			// 		friendStatus: friendStatuKey,
+			// 		isFriend: didAccept
+			// 	})
+			// );
 		} catch (err) {}
 		return;
 	}

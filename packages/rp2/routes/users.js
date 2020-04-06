@@ -42,6 +42,18 @@ class UserRoute extends Route {
 			req.session && req.session.passport && req.session.passport.user;
 		return username;
 	}
+	getUserIdFromReq(req) {
+		if (
+			!req.session ||
+			!req.session.passport ||
+			!req.session.passport.user ||
+			!req.session.passport.user.username
+		)
+			return '';
+		const { username } =
+			req.session && req.session.passport && req.session.passport.user;
+		return username;
+	}
 
 	retrieveAll(req, res) {
 		// var accessGroups = 'sysadmin';

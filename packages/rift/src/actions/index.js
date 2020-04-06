@@ -162,8 +162,8 @@ export const setUsers = users => ({
 export const UPDATE_USER = 'UPDATE_USER';
 export const updateUser = (oauth_id, data, user = {}) => ({
 	type: UPDATE_USER,
+	id: oauth_id || user.oauth_id,
 	payload: {
-		id: oauth_id || user.oauth_id,
 		data,
 		user
 	}

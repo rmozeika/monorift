@@ -211,7 +211,6 @@ const getVis = (state, props) =>
 		(friends, users) => {}
 	);
 const getVisOnline = (state, props) => {
-	debugger;
 	return state.users.allIds[props.route.params.listType].online;
 };
 const getVisOffline = (state, props) =>
@@ -271,7 +270,6 @@ const selectDenormUsers = createSelectorCustom(
 	(objectsById, ids) => ids.map(id => objectsById[id])
 );
 export const getUsersByOnline = createSelector([selectDenormUsers], users => {
-	debugger;
 	const onlineUsers = [];
 	const offlineUsers = [];
 

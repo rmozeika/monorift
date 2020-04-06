@@ -8,21 +8,40 @@ class UserItem extends SocketItem {
 		this.user = user;
 		// google-oauth2|100323185772603201403
 		this.subscriber = this.redis.duplicate();
-		this.subscriber.on('pmessage', this.sub);
+		this.subscriber.on('pmessage', this.psub);
+		this.subscriber.on('message', this.sub);
+
 		// this.subscriber.subscribe(`${this.user.oauth_id}:friend_request`);
 		this.subscriber.psubscribe(`${this.user.oauth_id}:*`);
+		this.subscriber.subscribe(`new_user`);
 
 		this.logConnection();
 		this.connected();
 	}
-	sub(pattern, chan, message) {
-		const channel = chan.replace(`${this.user.oauth_id}:`, '');
-		if (channel == 'friend_request') {
-			const [id, status] = message.split(':');
+	async sub(channel, message) {
+		if (channel == 'new_user') {
+			const user = await this.api.repositories.users.findById(message);
 			this.socket.emit('message', {
 				id,
 				data: {
-					status
+					online: true
+					// friendStatus,
+					// isFriend
+				},
+				user
+			});
+		}
+	}
+	psub(pattern, chan, message) {
+		const channel = chan.replace(`${this.user.oauth_id}:`, '');
+		if (channel == 'friend_request') {
+			const [id, friendStatus] = message.split(':');
+			const isFriend = ['P', 'A', 'S'].some(key => key == friendStatus);
+			this.socket.emit('message', {
+				id,
+				data: {
+					friendStatus,
+					isFriend
 				}
 			});
 			// this.socket.emit('FRIEND_REQUEST', message);
@@ -80,6 +99,7 @@ class UserItem extends SocketItem {
 	}
 	async onMessage(msg, secondArg) {}
 	async onDisconnect() {
+		this.subscriber.punsubscribe();
 		const { user = {} } = this;
 		const { oauth_id, username } = user;
 		if (oauth_id) {

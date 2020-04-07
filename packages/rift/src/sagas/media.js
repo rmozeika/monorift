@@ -16,10 +16,10 @@ import { eventChannel, runSaga } from 'redux-saga';
 const config = {
 	iceServers: [
 		{
-			urls: 'stun:stun.l.google.com:19302'
+			urls: 'stun:stun.monorift.com:80'
 		},
 		{
-			urls: 'turn:monorift:78?transport=udp',
+			urls: 'turn:turn.monorift.com:443?transport=udp',
 			credential: '0x054c7df422cd6b99b6f6cae2c0bdcc14',
 			username: 'rtcpeer'
 		}

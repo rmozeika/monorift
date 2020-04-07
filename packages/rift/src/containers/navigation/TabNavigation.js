@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { Icon } from '@ui-kitten/components';
 import { connect } from 'react-redux';
+import 'react-native-gesture-handler';
+
 // import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import UserList from './UsersList';
-import UsersList from './UsersList';
+import UsersList from '../users/UsersList';
 
 const Tab = createBottomTabNavigator();
 
 class TabNavigation extends React.Component {
 	constructor(props) {
 		super(props);
-		this.getActiveTabs = this.getActiveTabs.bind(this);
 	}
-	getActiveTabs() {
+	getActiveTabs = () => {
 		const { loggedIn, checked } = this.props;
 		const tabs = [
 			{
@@ -30,21 +30,21 @@ class TabNavigation extends React.Component {
 				name: 'Users',
 				key: 'users',
 				initialParams: {
-					listType: 'nonFriends'
+					listType: 'master'
 				},
 				condition: true, //checked,
 				render: UsersList
 			}
 		];
 		return tabs.filter(({ condition }) => condition);
-	}
+	};
 	createFriendComponent({ initialParams: { listType } }) {
 		// const listType = props.route.name.toLowerCase();
-		return <UserList listType={'friends'} containerHeight={500}></UserList>;
+		return <UsersList listType={'friends'} containerHeight={500}></UsersList>;
 	}
 	createUserComponent({ initialParams: { listType } }) {
 		// const listType = props.route.name.toLowerCase();
-		return <UserList listType={'nonFriends'} containerHeight={500}></UserList>;
+		return <UsersList listType={'master'} containerHeight={500}></UsersList>;
 	}
 	render() {
 		const tabColor = '#161c30';
@@ -78,6 +78,7 @@ class TabNavigation extends React.Component {
 							/>
 						);
 					}
+					// cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 				})}
 				tabBarOptions={{
 					// inactiveBackgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -103,7 +104,7 @@ class TabNavigation extends React.Component {
 							initialParams={initialParams}
 							key={key}
 							name={name}
-							component={render}
+							component={UsersList}
 						/>
 					);
 				})}

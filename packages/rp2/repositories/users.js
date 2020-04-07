@@ -5,6 +5,17 @@ const http = require('http');
 const fs = require('fs');
 const collection = 'users';
 const path = require('path');
+const { PerformanceObserver, performance } = require('perf_hooks');
+const obs = new PerformanceObserver(items => {
+	console.log(`
+		BEFORE:
+		users.js:10
+		0.052421855`);
+	console.log('PERFORMANCE: FUNCTION TOOK');
+	console.log(items.getEntries()[0].duration * 0.001);
+	performance.clearMarks();
+});
+obs.observe({ entryTypes: ['measure'] });
 // friendship status
 // A = accepted
 // S = SENT
@@ -27,7 +38,7 @@ class UserRepository extends Repository {
 		super(api, collection);
 		this.findByUsername.bind(this);
 	}
-	async createGravatar(username, email) {
+	async createGravatar(filename, email) {
 		const gravatarUrl = gravatar.url(
 			email,
 			{ s: '100', r: 'x', d: 'retro' },
@@ -38,7 +49,7 @@ class UserRepository extends Repository {
 			__dirname,
 			'../public',
 			'gravatar',
-			`${username}.png`
+			`${filename}.png`
 		);
 		const file = fs.createWriteStream(gravatarPath);
 		const response = await promiseGet(gravatarUrl);
@@ -49,8 +60,8 @@ class UserRepository extends Repository {
 		return new Promise((resolve, reject) => {
 			// let user;
 			const userData = { ...user };
-			const { username, src, email } = user;
-			this.createGravatar(username, email)
+			const { username, src, email, oauth_id } = user;
+			this.createGravatar(oauth_id, email)
 				.then(gravatarData => {
 					userData.src['gravatar'] = gravatarData;
 					return;
@@ -66,9 +77,13 @@ class UserRepository extends Repository {
 					const _id = result.insertedId.toString();
 					return this.insertUserIntoPostgres(_id, userData);
 				})
+				.then(async bit_id => {
+					const updateOp = await this.updateByOAuthId(oauth_id, { bit_id });
+					return { ...userData, bit_id };
+				})
 				.then(result => {
-					if (cb) return cb(user);
-					resolve(user);
+					if (cb) return cb(result);
+					resolve(result);
 				})
 				.catch(e => {
 					console.log(e);
@@ -76,21 +91,31 @@ class UserRepository extends Repository {
 		});
 	}
 	async insertUserIntoPostgres(_id, user) {
-		const { username, src, email } = user;
-		const inserted = await this.postgresInstance.knex('users').insert({
-			username: username,
-			mongo_id: _id,
-			src: { email, ...src },
-			email
-		});
-		return inserted;
+		const { username, src, email, oauth_id } = user;
+		const [id] = await this.postgresInstance
+			.knex('users')
+			.returning('id')
+			// .returning('id').as('BIT_ID')
+			.insert({
+				username: username,
+				mongo_id: _id,
+				src: { email, ...src },
+				email,
+				oauth_id
+			});
+		return id;
 	}
 
 	async findByUsername(username, cb) {
 		return this.findOne({ username }, cb);
 	}
-	importProfile(profile, cb) {
-		const { email, emails, username, nickname, mocked = false } = profile;
+	async findById(id) {
+		return this.findOne({ oauth_id: id });
+	}
+	async importProfile(profile, cb) {
+		const { id, email, emails, nickname, mocked = false } = profile;
+		const oauth_id = profile.oauth_id || id;
+		const username = nickname || profile.username;
 		let emailVal;
 		if (email) {
 			emailVal = email;
@@ -98,10 +123,14 @@ class UserRepository extends Repository {
 			const [{ value }] = emails;
 			emailVal = value;
 		}
-
+		const existingUser = await this.findOne({ username });
+		// need to add random to stop breaking upon multiple temps
+		const tempUsername = existingUser && username + '_temp';
 		const obj = {
 			email: emailVal,
-			username: username || nickname,
+			username: tempUsername || username,
+			usingTempUsername: !!tempUsername,
+			oauth_id,
 			src: profile,
 			mocked
 		};
@@ -110,6 +139,13 @@ class UserRepository extends Repository {
 	update({ doc, filter }, opts = {}) {
 		return this.update({ filter, doc: { $set: doc }, opts }, type);
 	}
+	updateByOAuthId(id, doc, opts) {
+		return this.updateOne({
+			filter: { oauth_id: id },
+			doc: { $set: doc },
+			opts
+		});
+	}
 	updateByUsername(username, doc, opts = {}) {
 		return this.updateOne({
 			filter: { username },
@@ -117,22 +153,57 @@ class UserRepository extends Repository {
 			opts
 		});
 	}
-	async getUsersPostgres() {
+	async updateUserByUsernamePostgres(username, column, value) {
+		const [userId] = await this.getUsersIdsByUsername([username]);
+		const update = await this.postgresInstance
+			.knex('users')
+			.update(column, value)
+			.where({ id: userId });
+		return update;
+	}
+	async updateTempUsername(tempUsername, username) {
+		const existing = await this.findOne({ username });
+		if (existing) return { taken: true, success: false };
+		const updateOperation = await this.updateByUsername(tempUsername, {
+			usingTempUsername: false,
+			username,
+			usingTempUsername: false
+		}).catch(e => {
+			console.log('update temp username error');
+			// CHANGE THIS
+			return { taken: false, success: false };
+		});
+		const updatePostgres = await this.updateUserByUsernamePostgres(
+			tempUsername,
+			'username',
+			username
+		);
+		return { taken: false, success: true };
+	}
+	async getUsersPostgres(query = {}) {
 		const users = await this.postgresInstance
 			.knex('users')
-			// .whereIn('username', usernames)
+			.where(query)
 			.select('*');
 		return users;
 	}
 	async getUsersPostgresByFriendStatus(username) {
-		console.log(username);
+		performance.mark('A');
+		// console.log
 		const [{ id }] = await this.postgresInstance.client
 			.select('id')
 			.from('users')
 			.where('username', '=', username);
 		const users = await this.postgresInstance.client
-			.select('users.username', 'users.src', 'friendship.status')
+			.select(
+				'users.id',
+				'users.username',
+				'users.src',
+				'friendship.status',
+				'users.oauth_id'
+			)
 			.from('users')
+			.where('id', '!=', id)
 			.leftJoin('friendship', function() {
 				this.on('friendship.member2_id', '=', 'users.id').andOn(
 					'friendship.member1_id',
@@ -144,58 +215,142 @@ class UserRepository extends Repository {
 			.catch(e => {
 				console.log(e);
 			});
-		return users;
+
+		const usersWithOnlineStatus = await Promise.all(
+			users.map(async user => {
+				const online = await this.api.redisAsync('getbit', 'online_bit', user.id);
+				return { ...user, online: online == 1 };
+			})
+		);
+		performance.mark('B');
+		performance.measure('A to B', 'A', 'B');
+		return usersWithOnlineStatus;
 	}
-	async getUsersIdsByUsername(usernames) {
+	async getUserColumnsByUsername(usernames, columns) {
 		const users = await this.postgresInstance
 			.knex('users')
 			.whereIn('username', usernames)
-			.select('id');
-		const ids = users.map(({ id }) => id);
+			.column(['username', ...columns])
+			.select();
+		const usersMapped = usernames.map(name => {
+			const values = users.find(({ id, username }) => name == username);
+			return values;
+		});
+		// const ids = users.map(({ id }) => id);
+		return usersMapped;
+	}
+	async getUsersIdsByUsername(usernames) {
+		// could use ordanality instead
+		const users = await this.postgresInstance
+			.knex('users')
+			.whereIn('username', usernames)
+			.select('id', 'username');
+		const ids = usernames.map(name => {
+			const { id } = users.find(({ id, username }) => name == username);
+			return id;
+		});
+		// const ids = users.map(({ id }) => id);
 		return ids;
 	}
-	async acceptFriend(username, friend) {
-		const [userId, friendId] = await this.getUsersIdsByUsername([
-			username,
-			friend
-		]);
+	async publishFriendStatus(status, to, from) {
+		if (typeof to == 'string') {
+			return this.api.redisAsync(
+				'publish',
+				`${user}:friend_request`,
+				`${friend}:${status}`
+			);
+		}
+		return this.api.redisAsync(
+			'publish',
+			`${to.oauth_id}:friend_request`,
+			`${from.oauth_id}:${status}`
+		);
+	}
+	async acceptFriend(username, friendUsername) {
+		const [user, friend] = await this.getUserColumnsByUsername(
+			[username, friendUsername],
+			['oauth_id', 'id']
+		);
 		const accepted = await this.postgresInstance
 			.knex('friendship')
 			.update('status', friendStatus.accepted)
-			.where({ member1_id: userId, member2_id: friendId })
-			.orWhere({ member1_id: friendId, member2_id: userId });
-		console.log(accepted);
+			.where({ member1_id: user.id, member2_id: friend.id })
+			.orWhere({ member1_id: friend.id, member2_id: user.id });
+		const updateToFriend = await this.publishFriendStatus(
+			friendStatus.accepted,
+			friend,
+			user
+		);
+		const updateToSelf = await this.publishFriendStatus(
+			friendStatus.accepted,
+			user,
+			friend
+		);
+
 		return accepted;
 	}
-	async rejectFriend(username, friend) {
-		const [userId, friendId] = await this.getUsersIdsByUsername([
-			username,
-			friend
-		]);
-		const accepted = await this.postgresInstance
+
+	async rejectFriend(username, friendUsername) {
+		const [user, friend] = await this.getUserColumnsByUsername(
+			[username, friendUsername],
+			['oauth_id', 'id']
+		);
+		const reject = await this.postgresInstance
 			.knex('friendship')
 			.update('status', friendStatus.rejected)
-			.where({ member1_id: userId, member2_id: friendId })
-			.orWhere({ member1_id: friendId, member2_id: userId });
-	}
-	async addFriend(username, friend, mocked = false) {
-		const [userId, friendId] = await this.getUsersIdsByUsername([
-			username,
+			.where({ member1_id: user.id, member2_id: friend.id })
+			.orWhere({ member1_id: friend.id, member2_id: user.id });
+		const updateToFriend = await this.publishFriendStatus(
+			friendStatus.rejected,
+			friend,
+			user
+		);
+		const updateToSelf = await this.publishFriendStatus(
+			friendStatus.rejected,
+			user,
 			friend
-		]);
-		// console.log(userIds);
+		);
+
+		return { reject };
+	}
+	async addFriend(username, friendUsername, mocked = false) {
+		// const [userId, friendId] = await this.getUsersIdsByUsername([
+		// 	username,
+		// 	friend
+		// ]);
+
+		const [user, friend] = await this.getUserColumnsByUsername(
+			[username, friendUsername],
+			['oauth_id', 'id']
+		);
+		const existing = await this.postgresInstance
+			.knex('friendship')
+			.select('status')
+			.where('member1_id', '=', user.id)
+			.andWhere('member2_id', '=', friend.id);
+		if (existing.length > 0) return {};
 		const inserted1 = await this.postgresInstance.knex('friendship').insert({
-			member1_id: userId,
-			member2_id: friendId,
+			member1_id: user.id,
+			member2_id: friend.id,
 			status: friendStatus['sent'],
 			mocked
 		});
 		const inserted2 = await this.postgresInstance.knex('friendship').insert({
-			member1_id: friendId,
-			member2_id: userId,
+			member1_id: friend.id,
+			member2_id: user.id,
 			status: friendStatus['pending'],
 			mocked
 		});
+		const updateToFriend = await this.publishFriendStatus(
+			friendStatus.pending,
+			friend,
+			user
+		);
+		const updateToSelf = await this.publishFriendStatus(
+			friendStatus.sent,
+			user,
+			friend
+		);
 
 		return { inserted1, inserted2 };
 	}
@@ -213,6 +368,30 @@ class UserRepository extends Repository {
 			.select('users.id', 'users.username', 'friendship.status');
 		return friends;
 	}
+	async deleteUser(query) {
+		let filter = {};
+		if (typeof query == 'string') {
+			filter = { username: query };
+		} else {
+			filter = query;
+		}
+		const deleteMongo = await this.deleteOne(filter);
+		const [user] = await this.getUsersPostgres(filter);
+
+		const deleteFriends = await this.postgresInstance
+			.knex('friendship')
+			.where('member1_id', '=', user.id)
+			.orWhere('member2_id', '=', user.id)
+			.del();
+		const deletePsql = await this.postgresInstance
+			.knex('users')
+			.where('id', user.id)
+			.del();
+		return { deleteMongo, deletePsql };
+	}
+	// resetUsers() {
+
+	// }
 }
 
 module.exports = UserRepository;

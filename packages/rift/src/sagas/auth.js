@@ -13,7 +13,7 @@ import { eventChannel } from 'redux-saga';
 import { originLink } from '../core/utils';
 import 'isomorphic-unfetch';
 
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 
 const { AUTH } = Actions;
 import io from 'socket.io-client';
@@ -54,7 +54,7 @@ function* initAuthSaga() {
 		console.log('GOT MESSAGE, AUTH', payload);
 
 		try {
-			if (payload && payload.username) {
+			if (payload?.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload });
 			} else {
 				yield put({ type: AUTH.LOGIN.REQUEST, payload });

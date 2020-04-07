@@ -23,9 +23,26 @@ class UserRoute extends Route {
 			this.router.post('/friends/accept', this.acceptFriend.bind(this));
 			this.router.post('/friends/reject', this.rejectFriend.bind(this));
 			this.router.get('/username', secured(), this.getUser.bind(this));
+			this.router.post(
+				'/username/temp',
+				secured(),
+				this.updateTempUsername.bind(this)
+			);
 		});
 	}
 	getUserNameFromReq(req) {
+		if (
+			!req.session ||
+			!req.session.passport ||
+			!req.session.passport.user ||
+			!req.session.passport.user.username
+		)
+			return '';
+		const { username } =
+			req.session && req.session.passport && req.session.passport.user;
+		return username;
+	}
+	getUserIdFromReq(req) {
 		if (
 			!req.session ||
 			!req.session.passport ||
@@ -103,18 +120,33 @@ class UserRoute extends Route {
 		const { friend } = req.body;
 		console.log(username);
 		this.repository.addFriend(username, friend.username);
+		res.send(true);
 	}
 	async acceptFriend(req, res) {
 		const username = this.getUserNameFromReq(req);
 		const { friend } = req.body;
 		console.log(username);
 		this.repository.acceptFriend(username, friend.username);
+		res.send(true);
 	}
 	async rejectFriend(req, res) {
 		const username = this.getUserNameFromReq(req);
 		const { friend } = req.body;
 		console.log(username);
 		this.repository.rejectFriend(username, friend.username);
+	}
+	async updateTempUsername(req, res) {
+		const tempUsername = this.getUserNameFromReq(req);
+		const { username } = req.body;
+		const result = await this.repository
+			.updateTempUsername(tempUsername, username)
+			.catch(e => {
+				console.log(e);
+			});
+		if (result.success) {
+			req.session.passport.user.username = username;
+		}
+		res.send(result);
 	}
 }
 

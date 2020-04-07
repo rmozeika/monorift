@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 
 import { Layout, Text, Button, styled, Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import * as Selectors from '../selectors';
-import * as CallSelectors from '../selectors/call';
-import * as UserSelectors from '../selectors/users';
-import * as AuthSelectors from '../selectors/auth';
+import * as Actions from '@actions';
+import * as Selectors from '@selectors';
+import * as CallSelectors from '@selectors/call';
+import * as UserSelectors from '@selectors/users';
+import * as AuthSelectors from '@selectors/auth';
 // export const SearchBar = (props) => {
 //     return ()
 // }
@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
 		height: 50,
 		padding: 8,
 		display: 'flex',
-		flexDirection: 'row'
+		flexDirection: 'row',
+		backgroundColor: 'rgb(26, 33, 56)'
 	},
 	searchInput: {
 		flexBasis: '80%',
@@ -27,21 +28,18 @@ const styles = StyleSheet.create({
 export class SearchBar extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.search = this.search.bind(this);
-		this.setFilterText = this.setFilterText.bind(this);
-		// this.setState({ filterText: '' });
 		this.state = { filterText: '' };
 	}
-	setFilterText(input) {
+	setFilterText = input => {
 		this.setState({ filterText: input });
-	}
-	search(input) {
+	};
+	search = input => {
 		const { search } = this.props;
 
 		search(input);
 		// const { filterText } = this.state;
 		// this.props.search(filterText);
-	}
+	};
 	render() {
 		const { filter } = this.props;
 		return (

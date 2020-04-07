@@ -1,6 +1,9 @@
 import { combineReducers } from 'redux';
 import {
 	ADD_CANDIDATE,
+	ADD_CONNECTION,
+	EDIT_CONNECTION,
+	CALL_ACTIVE,
 	CREATE_PEER_CONN,
 	SET_PEER_CONN,
 	SET_CONSTRAINTS,
@@ -11,7 +14,8 @@ import {
 	SET_STREAM,
 	CALL_INCOMING,
 	ANSWER_INCOMING
-} from '../actions';
+} from '@actions';
+
 export const initialState = {
 	peerStore: {
 		conn: null,
@@ -22,13 +26,17 @@ export const initialState = {
 		isInitiator: false,
 		remoteSet: false,
 		stream: null,
-		incomingCall: { received: false, from: null, answered: null, pending: false }
+		incomingCall: { received: false, from: null, answered: null, pending: false },
+		active: false
 		// incomingCall: {
 		// 	received: true,
-		// 	from: { id: 'bullshit', name: 'robertmozeika' },
+		// 	from: { id: 'bullshit', username: 'robertmozeika' },
 		// 	answered: false,
 		// 	pending: true
 		// }
+	},
+	connections: {
+		// id: status
 	},
 	candidate: {},
 	constraints: {
@@ -64,7 +72,6 @@ export const incomingCall = (state = {}, action = {}) => {
 				answered: action.payload,
 				pending: false
 			};
-
 		default:
 			return state;
 	}
@@ -89,6 +96,7 @@ export const peerStore = (state = [], action = {}) => {
 			return Object.assign({}, state, {
 				incomingCall: incomingCall(state.incomingCall, action)
 			});
+
 		// return {
 		// 	...state,
 		// 	incomingCall: {
@@ -113,6 +121,68 @@ export const peerStore = (state = [], action = {}) => {
 			return state;
 	}
 };
+const connection = (state = {}, action) => {
+	switch (action.type) {
+		case ADD_CONNECTION: {
+			return {
+				id: action.id,
+				// status: 'started',
+				active: false,
+				incoming: false
+			};
+		}
+		case CALL_ACTIVE:
+		case EDIT_CONNECTION: {
+			return {
+				...state,
+				...action.payload
+			};
+		}
+		case CALL_INCOMING: {
+			return {
+				...state,
+				id: action.id,
+				active: false,
+				incoming: true
+			};
+		}
+		case ANSWER_INCOMING: {
+			return {
+				...state,
+				id: action.id,
+				active: true,
+				incoming: true
+			};
+		}
+		default:
+			return state;
+	}
+};
+export const connections = (state = {}, action) => {
+	switch (action.type) {
+		case ADD_CONNECTION:
+		case EDIT_CONNECTION:
+		case CALL_ACTIVE:
+		case CALL_INCOMING:
+		case ANSWER_INCOMING:
+			return {
+				...state,
+				[action.id]: connection(state[action.id], action)
+			};
+		// case CALL_ACTIVE: {
+		// 	const { user_id, active } = action.payload;
+		// 	return Object.assign({}, state, { active: action.payload });
+		// }
+		// case CALL_INCOMING: {
+		// 	return {
+		// 		...state,
+		// 		[action.id]: connection(state[action.id], action)
+		// 	};
+		// }
+		default:
+			return state;
+	}
+};
 export const constraints = (state = {}, action) => {
 	switch (action.type) {
 		case SET_CONSTRAINTS:
@@ -125,7 +195,8 @@ export const constraints = (state = {}, action) => {
 const callReducer = combineReducers({
 	candidate,
 	peerStore,
-	constraints
+	constraints,
+	connections
 	// incoming
 });
 export default callReducer;

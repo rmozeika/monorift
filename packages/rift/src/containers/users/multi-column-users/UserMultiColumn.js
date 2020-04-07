@@ -2,11 +2,11 @@ import * as React from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import { getUser } from '../selectors/users';
-import AddToCallButton from '../components/buttons/AddToCall';
-import AddRemoveFriendButton from '../components/buttons/AddRemoveFriend';
-import Gravatar from '../components/users/Gravatar';
+import * as Actions from '../../../actions';
+import { getUser } from '../../../selectors/users';
+import AddToCallButton from '../../../components/buttons/AddToCall';
+import AddRemoveFriendButton from '../../../components/buttons/AddRemoveFriend';
+import Gravatar from '../../../components/users/Gravatar';
 const styles = StyleSheet.create({
 	listItem: {
 		margin: 4,
@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
 		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
 
 		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		flexBasis: '45%',
+		flexBasis: '45%', // multi column
+		// flexBasis: 100,
 		flexGrow: 1,
 		// flexWrap: 'wrap',
 		display: 'flex',
@@ -83,6 +84,8 @@ const styles = StyleSheet.create({
 		flexBasis: '25%',
 		justifySelf: 'flex-end',
 		width: '100%'
+
+		// width: '100%'
 	},
 	statusBar: {
 		flexBasis: '15%',
@@ -149,49 +152,61 @@ const styles = StyleSheet.create({
 		display: 'flex'
 	}
 });
-class UserItem extends React.PureComponent {
+class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
-		this.addUserToCall = this.addUserToCall.bind(this);
-		this.removeUserFromCall = this.removeUserFromCall.bind(this);
-		this.addFriend = this.addFriend.bind(this);
-		this.removeFriend = this.removeFriend.bind(this);
-		this.acceptFriend = this.acceptFriend.bind(this);
-		this.rejectFriend = this.rejectFriend.bind(this);
-		this.respondFriendRequest = this.respondFriendRequest.bind(this);
+		// remove
+		console.log(`created ${props.username}`);
+		if (props.username == 'ehappertq') {
+			console.log('rendered ehap');
+		}
+		this.state = {
+			originalUser: this.props.username
+		};
 	}
-	addFriend(e) {
+	shouldComponentUpdate(nextProps) {
+		if (this.props.user !== nextProps.user) {
+			console.log(`user not equal ${this.props.username}`);
+			return true;
+		}
+		// console.log(`user not equal ${props.username}`);
+
+		return false;
+	}
+	addFriend = e => {
 		// e.stopPropagation();
 		const { addFriend, user } = this.props;
 		addFriend(user);
-	}
-	respondFriendRequest(didAccept) {
+	};
+	// componentWillReceiveProps()
+	respondFriendRequest = didAccept => {
 		const { respondFriendRequest, user } = this.props;
 		respondFriendRequest(user, didAccept);
-	}
-	acceptFriend() {
+	};
+	acceptFriend = () => {
 		// e.stopPropagation();
 		this.respondFriendRequest(true);
-	}
-	rejectFriend() {
+	};
+	rejectFriend = () => {
 		// e.stopPropagation();
 		this.respondFriendRequest(false);
-	}
-	removeFriend() {
+	};
+	removeFriend = () => {
 		const { removeFriend, user } = this.props;
 		removeFriend(user);
-	}
-	addUserToCall() {
-		const { user, addToCall, index } = this.props;
-		addToCall(index, user);
-	}
-	removeUserFromCall() {
-		const { user, removeFromCall, index } = this.props;
-		removeFromCall(index, user);
-	}
+	};
+	addUserToCall = () => {
+		const { user, addToCall } = this.props;
+		addToCall(user);
+	};
+	removeUserFromCall = () => {
+		const { user, removeFromCall } = this.props;
+		removeFromCall(user);
+	};
 
 	render() {
-		const { username, index, themedStyle, user } = this.props;
+		const { username, themedStyle, user, key } = this.props;
+		console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
@@ -199,16 +214,9 @@ class UserItem extends React.PureComponent {
 		const border = user.checked
 			? { borderWidth: 3, borderColor: onlineBorderColor }
 			: {};
-		const otherProps = {};
-
-		const listHeader = () => (
-			<Layout>
-				<Text>Header</Text>
-			</Layout>
-		);
 
 		return (
-			<ListItem key={index} style={[styles.listItem, border, { padding: 0 }]}>
+			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
 				<Layout style={styles.listItemMain}>
 					<TouchableOpacity
 						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
@@ -254,9 +262,8 @@ const mapStateToProps = (state, props) => {
 };
 const mapDispatchToProps = dispatch => {
 	return {
-		addToCall: (index, user) => dispatch(Actions.addToCall(index, user)),
-		removeFromCall: (index, user) =>
-			dispatch(Actions.removeFromCall(index, user)),
+		addToCall: user => dispatch(Actions.addToCall(user)),
+		removeFromCall: user => dispatch(Actions.removeFromCall(user)),
 		addFriend: user => dispatch(Actions.addFriend(user)),
 		removeFriend: user => dispatch(Actions.removeFriend(user)),
 		respondFriendRequest: (user, didAccept) =>

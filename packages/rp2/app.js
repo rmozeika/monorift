@@ -10,7 +10,6 @@ const passport = require('./auth0');
 const redis = require('redis');
 
 const session = require('express-session');
-var MongoDBStore = require('connect-mongodb-session')(session);
 
 const config = require('./config.js');
 const {
@@ -25,7 +24,9 @@ const webpack = require('webpack');
 var io = require('socket.io');
 const passportSocketIo = require('passport.socketio');
 const Socket = require('./socket');
-const Call = require('./socket/call');
+const CallSocket = require('./socket/call');
+const UsersSocket = require('./socket/users');
+
 console.log('VERSION', '1.1');
 var app = express();
 let RedisStore = require('connect-redis')(session);
@@ -53,7 +54,11 @@ app.use(function(req, res, next) {
 		req.session.passport &&
 		req.session.passport.user &&
 		req.session.passport.user.username;
-	console.log(user || 'anonymous', req.path);
+	// console.log(user || 'anonymous', req.path);
+	console.log(`
+		Request: ${req.method} ${req.path}
+		User:  ${user || 'anonymous'}
+	`);
 	console.log('Time:', Date.now());
 	next();
 });
@@ -129,7 +134,9 @@ console.log('App ready!');
 app.api = api;
 const socketIO = io();
 app.io = socketIO;
+// api.redis = client;
 api.redis = client;
+
 app.io.use(function(socket, next) {
 	sessionMiddleware(socket.request, {}, next);
 });
@@ -150,21 +157,22 @@ app.io.on('connection', async socket => {
 	const { passport = {} } = session;
 	const { user = false } = passport;
 	const isUser = user && user.username;
-	if (isUser) {
-		const key = client.sadd('online_users', user.username);
-		client.set(user.username, socket.id);
-		client.hmset(`user:${user.username}`, [
-			'socketid',
-			socket.id,
-			'key',
-			user._id
-		]);
-	}
-	app.api.repositories.users
-		.updateByUsername(user.username, { socket_id: socket.id })
-		.then(result => {
-			console.log(result);
-		});
+	// 	if (isUser) {
+	// 		const key = client.sadd('online_users', user.oauth_id);
+	// 		client.setbit('online_bit', user.bit_id, 1);
+	// 		client.set(user.oauth_id, socket.id);
+	// 		client.hmset(`user:${user.username}`, [
+	// 			'socketid',
+	// 			socket.id,
+	// 			'key',
+	// 			user.oauth_id
+	// 		]);
+	// 	}
+	// 	app.api.repositories.users
+	// 		.updateByUsername(user.username, { socket_id: socket.id })
+	// 		.then(result => {
+	// 			console.log(result);
+	// 		});
 	socket.on('check_auth', ack => {
 		if (user) {
 			ack(user);
@@ -172,19 +180,23 @@ app.io.on('connection', async socket => {
 		}
 		ack({ user: false });
 	});
-	socket.on('disconnect', socket => {
-		console.log('disconnected');
-		if (user.username) {
-			client.srem('online_users', user.username);
-		}
-	});
-});
-app.io.on('disconnect', async socket => {
-	console.log('disconnected');
-});
+	// 	socket.on('disconnect', socket => {
+	// 		// client.setbit('online_bit', user.bit_id, 1);
 
-app.io.on('message', function(msg) {
-	// console.log(msg);
+	// 		console.log('disconnected');
+	// 		if (user.username) {
+	// 			client.srem('online_users', user.oauth_id);
+	// 		}
+	// 	});
 });
-const call = new Call(app.io, api);
+// app.io.on('disconnect', async socket => {
+// 	console.log('disconnected');
+// });
+
+// app.io.on('message', function(msg) {
+// 	// console.log(msg);
+// });
+const callSocket = new CallSocket(app.io, api);
+const usersSocket = new UsersSocket(app.io, api);
+
 module.exports = app;

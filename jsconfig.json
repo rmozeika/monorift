@@ -1,5 +1,14 @@
 {
-    "typeAcquisition": {
-      "include": ["socket.io"]
-    }
-  }
+	"typeAcquisition": {
+		"include": ["socket.io"]
+	},
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"@components/*": ["packages/rift/src/components/*"],
+			"@selectors/*": ["packages/rift/src/selectors/*"],
+			"@containers/*": ["packages/rift/src/containers/*"],
+			"@selectors": ["packages/rift/src/selectors/index.js"]
+		}
+	}
+}

@@ -1,4 +1,11 @@
-import { createSelector } from 'reselect';
+import {
+	createSelector,
+	createSelectorCreator,
+	defaultMemoize
+} from 'reselect';
+import { defaultEqualityCheck, resultCheckMemoize } from './utils';
+import shallowEqual from 'fbjs/lib/shallowEqual';
+
 import { getTabType } from '../reducers/view';
 import { loggedIn } from './auth.js';
 export const getTab = state => state.view.tab;
@@ -7,6 +14,7 @@ export const getOnlineUsers = state => state.users.online;
 export const getFriends = state => state.users.friends;
 export const gotOnline = state => state.users.status.gotOnline;
 export const gotFriends = state => state.users.status.gotFriends;
+
 const sortOnlineOffline = (users, usernames) => {
 	let onlineOffline = {
 		online: [],
@@ -185,17 +193,17 @@ export const getVisibleUsersFiltered = createSelector(
 // }
 import createCachedSelector from 're-reselect';
 import { search } from '@src/reducers/users';
-const getUserByUsername = (state, props) => state.users.byId[props.username];
+const getUserById = (state, props) => state.users.byId[props.id];
 
 // const getUserData = state => state.world;
-export const getUser = createCachedSelector([getUserByUsername], users => {
+export const getUser = createCachedSelector([getUserById], users => {
 	return users;
 })(
 	/*
 	 * Re-reselect resolver function.
 	 * Cache/call a new selector for each different "listId"
 	 */
-	(state, props) => props.username
+	(state, props) => props.id
 );
 const getVis = (state, props) =>
 	createSelector(
@@ -218,6 +226,9 @@ const getVisibleUsersByFilter = (state, props) => {
 	const offline = offlineUsernames(state);
 	return online.concat(offline);
 };
+export const getVisibleOnline = createCachedSelector([getVisOnline], online => {
+	return online;
+})((state, props) => props.route.params.listType);
 
 export const getVisibleUserlist = createCachedSelector(
 	// [getVisibleUsersByFilter],
@@ -225,6 +236,123 @@ export const getVisibleUserlist = createCachedSelector(
 	(online, offline) => online.concat(offline)
 )((state, props) => props.route.params.listType);
 
+// const getVisOnlineWithSearch = createSelector(
+// 	[getSearchFilter, getVisOnline],
+
+// 	state, props) => {
+
+// 	return state.users.allIds[props.route.params.listType].online;
+// };
+const getVisOfflineWithSearch = (state, props) =>
+	state.users.allIds[props.route.params.listType].offline;
+
+// use getUsers
+
+// use
+const getUserIdsByList = (state, props) => {
+	// CHANGE THIS
+	const { listType } = props.route.params;
+	if (listType == 'master') {
+		return state.users.allIds[listType];
+	}
+	return state.users.allIds[listType].all;
+};
+const selectIds = state => state.ids; // dont use REMOVE
+
+const createSelectorCustom = createSelectorCreator(
+	resultCheckMemoize,
+	shallowEqual
+);
+// don't rerun selectors if ids don't change (even if usersbyIds do that aren't returned)
+const selectDenormUsers = createSelectorCustom(
+	getUsers,
+	getUserIdsByList,
+	(objectsById, ids) => ids.map(id => objectsById[id])
+);
+export const getUsersByOnline = createSelector([selectDenormUsers], users => {
+	const onlineUsers = [];
+	const offlineUsers = [];
+
+	users.forEach(({ oauth_id, online }) => {
+		if (online) {
+			onlineUsers.push(oauth_id);
+		} else {
+			offlineUsers.push(oauth_id);
+		}
+	});
+	return onlineUsers.concat(offlineUsers);
+});
+const getUsersByFriendStatus = (state, props) => {
+	const users = getUsers(state);
+	const ids = Object.keys(users);
+	// const online = [];
+	// const offline = [];
+	const listType = props.route.params.listType;
+	const filteredUsers = [];
+	ids.forEach(id => {
+		const user = users[id];
+		if (
+			(listType == 'friends' && !user.isFriend) ||
+			(listType == 'users' && user.isFriend)
+		)
+			return;
+		filteredUsers.push(user);
+		return;
+		// if (user.online) {
+		// 	online.push(id);
+		// } else {
+		// 	offline.push(id);
+		// }
+	});
+	return filteredUsers;
+};
+
+// const getT = (state, props) => {
+// 	const listType = props.route.params.listType;
+// 	if (listType == friends) {
+// 		return getFriends(state)
+// 	};
+// 	return getUserMasterlist(state);
+// };
+// export const getVisUsersAlt = createCachedSelector(
+// 	// [getUsersByFriendStatus],
+// 	[getTest],
+// 	(users) => {
+// 		// const online = [];
+// 		const offline = [];
+// 		const online = [];
+// 		users.forEach(user => {
+// 			if (user.online) {
+// 				online.push(user.oauth_id);
+// 			} else {
+// 				offline.push(user.oauth_id);
+// 			};
+// 		});
+// 		return online.concat(offline);
+// 	}
+// )((state, props) => props.route.params.listType);
+
+export const getVisibleUserlistSearch = createCachedSelector(
+	// [getVisibleUsersByFilter],
+	[getSearchFilter, getVisOnline, getVisOffline],
+	(filter, online, offline) => {
+		const usersOrderedByOnlineOffline = online.concat(offline);
+		if (!filter) {
+			return usersOrderedByOnlineOffline;
+		}
+		return filterUsers(usersOrderedByOnlineOffline, filter);
+		// const usersFiltered = usersOrderedByOnlineOffline.filter(username => {
+		// 	return username
+		// });
+	}
+)((state, props) => props.route.params.listType);
+
+const getAllUsers = state => {
+	return state.users.allIds.master;
+};
+export const getUserMasterlist = createSelector([getAllUsers], users => {
+	return users;
+});
 // export const makeVisibleUsers = () => {
 // 	return createSelector(
 // 		[getTab, getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],

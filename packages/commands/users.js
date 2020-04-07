@@ -1,6 +1,10 @@
 const Command = require('./Command.js');
 const repositoryName = 'users';
 const mockUsers = require('./mock-data/mock-users.js');
+const path = require('path');
+// const data = require('./mock-data/mock.json')
+var fs = require('fs');
+const { promisify } = require('util');
 class UserCommands extends Command {
 	constructor(rp2) {
 		super(rp2, repositoryName);
@@ -9,12 +13,17 @@ class UserCommands extends Command {
 		this.acceptFriend = this.acceptFriend.bind(this);
 		this.addAllMockToFriends = this.addAllMockToFriends.bind(this);
 		this.createGravatar = this.createGravatar.bind(this);
+		this.deleteAll = this.deleteAll.bind(this);
 	}
 	async createMockUsers() {
 		// mockUsers.forEach(user => {
 		//     this.repository.importProfile(user)
 		// });
-		const promises = mockUsers.map(user => {
+		// const users = JSON.parse(data);
+		const jsonPath = path.resolve(__dirname, 'mock-data', 'mock.json');
+		var users = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+
+		const promises = users.map(user => {
 			return this.repository.importProfile({ ...user, mocked: true });
 		});
 		let res;
@@ -58,6 +67,20 @@ class UserCommands extends Command {
 	createGravatar(username, email) {
 		return this.repository.createGravatar(username, email);
 	}
+	async deleteAll() {
+		const mongo = await this.repository.deleteMany({});
+		const friends = await this.repository.postgresInstance
+			.knex('friendship')
+			.del();
+		const postgres = await this.repository.postgresInstance.knex('users').del();
+		const redis = await this.repository.api.redisAsync('flushdb');
+		return { mongo, postgres, redis };
+	}
+	deleteUser = async () => {
+		const delOp = await this.repository.deleteUser('santaclauseoldsaintnick');
+		console.log(delOp);
+		return delOp;
+	};
 }
 module.exports = UserCommands;
 const acceptFriend = () => {

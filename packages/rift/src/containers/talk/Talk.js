@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Layout, Text, Button, withStyles } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import Media from './Media';
-
+import CallActions from '@components/buttons/CallActions';
 const trace = msg => {
 	console.log(msg);
 };
@@ -41,7 +41,7 @@ function getPeerName(peerConnection) {
 
 let connName = 'peerStore';
 
-class Adapter extends React.Component {
+class Adapter extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		let audioRef = this.props.audioRef || React.createRef();
@@ -51,10 +51,19 @@ class Adapter extends React.Component {
 		this.videoRef = videoRef;
 		this.selfRef = selfRef;
 		this.audioFileRef = React.createRef();
+		this.canvasRef = React.createRef();
 		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
 		// this.getDisplayStyle = this.get
 	}
+	// remove just for debugging
+	componentWillMount() {
+		console.log('didmount');
+	}
+	componentWillUnmount() {
+		console.log('unmount');
+	}
+
 	componentDidUpdate() {
 		const { peerStore, peerConnStatus } = this.props;
 		const { audioRef, videoRef } = this;
@@ -67,11 +76,12 @@ class Adapter extends React.Component {
 			console.log('on track ID', e.track.id);
 
 			if (mediaStreamConstraints.video && e.track.kind == 'video') {
-				if (!(videoRef && videoRef.current)) {
+				if (!videoRef?.current) {
 					return;
 				}
-				if (e.streams && e.streams[0]) {
+				if (e.streams?.[0]) {
 					videoRef.current.srcObject = e.streams[0];
+					videoRef.current.muted = true;
 				} else {
 					if (!inboundStream) {
 						inboundStream = new MediaStream();
@@ -86,20 +96,47 @@ class Adapter extends React.Component {
 				// return;
 				return;
 			}
-			if (!(audioRef && audioRef.current)) {
+			if (!audioRef?.current) {
 				return;
 			}
-			if (e.streams && e.streams[0]) {
-				audioRef.current.srcObject = e.streams[0];
+			if (e.streams?.[0]) {
+				const stream = e.streams[0];
+				// audioRef.current.srcObject = e.streams[0];
+				const audioTag = new Audio();
+				audioTag.srcObject = stream;
+				var audioCtx = new AudioContext();
+				const source = audioCtx.createMediaElementSource(audioTag);
+				var analyser = audioCtx.createAnalyser();
+				analyser.minDecibels = -90;
+				analyser.maxDecibels = -10;
+				analyser.smoothingTimeConstant = 0.85;
+				source.connect(analyser);
+				analyser.connect(audioCtx.destination);
+				var distortion = audioCtx.createWaveShaper();
+				var gainNode = audioCtx.createGain();
+				// var wavesurfer = WaveSurfer.create({
+				// 	container: document.querySelector('#wave'),
+				// 	backend: 'MediaElementWebAudio'
+				// });
+				audioTag.play();
+				this.visualize(analyser);
+				if (1 == '1') return;
+				debugger; // remove
+				// var source = audioCtx.createMediaStreamSource(stream);
+				// source.connect(audioCtx.destination);
+				// audioRef.current.play();
+				debugger; // remove
 			} else {
 				if (!inboundStream) {
 					inboundStream = new MediaStream();
 					videoRef.current.srcObject = inboundStream;
 				}
 				inboundStream.addTrack(e.track);
-			} // if (e.track.kind == 'audio') {
+			}
+
+			// if (e.track.kind == 'audio') {
 			// 	audioRef.current.srcObject = e.streams[0];
-			// 	this.props.setStream(e.streams[0]);
+			// this.props.setStream(e.streams[0]);
 			// }
 			// let audio = audioRef.current;
 			// audio.play();
@@ -107,11 +144,13 @@ class Adapter extends React.Component {
 
 		if (peerConnStatus.created === true && conn.ontrack == null) {
 			console.log('handlers added: ontrack and onice');
-			conn.ontrack = onTrack.bind(this);
-			conn.addEventListener('track', e => {
-				console.log('on EVENT track');
-			});
-			conn.addEventListener('icecandidate', this.handleConnection.bind(this));
+			// conn.ontrack = onTrack.bind(this);
+			// conn.ontrack = onTrack.bind(this);
+
+			// conn.addEventListener('track', e => {
+			// 	console.log('on EVENT track');
+			// });
+			// conn.addEventListener('icecandidate', this.handleConnection.bind(this));
 		}
 	}
 	setMediaStreamConstraints(audio, video) {
@@ -184,12 +223,13 @@ class Adapter extends React.Component {
 		this.props.sendOffer({});
 	}
 	call() {
-		const audioConstraints = { audio: true, video: false };
+		this.props.startCallSaga('audio', {});
+		// const audioConstraints = { audio: true, video: false };
 
-		const { peerStore } = this.props;
-		this.setMediaStreamConstraints(true, false);
-		peerStore.onicecandidate = e => {};
-		this.startCall(audioConstraints);
+		// const { peerStore } = this.props;
+		// this.setMediaStreamConstraints(true, false);
+		// peerStore.onicecandidate = e => {};
+		// this.startCall(audioConstraints);
 	}
 	handleConnection(event) {
 		console.log('got candidate onicecandidate event');
@@ -203,7 +243,7 @@ class Adapter extends React.Component {
 		}
 	}
 	render() {
-		const { peerStore, peerConnStatus, themedStyle } = this.props;
+		const { peerStore, peerConnStatus } = this.props;
 		const audio = (ref, onPress, key) => (
 			<Layout key={key} style={[styles.callButton]}>
 				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
@@ -283,6 +323,7 @@ class Adapter extends React.Component {
 							audioRef={this.audioRef}
 						/>
 					</Layout>
+					<CallActions />
 					{/* <Layout style={[styles.row, { padding: 2 }]}>
 						<Button onPress={fileCall} appearance="outline" status="warning">
 							Stream Audio from File
@@ -302,11 +343,7 @@ class Adapter extends React.Component {
 		);
 	}
 }
-const AdapterWithStyles = withStyles(Adapter, theme => ({
-	container: {
-		backgroundColor: theme['color-basic-500']
-	}
-}));
+
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),
@@ -316,7 +353,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 			dispatch(Actions.setConstraints({ mediaStream })),
 		setPeerInitiator: isInitiator =>
 			dispatch(Actions.setPeerInitiator(isInitiator)),
-		setStream: stream => dispatch(Actions.setStream(stream))
+		setStream: stream => dispatch(Actions.setStream(stream)),
+		startCallSaga: type => dispatch(Actions.startCall('audio'))
 	};
 };
 const mapStateToProps = (state, ownProps) => {
@@ -333,4 +371,4 @@ const mapStateToProps = (state, ownProps) => {
 		tab
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(AdapterWithStyles);
+export default connect(mapStateToProps, mapDispatchToProps)(Adapter);

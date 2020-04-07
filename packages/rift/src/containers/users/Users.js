@@ -8,10 +8,10 @@ import {
 } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import UsersList from './UsersList';
 
-import CallActions from '../components/buttons/CallActions';
+import CallActions from '@components/buttons/CallActions';
 
 const styles = StyleSheet.create({
 	userLayout: {
@@ -56,50 +56,17 @@ class Users extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { containerHeight: null };
+	}
 
-		this.goTalk = this.goTalk.bind(this);
-		this.answer = this.answer.bind(this);
-		this.reject = this.reject.bind(this);
-		this.onLayout = this.onLayout.bind(this);
-	}
-	goTalk() {
-		this.props.setTabView(1);
-	}
-	onLayout({ nativeEvent, timeStamp }) {
-		const { mobile, incomingCall } = this.props;
-		const { layout } = nativeEvent;
-		const { width, height } = layout;
-		// if (!mobile) {
-		// 	this.setState({
-		// 		containerHeight: {
-		// 			container: height,
-		// 			userList: height,
-		// 			callButton: 0
-		// 		}
-		// 	});
-		// 	return;
-		// }
-		// const actionHeightMultiplier = incomingCall.received ? 0.15 : 0.1;
-		// const callActions = height * actionHeightMultiplier;
-		this.setState({
-			containerHeight: height // - 32
-		});
-	}
-	answer() {
+	answer = () => {
 		const { answer } = this.props;
 		answer(true);
-	}
-	reject() {
+	};
+	reject = () => {
 		const { answer } = this.props;
 		answer(false);
-	}
-	// REMOVE THIS
-	// calculateHeights() {
-	// 	const { containerHeight, mobile, incomingCall } = this.props;
-	// 	const callActions = containerHeight * actionHeightMultiplier;
-	// 	const userList = containerHeight - callActions;
-	// 	return { userList, callActions };
-	// }
+	};
+
 	render() {
 		const { gotOnlineUsers, themedStyle, mobile, incomingCall } = this.props;
 		const { containerHeight } = this.state;

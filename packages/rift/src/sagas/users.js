@@ -9,13 +9,13 @@ import {
 	select
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-
+import * as AuthSelectors from '@selectors/auth';
 import 'isomorphic-unfetch';
 import io from 'socket.io-client';
 
-import * as Actions from '../actions';
+import * as Actions from '@actions';
 import { originLink } from '../core/utils';
-const socketServerURL = originLink('users');
+const socketServerURL = originLink();
 let socket;
 const selectUsers = state => {
 	return state.users.list;
@@ -69,6 +69,12 @@ function* addFriendSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend: action.payload })
 		});
+		// yield put(
+		// 	Actions.updateUser(action.payload.oauth_id, {
+		// 		friendStatus: 'S',
+		// 		isFriend: true
+		// 	})
+		// );
 	} catch (err) {}
 }
 function* respondFriendRequestSaga(action) {
@@ -86,6 +92,13 @@ function* respondFriendRequestSaga(action) {
 				method: 'POST',
 				body: JSON.stringify({ friend })
 			});
+			// const friendStatuKey = didAccept ? 'A' : 'R';
+			// yield put(
+			// 	Actions.updateUser(friend.oauth_id, {
+			// 		friendStatus: friendStatuKey,
+			// 		isFriend: didAccept
+			// 	})
+			// );
 		} catch (err) {}
 		return;
 	}
@@ -103,7 +116,8 @@ function* respondFriendRequestSaga(action) {
 	} catch (err) {}
 }
 const connect = () => {
-	socket = io(socketServerURL);
+	// socket = io(socketServerURL);
+	socket = io('/users');
 	return new Promise(resolve => {
 		socket.on('connect', () => {
 			resolve(socket);
@@ -112,12 +126,14 @@ const connect = () => {
 };
 const createSocketChannel = socket =>
 	eventChannel(emit => {
-		const handler = (data, secondArg) => {
-			let msg = { message: data }; //from: this._id };
-			if (secondArg) {
-				const { constraints, users, from } = secondArg;
-				msg = { ...msg, ...secondArg };
-			}
+		console.log('created user socket event channel');
+		const handler = (msg, secondArg) => {
+			// let msg = { message: data }; //from: this._id };
+			// if (secondArg) {
+			// 	const { constraints, users, from } = secondArg;
+			// 	msg = { ...msg, ...secondArg };
+			// }
+			console.log('USER SOCKET MESSAGE', msg);
 			emit(msg);
 		};
 		const onCandidateHandler = candidate => {
@@ -143,23 +159,50 @@ const createSocketChannel = socket =>
 	});
 
 function* initSocketSaga() {
-	const socket = yield call(connect);
+	try {
+		const socket = yield call(connect);
+	} catch (e) {
+		console.log('init socket error', e);
+	}
+	console.log('create user socket channel');
 	//socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
+	console.log('take channel');
 	while (true) {
-		const { message } = yield take(socketChannel);
-
+		const message = yield take(socketChannel);
 		try {
-			if (message.online == true) {
-				const user = { name: message.name };
+			const { id, data, user } = message;
+			yield put(Actions.updateUser(id, data, user));
+			if (data.online == true) {
+				const user = { username: message.username, oauth_id: id };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { name: message.name };
+				const user = { username: message.username, oauth_id: id };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 		}
+	}
+}
+
+function* updateUsernameSaga({ payload }) {
+	const currentUsername = yield select(AuthSelectors.getSelfUsername);
+	const origin = originLink('updateUsername');
+
+	const res = yield fetch(origin, {
+		headers: {
+			'Content-Type': 'application/json'
+			// 'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		method: 'POST',
+		body: JSON.stringify({ username: payload })
+	});
+	const data = yield res.json();
+	if (data.success) {
+		yield put(Actions.updateUsernameSuccess(payload));
+	} else {
+		yield put(Actions.updateUsernameFailure(payload));
 	}
 }
 function* rootSaga() {
@@ -171,7 +214,8 @@ function* rootSaga() {
 		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
 		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
 		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
-		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga)
+		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga),
+		takeLatest(Actions.UPDATE_USERNAME, updateUsernameSaga)
 	]);
 }
 

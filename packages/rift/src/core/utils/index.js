@@ -11,10 +11,23 @@ export const originLink = type => {
 		friends: '/users/friends',
 		addFriend: '/users/friends/add',
 		acceptFriend: '/users/friends/accept',
-		rejectFriend: '/users/friends/reject'
+		rejectFriend: '/users/friends/reject',
+		updateUsername: '/users/username/temp'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;
 	let link = `${host}${path}`;
 	return link;
+};
+
+export const navigateToSignin = () => {
+	Linking.openURL(originLink('login')).catch(err => {
+		console.error('An error occurred', err);
+	});
+};
+
+export const navigateToSignout = () => {
+	Linking.openURL(originLink('logout')).catch(err => {
+		console.error('An error occurred', err);
+	});
 };

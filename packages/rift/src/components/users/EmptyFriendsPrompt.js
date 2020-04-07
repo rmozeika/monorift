@@ -8,7 +8,7 @@ import {
 	Button,
 	Icon
 } from '@ui-kitten/components';
-import { originLink } from '../core/utils';
+import { originLink } from '../../core/utils';
 
 const styles = StyleSheet.create({
 	container: {
@@ -39,7 +39,7 @@ const signIn = () => {
 	});
 };
 
-const GoToUsersIcon = () => <Icon name={'pointedRight'}></Icon>;
+const GoToUsersIcon = () => <Icon name={'pointed-right'}></Icon>;
 export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 	if (!checked) {
 		return (

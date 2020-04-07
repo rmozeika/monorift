@@ -6,7 +6,9 @@ var repositories = require('./repositories');
 var config = require('./config.js');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-
+const { redisConnectionString } = require('./config.js');
+const redis = require('redis');
+const { promisify } = require('util');
 class Api {
 	constructor() {
 		this.repositories = {};
@@ -16,6 +18,7 @@ class Api {
 		this.app = app;
 		await this._connectMongo();
 		await this._connectPostgres();
+		await this._connectRedis();
 		this._registerRoutes();
 		// this._createRootUser();
 	}
@@ -35,6 +38,16 @@ class Api {
 		this.postgresInstance = new PostgreUtil();
 		await this.postgresInstance.connectToServer();
 		// });
+	}
+	async _connectRedis() {
+		let client = redis.createClient(6379, redisConnectionString);
+		this.redis = client;
+	}
+	async redisAsync(cmd, ...args) {
+		const func = this.redis[cmd];
+		const redisPromise = promisify(func);
+		const result = await redisPromise.apply(this.redis, args);
+		return result;
 	}
 	_registerRoutes() {
 		this._createRepositories();

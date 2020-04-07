@@ -1,12 +1,17 @@
 import * as React from 'react';
 // import { action } from '@storybook/addon-actions';
-import SearchBar from './SearchBar';
+import { Media } from './Media';
 // import { taskData, actionsData } from './Task.stories';
-import Provider from '../storybook/Provider';
-import createStore from '../store';
+import Provider from '../../storybook/Provider';
+import createStore from '../../store';
 const store = createStore({});
 export const defaultSearchData = {
-	filterText: 'hey'
+	audioRef: React.createRef(),
+	videoRef: React.createRef(),
+	callFunctions: {
+		audio: () => true,
+		video: () => true
+	}
 };
 
 // export const actionsData = {
@@ -16,19 +21,14 @@ export const defaultSearchData = {
 
 const withProvider = story => <Provider store={store}>{story()}</Provider>;
 export default {
-	component: SearchBar,
-	title: 'SearchBar',
+	component: Media,
+	title: 'Media',
 	//   decorators: [story => <div style={{ padding: '3rem' }}>{story()}</div>],
 	decorators: [
 		withProvider,
 		story => (
 			<div
-				style={{
-					height: '200px',
-					width: '400px',
-					backgroundColor: '#222C44',
-					padding: '3rem'
-				}}
+				style={{ display: 'flex', backgroundColor: '#222C44', padding: '3rem' }}
 			>
 				{story()}
 			</div>
@@ -37,4 +37,9 @@ export default {
 	excludeStories: /.*Data$/
 };
 
-export const Default = () => <SearchBar tasks={defaultSearchData} />;
+export const Default = () => (
+	<Media
+		tasks={defaultSearchData}
+		callFunctions={defaultSearchData.callFunctions}
+	/>
+);

@@ -1,6 +1,6 @@
 {
-	"workbench.colorTheme": "Monokai Pro (Filter Octagon)",
 	"workbench.colorCustomizations": {
-		"activityBar.background": "#ffff"
-	}
+		"activityBar.background": "#000000"
+	},
+	"workbench.colorTheme": "Monokai Pro (Filter Octagon)"
 }

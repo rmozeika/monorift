@@ -23,6 +23,7 @@ module.exports = function(api) {
 		return {
 			presets: ['module:metro-react-native-babel-preset', '@babel/react'],
 			plugins: [
+				'@babel/plugin-proposal-optional-chaining',
 				['module-resolver', moduleResolverConfig],
 				'react-native-web',
 				'@babel/plugin-syntax-dynamic-import',

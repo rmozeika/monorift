@@ -2,45 +2,8 @@ import * as React from 'react';
 import { Button, Icon, Layout } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
-	button: {
-		flex: 1,
-		margin: 0,
-		marginRight: 0,
-		minWidth: 10,
-		height: '100%',
-		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`,
-		borderRadius: 0,
-		color: '#EDF1F7'
-	},
-	buttonContainer: {
-		// position: 'absolute',
-		// right: '0px
-		// left: '70%',
-		// right: '-5%',
-		// top: '0%',
-		// height:'20%',
-		// width: '25%'
-		flexBasis: '25%',
-		justifySelf: 'flex-end',
-		width: '100%',
-		flexDirection: 'row'
-	},
-	acceptButton: {
-		borderRightWidth: 0
-	},
-	rejectButton: {
-		flexBasis: '20%',
-		flexGrow: 0,
-		borderRightWidth: 0
-	},
-	rejectIcon: {
-		textAlign: 'center'
-	}
-});
-
 const AddFriendIcon = style => <Icon name="friend" />;
-const FriendRequestIcon = style => <Icon name="friendRequest" />;
+const FriendRequestIcon = style => <Icon name="friend-request" />;
 const RejectFriendIcon = style => (
 	<Icon color={'white'} style={styles.rejectIcon} name="x" />
 );
@@ -64,6 +27,12 @@ export default ({
 			status: 'danger',
 			text: 'Remove from Call',
 			condition: false
+		},
+		sent: {
+			onPress: () => {},
+			state: 'primary',
+			text: 'sent',
+			condition: friendStatus == 'S'
 		},
 		add: {
 			onPress: onAdd,
@@ -128,6 +97,44 @@ export default ({
 		</Button>
 	);
 };
+
+const styles = StyleSheet.create({
+	button: {
+		flex: 1,
+		margin: 0,
+		marginRight: 0,
+		minWidth: 10,
+		height: '100%',
+		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`,
+		borderRadius: 0,
+		color: '#EDF1F7',
+		flexDirection: 'column'
+	},
+	buttonContainer: {
+		// position: 'absolute',
+		// right: '0px
+		// left: '70%',
+		// right: '-5%',
+		// top: '0%',
+		// height:'20%',
+		// width: '25%'
+		flexBasis: '25%',
+		justifySelf: 'flex-end',
+		// width: '100%',
+		flexDirection: 'row'
+	},
+	acceptButton: {
+		borderRightWidth: 0
+	},
+	rejectButton: {
+		flexBasis: '20%',
+		flexGrow: 0,
+		borderRightWidth: 0
+	},
+	rejectIcon: {
+		textAlign: 'center'
+	}
+});
 // if (online[index].checked) {
 //     taskButton = (
 //         <Button

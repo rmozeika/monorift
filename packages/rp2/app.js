@@ -17,7 +17,8 @@ const {
 	remote,
 	sessionSecret,
 	debug,
-	redisConnectionString
+	redisConnectionString,
+	redisPort = 6379
 } = config;
 const fs = require('fs');
 const webpack = require('webpack');
@@ -30,7 +31,8 @@ const UsersSocket = require('./socket/users');
 console.log('VERSION', '1.1');
 var app = express();
 let RedisStore = require('connect-redis')(session);
-let client = redis.createClient(6379, redisConnectionString);
+// probably remove as this is already created in api.js
+let client = redis.createClient(redisPort, redisConnectionString);
 
 const sessionMiddleware = session({
 	store: new RedisStore({ client }),

@@ -15,7 +15,7 @@ class UserItem extends SocketItem {
 					try {
 						const getAsync = util.promisify(redis.get).bind(redis);
 						// if (user.id) return user;
-						const id = await getAsync(user.oauth_id);
+						const id = await getAsync(`call:${user.oauth_id}`);
 						return { username: user.username, id };
 					} catch (e) {
 						console.log(e);

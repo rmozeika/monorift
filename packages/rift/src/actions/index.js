@@ -93,11 +93,12 @@ export const startCall = (type = 'audio', user) => ({
 });
 export const SEND_OFFER = 'SEND_OFFER';
 //probably remove other than user
-export const sendOffer = ({ oauth_id = false }) => ({
+export const sendOffer = ({ id, user }) => ({
 	type: SEND_OFFER,
 	// offer: message.desc,
 	// constraints: message.constraints,
-	id: oauth_id
+	user,
+	id: id || user?.oauth_id || false
 });
 export const GOT_MESSAGE = 'GOT_MESSAGE';
 export const HANDLERS_SET = 'HANDLERS_SET';

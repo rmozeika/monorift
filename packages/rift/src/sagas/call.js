@@ -340,8 +340,8 @@ const getUserMedia = async constraints => {
 	return stream;
 	// this.gotMedia(stream);
 };
-function* startCallSaga({ id, user }) {
-	const { type, oauth_id } = payload;
+function* startCallSaga({ payload }) {
+	const { type, id, user } = payload;
 	yield put(setPeerInitiator(true));
 	const constraints = { audio: true, video: type == 'video' };
 	yield put(setConstraints({ mediaStream: constraints }));

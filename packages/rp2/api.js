@@ -6,7 +6,7 @@ var repositories = require('./repositories');
 var config = require('./config.js');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const { redisConnectionString } = require('./config.js');
+const { redisConnectionString, redisPort } = require('./config.js');
 const redis = require('redis');
 const { promisify } = require('util');
 class Api {
@@ -40,7 +40,7 @@ class Api {
 		// });
 	}
 	async _connectRedis() {
-		let client = redis.createClient(6379, redisConnectionString);
+		let client = redis.createClient(redisPort, redisConnectionString);
 		this.redis = client;
 	}
 	async redisAsync(cmd, ...args) {

@@ -140,6 +140,9 @@ function* createPeerConnSaga(action) {
 		console.log(error);
 	}
 }
+const audioTag = new Audio();
+const audioCtx = new AudioContext();
+
 function* configurePeerConnSaga(action) {}
 const onTrack = e => {
 	// CHANGE THIS select from store;
@@ -175,9 +178,8 @@ const onTrack = e => {
 	if (e.streams?.[0]) {
 		const stream = e.streams[0];
 		// audioRef.current.srcObject = e.streams[0];
-		const audioTag = new Audio();
+
 		audioTag.srcObject = stream;
-		var audioCtx = new AudioContext();
 		const source = audioCtx.createMediaElementSource(audioTag);
 		// var analyser = audioCtx.createAnalyser();
 		// analyser.minDecibels = -90;

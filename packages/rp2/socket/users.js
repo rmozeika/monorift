@@ -32,7 +32,7 @@ class UserItem extends SocketItem {
 			});
 		}
 	}
-	psub(pattern, chan, message) {
+	psub = (pattern, chan, message) => {
 		const channel = chan.replace(`${this.user.oauth_id}:`, '');
 		if (channel == 'friend_request') {
 			const [id, friendStatus] = message.split(':');
@@ -47,7 +47,7 @@ class UserItem extends SocketItem {
 			// this.socket.emit('FRIEND_REQUEST', message);
 		}
 		console.log(channel, message);
-	}
+	};
 	logConnection() {
 		const { user = {} } = this;
 		console.log(`User connected: ${user.username || 'anonymous_change'}`);

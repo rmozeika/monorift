@@ -204,6 +204,15 @@ const argInterface = {
 				});
 			}
 		},
+		tunnel: {
+			func: async ([type, files]) => {
+				execFile('./dev.sh/tunnel-aws.sh', [], (error, stdout, stderr) => {
+					console.log(stdout);
+					console.log(stderr);
+					console.log(error);
+				});
+			}
+		},
 		transfer: {
 			func: async ([type, files]) => {
 				transferFiles(files);

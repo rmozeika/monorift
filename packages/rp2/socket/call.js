@@ -77,7 +77,6 @@ class Call extends Socket {
 	constructor(io, api) {
 		super(io, nameSpace, api, UserItem);
 		// this.createListeners(this.listeners);
-		this.onMessage = this.onMessage.bind(this);
 		this.makeListener = this.makeListener.bind(this);
 	}
 	onConnect(socket) {
@@ -104,73 +103,12 @@ class Call extends Socket {
 		// REMOVE BELOW
 		// socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
 	}
-	// async onUserDisconnect(userSock, user) {
-	// 	// console.log(this);
-	// 	// const { session = {} } = this.request;
-	// 	// const { passport = {} } = session;
-	// 	// const { user = false } = passport;
-	// 	// const userSock = io.of('/users'); //.broadcast.emit('message', username);
-	// 	if (user) {
-	// 		userSock.emit('broadcast', {
-	// 			oauth_id: user.oauth_id,
-	// 			username: user.username,
-	// 			online: false
-	// 		});
-	// 	}
-	// }
+
 	async makeListener(func, ...args) {
 		// return this[func]()
 		return socket => {
 			return this[func].apply(this, [socket, ...args]);
 		};
 	}
-	async onMessage(msg, secondArg) {
-		// async onMessage(socket, user) {
-		// if (msg.type == 'answer') {
-		// 	console.log(msg);
-		// }
-		const { socket } = this;
-		if (secondArg) {
-			const { users, constraints } = secondArg;
-			// console.log('GOT_MESSAGE', util.inspect(msg));
-			const mappedUsers = await Promise.all(
-				users.map(async user => {
-					try {
-						const getAsync = util.promisify(this.redis.get).bind(this.redis);
-						// if (user.id) return user;
-						const id = await getAsync(user.username);
-						return { username: user.username, id };
-					} catch (e) {
-						console.log(e);
-					}
-				})
-			).then(res => {
-				// console.log(`
-				// 	Emitting to: ${res[0].id}
-				// 	from: ${this.id}
-				// 	msg: ${util.inspect(msg, true)}
-				// 	users: ${util.inspect(users)}
-				// 	constraints: ${constraints}
-				// `);
-				this.to(res[0].id).emit('message', msg, {
-					users,
-					constraints,
-					from: {
-						id: this.id,
-						username: this.request.session.passport.user.username
-					}
-				});
-			});
-			// .catch(e => {
-			// 	console.log(e);
-			// });
-		} else {
-			this.broadcast.emit('message', msg, secondArg);
-		}
-	}
-
-	// onDisconnect() {
-
-	// }
 }
 module.exports = Call;

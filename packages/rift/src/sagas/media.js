@@ -51,13 +51,13 @@ function* tickChannel() {
 		// yield put(sendOffer({}));
 	}
 }
-function* peerCaller() {
-	const conn = new RTCPeerConnection(config);
-	let result;
-	while (true) {
-		result = yield result + 1;
-	}
-}
+// function* peerCaller() {
+// 	const conn = new RTCPeerConnection(config);
+// 	let result;
+// 	while (true) {
+// 		result = yield result + 1;
+// 	}
+// }
 function* addIceListener(conn) {
 	const chan = eventChannel(emit => {
 		conn.addEventListener('icecandidate', e => {
@@ -142,7 +142,7 @@ function* createPeerConnSaga(action) {
 }
 const audioTag = new Audio();
 const audioCtx = new AudioContext();
-
+let inboundStream;
 function* configurePeerConnSaga(action) {}
 const onTrack = e => {
 	// CHANGE THIS select from store;
@@ -178,8 +178,12 @@ const onTrack = e => {
 	if (e.streams?.[0]) {
 		const stream = e.streams[0];
 		// audioRef.current.srcObject = e.streams[0];
-
-		audioTag.srcObject = stream;
+		if (!inboundStream) {
+			inboundStream = new MediaStream();
+			audioTag.srcObject = inboundStream;
+		}
+		inboundStream.addTrack(e.track);
+		// audioTag.srcObject = stream;
 		const source = audioCtx.createMediaElementSource(audioTag);
 		// var analyser = audioCtx.createAnalyser();
 		// analyser.minDecibels = -90;

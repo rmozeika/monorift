@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
 	},
 	row: {
 		padding: 15,
-		width: '100%'
+		width: '100%',
+		flexGrow: 1
 	},
 	callButtonContainer: {
 		flexDirection: 'row',
@@ -316,12 +317,35 @@ class Adapter extends React.PureComponent {
 				contentContainerStyle={{ flexGrow: 1 }}
 			>
 				<Layout style={styles.container}>
-					<Layout style={[styles.row, { padding: 0, height: '100%' }]}>
+					<Layout
+						style={[
+							styles.row,
+							{
+								padding: 0
+								// height: '100%'
+							}
+						]}
+					>
 						<Media
 							callFunctions={callFunctions}
 							videoRef={this.videoRef}
 							audioRef={this.audioRef}
 						/>
+					</Layout>
+					<Layout
+						style={[
+							styles.row,
+							{
+								padding: 0,
+								flexGrow: 0,
+								flexBasis: 100
+								// height: '100%'
+							}
+						]}
+					>
+						<Button onPress={fileCall} appearance="outline" status="warning">
+							Stream Audio from File
+						</Button>
 					</Layout>
 					<CallActions />
 					{/* <Layout style={[styles.row, { padding: 2 }]}>

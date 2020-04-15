@@ -1,8 +1,8 @@
 const Auth0Strategy = require('passport-auth0'),
 	passport = require('passport');
 
-const { auth0Config } = require('./config.js');
-const api = require('./api.js');
+const { auth0Config } = require('../config.js');
+const api = require('../api.js');
 const { clientID, clientSecret, domain, callbackURL } = auth0Config;
 //passport-auth0
 const strategy = new Auth0Strategy(

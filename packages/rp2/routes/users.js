@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const secured = require('../middleware/secured');
+const secured = require('../middleware/session-secured');
+const { authenticateToken, userFromToken } = require('../middleware/jwt');
+
 var Route = require('./route.js');
 
 const routeName = '/users';
@@ -11,6 +13,8 @@ class UserRoute extends Route {
 		super(api, routeName, repoName);
 		setImmediate(() => {
 			this.router.get('/', secured(), this.retrieveAll.bind(this));
+			// this.router.get('/all', authenticateToken, this.fetchUserList.bind(this));
+			// this.router.post('/all', authenticateToken, this.fetchUserList.bind(this));
 			this.router.get('/all', this.fetchUserList.bind(this));
 			this.router.post('/all', this.fetchUserList.bind(this));
 
@@ -28,6 +32,7 @@ class UserRoute extends Route {
 				secured(),
 				this.updateTempUsername.bind(this)
 			);
+			this.router.post('/guest/register', this.registerAsGuest.bind(this));
 		});
 	}
 	getUserNameFromReq(req) {
@@ -86,14 +91,26 @@ class UserRoute extends Route {
 	}
 	// users postgres
 	async fetchUserList(req, res) {
-		const username = this.getUserNameFromReq(req);
-		if (!username) {
-			const users = await this.repository.getUsersPostgres();
-			res.send(users);
-			return;
-		}
+		// const auth = this.api.repositories['auth'];
+		// const token = auth.createJWT({ username: 'test'});
+		// auth.saveJWTCookie(res, token);
+		console.log(req.user);
+		// const username = this.getUserNameFromReq(req);
+		const { user = {} } = req;
+		const username = user.username;
+		// if (!username) {
+		// 	const users = await this.repository.getUsersPostgres();
+		// 	res.send(users);
+		// 	return;
+		// }
 		const users = await this.repository.getUsersPostgresByFriendStatus(username);
 		res.send(users);
+	}
+	async registerAsGuest(req, res) {
+		const { username, password } = req.body;
+		const user = await this.repository.createGuest(username, password);
+		const token = this.api.repositories.auth.initJWT(res, user);
+		res.send('success');
 	}
 	fetchOnlineUsers(req, res) {
 		console.log(this);

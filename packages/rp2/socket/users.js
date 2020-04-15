@@ -1,6 +1,7 @@
 const { Socket, SocketItem } = require('./index');
 const nameSpace = '/users';
 const util = require('util');
+const cookie = require('cookie');
 class UserItem extends SocketItem {
 	constructor(user, ...args) {
 		super(...args);
@@ -13,7 +14,7 @@ class UserItem extends SocketItem {
 
 		// this.subscriber.subscribe(`${this.user.oauth_id}:friend_request`);
 		this.subscriber.psubscribe(`${this.user.oauth_id}:*`);
-		this.subscriber.subscribe(`new_user`);
+		this.subscriber.subscribe('new_user');
 
 		this.logConnection();
 		this.connected();
@@ -139,13 +140,17 @@ class User extends Socket {
 		super(io, nameSpace, api, UserItem);
 		this.createListeners = this.createListeners.bind(this);
 	}
-	onConnect(socket) {
+	async onConnect(socket) {
 		// socket.emit('message', { test: 'val' });
+		let user = await this.api.repositories.auth.userFromSocket(socket);
+		if (!user) {
+			const { session = {} } = socket.request;
+			const { passport = {} } = session;
+			// { user = false } = passport;
+			user = passport.user || false;
+			const isUser = user && user.username;
+		}
 
-		const { session = {} } = socket.request;
-		const { passport = {} } = session;
-		const { user = false } = passport;
-		const isUser = user && user.username;
 		this.createSocketItem(socket, user);
 	}
 	// async onMessage(redis, msg, secondArg) {

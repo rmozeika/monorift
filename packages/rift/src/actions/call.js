@@ -35,13 +35,14 @@ export const setPeerInitiator = initiator => ({
 });
 export const START_CALL = 'START_CALL';
 // if user false, send offer from checked (user for quick call mostly)
-export const startCall = (type = 'audio', user) => ({
+export const startCall = (type = 'audio', user, stream = false) => ({
 	type: START_CALL,
 	payload: {
 		type,
 		id: user.id,
 		user
-	}
+	},
+	mediaStream: stream
 });
 export const SEND_OFFER = 'SEND_OFFER';
 //probably remove other than user

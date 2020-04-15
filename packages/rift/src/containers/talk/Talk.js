@@ -189,10 +189,11 @@ class Adapter extends React.PureComponent {
 	}
 	async getMediaFromFile() {
 		const { audioFileRef } = this;
-		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-		var source = audioCtx.createMediaElementSource(audioFileRef.current);
-		var dest = audioCtx.createMediaStreamDestination();
-
+		// var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		// var source = audioCtx.createMediaElementSource(audioFileRef.current);
+		// var dest = audioCtx.createMediaStreamDestination();
+		const source = this.props.addSource(audioFileRef.current);
+		debugger; //remove
 		source.connect(dest);
 		var stream = dest.stream;
 		audioFileRef.current.play();
@@ -216,10 +217,10 @@ class Adapter extends React.PureComponent {
 
 		const { peerStore } = this.props;
 		this.setMediaStreamConstraints(true, false);
-		peerStore.onicecandidate = e => {};
 
-		const { setPeerInitiator } = this.props;
+		// const { setPeerInitiator } = this.props;
 		await this.getMediaFromFile(audioConstraints);
+		debugger; //remove
 		setPeerInitiator(true);
 		this.props.sendOffer({});
 	}
@@ -346,6 +347,15 @@ class Adapter extends React.PureComponent {
 						<Button onPress={fileCall} appearance="outline" status="warning">
 							Stream Audio from File
 						</Button>
+						<audio
+							ref={this.audioFileRef}
+							src={`/example.mp3?${Math.random()
+								.toString()
+								.substr(2)}`}
+							type="audio/mpeg"
+							controls
+							style={{ margin: 'auto' }}
+						></audio>
 					</Layout>
 					<CallActions />
 					{/* <Layout style={[styles.row, { padding: 2 }]}>
@@ -378,7 +388,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		setPeerInitiator: isInitiator =>
 			dispatch(Actions.setPeerInitiator(isInitiator)),
 		setStream: stream => dispatch(Actions.setStream(stream)),
-		startCallSaga: type => dispatch(Actions.startCall('audio'))
+		startCallSaga: type => dispatch(Actions.startCall('audio')),
+		addSource: source => dispatch(Actions.addSource(source))
 	};
 };
 const mapStateToProps = (state, ownProps) => {

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const secured = require('../middleware/secured');
+const secured = require('../middleware/session-secured');
 var Route = require('./route.js');
 
 const routeName = '/code';

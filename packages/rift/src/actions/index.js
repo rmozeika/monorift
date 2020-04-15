@@ -9,7 +9,7 @@ export * from './auth';
 export * from './call';
 export * from './view';
 export * from './code';
-
+export * from './audio';
 // export default {
 // 	...userActions,
 // 	...authActions,

@@ -12,9 +12,9 @@ import { eventChannel } from 'redux-saga';
 import * as AuthSelectors from '@selectors/auth';
 import 'isomorphic-unfetch';
 import io from 'socket.io-client';
-import { get, post } from '../core/api';
+import { get, post } from '@core/api';
 import * as Actions from '@actions';
-import { originLink } from '../core/utils';
+import { originLink } from '@core/utils';
 const socketServerURL = originLink();
 let socket;
 const selectUsers = state => {
@@ -27,11 +27,10 @@ function* fetchUsers() {
 		// const res = yield fetch(origin, { method: 'POST' });
 		// const data = yield res.json();
 		const data = yield post(origin);
-		debugger; //remove
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
 
-		yield put(Actions.fetchOnlineUsers());
+		// yield put(Actions.fetchOnlineUsers());
 	} catch (err) {}
 }
 function* onlineUsersSaga() {

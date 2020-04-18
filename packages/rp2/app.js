@@ -161,10 +161,14 @@ function onAuthorizeFail(data, message, error, accept) {
 	accept(null, false);
 }
 app.io.on('connection', async socket => {
-	const { session = {} } = socket.request;
-	const { passport = {} } = session;
-	const { user = false } = passport;
-	const isUser = user && user.username;
+	// const { session = {} } = socket.request;
+	// const { passport = {} } = session;
+	// const { user = false } = passport;
+	// const isUser = user && user.username;
+	const usersRepo = api.repositories.users;
+	const { oauth_id } = await api.repositories.auth.userFromSocket(socket);
+	const userData = oauth_id ? await usersRepo.findById(oauth_id) : false;
+	const user = usersRepo.getPublicUser(userData);
 	// 	if (isUser) {
 	// 		const key = client.sadd('online_users', user.oauth_id);
 	// 		client.setbit('online_bit', user.bit_id, 1);
@@ -184,7 +188,6 @@ app.io.on('connection', async socket => {
 	socket.on('check_auth', async ack => {
 		if (user) {
 			// const token = jwt.sign(user, JWT_SECRET);
-			const user = await api.repositories.auth.userFromSocket(socket);
 			ack({ user });
 			return;
 		}

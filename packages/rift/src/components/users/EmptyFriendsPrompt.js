@@ -9,30 +9,9 @@ import {
 	Icon
 } from '@ui-kitten/components';
 import { originLink } from '../../core/utils';
+import CreateGuest from './CreateGuest';
+import AuthIcons from '@components/buttons/AuthIcons';
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'space-around'
-	},
-	buttonRow: {
-		display: 'flex',
-		flexDirection: 'column',
-		// justifyContent: 'space-evenly',
-		// alignContent: 'space-evenly',
-		width: '85%',
-		margin: 15
-	},
-	button: {
-		margin: 5,
-		// flexBasis: '45%',
-		textAlign: 'center'
-	},
-	message: {
-		marginTop: '20%'
-	}
-});
 const signIn = () => {
 	Linking.openURL(originLink('login')).catch(err => {
 		console.error('An error occurred', err);
@@ -76,8 +55,12 @@ export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 				Sign in for friends
 			</Text>
 			<Layout style={styles.buttonRow}>
+				<CreateGuest />
+			</Layout>
+			<Layout style={styles.buttonRow}>
+				{/* <AuthIcons onPress={signIn} style={styles.button} /> */}
 				<Button onPress={signIn} status={'basic'} style={styles.button}>
-					Sign in
+					Sign in with facebook, google, github
 				</Button>
 				<Button
 					onPress={goToUsers}
@@ -90,3 +73,31 @@ export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 		</Layout>
 	);
 };
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'space-around'
+	},
+	buttonRow: {
+		display: 'flex',
+		flexDirection: 'column',
+		// justifyContent: 'space-evenly',
+		// alignContent: 'space-evenly',
+		width: '85%',
+		margin: 15
+	},
+	button: {
+		margin: 5,
+		// flexBasis: '45%',
+		textAlign: 'center'
+	},
+	message: {
+		marginTop: '20%'
+	},
+	providerIcon: {
+		height: 40,
+		tintColor: 'white'
+	}
+});

@@ -139,7 +139,6 @@ const userData = (state = {}, action) => {
 				calling: false,
 				connected: false
 			};
-			console.log(added);
 			return added;
 		}
 		// fallinback, this shouldn't be happening, upsert if doesnt exisst

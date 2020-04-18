@@ -60,14 +60,29 @@ class UserRepository extends Repository {
 	createUser(user, cb) {
 		return new Promise((resolve, reject) => {
 			// let user;
+
 			const userData = { ...user };
 			const { username, src, email, oauth_id } = user;
-			this.createGravatar(oauth_id, email)
+			this.findByUsername(username)
+				.then(foundUser => {
+					if (foundUser) {
+						const message = `Username '${username}' already exists`;
+						reject(message);
+						throw new Error(message);
+						return false;
+					}
+					return true;
+				})
+				.then(proceed => {
+					if (proceed) {
+						this.createGravatar(oauth_id, email);
+					}
+				})
 				.then(gravatarData => {
 					userData.src['gravatar'] = gravatarData;
 					return;
 				})
-				.then(this.findByUsername(username))
+				.then(() => this.findByUsername(username))
 				.then(foundUser => {
 					if (foundUser) return false;
 					return this.mongoInstance.insertOne(this.collection, userData);
@@ -107,7 +122,7 @@ class UserRepository extends Repository {
 			});
 		return id;
 	}
-	async getIdByUsername(username) {
+	async getBitIdByUsername(username) {
 		const opts = { project: { bit_id: 1 } };
 		const { bit_id = false } = await this.findOne({ doc: { username }, opts });
 		return bit_id;
@@ -117,6 +132,9 @@ class UserRepository extends Repository {
 	}
 	async findById(id) {
 		return this.findOne({ oauth_id: id });
+	}
+	getPublicUser({ bit_id, _id, socket_id, ...user }) {
+		return user;
 	}
 	async importProfile(profile, cb) {
 		const { id, email, emails, nickname, mocked = false } = profile;
@@ -154,7 +172,10 @@ class UserRepository extends Repository {
 			mocked: false,
 			guest: true
 		};
-		const user = await this.createUser(guest);
+		const user = await this.createUser(guest).catch(e => {
+			console.log(e);
+			return Promise.reject(e);
+		});
 		const authData = await this.api.repositories.auth.storeAuth(
 			user.bit_id,
 			password

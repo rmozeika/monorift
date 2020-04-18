@@ -311,7 +311,7 @@ class Adapter extends React.PureComponent {
 			<ScrollView
 				style={{
 					overflowY: 'scroll',
-					height: '85vh',
+					// height: '85vh',
 					flexGrow: 1,
 					flexDirection: 'column'
 				}}

@@ -4,34 +4,17 @@ import * as Actions from '@actions';
 import { Layout, Input, Button, Text } from '@ui-kitten/components';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAlert } from '@selectors/auth';
-const styles = StyleSheet.create({
-	text: {
-		margin: 8
-	},
-	alternativeContainer: {
-		borderRadius: 4,
-		margin: 8,
-		backgroundColor: '#FF3D71',
-		height: 'auto',
-		padding: 5,
-		textAlign: 'center',
-		justifyContent: 'center'
-	}
-});
+import Alert from './Alert';
 
-export default props => {
+const UpdateTempUsername = props => {
 	const [value, onChangeText] = React.useState('');
 	const dispatch = useDispatch();
 	const alert = useSelector(getAlert);
 	return (
 		<Layout style={{ backgroundColor: 'inherit' }}>
-			{alert && (
-				<Layout style={styles.alternativeContainer}>
-					<Text style={{ fontWeight: '500' }}>{alert}</Text>
-				</Layout>
-			)}
+			<Alert message={alert} />
 			<Input
-				placeholder="Change Username"
+				placeholder="Desired Username"
 				value={value}
 				onChangeText={text => onChangeText(text)}
 				// value={this.state.filterText}
@@ -39,8 +22,16 @@ export default props => {
 				// style={styles.searchInput}
 			/>
 			<Button onPress={() => dispatch(Actions.updateUsername(value))}>
-				Submit
+				Change Username
 			</Button>
 		</Layout>
 	);
 };
+
+const styles = StyleSheet.create({
+	text: {
+		margin: 8
+	}
+});
+
+export default UpdateTempUsername;

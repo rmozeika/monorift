@@ -1,29 +1,17 @@
 import React from 'react';
-import { Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, ImageProps, Linking } from 'react-native';
-import {
-	ThemeContext,
-	ThemeContextType,
-	ThemeKey,
-	themes,
-	ThemeStore,
-	ThemeService
-} from '../../core/themes';
 import { originLink } from '../../core/utils';
 import {
 	withStyles,
 	ThemedComponentProps,
-	ThemeType,
-	StyledComponentProps
+	ThemeType
 } from '@ui-kitten/components/theme';
 import {
 	Icon,
 	TopNavigation,
 	TopNavigationAction,
-	TopNavigationActionProps,
-	TopNavigationProps,
-	IconProps
+	TopNavigationActionProps
 } from '@ui-kitten/components';
 interface Auth {
 	loggedIn: boolean;
@@ -44,7 +32,7 @@ type NavProps = NavBarProps & ThemedComponentProps;
 class NavBar extends React.Component<NavProps, {}> {
 	private renderSigninIcon = (style): React.ReactElement<ImageProps> => {
 		const { themedStyle } = this.props;
-		return <Icon name="sign-in-alt" style={{ ...style }} solid />;
+		return <Icon name="sign-in-alt" style={style} solid />;
 	};
 	private renderSignoutIcon = (style): React.ReactElement<ImageProps> => {
 		return <Icon name="sign-out-alt" style={{ ...style }} solid />;

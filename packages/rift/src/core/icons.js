@@ -6,6 +6,8 @@ import IconFeather from 'react-native-vector-icons/Feather';
 
 import iconFont from 'react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf';
 import iconFontSolid from 'react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf';
+import iconFontBrands from 'react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf';
+
 import iconFontFeather from 'react-native-vector-icons/Fonts/Feather.ttf';
 const iconFontStyles = `@font-face {
   src: url(${iconFont});
@@ -16,10 +18,13 @@ const iconFontStyles = `@font-face {
   font-family: FontAwesome5_Solid;
 }
 @font-face {
+	src: url(${iconFontBrands});
+	font-family: FontAwesome5_Brands;
+}
+@font-face {
 	src: url(${iconFontFeather});
 	font-family: Feather;
-  }
-`;
+}`;
 if (Platform.OS == 'web') {
 	const style = document.createElement('style');
 	style.type = 'text/css';
@@ -63,30 +68,39 @@ function FeatherIcon({
 		/>
 	);
 }
+const defaultStyle = StyleSheet.create({
+	height: 40,
+	tintColor: 'white'
+});
 function AwesomeIcon(
 	{ name, style, children, size, buttonProps, color, ...iconProps },
 	props
 ) {
-	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
-
+	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style); //StyleSheet.flatten([defaultStyle, style]);
+	if (name == 'google' || name == 'sign-in-alt') {
+		debugger; //remove
+		// console.log('ICON HERE', height, tintColor);
+	}
 	if (children || buttonProps) {
 		return (
 			<Icon5.Button
 				name={name}
 				color={tintColor}
 				{...buttonProps}
-				iconStyle={iconStyle}
+				// iconStyle={iconStyle}
+				iconStyle={style}
 			>
 				{children}
 			</Icon5.Button>
 		);
 	}
+
 	return (
 		<Icon5
 			name={name}
 			size={size || height}
 			color={color || tintColor}
-			style={iconStyle}
+			style={style}
 			{...iconProps}
 		/>
 	);
@@ -127,8 +141,11 @@ function createIconsMap() {
 		'pointed-right': IconProvider('angle-double-right'),
 		'caret-down': IconProvider('caret-down'),
 		phone: IconProvider('phone'),
-		alert: IconProvider('info-circle')
-
+		alert: IconProvider('info-circle'),
+		// facebook: IconProvider('facebook'),
+		// google: IconProvider('google'),
+		github: IconProvider('github'),
+		'google-play': IconProvider('google-play')
 		// activity: IconProvider('user-plus'),
 	};
 }

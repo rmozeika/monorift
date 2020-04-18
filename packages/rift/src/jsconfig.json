@@ -10,7 +10,8 @@
 			"@selectors": ["packages/rift/src/selectors/index.js"],
 			"@containers/*": ["packages/rift/src/containers/*"],
 			"@actions/*": ["packages/rift/src/actions/*"],
-			"@actions": ["packages/rift/src/actions/index.js"]
+			"@actions": ["packages/rift/src/actions/index.js"],
+			"@core": ["packages/rift/src/core/*"]
 		}
 	}
 	// "exclude": ["node_modules", "dist"]

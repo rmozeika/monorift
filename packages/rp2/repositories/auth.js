@@ -65,7 +65,6 @@ class AuthRepository extends Repository {
 	async simpleAuth(username, password) {
 		const user = await this.api.repositories.users.findByUsername(username);
 		const { bit_id: id } = user;
-		// const id = await this.api.repositories.users.getIdByUsername(username);
 		const authData = await this.findOne({ id });
 		const verify = await bcrypt.compare(password, authData.hash);
 		if (!verify) {

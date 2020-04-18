@@ -55,17 +55,17 @@ class UserItem extends SocketItem {
 	}
 	connected() {
 		const { user, socket, redis } = this;
-		if (user) {
+		if (user && user.id) {
 			try {
 				const key = redis.sadd('online_users', user.username);
-				redis.setbit('online_bit', user.bit_id, 1);
+				redis.setbit('online_bit', user.id, 1);
 				redis.set(user.username, socket.id);
-				redis.hmset(`user:${user.username}`, [
-					'socketid',
-					socket.id,
-					'key',
-					user._id
-				]);
+				// redis.hmset(`user:${user.username}`, [
+				// 	'socketid',
+				// 	socket.id,
+				// 	'key',
+				// 	user._id
+				// ]);
 				// socket.emit('broadcast', {
 				//     oauth_id: user.oauth_id,
 				//     username: user.username,
@@ -101,10 +101,13 @@ class UserItem extends SocketItem {
 	async onMessage(msg, secondArg) {}
 	async onDisconnect() {
 		this.subscriber.punsubscribe();
-		const { user = {} } = this;
+		const { user = {}, redis } = this;
 		const { oauth_id, username } = user;
+		if (user.id) {
+			redis.setbit('online_bit', user.id, 0);
+		}
 		if (oauth_id) {
-			console.log('broadcast user offline', user.username);
+			console.log('broadcast user offline', username);
 			try {
 				this.socket.broadcast.emit('message', {
 					id: user.oauth_id,
@@ -140,8 +143,7 @@ class User extends Socket {
 		super(io, nameSpace, api, UserItem);
 		this.createListeners = this.createListeners.bind(this);
 	}
-	async onConnect(socket) {
-		// socket.emit('message', { test: 'val' });
+	async getSelf(socket) {
 		let user = await this.api.repositories.auth.userFromSocket(socket);
 		if (!user) {
 			const { session = {} } = socket.request;
@@ -150,16 +152,21 @@ class User extends Socket {
 			user = passport.user || false;
 			const isUser = user && user.username;
 		}
+		return user;
+	}
+	async onConnect(socket) {
+		// socket.emit('message', { test: 'val' });
+		const user = await this.getSelf(socket);
 
 		this.createSocketItem(socket, user);
 	}
 	// async onMessage(redis, msg, secondArg) {
 	// }
 	async onDisconnect(socket) {
-		const { session = {} } = socket.request;
-		const { passport = {} } = session;
-		const { user = false } = passport;
-		const isUser = user && user.username;
+		// const { session = {} } = socket.request;
+		// const { passport = {} } = session;
+		// const { user = false } = passport;
+		// const isUser = user && user.username;
 		console.log('disconnected');
 		if (user.username) {
 			this.redis.srem('online_users', user.username);

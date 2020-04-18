@@ -62,21 +62,28 @@ class AuthRoute extends Route {
 		res.send('success');
 	}
 	auth0Callback(req, res, next) {
-		passport.authenticate('auth0', (err, user, info) => {
-			const auth = this.repository;
-			const token = auth.createJWT(user);
-			auth.saveJWTCookie(res, token);
+		passport.authenticate('auth0', async (err, user, info) => {
+			// const auth = this.repository;
+			// const token = auth.createJWT(user);
+			// auth.saveJWTCookie(res, token);
+			const token = await this.repository.initJWT(res, user);
 			if (err) {
 				return next(err);
 			}
 			if (!user) {
 				return res.redirect('/login');
 			}
+			const useSession = false;
+			const returnTo = req.session.returnTo;
+
+			if (!useSession) {
+				res.redirect(returnTo || '/');
+				return;
+			}
 			req.logIn(user, function(err) {
 				if (err) {
 					return next(err);
 				}
-				const returnTo = req.session.returnTo;
 				delete req.session.returnTo;
 				res.redirect(returnTo || '/');
 			});

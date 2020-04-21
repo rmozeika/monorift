@@ -77,10 +77,7 @@ function AwesomeIcon(
 	props
 ) {
 	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style); //StyleSheet.flatten([defaultStyle, style]);
-	if (name == 'google' || name == 'sign-in-alt') {
-		debugger; //remove
-		// console.log('ICON HERE', height, tintColor);
-	}
+
 	if (children || buttonProps) {
 		return (
 			<Icon5.Button

@@ -384,6 +384,7 @@ class UserRepository extends Repository {
 			[username, friendUsername],
 			['oauth_id', 'id']
 		);
+		console.log(user);
 		const existing = await this.postgresInstance
 			.knex('friendship')
 			.select('status')

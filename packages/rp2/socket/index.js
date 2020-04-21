@@ -8,6 +8,14 @@ exports.SocketItem = class SocketItem {
 		this.api = api;
 		this.redis = redis;
 		this.flush = flush;
+		if (this.getAdditionalHandlers) {
+			const handlers = this.getAdditionalHandlers();
+			console.log(handlers);
+			handlers.forEach(({ type, handler }) => {
+				socket.on(type, handler.bind(this));
+			});
+		}
+		// console.log(this.additionalMethods);
 		if (this.onMessage) {
 			socket.on('message', this.onMessage.bind(this));
 		}

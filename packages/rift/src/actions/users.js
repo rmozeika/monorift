@@ -65,3 +65,16 @@ export const removeOnlineUser = user => ({
 	id: user.oauth_id,
 	payload: user
 });
+
+export const AM_ONLINE = 'AM_ONLINE';
+export const setAmOnline = () => ({
+	type: AM_ONLINE
+});
+
+export const START_USER_SOCKET = 'START_USER_SOCKET';
+export const CLOSE_USER_SOCKET = 'CLOSE_USER_SOCKET';
+
+export const closeUserSocket = restart => ({
+	type: CLOSE_USER_SOCKET,
+	restart
+});

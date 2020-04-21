@@ -19,6 +19,14 @@ class UserItem extends SocketItem {
 		this.logConnection();
 		this.connected();
 	}
+	getAdditionalHandlers() {
+		return [
+			{
+				type: 'AM_ONLINE',
+				handler: this.onAmOnline
+			}
+		];
+	}
 	async sub(channel, message) {
 		if (channel == 'new_user') {
 			const user = await this.api.repositories.users.findById(message);
@@ -53,6 +61,25 @@ class UserItem extends SocketItem {
 		const { user = {} } = this;
 		console.log(`User connected: ${user.username || 'anonymous_change'}`);
 	}
+	setOnline() {
+		const { user, socket, redis } = this;
+		if (user && user.id) {
+			const key = redis.sadd('online_users', user.username);
+			redis.setbit('online_bit', user.id, 1);
+			redis.set(user.username, socket.id);
+			socket.broadcast.emit('message', {
+				id: user.oauth_id,
+				data: {
+					online: true
+				},
+				user
+			});
+		}
+	}
+	onAmOnline(msg) {
+		console.log(msg);
+		this.setOnline();
+	}
 	connected() {
 		const { user, socket, redis } = this;
 		if (user && user.id) {
@@ -60,24 +87,9 @@ class UserItem extends SocketItem {
 				const key = redis.sadd('online_users', user.username);
 				redis.setbit('online_bit', user.id, 1);
 				redis.set(user.username, socket.id);
-				// redis.hmset(`user:${user.username}`, [
-				// 	'socketid',
-				// 	socket.id,
-				// 	'key',
-				// 	user._id
-				// ]);
-				// socket.emit('broadcast', {
-				//     oauth_id: user.oauth_id,
-				//     username: user.username,
-				//     online: true
-				// });
+
 				console.log('broadcast user online', user.username);
-				// this.nsp.emit('message', {
-				//     id: user.oauth_id,
-				//     data: {
-				//         online: true
-				//     }
-				// });
+
 				socket.broadcast.emit('message', {
 					id: user.oauth_id,
 					data: {

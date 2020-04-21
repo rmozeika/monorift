@@ -34,6 +34,7 @@ function CreateGuest(props) {
 			/>
 			<Layout style={styles.buttonRow}>
 				<Button
+					status={'basic'}
 					style={styles.button}
 					onPress={() => dispatch(Actions.createGuest(username, password))}
 				>

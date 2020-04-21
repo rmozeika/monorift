@@ -76,13 +76,13 @@ function* createGuestSaga(action) {
 		const { username, password } = action.payload;
 		const origin = originLink('createGuest');
 		const { user, success } = yield post(origin, { username, password });
-		debugger; //remove
 		if (!success) {
 		}
 		// console.log(result);
 		try {
 			if (success && user?.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload: user });
+				yield put({ type: Actions.AM_ONLINE });
 			} else {
 				// yield put({ type: AUTH.LOGIN.REQUEST, payload: user });
 				yield put(Actions.updateUsernameFailure(username));

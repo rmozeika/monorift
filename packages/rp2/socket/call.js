@@ -1,7 +1,7 @@
 const { Socket, SocketItem } = require('./index');
 const nameSpace = '/call';
 const util = require('util');
-class UserItem extends SocketItem {
+class CallItem extends SocketItem {
 	constructor(...args) {
 		super(...args);
 	}
@@ -75,7 +75,7 @@ class Call extends Socket {
 		}
 	];
 	constructor(io, api) {
-		super(io, nameSpace, api, UserItem);
+		super(io, nameSpace, api, CallItem);
 		// this.createListeners(this.listeners);
 		this.makeListener = this.makeListener.bind(this);
 	}

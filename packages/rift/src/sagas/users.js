@@ -6,6 +6,9 @@ import {
 	take,
 	takeLatest,
 	actionChannel,
+	cancel,
+	cancelled,
+	fork,
 	select
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
@@ -154,21 +157,83 @@ const createSocketChannel = socket =>
 			}
 		};
 
-		return () => {
+		const onClose = () => {
+			debugger; //remove
+			socket.close(true);
 			//socket.off('login', handler);
 		};
+		return onClose;
 	});
 
-function* initSocketSaga() {
-	try {
-		const socket = yield call(connect);
-	} catch (e) {
-		console.log('init socket error', e);
+function* startSocketSaga() {
+	const task = yield fork(initSocketSaga);
+	const restart = yield take(Actions.CLOSE_USER_SOCKET);
+	yield cancel(task);
+	debugger; //remove
+	if (restart) {
+		debugger; //remove
+		const newTask = yield fork(initSocketSaga);
+		yield take(Actions.CLOSE_USER_SOCKET);
+		yield cancel(newTask);
+	} else {
+		while (yield take(Actions.START_USER_SOCKET)) {
+			debugger; //remove
+			const newTask = yield fork(initSocketSaga);
+			yield take(Actions.CLOSE_USER_SOCKET);
+			yield cancel(newTask);
+		}
 	}
-	console.log('create user socket channel');
-	//socket.send('hi');
+}
+function* initSocketSaga() {
+	const socket = yield call(connect);
+
 	const socketChannel = yield call(createSocketChannel, socket);
-	console.log('take channel');
+
+	try {
+		// try {
+		// } catch (e) {
+		// 	console.log('init socket error', e);
+		// }
+		console.log('create user socket channel');
+		//socket.send('hi');
+		// yield fork(closeSocket, socketChannel);
+		// while (true) {
+		// 	debugger; //remove
+		while (true) {
+			const message = yield take(socketChannel);
+			try {
+				const { id, data, user } = message;
+				yield put(Actions.updateUser(id, data, user));
+				if (data.online == true) {
+					const user = { username: message.username, oauth_id: id };
+					yield put(Actions.addOnlineUser(user));
+				} else if (message.online == false) {
+					const user = { username: message.username, oauth_id: id };
+					yield put(Actions.removeOnlineUser(user));
+				}
+			} catch (e) {
+				//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
+			}
+		}
+		// yield fork(socketMessageSaga, socketChannel);
+		// }
+		debugger; //remove
+		// yield take(Actions.CLOSE_USER_SOCKET);
+		// yield cancel(socketMessageSaga);
+		console.log('take channel');
+	} catch (e) {
+		debugger; //remove
+		console.log(e);
+	} finally {
+		if (yield cancelled()) {
+			console.log('cancelled socketsaga');
+			debugger; //remove
+			socketChannel.close();
+			console.log('countdown cancelled');
+		}
+	}
+}
+function* socketMessageSaga(socketChannel) {
 	while (true) {
 		const message = yield take(socketChannel);
 		try {
@@ -184,6 +249,13 @@ function* initSocketSaga() {
 		} catch (e) {
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 		}
+	}
+}
+function* closeSocket(socketChannel) {
+	while (true) {
+		debugger; //remove
+		yield take(Actions.CLOSE_USER_SOCKET);
+		socketChannel.close();
 	}
 }
 
@@ -206,9 +278,15 @@ function* updateUsernameSaga({ payload }) {
 		yield put(Actions.updateUsernameFailure(payload));
 	}
 }
+function* amOnlineSaga({ payload }) {
+	yield put(Actions.closeUserSocket(true));
+	// yield put({ type: Actions.START_USER_SOCKET });
+
+	socket.emit('AM_ONLINE');
+}
 function* rootSaga() {
 	yield all([
-		initSocketSaga(),
+		startSocketSaga(),
 		// onlineUsersSaga(),
 		fetchUsers(),
 		takeLatest(Actions.FETCH_USERS, fetchUsers),
@@ -216,7 +294,8 @@ function* rootSaga() {
 		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
 		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
 		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga),
-		takeLatest(Actions.UPDATE_USERNAME, updateUsernameSaga)
+		takeLatest(Actions.UPDATE_USERNAME, updateUsernameSaga),
+		takeLatest(Actions.AM_ONLINE, amOnlineSaga)
 	]);
 }
 

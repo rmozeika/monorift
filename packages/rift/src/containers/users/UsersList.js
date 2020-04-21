@@ -191,9 +191,8 @@ const mapStateToProps = (state, props) => {
 	const { loggedIn, checked } = auth;
 	// const listType = route.initialParams.listType;
 
-	// const visibleUsers = UserSelectors.getVisibleUserlistSearch(state, props);
-	// const visibleUsers = UserSelectors.getVisUsersAlt(state, props);
-	const visibleUsers = UserSelectors.getUsersByOnline(state, props);
+	const visibleUsers = UserSelectors.filteredUsersByOnline(state, props);
+	// const visibleUsers = UserSelectors.getUsersByOnlineCached(state, props);
 	return {
 		tab,
 		mobile,

@@ -139,10 +139,11 @@ class UserRoute extends Route {
 		res.send(friends);
 	}
 	async addFriend(req, res) {
-		const username = this.getUserNameFromReq(req);
+		const { user } = req;
+		const { username } = user;
 		const { friend } = req.body;
 		console.log(username);
-		this.repository.addFriend(username, friend.username);
+		const result = await this.repository.addFriend(username, friend.username);
 		res.send(true);
 	}
 	async acceptFriend(req, res) {

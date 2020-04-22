@@ -136,7 +136,8 @@ module.exports = {
 			'@containers': path.resolve(src, 'containers'),
 			'@selectors': path.resolve(src, 'selectors'),
 			'@reducers': path.resolve(src, 'reducers'),
-			'@actions': path.resolve(src, 'actions', 'index.js')
+			'@actions': path.resolve(src, 'actions', 'index.js'),
+			'@core': path.resolve(src, 'core')
 
 			// 'react-native-screens': 'react-native-screens/src/screens.web.js'
 		}

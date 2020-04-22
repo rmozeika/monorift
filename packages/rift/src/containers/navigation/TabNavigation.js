@@ -5,7 +5,7 @@ import 'react-native-gesture-handler';
 
 // import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import UsersList from '../users/UsersList';
+import UsersList from '../users/UsersListNative';
 
 const Tab = createBottomTabNavigator();
 

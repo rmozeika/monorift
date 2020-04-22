@@ -56,17 +56,33 @@ class UserRepository extends Repository {
 		response.pipe(file);
 		return { url: gravatarUrl, path: gravatarPath };
 	}
+
 	createUser(user, cb) {
 		return new Promise((resolve, reject) => {
 			// let user;
+
 			const userData = { ...user };
 			const { username, src, email, oauth_id } = user;
-			this.createGravatar(oauth_id, email)
+			this.findByUsername(username)
+				.then(foundUser => {
+					if (foundUser) {
+						const message = `Username '${username}' already exists`;
+						reject(message);
+						throw new Error(message);
+						return false;
+					}
+					return true;
+				})
+				.then(proceed => {
+					if (proceed) {
+						this.createGravatar(oauth_id, email);
+					}
+				})
 				.then(gravatarData => {
 					userData.src['gravatar'] = gravatarData;
 					return;
 				})
-				.then(this.findByUsername(username))
+				.then(() => this.findByUsername(username))
 				.then(foundUser => {
 					if (foundUser) return false;
 					return this.mongoInstance.insertOne(this.collection, userData);
@@ -91,7 +107,7 @@ class UserRepository extends Repository {
 		});
 	}
 	async insertUserIntoPostgres(_id, user) {
-		const { username, src, email, oauth_id } = user;
+		const { username, src, email, oauth_id, guest = false } = user;
 		const [id] = await this.postgresInstance
 			.knex('users')
 			.returning('id')
@@ -101,16 +117,24 @@ class UserRepository extends Repository {
 				mongo_id: _id,
 				src: { email, ...src },
 				email,
-				oauth_id
+				oauth_id,
+				guest
 			});
 		return id;
 	}
-
+	async getBitIdByUsername(username) {
+		const opts = { project: { bit_id: 1 } };
+		const { bit_id = false } = await this.findOne({ doc: { username }, opts });
+		return bit_id;
+	}
 	async findByUsername(username, cb) {
 		return this.findOne({ username }, cb);
 	}
 	async findById(id) {
 		return this.findOne({ oauth_id: id });
+	}
+	getPublicUser({ bit_id, _id, socket_id, ...user }) {
+		return user;
 	}
 	async importProfile(profile, cb) {
 		const { id, email, emails, nickname, mocked = false } = profile;
@@ -135,6 +159,38 @@ class UserRepository extends Repository {
 			mocked
 		};
 		return this.createUser(obj, cb);
+	}
+	async createGuest(username, password) {
+		const id = 'guest'; // TODO: get id
+		const email = `${username}@monorift.com`;
+		const guest = {
+			username,
+			oauth_id: `monorift|${username}`,
+			usingTempUsername: false,
+			email,
+			src: {},
+			mocked: false,
+			guest: true
+		};
+		const user = await this.createUser(guest).catch(e => {
+			console.log(e);
+			return Promise.reject(e);
+		});
+		const authData = await this.api.repositories.auth.storeAuth(
+			user.bit_id,
+			password
+		);
+		return user;
+		// this.createGravatar(id, email)
+		// 		.then(gravatarData => {
+		// 			userData.src['gravatar'] = gravatarData;
+		// 			return;
+		// 		})
+		// 		.then(this.findByUsername(username))
+		// 		.then(foundUser => {
+		// 			if (foundUser) return false;
+		// 			return this.mongoInstance.insertOne(this.collection, userData);
+		// 		})
 	}
 	update({ doc, filter }, opts = {}) {
 		return this.update({ filter, doc: { $set: doc }, opts }, type);
@@ -190,31 +246,36 @@ class UserRepository extends Repository {
 	async getUsersPostgresByFriendStatus(username) {
 		performance.mark('A');
 		// console.log
-		const [{ id }] = await this.postgresInstance.client
-			.select('id')
-			.from('users')
-			.where('username', '=', username);
-		const users = await this.postgresInstance.client
-			.select(
-				'users.id',
-				'users.username',
-				'users.src',
-				'friendship.status',
-				'users.oauth_id'
-			)
-			.from('users')
-			.where('id', '!=', id)
-			.leftJoin('friendship', function() {
-				this.on('friendship.member2_id', '=', 'users.id').andOn(
-					'friendship.member1_id',
-					'=',
-					id
-				);
-			})
-			.orderBy('friendship.status')
-			.catch(e => {
-				console.log(e);
-			});
+		let users;
+		if (username) {
+			const [{ id }] = await this.postgresInstance.client
+				.select('id')
+				.from('users')
+				.where('username', '=', username);
+			users = await this.postgresInstance.client
+				.select(
+					'users.id',
+					'users.username',
+					'users.src',
+					'friendship.status',
+					'users.oauth_id'
+				)
+				.from('users')
+				.where('id', '!=', id)
+				.leftJoin('friendship', function() {
+					this.on('friendship.member2_id', '=', 'users.id').andOn(
+						'friendship.member1_id',
+						'=',
+						id
+					);
+				})
+				.orderBy('friendship.status')
+				.catch(e => {
+					console.log(e);
+				});
+		} else {
+			users = await this.getUsersPostgres();
+		}
 
 		const usersWithOnlineStatus = await Promise.all(
 			users.map(async user => {
@@ -323,6 +384,7 @@ class UserRepository extends Repository {
 			[username, friendUsername],
 			['oauth_id', 'id']
 		);
+		console.log(user);
 		const existing = await this.postgresInstance
 			.knex('friendship')
 			.select('status')

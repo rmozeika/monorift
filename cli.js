@@ -3,6 +3,7 @@
 const util = require('util');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const { exec, execFile, spawn } = require('child_process');
 const execa = util.promisify(require('child_process').exec);
 const transferFiles = require('./scripts/xfer-files.js');
@@ -217,6 +218,20 @@ const argInterface = {
 			func: async ([type, files]) => {
 				transferFiles(files);
 				console.log('done');
+			}
+		},
+		jwt: {
+			func: async ([
+				type,
+				secret = 'DONT USE! DIDNT CHANGE, so change me!',
+				secret2,
+				...args
+			]) => {
+				console.log(`generate secret using: ${secret}`);
+				// const gen = crypto.createSecretKey(secret);
+				const hmac = crypto.createHmac('sha256', secret);
+				const sec = hmac.update(secret2).digest('hex');
+				console.log(sec);
 			}
 		}
 	}

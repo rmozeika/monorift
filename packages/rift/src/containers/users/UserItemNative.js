@@ -70,7 +70,7 @@ class UserItem extends React.Component {
 			: {};
 
 		return (
-			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
+			<Layout style={[styles.listItem, border, { padding: 0 }]}>
 				<Layout style={styles.listItemMain}>
 					<TouchableOpacity
 						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
@@ -116,7 +116,7 @@ class UserItem extends React.Component {
 						// style={buttonStyleAlt}
 					/>
 				)}
-			</ListItem>
+			</Layout>
 		);
 	}
 }

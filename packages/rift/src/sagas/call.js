@@ -340,7 +340,7 @@ const getUserMedia = async constraints => {
 	return stream;
 	// this.gotMedia(stream);
 };
-function* startCallSaga({ payload }) {
+function* startCallSaga({ payload, mediaStream }) {
 	const { type, id, user } = payload;
 	yield put(setPeerInitiator(true));
 	const constraints = { audio: true, video: type == 'video' };
@@ -350,7 +350,12 @@ function* startCallSaga({ payload }) {
 	// const { peerStore } = this.props;
 	// const { conn } = peerStore;
 	try {
-		const stream = yield getUserMedia(constraints);
+		let stream;
+		if (mediaStream) {
+			stream = mediaStream;
+		} else {
+			stream = yield getUserMedia(constraints);
+		}
 		// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
 		const tracks = stream.getTracks();
 		for (i = 0; i < tracks.length; i++) {

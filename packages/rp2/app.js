@@ -6,10 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
-const passport = require('./auth0');
+const passport = require('./auth/auth0');
 const redis = require('redis');
-
+const jwtMiddleware = require('./middleware/jwt');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
 
 const config = require('./config.js');
 const {
@@ -18,7 +19,8 @@ const {
 	sessionSecret,
 	debug,
 	redisConnectionString,
-	redisPort = 6379
+	redisPort = 6379,
+	JWT_SECRET
 } = config;
 const fs = require('fs');
 const webpack = require('webpack');
@@ -95,7 +97,8 @@ const setupDefaultRoute = () => {
 				  require('../../webpack.config.js');
 		const buildpath = path.resolve(webpackConfig.output.path);
 		app.use(express.static(buildpath, opts));
-		app.use('*', express.static(path.resolve(webpackConfig.output.path)));
+		// app.use('*', express.static(path.resolve(webpackConfig.output.path)));
+		// app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	} else {
 		console.log('Is remote');
 
@@ -123,8 +126,11 @@ const setFurtherRoutes = () => {
 		res.send('error');
 	});
 };
+
+setupDefaultRoute();
+
+app.use(jwtMiddleware.userFromToken);
 api.init(app).then(() => {
-	setupDefaultRoute();
 	setFurtherRoutes();
 	console.log('api ready');
 });
@@ -155,10 +161,14 @@ function onAuthorizeFail(data, message, error, accept) {
 	accept(null, false);
 }
 app.io.on('connection', async socket => {
-	const { session = {} } = socket.request;
-	const { passport = {} } = session;
-	const { user = false } = passport;
-	const isUser = user && user.username;
+	// const { session = {} } = socket.request;
+	// const { passport = {} } = session;
+	// const { user = false } = passport;
+	// const isUser = user && user.username;
+	const usersRepo = api.repositories.users;
+	const { oauth_id } = await api.repositories.auth.userFromSocket(socket);
+	const userData = oauth_id ? await usersRepo.findById(oauth_id) : false;
+	const user = usersRepo.getPublicUser(userData);
 	// 	if (isUser) {
 	// 		const key = client.sadd('online_users', user.oauth_id);
 	// 		client.setbit('online_bit', user.bit_id, 1);
@@ -175,12 +185,15 @@ app.io.on('connection', async socket => {
 	// 		.then(result => {
 	// 			console.log(result);
 	// 		});
-	socket.on('check_auth', ack => {
+	socket.on('check_auth', async ack => {
 		if (user) {
-			ack(user);
+			// const token = jwt.sign(user, JWT_SECRET);
+			ack({ user });
 			return;
 		}
+		// const token = jwt.sign(session, JWT_SECRET);
 		ack({ user: false });
+		// ack({ user: false, token });
 	});
 	// 	socket.on('disconnect', socket => {
 	// 		// client.setbit('online_bit', user.bit_id, 1);

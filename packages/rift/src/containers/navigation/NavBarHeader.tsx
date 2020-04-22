@@ -59,7 +59,7 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	}
 	private renderSigninIcon = (style): React.ReactElement<ImageProps> => {
 		const { themedStyle } = this.props;
-		return <Icon name="sign-in-alt" color={'#fff'} style={{ ...style }} solid />;
+		return <Icon name="sign-in-alt" color={'#fff'} style={style} solid />;
 	};
 	private renderSignoutIcon = (style): React.ReactElement<ImageProps> => {
 		return <Icon name="sign-out-alt" color={'#fff'} style={{ ...style }} solid />;

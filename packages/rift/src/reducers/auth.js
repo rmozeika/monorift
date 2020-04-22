@@ -58,7 +58,7 @@ const authReducer = createReducer(
 		[UPDATE_USERNAME_FAILURE]: (authState, action) => {
 			return {
 				...authState,
-				alert: `${action.payload} is already taken, try a different username`
+				alert: `Username "${action.payload}" is already taken, try a different username`
 			};
 		}
 	}

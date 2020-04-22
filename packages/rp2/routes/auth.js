@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const path = require('path');
 var Route = require('./route.js');
-const passport = require('../auth0.js');
+const passport = require('../auth/auth0.js');
 
 const routeName = '/auth';
 const repoName = 'auth';
@@ -44,26 +44,46 @@ class AuthRoute extends Route {
 				})(req, res, next);
 			});
 			this.router.get('/failed', this.failed.bind(this));
+			this.router.post('/simple/login', this.simpleLogin.bind(this));
 		};
 		run();
 	}
 	app(req, res) {
 		res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 	}
-
+	async simpleLogin(req, res, next) {
+		const { username, password } = req.body;
+		const user = await this.repository.simpleAuth(username, password);
+		if (!user) {
+			res.status(401).send({ error: 'incorrect password' });
+			return;
+		}
+		const token = await this.repository.initJWT(res, user);
+		res.send('success');
+	}
 	auth0Callback(req, res, next) {
-		passport.authenticate('auth0', function(err, user, info) {
+		passport.authenticate('auth0', async (err, user, info) => {
+			// const auth = this.repository;
+			// const token = auth.createJWT(user);
+			// auth.saveJWTCookie(res, token);
+			const token = await this.repository.initJWT(res, user);
 			if (err) {
 				return next(err);
 			}
 			if (!user) {
 				return res.redirect('/login');
 			}
+			const useSession = false;
+			const returnTo = req.session.returnTo;
+
+			if (!useSession) {
+				res.redirect(returnTo || '/');
+				return;
+			}
 			req.logIn(user, function(err) {
 				if (err) {
 					return next(err);
 				}
-				const returnTo = req.session.returnTo;
 				delete req.session.returnTo;
 				res.redirect(returnTo || '/');
 			});
@@ -72,6 +92,7 @@ class AuthRoute extends Route {
 
 	// Perform session logout and redirect to homepage
 	logout(req, res) {
+		res.clearCookie('token');
 		req.logout();
 		res.redirect('/');
 	}

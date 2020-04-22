@@ -51,13 +51,13 @@ function* tickChannel() {
 		// yield put(sendOffer({}));
 	}
 }
-function* peerCaller() {
-	const conn = new RTCPeerConnection(config);
-	let result;
-	while (true) {
-		result = yield result + 1;
-	}
-}
+// function* peerCaller() {
+// 	const conn = new RTCPeerConnection(config);
+// 	let result;
+// 	while (true) {
+// 		result = yield result + 1;
+// 	}
+// }
 function* addIceListener(conn) {
 	const chan = eventChannel(emit => {
 		conn.addEventListener('icecandidate', e => {
@@ -79,11 +79,89 @@ function* addIceListener(conn) {
 		yield put(Actions.sendCandidate(candidate));
 	}
 }
+function* addTrackListener(conn) {
+	const chan = eventChannel(emit => {
+		const onTrack = e => {
+			// CHANGE THIS select from store;
+			// const { mediaStreamConstraints } = this.props;
+			const mediaStreamConstraints = { audio: true, video: false };
+			console.log('ONTRACK called', e);
+			console.log('on track ID', e.track.id);
+
+			if (mediaStreamConstraints.video && e.track.kind == 'video') {
+				if (!videoRef?.current) {
+					return;
+				}
+				if (e.streams?.[0]) {
+					videoRef.current.srcObject = e.streams[0];
+					videoRef.current.muted = true;
+				} else {
+					if (!inboundStream) {
+						inboundStream = new MediaStream();
+						videoRef.current.srcObject = inboundStream;
+					}
+					inboundStream.addTrack(e.track);
+				}
+				// if (videoRef.current.srcObject !== null) {
+				// 	return;
+				// }
+				// videoRef.current.srcObject = e.streams[0];
+				// return;
+				return;
+			}
+			// if (!audioRef?.current) {
+			// 	return;
+			// }
+			if (e.streams?.[0]) {
+				const stream = e.streams[0];
+				emit(e.track);
+				// audioRef.current.srcObject = e.streams[0];
+				// if (!inboundStream) {
+				// 	inboundStream = new MediaStream();
+				// 	audioTag.srcObject = inboundStream;
+				// }
+				// inboundStream.addTrack(e.track);
+				// const source = audioCtx.createMediaElementSource(audioTag);
+
+				// source.connect(audioCtx.destination);
+
+				// audioTag.play();
+				// return;
+				// this.visualize(analyser);
+				// if (1 == '1') return;
+				// var source = audioCtx.createMediaStreamSource(stream);
+				// source.connect(audioCtx.destination);
+				// audioRef.current.play();
+			} else {
+				if (!inboundStream) {
+					inboundStream = new MediaStream();
+					videoRef.current.srcObject = inboundStream;
+				}
+				inboundStream.addTrack(e.track);
+			}
+
+			// if (e.track.kind == 'audio') {
+			// 	audioRef.current.srcObject = e.streams[0];
+			// this.props.setStream(e.streams[0]);
+			// }
+			// let audio = audioRef.current;
+			// audio.play();
+		};
+		conn.ontrack = onTrack;
+		return () => {};
+	});
+
+	while (true) {
+		const track = yield take(chan);
+		yield put(Actions.addTrack(track));
+	}
+}
 function* watchPeer() {
 	const conn = new RTCPeerConnection(config);
-	conn.ontrack = onTrack;
+	// conn.ontrack = onTrack;
 	yield put(Actions.setPeerConn(conn));
 	yield spawn(addIceListener, conn);
+	yield spawn(addTrackListener, conn);
 	// const chan = yield call(channel)
 	const peerChan = yield actionChannel('PEER_ACTION');
 	while (true) {
@@ -140,6 +218,9 @@ function* createPeerConnSaga(action) {
 		console.log(error);
 	}
 }
+const audioTag = new Audio();
+const audioCtx = new AudioContext();
+let inboundStream;
 function* configurePeerConnSaga(action) {}
 const onTrack = e => {
 	// CHANGE THIS select from store;
@@ -175,9 +256,12 @@ const onTrack = e => {
 	if (e.streams?.[0]) {
 		const stream = e.streams[0];
 		// audioRef.current.srcObject = e.streams[0];
-		const audioTag = new Audio();
-		audioTag.srcObject = stream;
-		var audioCtx = new AudioContext();
+		if (!inboundStream) {
+			inboundStream = new MediaStream();
+			audioTag.srcObject = inboundStream;
+		}
+		inboundStream.addTrack(e.track);
+		// audioTag.srcObject = stream;
 		const source = audioCtx.createMediaElementSource(audioTag);
 		// var analyser = audioCtx.createAnalyser();
 		// analyser.minDecibels = -90;

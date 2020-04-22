@@ -8,7 +8,7 @@ import * as CallSelectors from '@selectors/call';
 import * as UserSelectors from '@selectors/users';
 import * as AuthSelectors from '@selectors/auth';
 
-import UserItem from './UserItem';
+import UserItem from './UserItemNative';
 import YourProfile from './YourProfile';
 import SearchBar from '@components/users/SearchBar';
 import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
@@ -60,7 +60,7 @@ class UsersList extends React.PureComponent {
 		return (
 			<Layout style={[styles.userListLayout, {}]}>
 				<SearchBar />
-				<List
+				<FlatList
 					data={users}
 					renderItem={this.renderItem}
 					style={styles.list}

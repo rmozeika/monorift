@@ -10,10 +10,11 @@ import {
 	actionChannel
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-import { originLink } from '../core/utils';
+import { originLink } from '@core/utils';
 import 'isomorphic-unfetch';
 
 import * as Actions from '@actions';
+import { get, post } from '@core/api';
 
 const { AUTH } = Actions;
 import io from 'socket.io-client';
@@ -50,18 +51,17 @@ function* initAuthSaga() {
 	socket.send('hi');
 	const socketChannel = yield call(createSocketChannel, socket);
 	while (true) {
-		const payload = yield take(socketChannel);
-		console.log('GOT MESSAGE, AUTH', payload);
+		const { user } = yield take(socketChannel);
+		console.log('GOT MESSAGE, AUTH', user);
 
 		try {
-			if (payload?.username) {
-				yield put({ type: AUTH.LOGIN.SUCCESS, payload });
+			if (user?.username) {
+				yield put({ type: AUTH.LOGIN.SUCCESS, payload: user });
 			} else {
-				yield put({ type: AUTH.LOGIN.REQUEST, payload });
+				yield put({ type: AUTH.LOGIN.REQUEST, payload: user });
 			}
 		} catch (e) {
-			yield put({ type: AUTH.LOGIN.FAILURE, payload });
-			console.log(e);
+			yield put({ type: AUTH.LOGIN.FAILURE, payload: user });
 		}
 	}
 }
@@ -70,8 +70,38 @@ function* onLoginSaga() {
 	yield put(Actions.fetchFriends());
 	console.log('fetching friends');
 }
+
+function* createGuestSaga(action) {
+	try {
+		const { username, password } = action.payload;
+		const origin = originLink('createGuest');
+		const { user, success } = yield post(origin, { username, password });
+		if (!success) {
+		}
+		// console.log(result);
+		try {
+			if (success && user?.username) {
+				yield put({ type: AUTH.LOGIN.SUCCESS, payload: user });
+				yield put({ type: Actions.AM_ONLINE });
+			} else {
+				// yield put({ type: AUTH.LOGIN.REQUEST, payload: user });
+				yield put(Actions.updateUsernameFailure(username));
+			}
+		} catch (e) {
+			yield put({ type: AUTH.LOGIN.FAILURE, payload: user });
+		}
+	} catch (e) {
+		debugger; //remove
+		console.log(e);
+	}
+}
+
 function* rootSaga() {
-	yield all([initAuthSaga(), takeLatest(AUTH.LOGIN.SUCCESS, onLoginSaga)]);
+	yield all([
+		initAuthSaga(),
+		takeLatest(AUTH.LOGIN.SUCCESS, onLoginSaga),
+		takeLatest(Actions.CREATE_GUEST, createGuestSaga)
+	]);
 }
 
 export default rootSaga;

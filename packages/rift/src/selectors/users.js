@@ -14,6 +14,127 @@ export const getOnlineUsers = state => state.users.online;
 export const getFriends = state => state.users.friends;
 export const gotOnline = state => state.users.status.gotOnline;
 export const gotFriends = state => state.users.status.gotFriends;
+export const getSearchFilter = state => state.users.search.filter;
+export const filterUsers = (users, filter) => {
+	const filterRegex = new RegExp(filter, 'i');
+	return users.filter(user => user.match(filterRegex));
+};
+// use
+const getUserIdsByList = (state, props) => {
+	// CHANGE THIS
+	const { listType } = props.route.params;
+	if (listType == 'master') {
+		return state.users.allIds[listType];
+	}
+	return state.users.allIds[listType].all;
+};
+const selectIds = state => state.ids; // dont use REMOVE
+
+const createSelectorCustom = createSelectorCreator(
+	resultCheckMemoize,
+	shallowEqual
+);
+
+const cachedDenormUsers = createCachedSelector(
+	[getUsers, getUserIdsByList],
+	(objectsById, ids) => {
+		return ids.map(id => objectsById[id]);
+	}
+)((state, props) => props.route.params.listType, {
+	selectorCreator: createSelectorCustom
+});
+
+export const getUsersByOnlineCached = createCachedSelector(
+	[cachedDenormUsers],
+	users => {
+		const onlineUsers = [];
+		const offlineUsers = [];
+		console.log('RAN USER SELECTOR: MAIN');
+
+		users.forEach(({ oauth_id, online }) => {
+			if (online) {
+				onlineUsers.push(oauth_id);
+			} else {
+				offlineUsers.push(oauth_id);
+			}
+		});
+		return onlineUsers.concat(offlineUsers);
+	}
+)((state, props) => props.route.params.listType);
+export const getUsersDataByOnlineCached = createCachedSelector(
+	[cachedDenormUsers],
+	users => {
+		const onlineUsers = [];
+		const offlineUsers = [];
+		console.log('RAN USER SELECTOR: MAIN');
+
+		users.forEach(user => {
+			const { online } = user;
+			if (online) {
+				onlineUsers.push(user);
+			} else {
+				offlineUsers.push(user);
+			}
+		});
+		return onlineUsers.concat(offlineUsers);
+	}
+)((state, props) => props.route.params.listType);
+const filterUserData = (ids, users, filter) => {
+	const filteredIds = ids.filter(id => {
+		const filterRegex = new RegExp(filter, 'i');
+		const user = users[id];
+		return user.match(filterRegex);
+	});
+	return filteredIds;
+};
+const filterByUsername = (users, filter) => {
+	const filterRegex = new RegExp(filter, 'i');
+
+	const filteredIds = [];
+	users.forEach(user => {
+		const matched = user.username.match(filterRegex);
+		if (matched) filteredIds.push(user.oauth_id);
+	});
+	return filteredIds;
+};
+export const filteredUsersByOnline = createCachedSelector(
+	// [getVisibleUsersByFilter],
+	[getSearchFilter, getUsersDataByOnlineCached],
+	(filter, users) => {
+		if (filter == '' || filter == undefined) {
+			return users.map(({ oauth_id }) => oauth_id);
+		}
+		const filteredUsers = filterByUsername(users, filter);
+		// const filteredUsers =  filterUserData(users, userData, filter);
+		return filteredUsers;
+		// const usersFiltered = usersOrderedByOnlineOffline.filter(username => {
+		// 	return username
+		// });
+	}
+)((state, props) => props.route.params.listType);
+
+// don't rerun selectors if ids don't change (even if usersbyIds do that aren't returned)
+const selectDenormUsers = createSelectorCustom(
+	getUsers,
+	getUserIdsByList,
+	(objectsById, ids) => {
+		debugger; //remove
+		return ids.map(id => objectsById[id]);
+	}
+);
+export const getUsersByOnline = createSelector([selectDenormUsers], users => {
+	const onlineUsers = [];
+	const offlineUsers = [];
+	console.log('RAN USER SELECTOR: MAIN');
+	users.forEach(({ oauth_id, online }) => {
+		if (online) {
+			onlineUsers.push(oauth_id);
+		} else {
+			offlineUsers.push(oauth_id);
+		}
+	});
+	return onlineUsers.concat(offlineUsers);
+});
 
 const sortOnlineOffline = (users, usernames) => {
 	let onlineOffline = {
@@ -34,7 +155,6 @@ const usersOnlineOfflineBase = {
 	online: [],
 	offline: []
 };
-export const getSearchFilter = state => state.users.search.filter;
 
 export const sortOnline = createSelector([getUsers], users => {
 	return Object.keys(users);
@@ -74,11 +194,6 @@ export const getOnlineOffline = createSelector(
 		}
 	}
 );
-
-export const filterUsers = (users, filter) => {
-	const filterRegex = new RegExp(filter, 'i');
-	return users.filter(user => user.match(filterRegex));
-};
 
 export const getVisibleUsers = createSelector(
 	// [getTab, getUsers, loggedIn],
@@ -193,18 +308,12 @@ export const getVisibleUsersFiltered = createSelector(
 // }
 import createCachedSelector from 're-reselect';
 import { search } from '@src/reducers/users';
-const getUserById = (state, props) => state.users.byId[props.id];
+export const getUserById = (state, props) => state.users.byId[props.id];
 
 // const getUserData = state => state.world;
 export const getUser = createCachedSelector([getUserById], users => {
 	return users;
-})(
-	/*
-	 * Re-reselect resolver function.
-	 * Cache/call a new selector for each different "listId"
-	 */
-	(state, props) => props.id
-);
+})((state, props) => props.id);
 const getVis = (state, props) =>
 	createSelector(
 		[getFriendsOnlineOfflineUsernames, getOnlineOfflineUsernames],
@@ -248,40 +357,6 @@ const getVisOfflineWithSearch = (state, props) =>
 
 // use getUsers
 
-// use
-const getUserIdsByList = (state, props) => {
-	// CHANGE THIS
-	const { listType } = props.route.params;
-	if (listType == 'master') {
-		return state.users.allIds[listType];
-	}
-	return state.users.allIds[listType].all;
-};
-const selectIds = state => state.ids; // dont use REMOVE
-
-const createSelectorCustom = createSelectorCreator(
-	resultCheckMemoize,
-	shallowEqual
-);
-// don't rerun selectors if ids don't change (even if usersbyIds do that aren't returned)
-const selectDenormUsers = createSelectorCustom(
-	getUsers,
-	getUserIdsByList,
-	(objectsById, ids) => ids.map(id => objectsById[id])
-);
-export const getUsersByOnline = createSelector([selectDenormUsers], users => {
-	const onlineUsers = [];
-	const offlineUsers = [];
-
-	users.forEach(({ oauth_id, online }) => {
-		if (online) {
-			onlineUsers.push(oauth_id);
-		} else {
-			offlineUsers.push(oauth_id);
-		}
-	});
-	return onlineUsers.concat(offlineUsers);
-});
 const getUsersByFriendStatus = (state, props) => {
 	const users = getUsers(state);
 	const ids = Object.keys(users);

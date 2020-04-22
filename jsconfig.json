@@ -8,7 +8,10 @@
 			"@components/*": ["packages/rift/src/components/*"],
 			"@selectors/*": ["packages/rift/src/selectors/*"],
 			"@containers/*": ["packages/rift/src/containers/*"],
-			"@selectors": ["packages/rift/src/selectors/index.js"]
+			"@selectors": ["packages/rift/src/selectors/index.js"],
+			"@actions/*": ["packages/rift/src/actions/*"],
+			"@actions": ["packages/rift/src/actions/index.js"],
+			"@core": ["packages/rift/src/core/*"]
 		}
 	}
 }

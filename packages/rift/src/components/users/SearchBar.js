@@ -37,7 +37,7 @@ export class SearchBar extends React.PureComponent {
 		// this.props.search(filterText);
 	};
 	render() {
-		const { filter } = this.props;
+		// const { filter } = this.props;
 		const { filterText } = this.state;
 		return (
 			<Layout style={styles.searchContainer}>
@@ -71,11 +71,11 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = state => {
-	return {
-		filter: UserSelectors.getSearchFilter(state)
-	};
-};
+// const mapStateToProps = state => {
+// 	return {
+// 		filter: UserSelectors.getSearchFilter(state)
+// 	};
+// };
 const mapDispatchToProps = dispatch => {
 	return {
 		search: input => {
@@ -83,4 +83,4 @@ const mapDispatchToProps = dispatch => {
 		}
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);
+export default connect(null, mapDispatchToProps)(SearchBar);

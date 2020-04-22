@@ -160,16 +160,20 @@ class UserRoute extends Route {
 		this.repository.rejectFriend(username, friend.username);
 	}
 	async updateTempUsername(req, res) {
-		const tempUsername = this.getUserNameFromReq(req);
+		const tempUsername = req.user.username || this.getUserNameFromReq(req);
 		const { username } = req.body;
 		const result = await this.repository
 			.updateTempUsername(tempUsername, username)
 			.catch(e => {
 				console.log(e);
 			});
-		if (result.success) {
-			req.session.passport.user.username = username;
-		}
+		const oldUser = req.user;
+		const newCookie = { ...oldUser, username };
+		const newUser = this.api.repositories.auth.saveJWTCookie(res, newCookie);
+		// change to JWT
+		// if (result.success) {
+		// 	req.session.passport.user.username = username;
+		// }
 		res.send(result);
 	}
 }

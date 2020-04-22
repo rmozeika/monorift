@@ -59,7 +59,7 @@ export class SearchBar extends React.PureComponent {
 
 const styles = StyleSheet.create({
 	searchContainer: {
-		height: 50,
+		height: 54,
 		padding: 8,
 		display: 'flex',
 		flexDirection: 'row',

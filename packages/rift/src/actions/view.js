@@ -15,3 +15,9 @@ export const search = input => ({
 	type: SET_SEARCH_FILTER,
 	payload: input
 });
+
+export const HANDLE_FILTER_CHANGE = 'HANDLE_FILTER_CHANGE';
+export const handleFilterChange = input => ({
+	type: HANDLE_FILTER_CHANGE,
+	payload: input
+});

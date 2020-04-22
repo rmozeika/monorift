@@ -68,7 +68,7 @@ class Users extends React.Component {
 	};
 
 	render() {
-		const { gotOnlineUsers, themedStyle, mobile, incomingCall } = this.props;
+		const { gotUsers, themedStyle, mobile, incomingCall } = this.props;
 		const { containerHeight } = this.state;
 
 		if (containerHeight == null) {
@@ -78,7 +78,7 @@ class Users extends React.Component {
 				</Layout>
 			);
 		}
-		if (!gotOnlineUsers) {
+		if (!gotUsers) {
 			return (
 				<Layout
 					onLayout={this.onLayout}
@@ -121,14 +121,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = (state, ownProps) => {
 	const { users, view, call } = state;
 	// const { online } = users;
-	const { gotOnlineUsers } = users.online;
+	const { gotUsers } = users.status;
 	const { mobile } = view;
 
 	const { incomingCall } = call.peerStore;
 
 	return {
 		// online: online.users,
-		gotOnlineUsers,
+		gotUsers,
 		mobile,
 		incomingCall
 	};

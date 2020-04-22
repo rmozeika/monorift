@@ -19,6 +19,14 @@ export const updateUser = (oauth_id, data, user = {}) => ({
 		user
 	}
 });
+
+export const ADD_USER = 'ADD_USER';
+export const addUser = (id, user) => ({
+	type: ADD_USER,
+	user,
+	id
+});
+
 export const fetchOnlineUsers = () => ({
 	type: FETCH_ONLINE_USERS
 });

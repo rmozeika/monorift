@@ -60,7 +60,7 @@ class UserItem extends React.Component {
 	render() {
 		const { id, themedStyle, user, key } = this.props;
 		const { username } = user;
-		console.log(`rendered ${username}`);
+		// console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;

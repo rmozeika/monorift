@@ -13,6 +13,8 @@ import {
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import * as AuthSelectors from '@selectors/auth';
+import * as UserSelectors from '@selectors/users';
+
 import 'isomorphic-unfetch';
 import io from 'socket.io-client';
 import { get, post } from '@core/api';
@@ -23,6 +25,9 @@ let socket;
 const selectUsers = state => {
 	return state.users.list;
 };
+// const selectUser = state => {
+// 	return state.users.byId[]
+// }
 function* fetchUsers() {
 	try {
 		const origin = originLink('userList');
@@ -284,6 +289,21 @@ function* amOnlineSaga({ payload }) {
 
 	socket.emit('AM_ONLINE');
 }
+function* addUserSaga({ payload, id }) {
+	try {
+		debugger; //remove
+		if (!id) return;
+		const user = yield select(UserSelectors.getUserById, { id });
+		console.log(user);
+		if (!user) {
+			yield put(Actions.addUser(id, { ...payload.user, ...payload.data }));
+		}
+		debugger; //remove
+	} catch (e) {
+		debugger; //remove
+		console.log(e);
+	}
+}
 function* rootSaga() {
 	yield all([
 		startSocketSaga(),
@@ -295,7 +315,8 @@ function* rootSaga() {
 		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
 		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga),
 		takeLatest(Actions.UPDATE_USERNAME, updateUsernameSaga),
-		takeLatest(Actions.AM_ONLINE, amOnlineSaga)
+		takeLatest(Actions.AM_ONLINE, amOnlineSaga),
+		takeLatest(Actions.UPDATE_USER, addUserSaga)
 	]);
 }
 

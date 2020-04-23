@@ -28,7 +28,11 @@ function userFromToken(req, res, next) {
 	}
 	jwt.verify(token, JWT_SECRET, (err, user) => {
 		console.log(err);
-		if (err) return res.sendStatus(403);
+		if (err) {
+			res.clearCookie('token');
+			return res.sendStatus(403);
+		}
+		// if (err)
 		req.user = user;
 		next();
 	});

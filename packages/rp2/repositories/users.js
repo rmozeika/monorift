@@ -41,7 +41,7 @@ class UserRepository extends Repository {
 	async createGravatar(filename, email) {
 		const gravatarUrl = gravatar.url(
 			email,
-			{ s: '100', r: 'x', d: 'retro' },
+			{ s: '40', r: 'x', d: 'retro' },
 			false
 		);
 		const getPromise = promisfy(http.get);

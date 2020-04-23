@@ -31,15 +31,13 @@ const selectUsers = state => {
 function* fetchUsers() {
 	try {
 		const origin = originLink('userList');
-
-		// const res = yield fetch(origin, { method: 'POST' });
-		// const data = yield res.json();
 		const data = yield post(origin);
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
-
-		// yield put(Actions.fetchOnlineUsers());
-	} catch (err) {}
+	} catch (err) {
+		console.log(err);
+		debugger; //error
+	}
 }
 function* onlineUsersSaga() {
 	yield (data = call(loadOnlineUsersSaga, 'online', Actions.setOnlineUsers));

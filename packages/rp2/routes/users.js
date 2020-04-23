@@ -169,7 +169,9 @@ class UserRoute extends Route {
 			});
 		const oldUser = req.user;
 		const newCookie = { ...oldUser, username };
-		const newUser = this.api.repositories.auth.saveJWTCookie(res, newCookie);
+		const token = this.api.repositories.auth.initJWT(res, user);
+
+		// const newUser = this.api.repositories.auth.saveJWTCookie(res, newCookie);
 		// change to JWT
 		// if (result.success) {
 		// 	req.session.passport.user.username = username;

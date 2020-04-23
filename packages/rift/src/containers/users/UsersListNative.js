@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import { Layout, withStyles } from '@ui-kitten/components';
 import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import * as Selectors from '@selectors';
@@ -67,31 +68,35 @@ class UsersList extends React.PureComponent {
 				</Layout>
 			);
 		}
-		const height = 1000;
+		// const height = 1000;
 		const itemHeight = 90;
-		const width = 400;
+		// const width = 400;
 		return (
 			<Layout style={[styles.userListLayout, {}]}>
 				<SearchBar />
-				<List
-					itemData={users}
-					height={height}
-					width={width}
-					itemSize={itemHeight}
-					itemCount={users.length}
-					// renderItem={this.renderItem}
-					style={styles.list}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.listContentContainer}
-					// numColumns={2}
-					// columnWrapperStyle={styles.columnWrapper}
-					initialNumToRender={8}
-					keyExtractor={this._keyExtractor}
-					itemKey={this.itemKey}
-					useIsScrolling
-				>
-					{this.renderItem}
-				</List>
+				<AutoSizer>
+					{({ height, width }) => (
+						<List
+							itemData={users}
+							height={height}
+							width={width}
+							itemSize={itemHeight}
+							itemCount={users.length}
+							// renderItem={this.renderItem}
+							style={styles.list}
+							showsVerticalScrollIndicator={false}
+							contentContainerStyle={styles.listContentContainer}
+							// numColumns={2}
+							// columnWrapperStyle={styles.columnWrapper}
+							initialNumToRender={8}
+							keyExtractor={this._keyExtractor}
+							itemKey={this.itemKey}
+							useIsScrolling
+						>
+							{this.renderItem}
+						</List>
+					)}
+				</AutoSizer>
 				{/* <Layout style={styles.floatingButtonContainer}>
 					<Button style={{}}>Call</Button>
 				</Layout> */}

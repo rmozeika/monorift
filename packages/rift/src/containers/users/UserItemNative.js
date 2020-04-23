@@ -21,9 +21,13 @@ class UserItem extends React.Component {
 			return true;
 		}
 		// SCROLLING
-		// if (this.state.gravatarRendered == false && this.props.isScrolling == true && nextProps.isScrolling == false) {
-		// 	return true;
-		// }
+		if (
+			this.state.gravatarRendered == false &&
+			this.props.isScrolling == true &&
+			nextProps.isScrolling == false
+		) {
+			return true;
+		}
 		// console.log(`user not equal ${props.username}`);
 
 		return false;

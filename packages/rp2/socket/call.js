@@ -2,11 +2,12 @@ const { Socket, SocketItem } = require('./index');
 const nameSpace = '/call';
 const util = require('util');
 class CallItem extends SocketItem {
-	constructor(...args) {
+	constructor(user, ...args) {
 		super(...args);
+		this.user = user;
 	}
 	async onMessage(msg, secondArg) {
-		const { socket, redis } = this;
+		const { socket, redis, user } = this;
 		if (secondArg) {
 			const { users, constraints } = secondArg;
 			// console.log('GOT_MESSAGE', util.inspect(msg));
@@ -30,7 +31,7 @@ class CallItem extends SocketItem {
 			// 	users: ${util.inspect(users)}
 			// 	constraints: ${constraints}
 			// `);
-			const user = socket.request.session.passport.user;
+
 			const actions = mappedUsers.map(async targetUser => {
 				const emitted = await socket.to(targetUser.id).emit('message', msg, {
 					users,
@@ -76,39 +77,20 @@ class Call extends Socket {
 	];
 	constructor(io, api) {
 		super(io, nameSpace, api, CallItem);
-		// this.createListeners(this.listeners);
-		this.makeListener = this.makeListener.bind(this);
 	}
-	onConnect(socket) {
+	async onConnect(socket) {
+		const user = await this.getSelf(socket);
+		if (!user) return;
+
 		this.createDefaultListeners();
-		const { session = {} } = socket.request;
-		const { passport = {} } = session;
-		const { user = false } = passport;
+
 		console.log(`
 			User: ${user.username}
 			SocketId: ${socket.id}
 		`);
 		this.redis.set(`call:${user.oauth_id}`, socket.id);
-		// const userSock = this.io.of('/users'); //.broadcast.emit('message', username);
-		// if (user) {
-		// 	userSock.emit('broadcast', {
-		// 		oauth_id: user.oauth_id,
-		// 		username: user.username,
-		// 		online: true
-		// 	});
-		// }
-		this.createSocketItem(socket);
-		// socket.on('message', this.onMessage.bind(socket, this.redis));
-		// socket.on('message', this.makeListener(userSock))
-		// REMOVE BELOW
-		// socket.on('disconnect', this.onUserDisconnect.bind(socket, userSock, user));
-	}
 
-	async makeListener(func, ...args) {
-		// return this[func]()
-		return socket => {
-			return this[func].apply(this, [socket, ...args]);
-		};
+		this.createSocketItem(socket, user);
 	}
 }
 module.exports = Call;

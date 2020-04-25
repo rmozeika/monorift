@@ -157,8 +157,10 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							heightVh={gravatarDimensions}
-							square={true}
+							// heightVh={gravatarDimensions}
+							// square={true}
+							isScrolling={false}
+							imageStyles={styles.gravatar}
 							id={id}
 						/>
 						<Layout style={styles.userIconContainer}>
@@ -242,6 +244,16 @@ const styles = StyleSheet.create({
 		width: gravatarDimensions
 		// maxHeight: gravatarDimensions || '10vh',
 		// maxWidth: gravatarDimensions || '10vh'
+	},
+	gravatar: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: gravatarDimensions,
+		maxWidth: gravatarDimensions,
+		height: '100%',
+		width: '100%',
+		borderRadius: 0,
+		backgroundColor: 'inherit'
 	},
 	popoverLayout: {
 		flexDirection: 'column',

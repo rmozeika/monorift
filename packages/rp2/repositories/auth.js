@@ -10,8 +10,8 @@ class AuthRepository extends Repository {
 		super(api, collection);
 	}
 	extractJWTData(user) {
-		const { bit_id: id, username, oauth_id } = user;
-		return { id, username, oauth_id };
+		const { bit_id, id, username, oauth_id } = user;
+		return { id: id || bit_id, username, oauth_id };
 	}
 	async initJWT(res, user) {
 		const token = this.createJWT(user);
@@ -53,7 +53,8 @@ class AuthRepository extends Repository {
 		});
 	}
 	async userFromSocket(socket) {
-		const { token = false } = cookie.parse(socket.handshake.headers.cookie);
+		const { cookie: cookies = '' } = socket.handshake.headers;
+		const { token = false } = cookie.parse(cookies);
 		if (!token) return false;
 		return await this.parseToken(token);
 	}
@@ -64,14 +65,19 @@ class AuthRepository extends Repository {
 	}
 	async simpleAuth(username, password) {
 		const user = await this.api.repositories.users.findByUsername(username);
+		if (!user) {
+			return { error: 'User does not exist' };
+		}
 		const { bit_id: id } = user;
 		const authData = await this.findOne({ id });
 		const verify = await bcrypt.compare(password, authData.hash);
 		if (!verify) {
-			return false;
+			return { error: 'Incorrect password' };
 		}
+		const publicUserData = this.api.repositories.users.getPublicUser(user);
+
 		// const user = await this.api.repositories.users.findById(authData.id);
-		return user;
+		return publicUserData;
 		// this.saveJWTCookie()
 	}
 }

@@ -4,11 +4,12 @@ var PostgreUtil = require('./data-service/postgresUtil.js');
 var routes = require('./routes/index.js');
 var repositories = require('./repositories');
 var config = require('./config.js');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+
 const { redisConnectionString, redisPort } = require('./config.js');
 const redis = require('redis');
 const { promisify } = require('util');
+const ExpressBrute = require('express-brute');
+const BruteStore = require('express-brute-redis');
 class Api {
 	constructor() {
 		this.repositories = {};
@@ -19,6 +20,7 @@ class Api {
 		await this._connectMongo();
 		await this._connectPostgres();
 		await this._connectRedis();
+		this._initBruteProtection();
 		this._registerRoutes();
 		// this._createRootUser();
 	}
@@ -48,6 +50,15 @@ class Api {
 		const redisPromise = promisify(func);
 		const result = await redisPromise.apply(this.redis, args);
 		return result;
+	}
+	_initBruteProtection() {
+		const bruteStore = new BruteStore({
+			host: redisConnectionString,
+			port: redisPort,
+			prefix: 'brute'
+		});
+		const bruteforce = new ExpressBrute(bruteStore);
+		this.bruteforce = bruteforce;
 	}
 	_registerRoutes() {
 		this._createRepositories();

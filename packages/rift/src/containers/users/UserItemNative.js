@@ -13,10 +13,19 @@ class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
 		// remove
+		this.state = { gravatarRendered: false };
 	}
 	shouldComponentUpdate(nextProps) {
 		if (this.props.user !== nextProps.user) {
-			console.log(`user not equal ${this.props.username}`);
+			console.log(`user not equal ${this.props.user.username}`);
+			return true;
+		}
+		// SCROLLING
+		if (
+			this.state.gravatarRendered == false &&
+			this.props.isScrolling == true &&
+			nextProps.isScrolling == false
+		) {
 			return true;
 		}
 		// console.log(`user not equal ${props.username}`);
@@ -56,21 +65,26 @@ class UserItem extends React.Component {
 		const { user, removeFromCall } = this.props;
 		removeFromCall(user);
 	};
-
+	setGravatarRendered = () => {
+		this.setState({ gravatarRendered: true });
+	};
 	render() {
-		const { id, themedStyle, user, key } = this.props;
+		const { id, user, key, isScrolling } = this.props;
 		const { username } = user;
-		// console.log(`rendered ${username}`);
+		console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
-		const onlineBorderColor = themedStyle['iconOnline'].color;
-		const border = user.checked
-			? { borderWidth: 3, borderColor: onlineBorderColor }
-			: {};
 
+		if (!isScrolling) {
+			this.setGravatarRendered();
+		}
+		const listItemStyle = user.checked
+			? styles.listItemSelected
+			: styles.listItem;
+		const gravatarStyle = online ? styles.gravatarOnline : styles.gravatar;
 		return (
-			<Layout style={[styles.listItem, border, { padding: 0 }]}>
+			<Layout style={listItemStyle}>
 				<Layout style={styles.listItemMain}>
 					<TouchableOpacity
 						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
@@ -78,34 +92,28 @@ class UserItem extends React.Component {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							online={online}
+							// online={online}
 							id={id}
-							onlineBorderColor={onlineBorderColor}
+							imageStyles={gravatarStyle}
+							// onlineBorderColor={onlineBorderColor}
+							// isScrolling={isScrolling}
+							isScrolling={isScrolling}
 						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
-							{online && (
-								<Text style={[styles.listItemDetails, themedStyle.statusText]}>
-									online
-								</Text>
-							)}
+							{online && <Text style={styles.listItemDetails}>online</Text>}
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{/* <QuickCall></QuickCall> */}
-				{/* {user.online && ( */}
-				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+				<Layout style={styles.statusBar}>
 					<QuickCall
 						startCall={this.startCall}
 						calling={user.calling}
 						connected={user.connected}
 						checked={user.checked}
 					></QuickCall>
-
-					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
 				</Layout>
-				{/* )} */}
-				{user.friendStatus !== 'A' && (
+				{/* {user.friendStatus !== 'A' && (
 					<AddRemoveFriendButton
 						onAdd={this.addFriend}
 						removeFriend={this.removeFriend}
@@ -115,7 +123,7 @@ class UserItem extends React.Component {
 						rejectFriend={this.rejectFriend}
 						// style={buttonStyleAlt}
 					/>
-				)}
+				)} */}
 			</Layout>
 		);
 	}
@@ -127,39 +135,30 @@ const mapStateToProps = (state, props) => {
 	};
 };
 
+const listItemStyleBase = {
+	margin: 10,
+	borderRadius: 12,
+	boxShadow: ` 8px 8px 5px #161c30, 
+	-8px -8px 5px #1e2640`,
+	// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
+	backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
+	flexBasis: 75,
+	flexGrow: 1,
+	alignItems: 'stretch',
+	display: 'flex',
+	flexDirection: 'row',
+	overflow: 'hidden',
+	padding: 0,
+	paddingHorizontal: 0,
+	paddingVertical: 0,
+	zIndex: 9
+};
 const styles = StyleSheet.create({
-	listItem: {
-		margin: 10,
-		borderRadius: 12,
-		// boxShadow: `-8px 8px 5px #111522, 8px -8px 5px #334168;`,
-		boxShadow: ` 8px 8px 5px #161c30, 
-		-8px -8px 5px #1e2640`,
-
-		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
-		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
-
-		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		// flexBasis: '45%',
-		flexBasis: 75,
-		flexGrow: 1,
-		alignItems: 'stretch',
-		// flexWrap: 'wrap',
-		display: 'flex',
-		flexDirection: 'row',
-		overflow: 'hidden',
-		// flexShrink: 1
-		// shadowColor: '#000',
-		// shadowOffset: { width: 0, height: 1 },
-		// shadowOpacity: 0.8,
-		// shadowRadius: 1,
-		padding: 0,
-		paddingHorizontal: 0,
-		paddingVertical: 0,
-		zIndex: 9
-		// MAY NEED TO DIABLE -REACTIVATE FOR FLEX POSITION
-		// alignContent: 'stretch'
-		// marginHorizontal: 0,
-		// marginVertical:0
+	listItem: listItemStyleBase,
+	listItemSelected: {
+		...listItemStyleBase,
+		borderWidth: 3,
+		borderColor: '#00E096'
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
@@ -188,8 +187,31 @@ const styles = StyleSheet.create({
 		// alignContent: 'center',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
+
 		// alignItems: 'flex-end'
 		// borderRadius: '50%',
+	},
+	gravatar: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: 40,
+		maxWidth: 40,
+		height: '100%',
+		width: '100%',
+		borderRadius: 100,
+		backgroundColor: 'inherit'
+	},
+	gravatarOnline: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: 40,
+		maxWidth: 40,
+		height: '100%',
+		width: '100%',
+		borderRadius: 100,
+		backgroundColor: 'inherit',
+		borderWidth: 2,
+		borderColor: '#00E096'
 	},
 	// gravatarContainerOnline: {
 
@@ -222,7 +244,8 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
 		// justifySelf: 'flex-end',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		backgroundColor: 'rgba(143, 155, 179, 0.24)'
 		// width: '100%'
 	},
 	listItemTitle: {
@@ -239,9 +262,9 @@ const styles = StyleSheet.create({
 		textAlign: 'start',
 		alignContent: 'center',
 		paddingRight: 20,
-		paddingLeft: 10
+		paddingLeft: 10,
+		color: '#00E096'
 	},
-
 	icon: {
 		width: 24,
 		height: 24,

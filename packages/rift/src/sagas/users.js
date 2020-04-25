@@ -31,15 +31,12 @@ const selectUsers = state => {
 function* fetchUsers() {
 	try {
 		const origin = originLink('userList');
-
-		// const res = yield fetch(origin, { method: 'POST' });
-		// const data = yield res.json();
 		const data = yield post(origin);
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
-
-		// yield put(Actions.fetchOnlineUsers());
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* onlineUsersSaga() {
 	yield (data = call(loadOnlineUsersSaga, 'online', Actions.setOnlineUsers));
@@ -55,7 +52,9 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 		const data = yield res.json();
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* loadFriendsSaga() {
 	try {
@@ -64,7 +63,9 @@ function* loadFriendsSaga() {
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(Actions.setFriends(data));
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* addFriendSaga(action) {
 	try {
@@ -78,13 +79,9 @@ function* addFriendSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend: action.payload })
 		});
-		// yield put(
-		// 	Actions.updateUser(action.payload.oauth_id, {
-		// 		friendStatus: 'S',
-		// 		isFriend: true
-		// 	})
-		// );
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* respondFriendRequestSaga(action) {
 	const { friend, didAccept } = action.payload;
@@ -108,7 +105,9 @@ function* respondFriendRequestSaga(action) {
 			// 		isFriend: didAccept
 			// 	})
 			// );
-		} catch (err) {}
+		} catch (err) {
+			console.warn(err);
+		}
 		return;
 	}
 	try {
@@ -122,7 +121,9 @@ function* respondFriendRequestSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend })
 		});
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 const connect = () => {
 	// socket = io(socketServerURL);
@@ -153,17 +154,8 @@ const createSocketChannel = socket =>
 		socket.on('disconnect', reason => {
 			socket.connect();
 		});
-		const oldOnMsg = (msg, secondArg) => {
-			if (msg.type == 'candidate') {
-				onCandidateHandler(msg.candidate);
-			}
-			if (msg.type == 'offer') {
-				put({ type: GOT_MESSAGE, msg }, constraints);
-			}
-		};
 
 		const onClose = () => {
-			debugger; //remove
 			socket.close(true);
 			//socket.off('login', handler);
 		};
@@ -174,15 +166,12 @@ function* startSocketSaga() {
 	const task = yield fork(initSocketSaga);
 	const restart = yield take(Actions.CLOSE_USER_SOCKET);
 	yield cancel(task);
-	debugger; //remove
 	if (restart) {
-		debugger; //remove
 		const newTask = yield fork(initSocketSaga);
 		yield take(Actions.CLOSE_USER_SOCKET);
 		yield cancel(newTask);
 	} else {
 		while (yield take(Actions.START_USER_SOCKET)) {
-			debugger; //remove
 			const newTask = yield fork(initSocketSaga);
 			yield take(Actions.CLOSE_USER_SOCKET);
 			yield cancel(newTask);
@@ -195,15 +184,7 @@ function* initSocketSaga() {
 	const socketChannel = yield call(createSocketChannel, socket);
 
 	try {
-		// try {
-		// } catch (e) {
-		// 	console.log('init socket error', e);
-		// }
 		console.log('create user socket channel');
-		//socket.send('hi');
-		// yield fork(closeSocket, socketChannel);
-		// while (true) {
-		// 	debugger; //remove
 		while (true) {
 			const message = yield take(socketChannel);
 			try {
@@ -217,22 +198,14 @@ function* initSocketSaga() {
 					yield put(Actions.removeOnlineUser(user));
 				}
 			} catch (e) {
-				//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
+				console.warn(e);
 			}
 		}
-		// yield fork(socketMessageSaga, socketChannel);
-		// }
-		debugger; //remove
-		// yield take(Actions.CLOSE_USER_SOCKET);
-		// yield cancel(socketMessageSaga);
-		console.log('take channel');
 	} catch (e) {
-		debugger; //remove
-		console.log(e);
+		console.warn(e);
 	} finally {
 		if (yield cancelled()) {
 			console.log('cancelled socketsaga');
-			debugger; //remove
 			socketChannel.close();
 			console.log('countdown cancelled');
 		}
@@ -254,13 +227,6 @@ function* socketMessageSaga(socketChannel) {
 		} catch (e) {
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 		}
-	}
-}
-function* closeSocket(socketChannel) {
-	while (true) {
-		debugger; //remove
-		yield take(Actions.CLOSE_USER_SOCKET);
-		socketChannel.close();
 	}
 }
 
@@ -291,17 +257,14 @@ function* amOnlineSaga({ payload }) {
 }
 function* addUserSaga({ payload, id }) {
 	try {
-		debugger; //remove
 		if (!id) return;
 		const user = yield select(UserSelectors.getUserById, { id });
 		console.log(user);
 		if (!user) {
 			yield put(Actions.addUser(id, { ...payload.user, ...payload.data }));
 		}
-		debugger; //remove
 	} catch (e) {
-		debugger; //remove
-		console.log(e);
+		console.warn(e);
 	}
 }
 function* rootSaga() {

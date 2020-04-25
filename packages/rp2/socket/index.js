@@ -1,7 +1,7 @@
 // var io = socketIO.listen(app);
 // const { io } = require('../app.js');
 const ioType = require('socket.io');
-
+const { useSession } = require('../config');
 exports.SocketItem = class SocketItem {
 	constructor(socket, api, redis, flush, additionalMethods = []) {
 		this.socket = socket;
@@ -90,6 +90,17 @@ exports.Socket = class Socket {
 			nsp.on(type, listener.bind(socket));
 		});
 	}
+	async getSelf(socket) {
+		if (!useSession) {
+			let user = await this.api.repositories.auth.userFromSocket(socket);
+			return user;
+		} else {
+			// Sessions not currently used, but available
+			const { session = {} } = socket.request;
+			const { passport = {} } = session;
+			const { user = false } = passport;
+			const isUser = user && user.username;
+			return user;
+		}
+	}
 };
-
-// module.exports = Socket;

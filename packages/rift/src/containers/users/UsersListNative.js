@@ -1,6 +1,8 @@
-import * as React from 'react';
-import { StyleSheet, Linking, Platform, FlatList } from 'react-native';
-import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
+import React, { memo } from 'react';
+import { StyleSheet, FlatList } from 'react-native';
+import { Layout, withStyles } from '@ui-kitten/components';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import * as Selectors from '@selectors';
@@ -26,14 +28,23 @@ class UsersList extends React.PureComponent {
 	_keyExtractor = item => {
 		return item;
 	};
-	renderItem = ({ item: user, index, ...restProps }) => {
+	renderItem = memo(({ data, index, style, isScrolling, ...restProps }) => {
+		const user = data[index];
 		// IF REACTIVATE PROFILE
 		// if (user == 'self') {
 		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
 		// }
-		return <UserItem themedStyle={this.props.themedStyle.userItem} id={user} />;
-	};
-
+		return (
+			<Layout style={style}>
+				<UserItem key={user} id={user} isScrolling={isScrolling} />
+				{/* {isScrolling ? 'Scrolling' : <UserItem key={user} themedStyle={this.props.themedStyle.userItem} id={user} />} */}
+			</Layout>
+		);
+	});
+	itemKey(index, data) {
+		const key = data[index];
+		return key;
+	}
 	render() {
 		const {
 			incomingCall,
@@ -57,20 +68,35 @@ class UsersList extends React.PureComponent {
 				</Layout>
 			);
 		}
+		// const height = 1000;
+		const itemHeight = 90;
+		// const width = 400;
 		return (
 			<Layout style={[styles.userListLayout, {}]}>
 				<SearchBar />
-				<FlatList
-					data={users}
-					renderItem={this.renderItem}
-					style={styles.list}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.listContentContainer}
-					// numColumns={2}
-					// columnWrapperStyle={styles.columnWrapper}
-					initialNumToRender={8}
-					keyExtractor={this._keyExtractor}
-				/>
+				<AutoSizer>
+					{({ height, width }) => (
+						<List
+							itemData={users}
+							height={height}
+							width={width}
+							itemSize={itemHeight}
+							itemCount={users.length}
+							// renderItem={this.renderItem}
+							style={styles.list}
+							showsVerticalScrollIndicator={false}
+							contentContainerStyle={styles.listContentContainer}
+							// numColumns={2}
+							// columnWrapperStyle={styles.columnWrapper}
+							initialNumToRender={8}
+							keyExtractor={this._keyExtractor}
+							itemKey={this.itemKey}
+							useIsScrolling
+						>
+							{this.renderItem}
+						</List>
+					)}
+				</AutoSizer>
 				{/* <Layout style={styles.floatingButtonContainer}>
 					<Button style={{}}>Call</Button>
 				</Layout> */}
@@ -88,20 +114,22 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 	callActions: {
 		backgroundColor: theme['color-primary-500']
 	},
-	userItem: {
-		onlineColor: theme['color-success-500'],
-		statusBar: {
-			backgroundcolor: theme['color-basic-transparent-disabled-border']
-		},
-		statusText: {
-			color: theme['color-success-500'] // CHANGE THIS!
-		},
-		iconOnline: {
-			backgroundColor: theme['color-primary-100'],
-			// color: theme['color-basic-800']
-			color: theme['color-success-500']
-		}
-	},
+	// userItem: {
+	// 	// REMOVE
+	// 	onlineColor: theme['color-success-500'],
+	// 	statusBar: {
+	// 		// is rgba(143, 155, 179, 0.24)
+	// 		backgroundcolor: theme['color-basic-transparent-disabled-border']
+	// 	},
+	// 	statusText: {
+	// 		color: theme['color-success-500'] // CHANGE THIS!
+	// 	},
+	// 	iconOnline: {
+	// 		backgroundColor: theme['color-primary-100'],
+	// 		// color: theme['color-basic-800']
+	// 		color: theme['color-success-500']
+	// 	}
+	// },
 
 	container: { backgroundColor: '#1A2138' }
 }));

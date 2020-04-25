@@ -142,7 +142,6 @@ const userData = (state = {}, action) => {
 		}
 		case ADD_USER: {
 			const { user } = action;
-			debugger; //remove
 			const { status, isFriend } = user;
 			return {
 				...user,

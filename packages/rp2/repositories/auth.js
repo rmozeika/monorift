@@ -10,8 +10,8 @@ class AuthRepository extends Repository {
 		super(api, collection);
 	}
 	extractJWTData(user) {
-		const { bit_id: id, username, oauth_id } = user;
-		return { id, username, oauth_id };
+		const { bit_id, id, username, oauth_id } = user;
+		return { id: id || bit_id, username, oauth_id };
 	}
 	async initJWT(res, user) {
 		const token = this.createJWT(user);

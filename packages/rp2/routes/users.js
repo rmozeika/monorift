@@ -122,7 +122,6 @@ class UserRoute extends Route {
 	}
 	// unused
 	fetchOnlineUsers(req, res) {
-		console.log(this);
 		const { username = false } = this.getUserFromReq(req);
 
 		const redisCmd = util.promisify(this.api.redis.SMEMBERS).bind(this.api.redis);
@@ -144,21 +143,18 @@ class UserRoute extends Route {
 	async addFriend(req, res) {
 		const { username } = this.getUserFromReq(req);
 		const { friend } = req.body;
-		console.log(username);
 		const result = await this.repository.addFriend(username, friend.username);
 		res.send(true);
 	}
 	async acceptFriend(req, res) {
 		const { username } = this.getUserFromReq(req);
 		const { friend } = req.body;
-		console.log(username);
 		this.repository.acceptFriend(username, friend.username);
 		res.send(true);
 	}
 	async rejectFriend(req, res) {
 		const { username } = this.getUserFromReq(req);
 		const { friend } = req.body;
-		console.log(username);
 		this.repository.rejectFriend(username, friend.username);
 	}
 	async updateTempUsername(req, res) {
@@ -168,7 +164,7 @@ class UserRoute extends Route {
 		const result = await this.repository
 			.updateTempUsername(tempUsername, username)
 			.catch(e => {
-				console.log(e);
+				console.error(e);
 			});
 		if (result.succes === false) {
 			return res.send(result);

@@ -35,8 +35,7 @@ function* fetchUsers() {
 		yield put(Actions.setUsers(data));
 		const users = yield select(selectUsers);
 	} catch (err) {
-		console.log(err);
-		debugger; //error
+		console.warn(err);
 	}
 }
 function* onlineUsersSaga() {
@@ -53,7 +52,9 @@ function* loadOnlineUsersSaga(nsp, onComplete) {
 		const data = yield res.json();
 		yield put(onComplete(data));
 		// yield put(setOnlineUsers(data));
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* loadFriendsSaga() {
 	try {
@@ -62,7 +63,9 @@ function* loadFriendsSaga() {
 		const res = yield fetch(origin, { method: 'POST' });
 		const data = yield res.json();
 		yield put(Actions.setFriends(data));
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* addFriendSaga(action) {
 	try {
@@ -76,13 +79,9 @@ function* addFriendSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend: action.payload })
 		});
-		// yield put(
-		// 	Actions.updateUser(action.payload.oauth_id, {
-		// 		friendStatus: 'S',
-		// 		isFriend: true
-		// 	})
-		// );
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 function* respondFriendRequestSaga(action) {
 	const { friend, didAccept } = action.payload;
@@ -106,7 +105,9 @@ function* respondFriendRequestSaga(action) {
 			// 		isFriend: didAccept
 			// 	})
 			// );
-		} catch (err) {}
+		} catch (err) {
+			console.warn(err);
+		}
 		return;
 	}
 	try {
@@ -120,7 +121,9 @@ function* respondFriendRequestSaga(action) {
 			method: 'POST',
 			body: JSON.stringify({ friend })
 		});
-	} catch (err) {}
+	} catch (err) {
+		console.warn(err);
+	}
 }
 const connect = () => {
 	// socket = io(socketServerURL);
@@ -151,14 +154,6 @@ const createSocketChannel = socket =>
 		socket.on('disconnect', reason => {
 			socket.connect();
 		});
-		const oldOnMsg = (msg, secondArg) => {
-			if (msg.type == 'candidate') {
-				onCandidateHandler(msg.candidate);
-			}
-			if (msg.type == 'offer') {
-				put({ type: GOT_MESSAGE, msg }, constraints);
-			}
-		};
 
 		const onClose = () => {
 			socket.close(true);
@@ -203,11 +198,11 @@ function* initSocketSaga() {
 					yield put(Actions.removeOnlineUser(user));
 				}
 			} catch (e) {
-				//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
+				console.warn(e);
 			}
 		}
 	} catch (e) {
-		console.log(e);
+		console.warn(e);
 	} finally {
 		if (yield cancelled()) {
 			console.log('cancelled socketsaga');
@@ -262,17 +257,14 @@ function* amOnlineSaga({ payload }) {
 }
 function* addUserSaga({ payload, id }) {
 	try {
-		debugger; //remove
 		if (!id) return;
 		const user = yield select(UserSelectors.getUserById, { id });
 		console.log(user);
 		if (!user) {
 			yield put(Actions.addUser(id, { ...payload.user, ...payload.data }));
 		}
-		debugger; //remove
 	} catch (e) {
-		debugger; //remove
-		console.log(e);
+		console.warn(e);
 	}
 }
 function* rootSaga() {

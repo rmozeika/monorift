@@ -9,19 +9,9 @@ var users = require('./routes/users');
 const passport = require('./auth/auth0');
 const redis = require('redis');
 const jwtMiddleware = require('./middleware/jwt');
-const session = require('express-session');
-const jwt = require('jsonwebtoken');
-
+const appSession = require('./middleware/session');
 const config = require('./config.js');
-const {
-	mongoConnectionString: uri,
-	remote,
-	sessionSecret,
-	debug,
-	redisConnectionString,
-	redisPort = 6379,
-	JWT_SECRET
-} = config;
+const { mongoConnectionString: uri, remote, debug } = config;
 const fs = require('fs');
 const webpack = require('webpack');
 var io = require('socket.io');
@@ -32,17 +22,8 @@ const UsersSocket = require('./socket/users');
 
 console.log('VERSION', '1.1');
 var app = express();
-let RedisStore = require('connect-redis')(session);
 // probably remove as this is already created in api.js
-let client = redis.createClient(redisPort, redisConnectionString);
-
-const sessionMiddleware = session({
-	store: new RedisStore({ client }),
-	secret: 'keyboard cat',
-	resave: false
-});
-
-app.use(sessionMiddleware);
+// let client = redis.createClient(redisPort, redisConnectionString);
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
@@ -51,21 +32,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(function(req, res, next) {
-	const user =
-		req.session &&
-		req.session.passport &&
-		req.session.passport.user &&
-		req.session.passport.user.username;
-	// console.log(user || 'anonymous', req.path);
-	console.log(`
-		Request: ${req.method} ${req.path}
-		User:  ${user || 'anonymous'}
-	`);
-	console.log('Time:', Date.now());
-	next();
-});
 
 app.get(
 	'/gravatar',
@@ -125,10 +91,13 @@ const setFurtherRoutes = () => {
 		res.status(err.status || 500);
 		res.send('error');
 	});
+
+	const callSocket = new CallSocket(app.io, api);
+	const usersSocket = new UsersSocket(app.io, api);
 };
 
 setupDefaultRoute();
-
+appSession(app);
 app.use(jwtMiddleware.userFromToken);
 api.init(app).then(() => {
 	setFurtherRoutes();
@@ -143,11 +112,8 @@ app.api = api;
 const socketIO = io();
 app.io = socketIO;
 // api.redis = client;
-api.redis = client;
+// api.redis = client;
 
-app.io.use(function(socket, next) {
-	sessionMiddleware(socket.request, {}, next);
-});
 function onAuthorizeSuccess(data, accept) {
 	console.log('successful connection to socket.io');
 
@@ -161,10 +127,6 @@ function onAuthorizeFail(data, message, error, accept) {
 	accept(null, false);
 }
 app.io.on('connection', async socket => {
-	// const { session = {} } = socket.request;
-	// const { passport = {} } = session;
-	// const { user = false } = passport;
-	// const isUser = user && user.username;
 	const usersRepo = api.repositories.users;
 	const { oauth_id } = await api.repositories.auth.userFromSocket(socket);
 	const userData = oauth_id ? await usersRepo.findById(oauth_id) : false;
@@ -211,7 +173,5 @@ app.io.on('connection', async socket => {
 // app.io.on('message', function(msg) {
 // 	// console.log(msg);
 // });
-const callSocket = new CallSocket(app.io, api);
-const usersSocket = new UsersSocket(app.io, api);
 
 module.exports = app;

@@ -20,6 +20,16 @@ export const createGuest = (username, password) => ({
 		password
 	}
 });
+
+export const SIMPLE_LOGIN = 'SIMPLE_LOGIN';
+export const simpleLogin = (username, password) => ({
+	type: SIMPLE_LOGIN,
+	payload: {
+		username,
+		password
+	}
+});
+
 export const CREATE_GUEST_FAILURE = 'CREATE_GUEST_FAILURE';
 export const createGuestFailure = message => ({
 	type: CREATE_GUEST_FAILURE,

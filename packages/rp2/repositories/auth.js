@@ -53,7 +53,8 @@ class AuthRepository extends Repository {
 		});
 	}
 	async userFromSocket(socket) {
-		const { token = false } = cookie.parse(socket.handshake.headers.cookie);
+		const { cookie: cookies = '' } = socket.handshake.headers;
+		const { token = false } = cookie.parse(cookies);
 		if (!token) return false;
 		return await this.parseToken(token);
 	}

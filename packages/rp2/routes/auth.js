@@ -44,7 +44,11 @@ class AuthRoute extends Route {
 				})(req, res, next);
 			});
 			this.router.get('/failed', this.failed.bind(this));
-			this.router.post('/simple/login', this.simpleLogin.bind(this));
+			this.router.post(
+				'/simple/login',
+				this.api.bruteforce.prevent,
+				this.simpleLogin.bind(this)
+			);
 		};
 		run();
 	}

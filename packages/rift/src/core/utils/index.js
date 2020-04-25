@@ -13,7 +13,8 @@ export const originLink = type => {
 		acceptFriend: '/users/friends/accept',
 		rejectFriend: '/users/friends/reject',
 		updateUsername: '/users/username/temp',
-		createGuest: '/users/guest/register'
+		createGuest: '/users/guest/register',
+		simpleLogin: '/auth/simple/login'
 	};
 	let path = paths[type] || '';
 	let host = window.location.origin;

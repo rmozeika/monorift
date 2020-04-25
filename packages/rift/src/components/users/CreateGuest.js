@@ -40,7 +40,12 @@ function CreateGuest(props) {
 				>
 					Sign In
 				</Button>
-				<Button style={styles.button}>Sign Up</Button>
+				<Button
+					style={styles.button}
+					onPress={() => dispatch(Actions.simpleLogin(username, password))}
+				>
+					Sign Up
+				</Button>
 			</Layout>
 		</Layout>
 	);

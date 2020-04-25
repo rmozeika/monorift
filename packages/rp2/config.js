@@ -34,4 +34,5 @@ exports.psqlConfig = {
 	port: env.psqlPort || '5432'
 };
 exports.JWT_SECRET = env.JWT_SECRET;
+exports.useSession = env.useSession || false;
 exports.env = env;

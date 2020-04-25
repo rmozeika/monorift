@@ -155,42 +155,13 @@ class User extends Socket {
 		super(io, nameSpace, api, UserItem);
 		this.createListeners = this.createListeners.bind(this);
 	}
-	async getSelf(socket) {
-		let user = await this.api.repositories.auth.userFromSocket(socket);
-		if (!user) {
-			const { session = {} } = socket.request;
-			const { passport = {} } = session;
-			// { user = false } = passport;
-			user = passport.user || false;
-			const isUser = user && user.username;
-		}
-		return user;
-	}
+
 	async onConnect(socket) {
 		// socket.emit('message', { test: 'val' });
 		const user = await this.getSelf(socket);
 
 		this.createSocketItem(socket, user);
 	}
-	// async onMessage(redis, msg, secondArg) {
-	// }
-	async onDisconnect(socket) {
-		// const { session = {} } = socket.request;
-		// const { passport = {} } = session;
-		// const { user = false } = passport;
-		// const isUser = user && user.username;
-		console.log('disconnected');
-		if (user.username) {
-			this.redis.srem('online_users', user.username);
-		}
-	}
-	// onMessage(msg) {
-	// 	this.nsp.emit('message', msg);
-	// }
-
-	// onDisconnect() {
-
-	// }
 }
 
 module.exports = User;

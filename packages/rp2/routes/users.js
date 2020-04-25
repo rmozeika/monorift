@@ -107,12 +107,15 @@ class UserRoute extends Route {
 	}
 	async registerAsGuest(req, res) {
 		const { username, password } = req.body;
-		const user = await this.repository
+		const { success, error, ...user } = await this.repository
 			.createGuest(username, password)
 			.catch(e => {
-				res.send({ success: false });
+				return { success: false, error: e };
 			});
-		if (!user) return;
+		if (!user || error) {
+			res.send({ success, error });
+			return;
+		}
 		const token = this.api.repositories.auth.initJWT(res, user);
 		const publicUserData = this.repository.getPublicUser(user);
 		res.send({ success: true, user: publicUserData });

@@ -36,13 +36,13 @@ function CreateGuest(props) {
 				<Button
 					status={'basic'}
 					style={styles.button}
-					onPress={() => dispatch(Actions.createGuest(username, password))}
+					onPress={() => dispatch(Actions.simpleLogin(username, password))}
 				>
 					Sign In
 				</Button>
 				<Button
 					style={styles.button}
-					onPress={() => dispatch(Actions.simpleLogin(username, password))}
+					onPress={() => dispatch(Actions.createGuest(username, password))}
 				>
 					Sign Up
 				</Button>

@@ -57,13 +57,16 @@ class AuthRoute extends Route {
 	}
 	async simpleLogin(req, res, next) {
 		const { username, password } = req.body;
-		const user = await this.repository.simpleAuth(username, password);
-		if (!user) {
-			res.status(401).send({ error: 'incorrect password' });
+		const { error, ...user } = await this.repository.simpleAuth(
+			username,
+			password
+		);
+		if (error || !user) {
+			res.send({ error: error || 'Incorrect password' });
 			return;
 		}
 		const token = await this.repository.initJWT(res, user);
-		res.send('success');
+		res.send({ success: true, user });
 	}
 	auth0Callback(req, res, next) {
 		passport.authenticate('auth0', async (err, user, info) => {

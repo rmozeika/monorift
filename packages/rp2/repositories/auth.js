@@ -65,14 +65,19 @@ class AuthRepository extends Repository {
 	}
 	async simpleAuth(username, password) {
 		const user = await this.api.repositories.users.findByUsername(username);
+		if (!user) {
+			return { error: 'User does not exist' };
+		}
 		const { bit_id: id } = user;
 		const authData = await this.findOne({ id });
 		const verify = await bcrypt.compare(password, authData.hash);
 		if (!verify) {
-			return false;
+			return { error: 'Incorrect password' };
 		}
+		const publicUserData = this.api.repositories.users.getPublicUser(user);
+
 		// const user = await this.api.repositories.users.findById(authData.id);
-		return user;
+		return publicUserData;
 		// this.saveJWTCookie()
 	}
 }

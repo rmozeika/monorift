@@ -44,6 +44,13 @@ const authReducer = createReducer(
 					: null
 			};
 		},
+		[LOGIN.FAILURE]: (authState, action) => {
+			const { error } = action;
+			return {
+				...authState,
+				alert: error
+			};
+		},
 		[LOGIN.REQUEST]: (authState, action) => {
 			return { user: {}, loggedIn: false, checked: true };
 		},

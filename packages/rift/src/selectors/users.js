@@ -118,7 +118,6 @@ const selectDenormUsers = createSelectorCustom(
 	getUsers,
 	getUserIdsByList,
 	(objectsById, ids) => {
-		debugger; //remove
 		return ids.map(id => objectsById[id]);
 	}
 );

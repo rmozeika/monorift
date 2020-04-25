@@ -75,19 +75,19 @@ function* createGuestSaga(action) {
 	try {
 		const { username, password } = action.payload;
 		const origin = originLink('createGuest');
-		const { user, success } = yield post(origin, { username, password });
+		const { user, success, error } = yield post(origin, { username, password });
 
 		// console.log(result);
 		try {
-			if (success && user?.username) {
+			if (!error && success && user?.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload: user });
 				yield put({ type: Actions.AM_ONLINE });
 			} else {
-				// yield put({ type: AUTH.LOGIN.REQUEST, payload: user });
-				yield put(Actions.updateUsernameFailure(username));
+				yield put({ type: AUTH.LOGIN.FAILURE, error });
+				// yield put(Actions.updateUsernameFailure(username));
 			}
 		} catch (e) {
-			yield put({ type: AUTH.LOGIN.FAILURE, payload: user });
+			yield put({ type: AUTH.LOGIN.FAILURE, error: 'Please try again' });
 		}
 	} catch (e) {
 		debugger; //error
@@ -99,14 +99,16 @@ function* simpleLoginSaga(action) {
 	try {
 		const { username, password } = action.payload;
 		const origin = originLink('simpleLogin');
-		const { user, success } = yield post(origin, { username, password });
+		const { user, success, error } = yield post(origin, { username, password });
 		try {
 			if (success && user?.username) {
 				yield put({ type: AUTH.LOGIN.SUCCESS, payload: user });
 				yield put({ type: Actions.AM_ONLINE });
 			} else {
+				yield put({ type: AUTH.LOGIN.FAILURE, error });
+
 				// yield put({ type: AUTH.LOGIN.REQUEST, payload: user });
-				yield put(Actions.updateUsernameFailure(username));
+				// yield put(Actions.updateUsernameFailure(username));
 			}
 		} catch (e) {
 			yield put({ type: AUTH.LOGIN.FAILURE, payload: user });

@@ -161,7 +161,6 @@ const createSocketChannel = socket =>
 		};
 
 		const onClose = () => {
-			debugger; //remove
 			socket.close(true);
 			//socket.off('login', handler);
 		};
@@ -172,15 +171,12 @@ function* startSocketSaga() {
 	const task = yield fork(initSocketSaga);
 	const restart = yield take(Actions.CLOSE_USER_SOCKET);
 	yield cancel(task);
-	debugger; //remove
 	if (restart) {
-		debugger; //remove
 		const newTask = yield fork(initSocketSaga);
 		yield take(Actions.CLOSE_USER_SOCKET);
 		yield cancel(newTask);
 	} else {
 		while (yield take(Actions.START_USER_SOCKET)) {
-			debugger; //remove
 			const newTask = yield fork(initSocketSaga);
 			yield take(Actions.CLOSE_USER_SOCKET);
 			yield cancel(newTask);
@@ -193,15 +189,7 @@ function* initSocketSaga() {
 	const socketChannel = yield call(createSocketChannel, socket);
 
 	try {
-		// try {
-		// } catch (e) {
-		// 	console.log('init socket error', e);
-		// }
 		console.log('create user socket channel');
-		//socket.send('hi');
-		// yield fork(closeSocket, socketChannel);
-		// while (true) {
-		// 	debugger; //remove
 		while (true) {
 			const message = yield take(socketChannel);
 			try {
@@ -218,19 +206,11 @@ function* initSocketSaga() {
 				//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 			}
 		}
-		// yield fork(socketMessageSaga, socketChannel);
-		// }
-		debugger; //remove
-		// yield take(Actions.CLOSE_USER_SOCKET);
-		// yield cancel(socketMessageSaga);
-		console.log('take channel');
 	} catch (e) {
-		debugger; //remove
 		console.log(e);
 	} finally {
 		if (yield cancelled()) {
 			console.log('cancelled socketsaga');
-			debugger; //remove
 			socketChannel.close();
 			console.log('countdown cancelled');
 		}
@@ -252,13 +232,6 @@ function* socketMessageSaga(socketChannel) {
 		} catch (e) {
 			//yield put({ type: AUTH.LOGIN.FAILURE,  payload });
 		}
-	}
-}
-function* closeSocket(socketChannel) {
-	while (true) {
-		debugger; //remove
-		yield take(Actions.CLOSE_USER_SOCKET);
-		socketChannel.close();
 	}
 }
 

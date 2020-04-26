@@ -128,12 +128,6 @@ class UserItem extends React.Component {
 		);
 	}
 }
-const mapStateToProps = (state, props) => {
-	// const { }
-	return {
-		user: getUser(state, props)
-	};
-};
 
 const listItemStyleBase = {
 	margin: 10,
@@ -304,7 +298,12 @@ const styles = StyleSheet.create({
 		display: 'flex'
 	}
 });
-
+const mapStateToProps = (state, props) => {
+	// const { }
+	return {
+		user: getUser(state, props)
+	};
+};
 const mapDispatchToProps = dispatch => {
 	return {
 		startCall: (type = 'audio', user) => dispatch(Actions.startCall(type, user)),

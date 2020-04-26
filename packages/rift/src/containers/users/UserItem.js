@@ -120,46 +120,31 @@ class UserItem extends React.Component {
 		);
 	}
 }
-const mapStateToProps = (state, props) => {
-	// const { }
-	return {
-		user: getUser(state, props)
-	};
+
+const listItemStyleBase = {
+	margin: 10,
+	borderRadius: 12,
+	boxShadow: ` 8px 8px 5px #161c30, 
+	-8px -8px 5px #1e2640`,
+	// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
+	backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
+	flexBasis: 75,
+	flexGrow: 1,
+	alignItems: 'stretch',
+	display: 'flex',
+	flexDirection: 'row',
+	overflow: 'hidden',
+	padding: 0,
+	paddingHorizontal: 0,
+	paddingVertical: 0,
+	zIndex: 9
 };
-
 const styles = StyleSheet.create({
-	listItem: {
-		margin: 10,
-		borderRadius: 12,
-		// boxShadow: `-8px 8px 5px #111522, 8px -8px 5px #334168;`,
-		boxShadow: ` 8px 8px 5px #161c30, 
-		-8px -8px 5px #1e2640`,
-
-		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
-		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
-
-		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
-		// flexBasis: '45%',
-		flexBasis: 75,
-		flexGrow: 1,
-		alignItems: 'stretch',
-		// flexWrap: 'wrap',
-		display: 'flex',
-		flexDirection: 'row',
-		overflow: 'hidden',
-		// flexShrink: 1
-		// shadowColor: '#000',
-		// shadowOffset: { width: 0, height: 1 },
-		// shadowOpacity: 0.8,
-		// shadowRadius: 1,
-		padding: 0,
-		paddingHorizontal: 0,
-		paddingVertical: 0,
-		zIndex: 9
-		// MAY NEED TO DIABLE -REACTIVATE FOR FLEX POSITION
-		// alignContent: 'stretch'
-		// marginHorizontal: 0,
-		// marginVertical:0
+	listItem: listItemStyleBase,
+	listItemSelected: {
+		...listItemStyleBase,
+		borderWidth: 3,
+		borderColor: '#00E096'
 	},
 	listItemMain: {
 		backgroundColor: 'inherhit',
@@ -188,8 +173,31 @@ const styles = StyleSheet.create({
 		// alignContent: 'center',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
+
 		// alignItems: 'flex-end'
 		// borderRadius: '50%',
+	},
+	gravatar: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: 40,
+		maxWidth: 40,
+		height: '100%',
+		width: '100%',
+		borderRadius: 100,
+		backgroundColor: 'inherit'
+	},
+	gravatarOnline: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: 40,
+		maxWidth: 40,
+		height: '100%',
+		width: '100%',
+		borderRadius: 100,
+		backgroundColor: 'inherit',
+		borderWidth: 2,
+		borderColor: '#00E096'
 	},
 	// gravatarContainerOnline: {
 
@@ -222,7 +230,8 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
 		// justifySelf: 'flex-end',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		backgroundColor: 'rgba(143, 155, 179, 0.24)'
 		// width: '100%'
 	},
 	listItemTitle: {
@@ -239,9 +248,9 @@ const styles = StyleSheet.create({
 		textAlign: 'start',
 		alignContent: 'center',
 		paddingRight: 20,
-		paddingLeft: 10
+		paddingLeft: 10,
+		color: '#00E096'
 	},
-
 	icon: {
 		width: 24,
 		height: 24,
@@ -281,6 +290,12 @@ const styles = StyleSheet.create({
 		display: 'flex'
 	}
 });
+const mapStateToProps = (state, props) => {
+	// const { }
+	return {
+		user: getUser(state, props)
+	};
+};
 
 const mapDispatchToProps = dispatch => {
 	return {

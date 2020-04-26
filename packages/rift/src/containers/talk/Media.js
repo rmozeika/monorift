@@ -104,6 +104,7 @@ export class Media extends React.Component {
 					<Controls
 						callFunctions={this.props.callFunctions}
 						showHideMedia={this.showHideMedia}
+						audioControlsHidden={this.state.audioControlsHidden}
 						play={this.play}
 						stop={this.stop}
 					/>

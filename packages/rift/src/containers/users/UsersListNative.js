@@ -46,14 +46,8 @@ class UsersList extends React.PureComponent {
 		return key;
 	}
 	render() {
-		const {
-			incomingCall,
-			users,
-			listType,
-			loggedIn,
-			checked,
-			themedStyle
-		} = this.props;
+		const { incomingCall, users, listType, loggedIn, checked, eva } = this.props;
+		const { style } = eva;
 
 		const emptyFriends = users.length == 0;
 		if (listType == 'friends' && emptyFriends) {
@@ -64,7 +58,7 @@ class UsersList extends React.PureComponent {
 						checked={checked}
 						goToUsers={this.goToUsers}
 					/>
-					<CallActions themedStyle={themedStyle.callActions} />
+					<CallActions themedStyle={style.callActions} />
 				</Layout>
 			);
 		}
@@ -100,7 +94,7 @@ class UsersList extends React.PureComponent {
 				{/* <Layout style={styles.floatingButtonContainer}>
 					<Button style={{}}>Call</Button>
 				</Layout> */}
-				<CallActions themedStyle={themedStyle.callActions} />
+				<CallActions themedStyle={style.callActions} />
 			</Layout>
 		);
 	}

@@ -40,5 +40,16 @@ function userFromToken(req, res, next) {
 // const verify = asyc (token) => {
 //     const verified = jwt.
 // }
-
-module.exports = { authenticateToken, userFromToken };
+function authenticateSuperUser(req, res, next) {
+	const token = req.cookies.token;
+	if (token == null) return res.sendStatus(401);
+	jwt.verify(token, JWT_SECRET, (err, user) => {
+		console.log(err);
+		if (err) return res.sendStatus(403);
+		req.user = user;
+		if (!req.user) return res.send(403);
+		if (req.user.admin !== true) return res.send(403);
+		next();
+	});
+}
+module.exports = { authenticateToken, userFromToken, authenticateSuperUser };

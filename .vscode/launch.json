@@ -50,7 +50,7 @@
 			"request": "launch",
 			"name": "cli app",
 			"program": "${workspaceFolder}/cli.js",
-			"args": ["transfer", "app"]
+			"args": ["transfer", "distdev"]
 		},
 		{
 			"type": "node",

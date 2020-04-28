@@ -7,7 +7,7 @@ const { URL } = require('url');
 const { exec, execFile, spawn } = require('child_process');
 const execAsync = util.promisify(exec);
 const execFileAsync = util.promisify(execFile);
-
+var cookieParser = require('cookie-parser');
 const fs = require('fs').promises;
 const utils = require('./utils');
 const qs = require('querystring');
@@ -22,8 +22,17 @@ const express = require('express');
 const app = express();
 const port = 9090;
 const debug = false; //change to false
+
+const { authenticateSuperUser, ...restMw } = require('../rp2/middleware/jwt');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.get('/deploy/update', authenticateSuperUser, (req, res, next) => {
+	console.log(req);
+	updateScript(res);
+
+	// res.send(true);
+});
 app.get('*', (req, res) => {
 	console.log('got req (get)');
 	res.send('success');
@@ -42,24 +51,28 @@ app.post('*', async (req, res) => {
 	console.log(ref);
 	if (ref == branch || debug) {
 		console.log('Updating bash and writing file');
-		const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
-		const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
-		let output = '';
-		const logChunk = chunk => {
-			let str = chunk.toString();
-			console.log('Chunk', str);
-			output += str;
-		};
-		updateScr.stdout.on('data', logChunk);
-		updateScr.stderr.on('data', logChunk);
-		updateScr.on('close', code => {
-			console.log('closed ' + code);
-			const logFile = path.resolve(__dirname, 'history');
-			utils.writeFile(logFile, output);
-			res.send('done');
-		});
+		// const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
+		updateScript(res);
 	}
 });
+
+const updateScript = res => {
+	const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
+	let output = '';
+	const logChunk = chunk => {
+		let str = chunk.toString();
+		console.log('Chunk', str);
+		output += str;
+	};
+	updateScr.stdout.on('data', logChunk);
+	updateScr.stderr.on('data', logChunk);
+	updateScr.on('close', code => {
+		console.log('closed ' + code);
+		const logFile = path.resolve(__dirname, 'history');
+		utils.writeFile(logFile, output);
+		res.send('done');
+	});
+};
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 

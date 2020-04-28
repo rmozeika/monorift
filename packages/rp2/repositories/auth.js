@@ -10,8 +10,8 @@ class AuthRepository extends Repository {
 		super(api, collection);
 	}
 	extractJWTData(user) {
-		const { bit_id, id, username, oauth_id } = user;
-		return { id: id || bit_id, username, oauth_id };
+		const { bit_id, id, username, oauth_id, admin } = user;
+		return { id: id || bit_id, username, oauth_id, admin };
 	}
 	async initJWT(res, user) {
 		const token = this.createJWT(user);
@@ -79,6 +79,12 @@ class AuthRepository extends Repository {
 		// const user = await this.api.repositories.users.findById(authData.id);
 		return publicUserData;
 		// this.saveJWTCookie()
+	}
+	async authenticateSuperUser(req, res, next) {
+		if (!req.user) return res.send(403);
+		// const user = this.api.repositories.users.findById(req.user.id);
+		if (req.user.admin !== true) return res.send(403);
+		next();
 	}
 }
 

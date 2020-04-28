@@ -57,20 +57,7 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 		// const { themedStyle } = this.props;
 		return <Icon name="sign-in-alt" color={'#fff'} style={style} solid />;
 	};
-	private renderSignoutIcon = ({ style }): React.ReactElement<ImageProps> => {
-		return <Icon name="sign-out-alt" color={'#fff'} style={{ ...style }} solid />;
-	};
-	private renderAlertIcon = ({ style }): React.ReactElement<ImageProps> => {
-		return <Icon name="alert" color={'#FF3D71'} style={style} solid />;
-	};
-	private renderProfileIcon = ({ style }): React.ReactElement<ImageProps> => {
-		return <Icon name="caret-down" color={'#fff'} style={style} solid />;
-	};
-	private renderProfileCloseIcon = ({
-		style
-	}): React.ReactElement<ImageProps> => {
-		return <Icon name="x" color={'#fff'} style={{ ...style }} solid />;
-	};
+
 	private renderMenuIcon = ({ style }): React.ReactElement<ImageProps> => {
 		// const { themedStyle } = this.props;
 		return <Icon name="bars" color={'#fff'} style={{ ...style }} solid />;
@@ -84,29 +71,6 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 
 	private openMenu(): void {}
 
-	// private renderProfilePopover = (): React.ReactElement<ImageProps> => {
-	// 	return (
-	// 		<Layout style={styles.popoverLayout}>
-	// 			<Layout style={styles.signoutPopoverItem}>
-	// 				<Button
-	// 					style={{ flexGrow: 1 }}
-	// 					size={'small'}
-	// 					status={'danger'}
-	// 					onPress={this.onSignout}
-	// 				>
-	// 					Sign out
-	// 				</Button>
-	// 				<Button
-	// 					size={'small'}
-	// 					appearance={'ghost'}
-	// 					onPress={this.toggleProfilePopover}
-	// 					icon={this.renderProfileCloseIcon}
-	// 				/>
-	// 			</Layout>
-	// 			<UpdateTempUsername />
-	// 		</Layout>
-	// 	);
-	// };
 	private renderLeftControls(): React.ReactElement<TopNavigationActionProps> {
 		const { loggedIn, username = '', alert, id } = this.props;
 		// let icon = this.renderMenuIcon;
@@ -159,18 +123,6 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 			</Button>
 		);
 	}
-	// private renderRightControls(): React.ReactElement<TopNavigationActionProps> {
-	// 	const { themedStyle } = this.props;
-	// 	const icon = this.renderSignoutIcon;
-	// 	const onPress = this.onSignout;
-	// 	return (
-	// 		<TopNavigationAction
-	// 			icon={icon}
-	// 			onPress={onPress}
-	// 			style={themedStyle.action}
-	// 		/>
-	// 	);
-	// }
 
 	public render(): React.ReactNode {
 		const tabColor = 'rgb(26, 34, 55)';

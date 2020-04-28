@@ -56,7 +56,7 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.(js|jsx|mjs|ts|tsx)$/,
+				test: /\.(web.js|js|jsx|mjs|ts|tsx)$/,
 				include: [
 					path.resolve(__dirname, 'node_modules/react-native-elements'),
 					path.resolve(__dirname, 'node_modules/react-native-elements/src'),

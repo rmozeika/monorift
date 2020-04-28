@@ -36,7 +36,7 @@ interface ProfileProps {
 
 type ProfilePopoverProps = ProfileProps & ThemedComponentProps;
 interface ProfileState {
-	profilePopoverActive: boolean;
+	visible?: boolean;
 }
 
 const gravatarDimensions = '5vh';
@@ -48,7 +48,7 @@ class ProfilePopover extends React.Component<
 	public constructor(props: ProfilePopoverProps) {
 		super(props);
 		this.state = {
-			profilePopoverActive: false
+			visible: false
 		};
 	}
 	private renderSigninIcon = ({ style }): React.ReactElement<ImageProps> => {
@@ -75,8 +75,8 @@ class ProfilePopover extends React.Component<
 	};
 
 	private toggleProfilePopover = (): void => {
-		const { profilePopoverActive } = this.state;
-		this.setState({ profilePopoverActive: !profilePopoverActive });
+		const { visible } = this.state;
+		this.setState({ visible: !visible });
 		return;
 	};
 	private onSignout(): void {
@@ -84,6 +84,13 @@ class ProfilePopover extends React.Component<
 			console.error('An error occurred', err);
 		});
 	}
+	private renderAnchor2 = (): React.ReactElement<ImageProps> => {
+		return (
+			<Layout>
+				<Text>Anchor</Text>
+			</Layout>
+		);
+	};
 	private renderAnchor = (): React.ReactElement<ImageProps> => {
 		return (
 			<TouchableOpacity
@@ -131,14 +138,32 @@ class ProfilePopover extends React.Component<
 		);
 	};
 	public render(): React.ReactNode {
+		const { visible } = this.state;
 		return (
 			<Popover
-				// visible={this.state.profilePopoverActive}
+				// @ts-ignore
+				visible={visible}
 				anchor={this.renderAnchor}
-				// onBackdropPress={this.toggleProfilePopover}
+				onBackdropPress={this.toggleProfilePopover}
 			>
-				<Layout>
-					<Text>Test?</Text>
+				<Layout style={styles.popoverLayout}>
+					<Layout style={styles.signoutPopoverItem}>
+						<Button
+							style={styles.signoutButton}
+							size={'small'}
+							status={'danger'}
+							onPress={this.onSignout}
+						>
+							Sign out
+						</Button>
+						<Button
+							size={'small'}
+							appearance={'ghost'}
+							onPress={this.toggleProfilePopover}
+							accessoryLeft={this.renderProfileCloseIcon}
+						/>
+					</Layout>
+					<UpdateTempUsername />
 				</Layout>
 				{/* {this.renderContent} */}
 			</Popover>
@@ -181,6 +206,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginVertical: 15,
 		backgroundColor: 'inherit'
+	},
+	signoutButton: {
+		flexGrow: 1
 	},
 	myUsername: {
 		fontWeight: '600',

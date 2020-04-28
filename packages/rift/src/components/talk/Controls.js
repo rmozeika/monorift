@@ -7,6 +7,69 @@ import {
 	ButtonGroup
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
+
+class Controls extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	render() {
+		const {
+			showHideMedia,
+			callFunctions,
+			play,
+			stop,
+			audioControlsHidden
+		} = this.props;
+		return (
+			<Layout style={styles.container}>
+				<Layout style={styles.outerButtonGroup}>
+					<Layout style={styles.innerButtonGroup}>
+						<ButtonGroup style={styles.buttonGroup}>
+							{/* <Button onPress={this.createAudioContext}>Start</Button> */}
+							<Button style={styles.controlButton} onPress={play}>
+								Play
+							</Button>
+							<Button style={styles.controlButton} onPress={stop}>
+								Stop
+							</Button>
+							<ShowHideButton {...showHideMedia(audioControlsHidden)}></ShowHideButton>
+						</ButtonGroup>
+					</Layout>
+					<Layout style={[styles.innerButtonGroup, { flexBasis: '50%' }]}>
+						<Layout style={[styles.callButtonContainer, { boxShadow: 'none' }]}>
+							<Button
+								style={[styles.callButtons, styles.callButtonLeft]}
+								onPress={callFunctions.audio}
+							>
+								Audio Call
+							</Button>
+							<Button
+								style={[styles.callButtons, styles.callButtonRight]}
+								onPress={callFunctions.video}
+							>
+								Video Call
+							</Button>
+						</Layout>
+					</Layout>
+				</Layout>
+			</Layout>
+		);
+	}
+}
+
+function ShowHideButton(props) {
+	const { onPress, text, style, ...otherProps } = props;
+	return (
+		<Button
+			style={[styles.controlButton, style]}
+			onPress={onPress}
+			{...otherProps}
+		>
+			{text}
+		</Button>
+	);
+}
+
 const outerButtonGroupBoxShadow = {
 	boxShadow: `
 			inset 5px 5px 5px -15px rgba(0,0,0,0.1), 
@@ -22,14 +85,6 @@ const buttonGroupBoxShadow = {
 		rgba(255, 255, 255, 0.2) -7px -7px 16px -10px, 
 		rgba(0, 0, 0, 4) 10px 10px 16px 0px
 		`,
-	//		rgba(0, 0, 0, 9) 5px 5px 6px`,
-
-	// inset 5px 5px 5px -15px rgba(0,0,0,0.9),
-	// inset -5px -5px 7px -15px rgba(255, 255, 255, 0.9),
-	// 5px 5px 16px rgba(255,255,255,0.5),
-	// 5px 5px 10px rgba(0, 0, 0, 0.4)
-	// 	`,
-
 	borderWidth: 0
 };
 const innerButtonBoxShadow = {
@@ -115,61 +170,5 @@ const styles = StyleSheet.create({
 		...outerButtonGroupBoxShadow
 	}
 });
-
-class Controls extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-	render() {
-		const { showHideMedia, callFunctions, play, stop } = this.props;
-		return (
-			<Layout style={styles.container}>
-				<Layout style={styles.outerButtonGroup}>
-					<Layout style={styles.innerButtonGroup}>
-						<ButtonGroup style={styles.buttonGroup}>
-							{/* <Button onPress={this.createAudioContext}>Start</Button> */}
-							<Button style={styles.controlButton} onPress={play}>
-								Play
-							</Button>
-							<Button style={styles.controlButton} onPress={stop}>
-								Stop
-							</Button>
-							<ShowHideButton {...showHideMedia(audioControlsHidden)}></ShowHideButton>
-						</ButtonGroup>
-					</Layout>
-					<Layout style={[styles.innerButtonGroup, { flexBasis: '50%' }]}>
-						<Layout style={[styles.callButtonContainer, { boxShadow: 'none' }]}>
-							<Button
-								style={[styles.callButtons, styles.callButtonLeft]}
-								onPress={callFunctions.audio}
-							>
-								Audio Call
-							</Button>
-							<Button
-								style={[styles.callButtons, styles.callButtonRight]}
-								onPress={callFunctions.video}
-							>
-								Video Call
-							</Button>
-						</Layout>
-					</Layout>
-				</Layout>
-			</Layout>
-		);
-	}
-}
-
-function ShowHideButton(props) {
-	const { onPress, text, style, ...otherProps } = props;
-	return (
-		<Button
-			style={[styles.controlButton, style]}
-			onPress={onPress}
-			{...otherProps}
-		>
-			{text}
-		</Button>
-	);
-}
 
 export default Controls;

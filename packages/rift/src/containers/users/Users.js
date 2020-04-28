@@ -9,7 +9,7 @@ import {
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import * as Actions from '@actions';
-import UsersList from './UsersList';
+import UsersList from './UsersList.native';
 
 import CallActions from '@components/buttons/CallActions';
 

@@ -10,9 +10,6 @@
 		"docker": "docker build -f ../devops/Dockerfile ."
 	},
 	"dependencies": {
-		"@react-navigation/bottom-tabs": "^5.2.2",
-		"@storybook/react-native": "^5.3.17",
-		"@ui-kitten/components": "4.4.0",
 		"babel-eslint": "^10.1.0",
 		"bcrypt": "^4.0.1",
 		"body-parser": "~1.18.2",

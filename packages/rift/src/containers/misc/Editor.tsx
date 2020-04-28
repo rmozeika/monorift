@@ -18,7 +18,9 @@ type EditorProps = EditorComponentProps & ThemedComponentProps;
 class Editor extends React.Component<EditorProps, {}> {
 	private onInputValueChange = (inputValue: string) => {};
 	public render(): React.ReactNode {
-		const { themedStyle } = this.props;
+		const { eva } = this.props;
+		const { style: themedStyle } = eva;
+
 		return (
 			<View style={themedStyle.container}>
 				<Input

@@ -11,7 +11,7 @@ import {
 import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as Actions from '@actions';
-import UserList from './UsersList';
+import UserList from './UsersList.native';
 import Talk from '../talk/Talk';
 import Users from './Users';
 import TabBar from '@components/users/TabBar';

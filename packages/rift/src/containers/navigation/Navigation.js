@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
+
 import { Button, Icon } from '@ui-kitten/components';
 import { NavigationContainer } from '@react-navigation/native';
 import {
@@ -9,8 +11,6 @@ import {
 import 'react-native-gesture-handler';
 import TabNavigation from './TabNavigation';
 import Talk from '../talk/Talk';
-import UserScreen from '../users/UserScreen';
-import UserList from '../users/UsersList';
 import NavBarHeader from './NavBarHeader';
 import NavUserControls from '@components/navigation/NavUserControls';
 const Stack = createStackNavigator();
@@ -73,10 +73,18 @@ export default class NavigationContiner extends React.Component {
 						key={'talk'}
 						name={'Talk'}
 						component={Talk}
-						options={({ navigation, route }) => ({
-							headerRight: () => (
-								<Button onPress={() => this.toFriends(navigation)}> to other</Button>
-							),
+						options={({ navigation }) => ({
+							headerRight: () => {
+								return (
+									<Button
+										style={styles.closeButton}
+										status={'danger'}
+										onPress={() => this.toFriends(navigation)}
+									>
+										Close
+									</Button>
+								);
+							},
 							title: 'Talk',
 							headerTitleStyle: {
 								backgroundColor: tabColor
@@ -84,6 +92,10 @@ export default class NavigationContiner extends React.Component {
 							headerTitleContainerStyle: {
 								left: 50,
 								backgroundColor: tabColor
+							},
+							headerRightContainerStyle: {
+								marginRight: 10,
+								backgroundColor: 'white'
 							},
 							showLabel: false,
 							headerRightContainerStyle: { showLabel: false },
@@ -96,3 +108,9 @@ export default class NavigationContiner extends React.Component {
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	closeButton: {
+		marginRight: 8
+	}
+});

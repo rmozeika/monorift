@@ -29,6 +29,8 @@
 		"@react-navigation/web": "^1.0.0-alpha.9",
 		"@storybook/react": "^5.3.8",
 		"@storybook/react-native": "^5.3.17",
+		"@types/react-router": "^5.1.7",
+		"@types/react-router-dom": "^5.1.5",
 		"@ui-kitten/components": "5.0.0-alpha.1",
 		"@ui-kitten/eva-icons": "5.0.0-alpha.1",
 		"axios": "^0.19.2",

@@ -36,8 +36,9 @@ class AboutContainer extends React.Component {
 		return <CardHeader title="About" />;
 	}
 	render() {
+		const { eva } = this.props;
 		return (
-			<Layout style={[styles.container, this.props.themedStyle.container]}>
+			<Layout style={[styles.container, eva.style.container]}>
 				<Card style={styles.card} header={this.renderHeader} status="success">
 					<Text>{aboutText}</Text>
 				</Card>

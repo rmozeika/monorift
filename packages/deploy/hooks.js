@@ -27,10 +27,17 @@ const { authenticateSuperUser, ...restMw } = require('../rp2/middleware/jwt');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.get('/deploy/update', authenticateSuperUser, (req, res, next) => {
+app.get('/deploy/update', authenticateSuperUser, async (req, res, next) => {
 	console.log(req);
-	updateScript(res);
+	const debug = true;
+	// if (debug == true) {
+	// 	res.send({ status: 'success' });
+	// 	return;
 
+	// }
+
+	const result = await updateScript();
+	res.send(result);
 	// res.send(true);
 });
 app.get('*', (req, res) => {
@@ -52,25 +59,28 @@ app.post('*', async (req, res) => {
 	if (ref == branch || debug) {
 		console.log('Updating bash and writing file');
 		// const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
-		updateScript(res);
+		const result = await updateScript();
+		res.send(result);
 	}
 });
 
 const updateScript = res => {
-	const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
-	let output = '';
-	const logChunk = chunk => {
-		let str = chunk.toString();
-		console.log('Chunk', str);
-		output += str;
-	};
-	updateScr.stdout.on('data', logChunk);
-	updateScr.stderr.on('data', logChunk);
-	updateScr.on('close', code => {
-		console.log('closed ' + code);
-		const logFile = path.resolve(__dirname, 'history');
-		utils.writeFile(logFile, output);
-		res.send('done');
+	return new Promise((resolve, reject) => {
+		const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
+		let output = '';
+		const logChunk = chunk => {
+			let str = chunk.toString();
+			console.log('Chunk', str);
+			output += str;
+		};
+		updateScr.stdout.on('data', logChunk);
+		updateScr.stderr.on('data', logChunk);
+		updateScr.on('close', code => {
+			console.log('closed ' + code);
+			const logFile = path.resolve(__dirname, 'history');
+			utils.writeFile(logFile, output);
+			resolve({ status: 'success', output });
+		});
 	});
 };
 

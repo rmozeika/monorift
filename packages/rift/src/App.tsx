@@ -69,15 +69,6 @@ class App extends React.Component<Props, State> {
 				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
 					<View style={styles.parentView}>
 						<Router>
-							<Layout>
-								<Link to="/">Home</Link>
-							</Layout>
-							<Layout>
-								<Link to="/admin">Admin</Link>
-							</Layout>
-							<Layout>
-								<Link to="/about">About</Link>
-							</Layout>
 							<Switch>
 								<Route exact path="/about">
 									<About />
@@ -96,6 +87,19 @@ class App extends React.Component<Props, State> {
 		);
 	}
 }
+const links = () => (
+	<Layout>
+		<Layout>
+			<Link to="/">Home</Link>
+		</Layout>
+		<Layout>
+			<Link to="/admin">Admin</Link>
+		</Layout>
+		<Layout>
+			<Link to="/about">About</Link>
+		</Layout>
+	</Layout>
+);
 const mapStateToProps = (state, ownProps) => {
 	return {};
 };

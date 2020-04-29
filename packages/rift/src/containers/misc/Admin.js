@@ -18,7 +18,10 @@ class Admin extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			updateStatus: null
+			update: {
+				status: null,
+				output: null
+			}
 		};
 	}
 	updateDeploy = () => {
@@ -26,21 +29,29 @@ class Admin extends React.Component {
 			.then(res => res.json())
 			.then(res => {
 				console.log(res);
-				this.setState({ updateStatus: 'deploy complete' });
+				this.setState({ update: res });
 			})
 			.catch(e => {
-				this.setState({ updateStatus: e });
+				this.setState({ update: { status: 'error', output: e } });
 			});
+	};
+	renderUpdateView = () => {
+		const { status, output } = this.state.update;
+		if (status == null) return null;
+		return (
+			<Layout>
+				<Text status={status == 'success' ? 'success' : 'danger'} category="h6">
+					{status}
+				</Text>
+				<Text category="p1">{output}</Text>
+			</Layout>
+		);
 	};
 	render() {
 		return (
 			<Layout style={styles.container}>
 				<Button onPress={this.updateDeploy}>Update Deploy</Button>
-				<Layout>
-					{this.state.updateStatus !== null && (
-						<Text>{this.state.updateStatus}</Text>
-					)}
-				</Layout>
+				{this.renderUpdateView()}
 			</Layout>
 		);
 	}

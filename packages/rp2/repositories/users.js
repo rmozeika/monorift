@@ -5,6 +5,10 @@ const http = require('http');
 const fs = require('fs');
 const collection = 'users';
 const path = require('path');
+const {
+	validateUsernamePassword
+} = require('../data-service/data-model/users.js');
+// import { validate } from '../data-service/data-model/users.mjs'
 const { PerformanceObserver, performance } = require('perf_hooks');
 const obs = new PerformanceObserver(items => {
 	console.log(`
@@ -160,7 +164,10 @@ class UserRepository extends Repository {
 		};
 		return this.createUser(obj, cb);
 	}
-	async createGuest(username, password) {
+	async createGuest(inputUsername, password) {
+		const { username, error } = validateUsernamePassword(inputUsername, password);
+		if (error) return { error: error, success: false };
+		// console.log(validated);
 		const id = 'guest'; // TODO: get id
 		const email = `${username}@monorift.com`;
 		const guest = {

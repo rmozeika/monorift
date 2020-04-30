@@ -10,7 +10,7 @@ class AuthRepository extends Repository {
 		super(api, collection);
 	}
 	extractJWTData(user) {
-		const { bit_id, id, username, oauth_id, admin } = user;
+		const { bit_id, id, username, oauth_id, admin = false } = user;
 		return { id: id || bit_id, username, oauth_id, admin };
 	}
 	async initJWT(res, user) {

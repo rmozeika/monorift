@@ -169,8 +169,8 @@ class UserRoute extends Route {
 		if (result.succes === false) {
 			return res.send(result);
 		}
-		const newCookieData = { ...user, username };
-		const token = this.api.repositories.auth.initJWT(res, newCookieData);
+		const updatedUser = await this.repository.findById(user.oauth_id);
+		const token = this.api.repositories.auth.initJWT(res, updatedUser);
 		if (useSession) {
 			req.session.passport.user.username = username;
 		}

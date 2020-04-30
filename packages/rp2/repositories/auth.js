@@ -64,6 +64,7 @@ class AuthRepository extends Repository {
 		this.insertOne({ id, hash: hashedPassword });
 	}
 	async simpleAuth(username, password) {
+		username = username.toLowerCase();
 		const user = await this.api.repositories.users.findByUsername(username);
 		if (!user) {
 			return { error: 'User does not exist' };

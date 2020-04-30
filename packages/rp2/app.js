@@ -62,15 +62,23 @@ const setupDefaultRoute = () => {
 				: // : require('../../webpack.config.prod.js');
 				  require('../../webpack.config.js');
 		const buildpath = path.resolve(webpackConfig.output.path);
+		app.get(['/about', '/admin'], (req, res, next) => {
+			res.sendFile(path.resolve(buildpath, 'index.html'));
+		});
 		app.use(express.static(buildpath, opts));
 		// app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 		// app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	} else {
 		console.log('Is remote');
+		const opts = {};
 
 		builpath = path.resolve(__dirname, './dist.web');
-		app.use(express.static(__dirname + './dist.web'));
-		app.use('*', express.static(path.resolve(__dirname, './dist.web')));
+		// app.use(express.static(__dirname + './dist.web'));
+		// app.use('*', express.static(path.resolve(__dirname, './dist.web')));
+		app.get(['/about', '/admin'], (req, res, next) => {
+			res.sendFile(path.resolve(buildpath, 'index.html'));
+		});
+		app.use(express.static(buildpath, opts));
 	}
 };
 const setFurtherRoutes = () => {

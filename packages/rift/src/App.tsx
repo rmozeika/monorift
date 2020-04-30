@@ -16,6 +16,8 @@ import {
 
 import Navigation from './containers/navigation/Navigation';
 import About from './containers/misc/About';
+import Admin from './containers/misc/Admin';
+
 import { setCode, setIsMobile } from './actions';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import {
@@ -67,7 +69,17 @@ class App extends React.Component<Props, State> {
 				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
 					<View style={styles.parentView}>
 						<Router>
-							<Navigation></Navigation>
+							<Switch>
+								<Route exact path="/about">
+									<About />
+								</Route>
+								<Route exact path="/admin">
+									<Admin />
+								</Route>
+								<Route exact path="/">
+									<Navigation />
+								</Route>
+							</Switch>
 						</Router>
 					</View>
 				</ApplicationProvider>
@@ -75,6 +87,19 @@ class App extends React.Component<Props, State> {
 		);
 	}
 }
+const links = () => (
+	<Layout>
+		<Layout>
+			<Link to="/">Home</Link>
+		</Layout>
+		<Layout>
+			<Link to="/admin">Admin</Link>
+		</Layout>
+		<Layout>
+			<Link to="/about">About</Link>
+		</Layout>
+	</Layout>
+);
 const mapStateToProps = (state, ownProps) => {
 	return {};
 };

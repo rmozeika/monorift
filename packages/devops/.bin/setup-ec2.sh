@@ -8,8 +8,12 @@ rsync  --recursive -v -e ssh /Users/Bobby/Development/monorift/packages/devops/d
 rsync  -v -e ssh /Users/Bobby/Development/monorift/packages/devops/.bashrc ec2-user@aws:/home/ec2-user/.bashrc
 yum install -y docker
 yum install -y nginx
-yum install -y node
-
+#yum install -y node
+sudo yum remove -y nodejs npm
+curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+sudo yum install -y nodejs
+curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+sudo yum install -y yarn
 # Add user monorift
 adduser monorift
 usermod -aG root monorift

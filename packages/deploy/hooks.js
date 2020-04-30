@@ -7,7 +7,7 @@ const { URL } = require('url');
 const { exec, execFile, spawn } = require('child_process');
 const execAsync = util.promisify(exec);
 const execFileAsync = util.promisify(execFile);
-
+var cookieParser = require('cookie-parser');
 const fs = require('fs').promises;
 const utils = require('./utils');
 const qs = require('querystring');
@@ -22,8 +22,24 @@ const express = require('express');
 const app = express();
 const port = 9090;
 const debug = false; //change to false
+
+const { authenticateSuperUser, ...restMw } = require('../rp2/middleware/jwt');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.get('/deploy/update', authenticateSuperUser, async (req, res, next) => {
+	console.log(req);
+	const debug = true;
+	// if (debug == true) {
+	// 	res.send({ status: 'success' });
+	// 	return;
+
+	// }
+
+	const result = await updateScript();
+	res.send(result);
+	// res.send(true);
+});
 app.get('*', (req, res) => {
 	console.log('got req (get)');
 	res.send('success');
@@ -42,7 +58,14 @@ app.post('*', async (req, res) => {
 	console.log(ref);
 	if (ref == branch || debug) {
 		console.log('Updating bash and writing file');
-		const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
+		// const updateScript = path.resolve(__dirname, '.bin', 'update.sh');
+		const result = await updateScript();
+		res.send(result);
+	}
+});
+
+const updateScript = res => {
+	return new Promise((resolve, reject) => {
 		const updateScr = spawn('./.bin/update.sh', [], { cwd: __dirname });
 		let output = '';
 		const logChunk = chunk => {
@@ -56,10 +79,10 @@ app.post('*', async (req, res) => {
 			console.log('closed ' + code);
 			const logFile = path.resolve(__dirname, 'history');
 			utils.writeFile(logFile, output);
-			res.send('done');
+			resolve({ status: 'success', output });
 		});
-	}
-});
+	});
+};
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 

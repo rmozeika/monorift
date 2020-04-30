@@ -55,6 +55,7 @@
 		"tail": "^2.0.3",
 		"textract": "^2.5.0",
 		"underscore": "^1.8.3",
+		"validator": "^13.0.0",
 		"webpack": "^4.41.0",
 		"webpack-dev-middleware": "^3.7.2"
 	},

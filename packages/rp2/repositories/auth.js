@@ -78,7 +78,7 @@ class AuthRepository extends Repository {
 		const publicUserData = this.api.repositories.users.getPublicUser(user);
 
 		// const user = await this.api.repositories.users.findById(authData.id);
-		return publicUserData;
+		return { publicUser: publicUserData, user };
 		// this.saveJWTCookie()
 	}
 	async authenticateSuperUser(req, res, next) {

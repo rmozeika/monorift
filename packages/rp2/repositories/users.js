@@ -5,6 +5,7 @@ const http = require('http');
 const fs = require('fs');
 const collection = 'users';
 const path = require('path');
+const bcrypt = require('bcrypt');
 const {
 	validateUsernamePassword
 } = require('../data-service/data-model/users.js');
@@ -62,14 +63,25 @@ class UserRepository extends Repository {
 	}
 
 	createUser(user, cb) {
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			// let user;
 
-			const userData = { ...user };
-			const { username, src, email, oauth_id } = user;
-			this.findByUsername(username)
+			let { username, src, email, oauth_id } = user;
+			if (/monorift\|/.test(oauth_id)) {
+				const salt = await bcrypt.genSalt();
+				oauth_id = `${oauth_id}${salt}`.substring(0, 24);
+				// user.oauth_id = oauth
+			}
+			const userData = { ...user, username, src, email, oauth_id };
+
+			this.existingUser(oauth_id, username)
+				// this.findByUsername(username)
 				.then(foundUser => {
 					if (foundUser) {
+						if (foundUser.username !== username) {
+							userData.oauth_id = oauth_id + '1';
+							return true;
+						}
 						const message = `Username '${username}' already exists`;
 						reject(message);
 						throw new Error(message);
@@ -136,6 +148,9 @@ class UserRepository extends Repository {
 	}
 	async findById(id) {
 		return this.findOne({ oauth_id: id });
+	}
+	async existingUser(id, username) {
+		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
 	}
 	getPublicUser({ bit_id, _id, socket_id, ...user }) {
 		return user;
@@ -283,13 +298,28 @@ class UserRepository extends Repository {
 		} else {
 			users = await this.getUsersPostgres();
 		}
-
+		// remove
+		users.forEach(usertest => {
+			if (usertest.username == 'santatest') {
+				console.log(usertest);
+			}
+		});
 		const usersWithOnlineStatus = await Promise.all(
 			users.map(async user => {
 				const online = await this.api.redisAsync('getbit', 'online_bit', user.id);
 				return { ...user, online: online == 1 };
 			})
 		);
+		// remove
+
+		usersWithOnlineStatus.forEach(usertest => {
+			if (
+				usertest.username == 'santatest' ||
+				usertest.oauth_id == 'monorift|santatest'
+			) {
+				console.log(usertest);
+			}
+		});
 		performance.mark('B');
 		performance.measure('A to B', 'A', 'B');
 		return usersWithOnlineStatus;

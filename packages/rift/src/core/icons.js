@@ -72,11 +72,29 @@ const defaultStyle = StyleSheet.create({
 	height: 40,
 	tintColor: 'white'
 });
-function AwesomeIcon(
-	{ name, style, children, size, buttonProps, color, ...iconProps },
-	props
-) {
-	const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style); //StyleSheet.flatten([defaultStyle, style]);
+function AwesomeIcon({
+	name,
+	style,
+	children,
+	size,
+	buttonProps,
+	color,
+	...iconProps
+}) {
+	const props = {
+		color,
+		size,
+		...iconProps
+	};
+	if (!size || !color) {
+		const { height, tintColor } = StyleSheet.flatten(style); //StyleSheet.flatten([defaultStyle, style]);
+		if (!size) {
+			props.size = height;
+		}
+		if (!color) {
+			props.color = tintColor;
+		}
+	}
 
 	if (children || buttonProps) {
 		return (
@@ -95,10 +113,9 @@ function AwesomeIcon(
 	return (
 		<Icon5
 			name={name}
-			size={size || height}
-			color={color || tintColor}
 			style={style}
-			{...iconProps}
+			{...props}
+			// {...iconProps}
 		/>
 	);
 }
@@ -129,8 +146,15 @@ function createIconsMap() {
 		users: IconProvider('users'),
 		circle: IconProvider('circle'),
 		friend: IconProvider('user-plus'),
+		'friend-sent': IconProvider('user-check'),
+		'friend-sent-alt': IconProvider('user-clock'),
+		'reject-friend': IconProvider('user-slash'),
 		friends: IconProvider('user-friends'),
-
+		check: IconProvider('check'),
+		minus: IconProvider('minus'),
+		search: IconProvider('search'),
+		ellipsis: IconProvider('ellipsis-h'),
+		notch: IconProvider('circle-notch'),
 		// activity: FeatherIconProvider('activity')
 		activity: FeatherIconProvider('smartphone'),
 		x: FeatherIconProvider('x'),
@@ -138,6 +162,7 @@ function createIconsMap() {
 		'pointed-right': IconProvider('angle-double-right'),
 		'caret-down': IconProvider('caret-down'),
 		phone: IconProvider('phone'),
+		'phone-volume': IconProvider('phone-volume'),
 		alert: IconProvider('info-circle'),
 		// facebook: IconProvider('facebook'),
 		// google: IconProvider('google'),

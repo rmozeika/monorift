@@ -5,6 +5,11 @@ class AudioController {
 		this.audioTag = new Audio();
 		this.inboundStream = new MediaStream();
 		this.initialized = false;
+		window.audioStuff = {
+			audioTag: this.audioTag,
+			inboundStream: this.inboundStream,
+			context: this.context
+		};
 	}
 	initInboundStream() {
 		this.audioTag.srcObject = this.inboundStream;

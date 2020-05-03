@@ -23,7 +23,8 @@ const validateUsernamePassword = (inputUsername, password) => {
 		password,
 		characterRequirements.password
 	);
-	if (!isPasswordLength) return { error: lengthError(password) };
+	// REACTIVATE PRODUCTION
+	// if (!isPasswordLength) return { error: lengthError('password') };
 	return { username, password };
 };
 

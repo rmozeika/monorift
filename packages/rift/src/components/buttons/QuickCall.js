@@ -13,7 +13,7 @@ import {
 	useTheme
 } from '@ui-kitten/components';
 
-export default ({ startCall, checked, calling, connected }) => {
+const QuickCall = ({ startCall, checked, calling, connected }) => {
 	const styles = useStyleSheet(themedStyles);
 
 	const theme = useTheme();
@@ -27,7 +27,7 @@ export default ({ startCall, checked, calling, connected }) => {
 						{ backgroundColor: 'rgb(0, 224, 150)' }
 					]}
 				>
-					<Icon style={{}} size={22} name="phone" color={'#fff'}></Icon>
+					<Icon style={{}} size={22} name="phone-volume" color={'#fff'}></Icon>
 					<Text style={[{ color: '#fff' }, styles.statusText]}>Connected</Text>
 				</TouchableOpacity>
 			</Layout>
@@ -224,3 +224,5 @@ const themedStyles = StyleService.create({
 		marginTop: 5
 	}
 });
+
+export default QuickCall;

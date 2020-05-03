@@ -57,7 +57,7 @@ class AuthRoute extends Route {
 	}
 	async simpleLogin(req, res, next) {
 		const { username, password } = req.body;
-		const { error, ...user } = await this.repository.simpleAuth(
+		const { error, user, publicUser } = await this.repository.simpleAuth(
 			username,
 			password
 		);
@@ -66,7 +66,7 @@ class AuthRoute extends Route {
 			return;
 		}
 		const token = await this.repository.initJWT(res, user);
-		res.send({ success: true, user });
+		res.send({ success: true, user: publicUser });
 	}
 	auth0Callback(req, res, next) {
 		passport.authenticate('auth0', async (err, user, info) => {

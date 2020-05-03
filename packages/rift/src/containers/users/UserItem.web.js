@@ -9,6 +9,8 @@ import AddRemoveFriendButton from '@components/buttons/AddRemoveFriend';
 import Gravatar from '@components/users/Gravatar';
 import QuickCall from '@components/buttons/QuickCall';
 
+//REMOEV
+import AddRmTest from '@components/buttons/AddRmTest';
 class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
@@ -105,6 +107,14 @@ class UserItem extends React.Component {
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
+				{/* <TouchableOpacity
+				// key={key}
+					status={'success'}
+					style={styles.button}
+					onPress={this.addFriend}
+				>
+					<Text>Add Friend</Text>
+				</TouchableOpacity> */}
 				<Layout style={styles.statusBar}>
 					<QuickCall
 						startCall={this.startCall}
@@ -113,8 +123,19 @@ class UserItem extends React.Component {
 						checked={user.checked}
 					></QuickCall>
 				</Layout>
-				{/* {user.friendStatus !== 'A' && (
-					<AddRemoveFriendButton
+				<AddRemoveFriendButton
+					addFriend={this.addFriend}
+					removeFriend={this.removeFriend}
+					isFriend={user.isFriend}
+					friendStatus={user.friendStatus}
+					acceptFriend={this.acceptFriend}
+					rejectFriend={this.rejectFriend}
+					user={username}
+					// style={buttonStyleAlt}
+				/>
+				{/* <AddRmTest /> */}
+				{/* {user.friendStatus !== 'A' && ( */}
+				{/* <AddRemoveFriendButton
 						onAdd={this.addFriend}
 						removeFriend={this.removeFriend}
 						isFriend={user.isFriend}
@@ -122,8 +143,8 @@ class UserItem extends React.Component {
 						acceptFriend={this.acceptFriend}
 						rejectFriend={this.rejectFriend}
 						// style={buttonStyleAlt}
-					/>
-				)} */}
+					/> */}
+				{/* )} */}
 			</Layout>
 		);
 	}
@@ -239,7 +260,8 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 4,
 		// justifySelf: 'flex-end',
 		justifyContent: 'center',
-		backgroundColor: 'rgba(143, 155, 179, 0.24)'
+		backgroundColor: 'rgba(143, 155, 179, 0.24)',
+		order: 5
 		// width: '100%'
 	},
 	listItemTitle: {

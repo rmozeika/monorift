@@ -105,26 +105,13 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
 	},
+	// remove
 	callActions: {
-		backgroundColor: theme['color-primary-500']
+		backgroundColor: theme['color-primary-500'],
+		position: 'absolute',
+		width: '100%',
+		bottom: 0
 	},
-	// userItem: {
-	// 	// REMOVE
-	// 	onlineColor: theme['color-success-500'],
-	// 	statusBar: {
-	// 		// is rgba(143, 155, 179, 0.24)
-	// 		backgroundcolor: theme['color-basic-transparent-disabled-border']
-	// 	},
-	// 	statusText: {
-	// 		color: theme['color-success-500'] // CHANGE THIS!
-	// 	},
-	// 	iconOnline: {
-	// 		backgroundColor: theme['color-primary-100'],
-	// 		// color: theme['color-basic-800']
-	// 		color: theme['color-success-500']
-	// 	}
-	// },
-
 	container: { backgroundColor: '#1A2138' }
 }));
 
@@ -198,6 +185,13 @@ const styles = StyleSheet.create({
 		right: '10%',
 		bottom: '10%'
 	}
+	// REMOVE
+	// callActions: {
+	// 	backgroundColor: theme['color-primary-500'],
+	// 	position: 'absolute',
+	// 	width: '100%',
+	// 	bottom: 0
+	// },
 });
 
 const mapDispatchToProps = dispatch => {

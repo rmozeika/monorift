@@ -15,7 +15,12 @@ const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
 		flexWrap: 'wrap',
-		flexDirection: 'row'
+		flexDirection: 'row',
+		// justifySelf: 'flex-end',
+		// alignSelf: 'flex-end'
+		position: 'absolute',
+		width: '100%',
+		bottom: 0
 	},
 	button: {
 		margin: 15,

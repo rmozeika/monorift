@@ -27,7 +27,7 @@ const QuickCall = ({ startCall, checked, calling, connected }) => {
 						{ backgroundColor: 'rgb(0, 224, 150)' }
 					]}
 				>
-					<Icon style={{}} size={22} name="phone-volume" color={'#fff'}></Icon>
+					<Icon style={{}} size={22} name="phone" color={'#fff'}></Icon>
 					<Text style={[{ color: '#fff' }, styles.statusText]}>Connected</Text>
 				</TouchableOpacity>
 			</Layout>

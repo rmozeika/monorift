@@ -4,13 +4,10 @@ import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import { getUser } from '@selectors/users';
-import AddToCallButton from '@components/buttons/AddToCall';
 import AddRemoveFriendButton from '@components/buttons/AddRemoveFriend';
 import Gravatar from '@components/users/Gravatar';
 import QuickCall from '@components/buttons/QuickCall';
 
-//REMOEV
-import AddRmTest from '@components/buttons/AddRmTest';
 class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
@@ -28,6 +25,7 @@ class UserItem extends React.Component {
 			this.props.isScrolling == true &&
 			nextProps.isScrolling == false
 		) {
+			this.setGravatarRendered();
 			return true;
 		}
 		// console.log(`user not equal ${props.username}`);
@@ -78,9 +76,6 @@ class UserItem extends React.Component {
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
 
-		if (!isScrolling) {
-			this.setGravatarRendered();
-		}
 		const listItemStyle = user.checked
 			? styles.listItemSelected
 			: styles.listItem;
@@ -107,14 +102,6 @@ class UserItem extends React.Component {
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{/* <TouchableOpacity
-				// key={key}
-					status={'success'}
-					style={styles.button}
-					onPress={this.addFriend}
-				>
-					<Text>Add Friend</Text>
-				</TouchableOpacity> */}
 				<Layout style={styles.statusBar}>
 					<QuickCall
 						startCall={this.startCall}
@@ -133,18 +120,6 @@ class UserItem extends React.Component {
 					user={username}
 					// style={buttonStyleAlt}
 				/>
-				{/* <AddRmTest /> */}
-				{/* {user.friendStatus !== 'A' && ( */}
-				{/* <AddRemoveFriendButton
-						onAdd={this.addFriend}
-						removeFriend={this.removeFriend}
-						isFriend={user.isFriend}
-						friendStatus={user.friendStatus}
-						acceptFriend={this.acceptFriend}
-						rejectFriend={this.rejectFriend}
-						// style={buttonStyleAlt}
-					/> */}
-				{/* )} */}
 			</Layout>
 		);
 	}
@@ -313,11 +288,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		display: 'flex',
 		flexDirection: 'row'
-	},
-	// REMOVE
-	pseudoButtonGroup: {
-		maxWidth: '50%',
-		display: 'flex'
 	}
 });
 const mapStateToProps = (state, props) => {

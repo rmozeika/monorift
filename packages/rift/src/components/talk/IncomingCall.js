@@ -7,6 +7,10 @@ import {
 	useStyleSheet,
 	useTheme
 } from '@ui-kitten/components';
+
+// TODO: add this to config
+let animationsEnabled = true;
+
 const IncomingCall = ({ name, derivedHeight }) => {
 	const [fadeAnim] = React.useState(new Animated.Value(1));
 	const [colorAnim] = React.useState(new Animated.Value(0));
@@ -51,7 +55,9 @@ const IncomingCall = ({ name, derivedHeight }) => {
 		inputRange: [0, 100],
 		outputRange: [theme['color-info-focus'], theme['color-info-hover']]
 	});
-	loop();
+	if (animationsEnabled) {
+		loop();
+	}
 
 	const msg = `from ${name}`;
 	return (
@@ -88,6 +94,11 @@ const themedStyles = StyleService.create({
 		borderBottomRightRadius: 0,
 		borderBottomLeftRadius: 0,
 		flexWrap: 'wrap'
+		// justifySelf: 'flex-end',
+		// backgroundColor: theme['color-primary-500'],
+		// position: 'absolute',
+		// width: '100%',
+		// bottom: 0
 	},
 	miniContainer: {
 		flexBasis: '90%',

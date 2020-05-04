@@ -109,7 +109,8 @@ class AddRmFriend extends React.PureComponent {
 					onPress: this.rejectFriend
 				}
 			},
-			['A']: null
+			['A']: { empty: true },
+			[undefined]: { empty: true }
 			// reject: {
 			// 	onPress: rejectFriend,
 			// 	status: 'danger',
@@ -122,59 +123,6 @@ class AddRmFriend extends React.PureComponent {
 		};
 		return buttons[this.props.friendStatus];
 	}
-	buttons = {
-		[null]: {
-			// condition: this.props.friendStatus == null,
-			type: 'add',
-			// onPress: this.props.onAdd,
-			props: {
-				// icon: AddFriendIcon,
-				onPress: this.addFriend, //this.clickHandler,
-				// status: 'success',
-				text: 'Add Friend' // 'Add To Call',
-				// boxShadowStyle: createBoxShadow('#1cac75', '#2cffbb')
-			}
-		},
-		['S']: {
-			type: 'sent',
-			props: {
-				onPress: () => {},
-				// state: 'primary',
-				text: 'sent'
-			}
-
-			// condition: friendStatus == 'S'
-		},
-		// remove: {
-		// 	onPress: onRemove,
-		// 	status: 'danger',
-		// 	text: 'Remove from Call',
-		// 	condition: false
-		// },
-
-		['P']: {
-			type: 'accept',
-			props: {
-				// icon: FriendRequestIcon,
-				onPress: this.acceptFriend,
-				text: 'Accept Request'
-				// condition: friendStatus == 'P',
-				// boxShadowStyle: createBoxShadow('#2b57d9', '#3b75ff'),
-				// customStyles: styles.acceptButton
-				// status: 'primary',
-			}
-		}
-		// reject: {
-		// 	onPress: rejectFriend,
-		// 	status: 'danger',
-		// 	icon: RejectFriendIcon,
-		// 	text: '', //'Reject',
-		// 	condition: friendStatus == 'P',
-		// 	boxShadowStyle: createBoxShadow('#d93460', '#ff4682'),
-		// 	customStyles: styles.rejectButton
-		// }
-	};
-	clickHandlers = {};
 	cacheClickHandlers(id) {
 		return id;
 	}
@@ -186,17 +134,13 @@ class AddRmFriend extends React.PureComponent {
 		const { addFriend } = this.props;
 		addFriend();
 	};
-	respondFriendRequest = didAccept => {
-		const { respondFriendRequest, user } = this.props;
-		respondFriendRequest(user, didAccept);
-	};
 	acceptFriend = () => {
 		// e.stopPropagation();
-		this.respondFriendRequest(true);
+		this.props.acceptFriend();
 	};
 	rejectFriend = () => {
 		// e.stopPropagation();
-		this.respondFriendRequest(false);
+		this.props.rejectFriend();
 	};
 	removeFriend = () => {
 		const { removeFriend, user } = this.props;
@@ -204,8 +148,8 @@ class AddRmFriend extends React.PureComponent {
 	};
 	render() {
 		console.log(`rendered friend buttons ${this.props.user}`);
-		const { props, negative } = this.buttonProps;
-		if (!props) {
+		const { props, negative, empty } = this.buttonProps;
+		if (empty) {
 			return null;
 		}
 		return (

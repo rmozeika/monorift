@@ -54,7 +54,6 @@
 		"socket.io": "^2.3.0",
 		"storybook": "^5.3.17",
 		"tail": "^2.0.3",
-		"textract": "^2.5.0",
 		"underscore": "^1.8.3",
 		"validator": "^13.0.0",
 		"webpack": "^4.41.0",

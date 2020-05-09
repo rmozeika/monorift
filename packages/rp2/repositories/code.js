@@ -1,5 +1,4 @@
 var Repository = require('./repository.js');
-const textract = require('textract');
 const path = require('path');
 const esprima = require('esprima');
 const collection = 'code';

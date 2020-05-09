@@ -20,7 +20,7 @@ const Socket = require('./socket');
 const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 
-console.log('VERSION', '0.3.2');
+console.log('VERSION', '0.3.2a');
 var app = express();
 // probably remove as this is already created in api.js
 // let client = redis.createClient(redisPort, redisConnectionString);

@@ -1,6 +1,10 @@
 const { Socket, SocketItem } = require('./index');
 const nameSpace = '/call';
 const util = require('util');
+const chalk = require('chalk');
+
+const verbose = true;
+
 class CallItem extends SocketItem {
 	constructor(user, ...args) {
 		super(...args);
@@ -8,6 +12,16 @@ class CallItem extends SocketItem {
 	}
 	async onMessage(msg, secondArg) {
 		const { socket, redis, user } = this;
+		if (verbose) {
+			console.log('MSG_TYPE', chalk.blue(msg.type));
+			// console.log(chalk.blue(util.inspect(msg.type)));
+			if (secondArg && secondArg.users)
+				console.log('TO: ', chalk.green(util.inspect(secondArg.users[0])));
+			// console.log('TYPE: ', msg.type);
+			// if (secondArg && secondArg.users) console.log('TO: ', secondArg.users[0]);
+			console.log('CALL_MESSAGE', util.inspect(msg));
+			if (secondArg) console.log('EXTRA_ARG', util.inspect(secondArg));
+		}
 		if (secondArg) {
 			const { users, constraints } = secondArg;
 			// console.log('GOT_MESSAGE', util.inspect(msg));
@@ -19,7 +33,7 @@ class CallItem extends SocketItem {
 						const id = await getAsync(`call:${user.oauth_id}`);
 						return { username: user.username, id };
 					} catch (e) {
-						console.log(e);
+						console.error(e);
 					}
 				})
 			);
@@ -45,22 +59,6 @@ class CallItem extends SocketItem {
 				return emitted;
 			});
 			const result = await Promise.all(actions);
-			console.log(result);
-			// .then(result => {
-
-			// })
-			// socket.to(res[0].id).emit('message', msg, {
-			// 	users,
-			// 	constraints,
-			// 	from: {
-			// 		id: socket.id,
-			// 		username: socket.request.session.passport.user.username
-			// 	}
-			// });
-			// });
-			// .catch(e => {
-			// 	console.log(e);
-			// });
 		} else {
 			socket.broadcast.emit('message', msg, secondArg);
 		}
@@ -84,13 +82,17 @@ class Call extends Socket {
 
 		this.createDefaultListeners();
 
-		console.log(`
-			User: ${user.username}
-			SocketId: ${socket.id}
-		`);
+		logUser(user, socket);
 		this.redis.set(`call:${user.oauth_id}`, socket.id);
 
 		this.createSocketItem(socket, user);
 	}
 }
+
+const logUser = (user, socket) => {
+	console.log(`
+User: ${user.username}
+SocketId: ${socket.id}
+`);
+};
 module.exports = Call;

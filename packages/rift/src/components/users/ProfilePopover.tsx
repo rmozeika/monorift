@@ -106,7 +106,7 @@ class ProfilePopover extends React.Component<
 					id={this.props.id}
 				/>
 				<Layout style={styles.userIconContainer}>
-					{alert && this.renderAlertIcon({ style: styles.userIcons })}
+					{this.props.alert && this.renderAlertIcon({ style: styles.userIcons })}
 					{this.renderProfileIcon({ style: styles.userIcons })}
 				</Layout>
 

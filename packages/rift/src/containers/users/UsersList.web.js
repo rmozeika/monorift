@@ -69,27 +69,29 @@ class UsersList extends React.PureComponent {
 			<Layout style={[styles.userListLayout, {}]}>
 				<SearchBar />
 				<AutoSizer>
-					{({ height, width }) => (
-						<List
-							itemData={users}
-							height={height}
-							width={width}
-							itemSize={itemHeight}
-							itemCount={users.length}
-							// renderItem={this.renderItem}
-							style={styles.list}
-							showsVerticalScrollIndicator={false}
-							contentContainerStyle={styles.listContentContainer}
-							// numColumns={2}
-							// columnWrapperStyle={styles.columnWrapper}
-							initialNumToRender={8}
-							keyExtractor={this._keyExtractor}
-							itemKey={this.itemKey}
-							useIsScrolling
-						>
-							{this.renderItem}
-						</List>
-					)}
+					{({ height, width }) => {
+						return (
+							<List
+								itemData={users}
+								height={height - 54}
+								width={width}
+								itemSize={itemHeight}
+								itemCount={users.length}
+								// renderItem={this.renderItem}
+								style={styles.list}
+								showsVerticalScrollIndicator={false}
+								contentContainerStyle={styles.listContentContainer}
+								// numColumns={2}
+								// columnWrapperStyle={styles.columnWrapper}
+								initialNumToRender={8}
+								keyExtractor={this._keyExtractor}
+								itemKey={this.itemKey}
+								useIsScrolling
+							>
+								{this.renderItem}
+							</List>
+						);
+					}}
 				</AutoSizer>
 				{/* <Layout style={styles.floatingButtonContainer}>
 					<Button style={{}}>Call</Button>
@@ -105,26 +107,13 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		backgroundColor: theme['color-primary-100'],
 		marginHorizontal: 0
 	},
+	// remove
 	callActions: {
-		backgroundColor: theme['color-primary-500']
+		backgroundColor: theme['color-primary-500'],
+		position: 'absolute',
+		width: '100%',
+		bottom: 0
 	},
-	// userItem: {
-	// 	// REMOVE
-	// 	onlineColor: theme['color-success-500'],
-	// 	statusBar: {
-	// 		// is rgba(143, 155, 179, 0.24)
-	// 		backgroundcolor: theme['color-basic-transparent-disabled-border']
-	// 	},
-	// 	statusText: {
-	// 		color: theme['color-success-500'] // CHANGE THIS!
-	// 	},
-	// 	iconOnline: {
-	// 		backgroundColor: theme['color-primary-100'],
-	// 		// color: theme['color-basic-800']
-	// 		color: theme['color-success-500']
-	// 	}
-	// },
-
 	container: { backgroundColor: '#1A2138' }
 }));
 
@@ -198,6 +187,13 @@ const styles = StyleSheet.create({
 		right: '10%',
 		bottom: '10%'
 	}
+	// REMOVE
+	// callActions: {
+	// 	backgroundColor: theme['color-primary-500'],
+	// 	position: 'absolute',
+	// 	width: '100%',
+	// 	bottom: 0
+	// },
 });
 
 const mapDispatchToProps = dispatch => {

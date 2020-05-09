@@ -90,23 +90,14 @@ class UserRoute extends Route {
 	}
 	// users postgres
 	async fetchUserList(req, res) {
-		// const auth = this.api.repositories['auth'];
-		// const token = auth.createJWT({ username: 'test'});
-		// auth.saveJWTCookie(res, token);
-		console.log(req.user);
-		// const username = this.getUserNameFromReq(req);
 		const user = this.getUserFromReq(req);
 		const { username } = user;
-		// if (!username) {
-		// 	const users = await this.repository.getUsersPostgres();
-		// 	res.send(users);
-		// 	return;
-		// }
 		const users = await this.repository.getUsersPostgresByFriendStatus(username);
 		res.send(users);
 	}
 	async registerAsGuest(req, res) {
 		const { username, password } = req.body;
+		console.log('Registering guest', username);
 		const { success, error, ...user } = await this.repository
 			.createGuest(username, password)
 			.catch(e => {
@@ -169,8 +160,8 @@ class UserRoute extends Route {
 		if (result.succes === false) {
 			return res.send(result);
 		}
-		const newCookieData = { ...user, username };
-		const token = this.api.repositories.auth.initJWT(res, newCookieData);
+		const updatedUser = await this.repository.findById(user.oauth_id);
+		const token = this.api.repositories.auth.initJWT(res, updatedUser);
 		if (useSession) {
 			req.session.passport.user.username = username;
 		}

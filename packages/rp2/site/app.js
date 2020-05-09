@@ -10,12 +10,6 @@ const siteData = require('robertmozeika-site');
 var app = express();
 
 const publicDir = siteData();
-// app.use(sessionMiddleware);
-
-// app.use(favicon(path.join(__dirname, 'rmPublic', 'favicon.ico')));
-// app.use('files', express.static(path.join(__dirname, 'public')));
-// let buildpath;
-// app.use(express.static(buildpath, opts));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -41,11 +35,11 @@ app.use('/', (req, res) => {
 app.use(function(err, req, res, next) {
 	res.locals.message = err.message;
 	res.locals.error = req.app.get('env') === 'development' ? err : {};
-	console.log(err);
+	console.error(err);
 	res.status(err.status || 500);
 	res.send('error');
 });
 
-console.log('App ready!');
+// console.log('App ready!');
 
 module.exports = app;

@@ -11,30 +11,35 @@ const {
 } = require('../config');
 
 let client = redis.createClient(redisPort, redisConnectionString);
+const logSessionRequests = false;
 
 module.exports = function(app) {
 	app.use(passport.initialize());
 
 	app.use(passport.session());
-	app.use(function(req, res, next) {
-		const user =
-			req.session &&
-			req.session.passport &&
-			req.session.passport.user &&
-			req.session.passport.user.username;
-		// console.log(user || 'anonymous', req.path);
-		console.log(`
-			Request: ${req.method} ${req.path}
-			User:  ${user || 'anonymous'}
-		`);
-		console.log('Time:', Date.now());
-		next();
-	});
+
+	if (logSessionRequests) {
+		app.use(function(req, res, next) {
+			const user =
+				req.session &&
+				req.session.passport &&
+				req.session.passport.user &&
+				req.session.passport.user.username;
+			// console.log(user || 'anonymous', req.path);
+			console.log(`
+				Request: ${req.method} ${req.path}
+				User:  ${user || 'anonymous'}
+			`);
+			console.log('Time:', Date.now());
+			next();
+		});
+	}
 
 	const sessionMiddleware = session({
 		store: new RedisStore({ client }),
 		secret: sessionSecret,
-		resave: false
+		resave: false,
+		saveUninitialized: false
 	});
 
 	app.use(sessionMiddleware);

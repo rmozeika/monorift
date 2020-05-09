@@ -53,13 +53,22 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	public constructor(props: NavProps) {
 		super(props);
 	}
-	private renderSigninIcon = ({ style }): React.ReactElement<ImageProps> => {
-		// const { themedStyle } = this.props;
-		return <Icon name="sign-in-alt" color={'#fff'} style={style} solid />;
+	private renderSigninIcon = ({
+		style,
+		...restProps
+	}): React.ReactElement<ImageProps> => {
+		return (
+			<Icon
+				size={style.height}
+				name="sign-in-alt"
+				color={'#fff'}
+				style={style}
+				solid
+			/>
+		);
 	};
 
 	private renderMenuIcon = ({ style }): React.ReactElement<ImageProps> => {
-		// const { themedStyle } = this.props;
 		return <Icon name="bars" color={'#fff'} style={{ ...style }} solid />;
 	};
 

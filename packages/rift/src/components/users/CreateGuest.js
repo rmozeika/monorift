@@ -28,6 +28,7 @@ function CreateGuest(props) {
 				value={password}
 				onChangeText={text => onChangePasswordText(text)}
 				secureTextEntry={true}
+				inportantForAutofill={true}
 				// value={this.state.filterText}
 				// onChangeText={this.setFilterText}
 				// style={styles.searchInput}

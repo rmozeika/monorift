@@ -21,6 +21,13 @@ const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 
 console.log('VERSION', '1.1');
+const chalk = require('chalk');
+const util = require('util');
+console.log(chalk.green('hi'));
+const testObject = { type: 'hello' };
+console.log(util.inspect(testObject, { colors: false }));
+console.log(chalk.blue(util.inspect(testObject, { colors: false })));
+
 var app = express();
 // probably remove as this is already created in api.js
 // let client = redis.createClient(redisPort, redisConnectionString);
@@ -40,13 +47,6 @@ app.get(
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req, res, next) {
-	console.log('Time:', Date.now());
-	if (req.path.indexOf('.mp3') > -1) {
-		console.log(req);
-	}
-	next();
-});
 var api = require('./api.js');
 const setupDefaultRoute = () => {
 	if (remote == 'false') {
@@ -95,7 +95,7 @@ const setFurtherRoutes = () => {
 	app.use(function(err, req, res, next) {
 		res.locals.message = err.message;
 		res.locals.error = req.app.get('env') === 'development' ? err : {};
-		console.log(err);
+		console.error(err);
 		res.status(err.status || 500);
 		res.send('error');
 	});

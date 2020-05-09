@@ -13,11 +13,22 @@ import {
 	useTheme
 } from '@ui-kitten/components';
 
-export default ({ startCall, checked, calling, connected }) => {
+const QuickCall = ({ startCall, checked, calling, connected }) => {
 	const styles = useStyleSheet(themedStyles);
 
 	const theme = useTheme();
-
+	const [fadeAnim] = React.useState(new Animated.Value(1));
+	const [colorAnim] = React.useState(new Animated.Value(0));
+	React.useEffect(() => {
+		Animated.timing(fadeAnim, {
+			toValue: 1,
+			duration: 1000
+		}).start();
+	}, []);
+	const color = colorAnim.interpolate({
+		inputRange: [0, 100],
+		outputRange: [theme['color-success-500'], theme['color-success-300']]
+	});
 	if (connected) {
 		return (
 			<Layout style={[styles.container, { backgroundColor: 'rgb(0, 224, 150)' }]}>
@@ -43,14 +54,6 @@ export default ({ startCall, checked, calling, connected }) => {
 			</TouchableOpacity>
 		);
 	}
-	const [fadeAnim] = React.useState(new Animated.Value(1));
-	const [colorAnim] = React.useState(new Animated.Value(0));
-	React.useEffect(() => {
-		Animated.timing(fadeAnim, {
-			toValue: 1,
-			duration: 1000
-		}).start();
-	}, []);
 
 	const loop = () => {
 		const duration = 500;
@@ -76,10 +79,7 @@ export default ({ startCall, checked, calling, connected }) => {
 			loop();
 		});
 	};
-	const color = colorAnim.interpolate({
-		inputRange: [0, 100],
-		outputRange: [theme['color-success-500'], theme['color-success-300']]
-	});
+
 	loop();
 	// TODO: cancel action
 	return (
@@ -224,3 +224,5 @@ const themedStyles = StyleService.create({
 		marginTop: 5
 	}
 });
+
+export default QuickCall;

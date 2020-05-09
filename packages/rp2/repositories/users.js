@@ -5,17 +5,11 @@ const http = require('http');
 const fs = require('fs');
 const collection = 'users';
 const path = require('path');
-const { PerformanceObserver, performance } = require('perf_hooks');
-const obs = new PerformanceObserver(items => {
-	console.log(`
-		BEFORE:
-		users.js:10
-		0.052421855`);
-	console.log('PERFORMANCE: FUNCTION TOOK');
-	console.log(items.getEntries()[0].duration * 0.001);
-	performance.clearMarks();
-});
-obs.observe({ entryTypes: ['measure'] });
+const bcrypt = require('bcrypt');
+const {
+	validateUsernamePassword
+} = require('../data-service/data-model/users.js');
+
 // friendship status
 // A = accepted
 // S = SENT
@@ -58,14 +52,25 @@ class UserRepository extends Repository {
 	}
 
 	createUser(user, cb) {
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			// let user;
 
-			const userData = { ...user };
-			const { username, src, email, oauth_id } = user;
-			this.findByUsername(username)
+			let { username, src, email, oauth_id } = user;
+			if (/monorift\|/.test(oauth_id)) {
+				const salt = await bcrypt.genSalt();
+				oauth_id = `${oauth_id}${salt}`.substring(0, 24);
+				// user.oauth_id = oauth
+			}
+			const userData = { ...user, username, src, email, oauth_id };
+
+			this.existingUser(oauth_id, username)
+				// this.findByUsername(username)
 				.then(foundUser => {
 					if (foundUser) {
+						if (foundUser.username !== username) {
+							userData.oauth_id = oauth_id + '1';
+							return true;
+						}
 						const message = `Username '${username}' already exists`;
 						reject(message);
 						throw new Error(message);
@@ -102,7 +107,7 @@ class UserRepository extends Repository {
 					resolve(result);
 				})
 				.catch(e => {
-					console.log(e);
+					console.error(e);
 				});
 		});
 	}
@@ -133,6 +138,9 @@ class UserRepository extends Repository {
 	async findById(id) {
 		return this.findOne({ oauth_id: id });
 	}
+	async existingUser(id, username) {
+		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
+	}
 	getPublicUser({ bit_id, _id, socket_id, ...user }) {
 		return user;
 	}
@@ -160,7 +168,9 @@ class UserRepository extends Repository {
 		};
 		return this.createUser(obj, cb);
 	}
-	async createGuest(username, password) {
+	async createGuest(inputUsername, password) {
+		const { username, error } = validateUsernamePassword(inputUsername, password);
+		if (error) return { error: error, success: false };
 		const id = 'guest'; // TODO: get id
 		const email = `${username}@monorift.com`;
 		const guest = {
@@ -173,7 +183,7 @@ class UserRepository extends Repository {
 			guest: true
 		};
 		const user = await this.createUser(guest).catch(e => {
-			console.log(e);
+			console.error(e);
 			return Promise.reject(e);
 		});
 		const authData = await this.api.repositories.auth.storeAuth(
@@ -226,6 +236,7 @@ class UserRepository extends Repository {
 			usingTempUsername: false
 		}).catch(e => {
 			console.log('update temp username error');
+			console.error(e);
 			// CHANGE THIS
 			return { taken: false, success: false };
 		});
@@ -244,7 +255,6 @@ class UserRepository extends Repository {
 		return users;
 	}
 	async getUsersPostgresByFriendStatus(username) {
-		performance.mark('A');
 		// console.log
 		let users;
 		if (username) {
@@ -271,7 +281,7 @@ class UserRepository extends Repository {
 				})
 				.orderBy('friendship.status')
 				.catch(e => {
-					console.log(e);
+					console.error(e);
 				});
 		} else {
 			users = await this.getUsersPostgres();
@@ -283,8 +293,7 @@ class UserRepository extends Repository {
 				return { ...user, online: online == 1 };
 			})
 		);
-		performance.mark('B');
-		performance.measure('A to B', 'A', 'B');
+
 		return usersWithOnlineStatus;
 	}
 	async getUserColumnsByUsername(usernames, columns) {
@@ -384,7 +393,6 @@ class UserRepository extends Repository {
 			[username, friendUsername],
 			['oauth_id', 'id']
 		);
-		console.log(user);
 		const existing = await this.postgresInstance
 			.knex('friendship')
 			.select('status')

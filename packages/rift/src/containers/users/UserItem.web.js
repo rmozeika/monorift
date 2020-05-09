@@ -4,7 +4,6 @@ import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import { getUser } from '@selectors/users';
-import AddToCallButton from '@components/buttons/AddToCall';
 import AddRemoveFriendButton from '@components/buttons/AddRemoveFriend';
 import Gravatar from '@components/users/Gravatar';
 import QuickCall from '@components/buttons/QuickCall';
@@ -17,7 +16,7 @@ class UserItem extends React.Component {
 	}
 	shouldComponentUpdate(nextProps) {
 		if (this.props.user !== nextProps.user) {
-			console.log(`user not equal ${this.props.user.username}`);
+			// console.log(`user not equal ${this.props.user.username}`);
 			return true;
 		}
 		// SCROLLING
@@ -26,6 +25,7 @@ class UserItem extends React.Component {
 			this.props.isScrolling == true &&
 			nextProps.isScrolling == false
 		) {
+			this.setGravatarRendered();
 			return true;
 		}
 		// console.log(`user not equal ${props.username}`);
@@ -71,14 +71,11 @@ class UserItem extends React.Component {
 	render() {
 		const { id, user, key, isScrolling } = this.props;
 		const { username } = user;
-		console.log(`rendered ${username}`);
+		// console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
 
-		if (!isScrolling) {
-			this.setGravatarRendered();
-		}
 		const listItemStyle = user.checked
 			? styles.listItemSelected
 			: styles.listItem;
@@ -113,17 +110,16 @@ class UserItem extends React.Component {
 						checked={user.checked}
 					></QuickCall>
 				</Layout>
-				{/* {user.friendStatus !== 'A' && (
-					<AddRemoveFriendButton
-						onAdd={this.addFriend}
-						removeFriend={this.removeFriend}
-						isFriend={user.isFriend}
-						friendStatus={user.friendStatus}
-						acceptFriend={this.acceptFriend}
-						rejectFriend={this.rejectFriend}
-						// style={buttonStyleAlt}
-					/>
-				)} */}
+				<AddRemoveFriendButton
+					addFriend={this.addFriend}
+					removeFriend={this.removeFriend}
+					isFriend={user.isFriend}
+					friendStatus={user.friendStatus}
+					acceptFriend={this.acceptFriend}
+					rejectFriend={this.rejectFriend}
+					user={username}
+					// style={buttonStyleAlt}
+				/>
 			</Layout>
 		);
 	}
@@ -239,7 +235,8 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 4,
 		// justifySelf: 'flex-end',
 		justifyContent: 'center',
-		backgroundColor: 'rgba(143, 155, 179, 0.24)'
+		backgroundColor: 'rgba(143, 155, 179, 0.24)',
+		order: 5
 		// width: '100%'
 	},
 	listItemTitle: {
@@ -291,11 +288,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		display: 'flex',
 		flexDirection: 'row'
-	},
-	// REMOVE
-	pseudoButtonGroup: {
-		maxWidth: '50%',
-		display: 'flex'
 	}
 });
 const mapStateToProps = (state, props) => {

@@ -2,6 +2,7 @@ var webpack = require('webpack');
 var path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const src = path.join(__dirname, './packages/rift/src');
+const publicDir = path.resolve(__dirname, 'packages', 'rp2', 'public');
 
 module.exports = {
 	context: path.resolve(__dirname),

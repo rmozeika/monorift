@@ -31,7 +31,7 @@ const strategy = new Auth0Strategy(
 				}
 			})
 			.catch(e => {
-				console.log(e);
+				console.error(e);
 				process.exit(0);
 			});
 	}

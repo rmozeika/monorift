@@ -10,7 +10,7 @@ class AuthRepository extends Repository {
 		super(api, collection);
 	}
 	extractJWTData(user) {
-		const { bit_id, id, username, oauth_id, admin } = user;
+		const { bit_id, id, username, oauth_id, admin = false } = user;
 		return { id: id || bit_id, username, oauth_id, admin };
 	}
 	async initJWT(res, user) {
@@ -37,8 +37,10 @@ class AuthRepository extends Repository {
 		if (token == null) return res.sendStatus(401);
 
 		jwt.verify(token, JWT_SECRET, (err, user) => {
-			console.log(err);
-			if (err) return res.sendStatus(403);
+			if (err) {
+				console.error(err);
+				return res.sendStatus(403);
+			}
 			req.user = user;
 			next();
 		});
@@ -46,8 +48,10 @@ class AuthRepository extends Repository {
 	parseToken(token) {
 		return new Promise((resolve, reject) => {
 			jwt.verify(token, JWT_SECRET, (err, user) => {
-				console.log(err);
-				if (err) return resolve(false);
+				if (err) {
+					console.error(err);
+					return resolve(false);
+				}
 				resolve(user);
 			});
 		});
@@ -64,6 +68,7 @@ class AuthRepository extends Repository {
 		this.insertOne({ id, hash: hashedPassword });
 	}
 	async simpleAuth(username, password) {
+		username = username.toLowerCase();
 		const user = await this.api.repositories.users.findByUsername(username);
 		if (!user) {
 			return { error: 'User does not exist' };
@@ -77,7 +82,7 @@ class AuthRepository extends Repository {
 		const publicUserData = this.api.repositories.users.getPublicUser(user);
 
 		// const user = await this.api.repositories.users.findById(authData.id);
-		return publicUserData;
+		return { publicUser: publicUserData, user };
 		// this.saveJWTCookie()
 	}
 	async authenticateSuperUser(req, res, next) {

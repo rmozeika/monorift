@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { Layout, Text, Button, styled, Input } from '@ui-kitten/components';
+import { Layout, Icon, Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 
@@ -49,6 +49,9 @@ export class SearchBar extends React.PureComponent {
 					// onChangeText={this.setFilterText}
 					style={styles.searchInput}
 				/>
+				{/* <Layout style={styles.searchIconContainer}>
+					<Icon name={'search'} size={18} color={'#EDF1F7'} />
+				</Layout> */}
 				{/* <Button style={{ flexBasis: '15%' }} onPress={this.search}>
 					Search
 				</Button> */}
@@ -67,7 +70,13 @@ const styles = StyleSheet.create({
 	},
 	searchInput: {
 		flexBasis: '80%',
-		flex: 1
+		flex: 1,
+		borderRadius: 8
+	},
+	searchIconContainer: {
+		justifyContent: 'center',
+		marginLeft: 5,
+		backgroundColor: 'inherhit'
 	}
 });
 

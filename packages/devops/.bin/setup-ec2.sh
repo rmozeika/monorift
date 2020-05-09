@@ -10,8 +10,9 @@ yum install -y docker
 yum install -y nginx
 #yum install -y node
 sudo yum remove -y nodejs npm
-curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+curl -sL https://rpm.nodesource.com/setup_14.x | bash -
 sudo yum install -y nodejs
+
 curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
 sudo yum install -y yarn
 # Add user monorift

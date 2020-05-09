@@ -9,12 +9,7 @@ import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 // const GravatarPlaceholder = () => {
 
 // }
-export default function Gravatar({
-	style = {},
-	imageStyles = {},
-	id,
-	isScrolling
-}) {
+function Gravatar({ style = {}, imageStyles = {}, id, isScrolling }) {
 	return (
 		<Layout style={style}>
 			{!isScrolling && (
@@ -27,3 +22,4 @@ export default function Gravatar({
 		</Layout>
 	);
 }
+export default Gravatar;

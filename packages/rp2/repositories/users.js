@@ -9,18 +9,7 @@ const bcrypt = require('bcrypt');
 const {
 	validateUsernamePassword
 } = require('../data-service/data-model/users.js');
-// import { validate } from '../data-service/data-model/users.mjs'
-const { PerformanceObserver, performance } = require('perf_hooks');
-const obs = new PerformanceObserver(items => {
-	console.log(`
-		BEFORE:
-		users.js:10
-		0.052421855`);
-	console.log('PERFORMANCE: FUNCTION TOOK');
-	console.log(items.getEntries()[0].duration * 0.001);
-	performance.clearMarks();
-});
-obs.observe({ entryTypes: ['measure'] });
+
 // friendship status
 // A = accepted
 // S = SENT
@@ -118,7 +107,7 @@ class UserRepository extends Repository {
 					resolve(result);
 				})
 				.catch(e => {
-					console.log(e);
+					console.error(e);
 				});
 		});
 	}
@@ -182,7 +171,6 @@ class UserRepository extends Repository {
 	async createGuest(inputUsername, password) {
 		const { username, error } = validateUsernamePassword(inputUsername, password);
 		if (error) return { error: error, success: false };
-		// console.log(validated);
 		const id = 'guest'; // TODO: get id
 		const email = `${username}@monorift.com`;
 		const guest = {
@@ -195,7 +183,7 @@ class UserRepository extends Repository {
 			guest: true
 		};
 		const user = await this.createUser(guest).catch(e => {
-			console.log(e);
+			console.error(e);
 			return Promise.reject(e);
 		});
 		const authData = await this.api.repositories.auth.storeAuth(
@@ -248,6 +236,7 @@ class UserRepository extends Repository {
 			usingTempUsername: false
 		}).catch(e => {
 			console.log('update temp username error');
+			console.error(e);
 			// CHANGE THIS
 			return { taken: false, success: false };
 		});
@@ -266,7 +255,6 @@ class UserRepository extends Repository {
 		return users;
 	}
 	async getUsersPostgresByFriendStatus(username) {
-		performance.mark('A');
 		// console.log
 		let users;
 		if (username) {
@@ -293,35 +281,19 @@ class UserRepository extends Repository {
 				})
 				.orderBy('friendship.status')
 				.catch(e => {
-					console.log(e);
+					console.error(e);
 				});
 		} else {
 			users = await this.getUsersPostgres();
 		}
-		// remove
-		users.forEach(usertest => {
-			if (usertest.username == 'santatest') {
-				console.log(usertest);
-			}
-		});
+
 		const usersWithOnlineStatus = await Promise.all(
 			users.map(async user => {
 				const online = await this.api.redisAsync('getbit', 'online_bit', user.id);
 				return { ...user, online: online == 1 };
 			})
 		);
-		// remove
 
-		usersWithOnlineStatus.forEach(usertest => {
-			if (
-				usertest.username == 'santatest' ||
-				usertest.oauth_id == 'monorift|santatest'
-			) {
-				console.log(usertest);
-			}
-		});
-		performance.mark('B');
-		performance.measure('A to B', 'A', 'B');
 		return usersWithOnlineStatus;
 	}
 	async getUserColumnsByUsername(usernames, columns) {
@@ -421,7 +393,6 @@ class UserRepository extends Repository {
 			[username, friendUsername],
 			['oauth_id', 'id']
 		);
-		console.log(user);
 		const existing = await this.postgresInstance
 			.knex('friendship')
 			.select('status')

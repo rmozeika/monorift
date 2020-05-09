@@ -36,7 +36,7 @@ class CodeRepository extends Repository {
 						const result = await parser
 							.File(file, repoName, user, codeEmitter)
 							.catch(e => {
-								console.log(e);
+								console.error(e);
 							});
 						return result;
 					};

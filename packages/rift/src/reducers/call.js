@@ -24,7 +24,6 @@ export const initialState = {
 		handlersAttached: false,
 		isStarted: false,
 		isInitiator: false,
-		remoteSet: false,
 		stream: null,
 		incomingCall: { received: false, from: null, answered: null, pending: false },
 		active: false
@@ -88,8 +87,6 @@ export const peerStore = (state = [], action = {}) => {
 			return { ...state, isStarted: action.started };
 		case SET_PEER_INITIATOR:
 			return { ...state, isInitiator: action.initiator };
-		case SET_REMOTE:
-			return { ...state, remoteSet: action.remoteSet };
 		case SET_STREAM:
 			return { ...state, stream: action.payload };
 		case CALL_INCOMING:

@@ -56,10 +56,11 @@ class MongoService {
 	connectToServer(cb) {
 		const options = {
 			authMechanism: 'SCRAM-SHA-1',
-			authSource: 'admin'
+			authSource: 'admin',
+			useUnifiedTopology: true // for deprecation warning
 		};
-		options['auth.user'] = mongoUser;
-		options['auth.password'] = mongoPassword;
+		// options['auth.user'] = mongoUser;
+		// options['auth.password'] = mongoPassword;
 		console.log('connecting to mongo');
 		const MonoriftClient = new MongoClient(uri, options);
 		MonoriftClient.connect()

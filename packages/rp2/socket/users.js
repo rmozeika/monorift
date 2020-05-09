@@ -98,16 +98,17 @@ class UserItem extends SocketItem {
 					user
 				});
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 			}
-			// .catch(e => {
-			//     console.log(e);
-			// })
 		}
+		// TODO: maybe uneeded
 		this.api.repositories.users
 			.updateByUsername(user.username, { socket_id: socket.id })
-			.then(result => {
-				console.log(result);
+			// .then(result => {
+			// 	console.log(result);
+			// })
+			.catch(e => {
+				console.error(e);
 			});
 	}
 	async onMessage(msg, secondArg) {}
@@ -129,11 +130,11 @@ class UserItem extends SocketItem {
 					user
 				});
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 			}
 
 			// .catch(e => {
-			//     console.log(e);
+			//     console.error(e);;
 			// })
 		}
 	}

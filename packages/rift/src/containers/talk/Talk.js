@@ -192,13 +192,15 @@ class Adapter extends React.PureComponent {
 		// var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 		// var source = audioCtx.createMediaElementSource(audioFileRef.current);
 		// var dest = audioCtx.createMediaStreamDestination();
-		const source = this.props.addSource(audioFileRef.current);
+		// const source = this.props.addSource(audioFileRef.current);
+		const dest = this.props.addSource(audioFileRef.current);
 		debugger; //remove
-		source.connect(dest);
+		// source.connect(dest);
 		var stream = dest.stream;
 		audioFileRef.current.play();
 		window.stream = stream; // make variable available to browser console
-		this.gotMedia(stream);
+		return stream;
+		// this.gotMedia(stream);
 	}
 	async startCall(constraints) {
 		const { peerStore, setPeerInitiator } = this.props;
@@ -219,10 +221,11 @@ class Adapter extends React.PureComponent {
 		this.setMediaStreamConstraints(true, false);
 
 		// const { setPeerInitiator } = this.props;
-		await this.getMediaFromFile(audioConstraints);
+		const stream = await this.getMediaFromFile(audioConstraints);
 		debugger; //remove
-		setPeerInitiator(true);
-		this.props.sendOffer({});
+		// setPeerInitiator(true);
+		// this.props.sendOffer({});
+		this.props.startCall(stream);
 	}
 	call() {
 		this.props.startCallSaga('audio', {});
@@ -389,6 +392,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 			dispatch(Actions.setPeerInitiator(isInitiator)),
 		setStream: stream => dispatch(Actions.setStream(stream)),
 		startCallSaga: type => dispatch(Actions.startCall('audio')),
+		startCall: (stream, type = 'audio', user = false) =>
+			dispatch(Actions.startCall(type, user, stream)),
 		addSource: source => dispatch(Actions.addSource(source))
 	};
 };

@@ -1,7 +1,7 @@
 // var io = socketIO.listen(app);
 // const { io } = require('../app.js');
 const ioType = require('socket.io');
-const { useSession } = require('../config');
+const { useSession, verbose = false } = require('../config');
 exports.SocketItem = class SocketItem {
 	constructor(socket, api, redis, flush, additionalMethods = []) {
 		this.socket = socket;
@@ -10,7 +10,6 @@ exports.SocketItem = class SocketItem {
 		this.flush = flush;
 		if (this.getAdditionalHandlers) {
 			const handlers = this.getAdditionalHandlers();
-			console.log(handlers);
 			handlers.forEach(({ type, handler }) => {
 				socket.on(type, handler.bind(this));
 			});
@@ -65,10 +64,9 @@ exports.Socket = class Socket {
 			this.additionalMethods
 		);
 		this.socketItems[socket.id] = item;
-		console.log(`
-		Created Socket Item:
-			socket_id: ${socket.id}	
-		`);
+		if (verbose) {
+			logSocketItem(socket);
+		}
 	}
 	deleteSocketItem(socket) {
 		delete this.socketItems[socket.id];
@@ -103,4 +101,11 @@ exports.Socket = class Socket {
 			return user;
 		}
 	}
+};
+
+const logSocketItem = socket => {
+	console.log(`
+Created Socket Item:
+socket_id: ${socket.id}	
+	`);
 };

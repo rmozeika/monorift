@@ -16,7 +16,7 @@ class UserItem extends React.Component {
 	}
 	shouldComponentUpdate(nextProps) {
 		if (this.props.user !== nextProps.user) {
-			console.log(`user not equal ${this.props.user.username}`);
+			// console.log(`user not equal ${this.props.user.username}`);
 			return true;
 		}
 		// SCROLLING
@@ -71,7 +71,7 @@ class UserItem extends React.Component {
 	render() {
 		const { id, user, key, isScrolling } = this.props;
 		const { username } = user;
-		console.log(`rendered ${username}`);
+		// console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;

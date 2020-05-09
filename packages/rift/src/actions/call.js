@@ -1,5 +1,6 @@
-export const peerAction = (method, ...args) => ({
+export const peerAction = (conn_id, method, ...args) => ({
 	type: 'PEER_ACTION',
+	conn_id,
 	payload: {
 		method,
 		args: args || []
@@ -35,11 +36,11 @@ export const setPeerInitiator = initiator => ({
 });
 export const START_CALL = 'START_CALL';
 // if user false, send offer from checked (user for quick call mostly)
-export const startCall = (type = 'audio', user, stream = false) => ({
+export const startCall = (type = 'audio', user = {}, stream = false) => ({
 	type: START_CALL,
 	payload: {
 		type,
-		id: user.id,
+		id: user.id || false,
 		user
 	},
 	mediaStream: stream
@@ -94,12 +95,6 @@ export const setCallActive = (user_id, active) => ({
 // 	id: user_id,
 // 	payload: { active }
 // });
-
-export const SET_REMOTE = 'SET_REMOTE';
-export const setRemote = (remoteIsSet = true) => ({
-	type: SET_REMOTE,
-	remoteSet: remoteIsSet
-});
 
 export const ADD_CALL = 'ADD_CALL';
 export const addToCall = user => ({

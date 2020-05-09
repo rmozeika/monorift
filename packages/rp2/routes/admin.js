@@ -11,7 +11,6 @@ class AdminRoute extends Route {
 	constructor(api) {
 		super(api, routeName, repoName);
 		const run = () => {
-			console.log(this);
 			this.router.get(
 				'/',
 				this.api.repositories.auth.authenticateSuperUser,

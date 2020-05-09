@@ -41,27 +41,19 @@ function FriendButton({ text, icon, ...props }) {
 		</Button>
 	);
 }
-class AddRmFriend extends React.PureComponent {
+class AddRemoveFriend extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		console.log(`created friend buttons ${this.props.user}`);
 	}
 	get buttonProps() {
 		const buttons = {
 			[null]: {
-				// condition: this.props.friendStatus == null,
 				type: 'add',
-				// onPress: this.props.onAdd,
 				props: {
 					Accessory: AddFriendIcon,
-					onPress: this.addFriend, //this.clickHandler,
-
-					// status: 'success',
-					// text: 'Add Friend', // 'Add To Call',
+					onPress: this.addFriend,
 					style: styles.touchableAdd,
 					textStyle: styles.sentText
-
-					// boxShadowStyle: createBoxShadow('#1cac75', '#2cffbb')
 				}
 			},
 			['S']: {
@@ -82,26 +74,12 @@ class AddRmFriend extends React.PureComponent {
 
 				// condition: friendStatus == 'S'
 			},
-			// remove: {
-			// 	onPress: onRemove,
-			// 	status: 'danger',
-			// 	text: 'Remove from Call',
-			// 	condition: false
-			// },
-
 			['P']: {
 				type: 'accept',
 				props: {
-					// icon: FriendRequestIcon,
 					Accessory: AcceptFriendIcon,
 					onPress: this.acceptFriend,
-					// text: 'Accept Request',
 					style: styles.touchableAccept
-
-					// condition: friendStatus == 'P',
-					// boxShadowStyle: createBoxShadow('#2b57d9', '#3b75ff'),
-					// customStyles: styles.acceptButton
-					// status: 'primary',
 				},
 				negative: {
 					Accessory: RejectFriendIcon,
@@ -111,23 +89,8 @@ class AddRmFriend extends React.PureComponent {
 			},
 			['A']: { empty: true },
 			[undefined]: { empty: true }
-			// reject: {
-			// 	onPress: rejectFriend,
-			// 	status: 'danger',
-			// 	icon: RejectFriendIcon,
-			// 	text: '', //'Reject',
-			// 	condition: friendStatus == 'P',
-			// 	boxShadowStyle: createBoxShadow('#d93460', '#ff4682'),
-			// 	customStyles: styles.rejectButton
-			// }
 		};
 		return buttons[this.props.friendStatus];
-	}
-	cacheClickHandlers(id) {
-		return id;
-	}
-	clickHandler() {
-		console.log('clicked');
 	}
 	addFriend = e => {
 		// e.stopPropagation();
@@ -147,143 +110,20 @@ class AddRmFriend extends React.PureComponent {
 		removeFriend(user);
 	};
 	render() {
-		console.log(`rendered friend buttons ${this.props.user}`);
 		const { props, negative, empty } = this.buttonProps;
 		if (empty) {
 			return null;
 		}
 		return (
 			<Layout style={styles.buttonContainer}>
-				{/* <AcceptButton onPress={this.clickHandler} /> */}
-				{/* <FriendButton {...this.buttons.add.props} /> */}
-				{/* <AcceptTouchable onPress={this.addFriend} /> */}
-				{/* <FriendTouchable {...this.buttons[this.props.friendStatus].props} /> */}
 				<FriendTouchable {...props} />
 				{negative && <FriendTouchable {...negative} />}
 			</Layout>
 		);
 	}
 }
-const AddRemoveFriend = ({
-	isFriend,
-	onRemove,
-	onAdd,
-	style,
-	friendStatus,
-	acceptFriend,
-	rejectFriend
-}) => {
-	const buttons = {
-		remove: {
-			onPress: onRemove,
-			status: 'danger',
-			text: 'Remove from Call',
-			condition: false
-		},
-		sent: {
-			onPress: () => {},
-			state: 'primary',
-			text: 'sent',
-			condition: friendStatus == 'S'
-		},
-		add: {
-			onPress: onAdd,
-			status: 'success',
-			icon: AddFriendIcon,
-			text: 'Add Friend', // 'Add To Call',
-			condition: friendStatus == null,
-			boxShadowStyle: createBoxShadow('#1cac75', '#2cffbb')
-		},
-		accept: {
-			onPress: acceptFriend,
-			status: 'primary',
-			icon: FriendRequestIcon,
-			text: 'Accept Request',
-			condition: friendStatus == 'P',
-			boxShadowStyle: createBoxShadow('#2b57d9', '#3b75ff'),
-			customStyles: styles.acceptButton
-		},
-		reject: {
-			onPress: rejectFriend,
-			status: 'danger',
-			icon: RejectFriendIcon,
-			text: '', //'Reject',
-			condition: friendStatus == 'P',
-			boxShadowStyle: createBoxShadow('#d93460', '#ff4682'),
-			customStyles: styles.rejectButton
-		}
-	};
-	// const buttonList = Object.keys(buttons).map(key => ({ ...buttons[key], key }));
-	// const activeButtons = buttonList.filter(({ condition }) => condition);
-	return (
-		<Layout style={styles.buttonContainer}>
-			<TouchableOpacity
-				// key={key}
-				// status={'success'}
-				style={styles.button}
-				onPress={onAdd}
-			>
-				<Text>Add Friend</Text>
-			</TouchableOpacity>
-			{/* <AcceptButton onPress={buttons.accept.onPress} ></AcceptButton> */}
-		</Layout>
-	);
-	{
-		/* return (
-		<Layout style={styles.buttonContainer}>
-			{activeButtons.map(
-				({
-					condition,
-					key,
-					text = '',
-					boxShadowStyle,
-					customStyles = {},
-					...buttonProps
-				}) => (
-					<Button
-						key={key}
-						style={[style, styles.button, boxShadowStyle, customStyles]}
-						{...buttonProps}
-					>
-						{text}
-					</Button>
-				)
-			)}
-		</Layout>
-	);
-	return (
-		<Button
-			style={[style, styles.button]}
-			status="success"
-			icon={AddFriendIcon}
-		></Button>
-	);
-	return (
-		<Button appearance="outline" style={buttonStyleAlt} {...restProps}>
-			{text}
-		</Button>
-	); */
-	}
-};
-const AcceptTouchable = ({ onPress }) => (
-	<TouchableOpacity
-		// key={key}
-		// status={'success'}
-		style={styles.touchable}
-		onPress={onPress}
-	>
-		<Text>Add Friend</Text>
-	</TouchableOpacity>
-);
 
-const FriendTouchable = ({
-	negative,
-	text,
-	onPress,
-	style,
-	textStyle,
-	Accessory
-}) => {
+const FriendTouchable = ({ text, onPress, style, textStyle, Accessory }) => {
 	return (
 		<TouchableOpacity
 			// key={key}
@@ -295,27 +135,6 @@ const FriendTouchable = ({
 			{text && <Text style={textStyle}>{text}</Text>}
 		</TouchableOpacity>
 	);
-};
-const AcceptButton = ({ onPress }) => (
-	<Button
-		// key={key}
-		status={'success'}
-		style={styles.button}
-		onPress={onPress}
-	>
-		<Text>Add Friend</Text>
-	</Button>
-);
-const buttonStyle = {
-	flex: 1,
-	margin: 0,
-	marginRight: 0,
-	minWidth: 10,
-	height: '100%',
-	boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`,
-	borderRadius: 0,
-	color: '#EDF1F7',
-	flexDirection: 'column'
 };
 
 const touchableStyle = {
@@ -440,4 +259,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default AddRmFriend;
+export default AddRemoveFriend;

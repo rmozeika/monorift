@@ -13,6 +13,7 @@
 		"babel-eslint": "^10.1.0",
 		"bcrypt": "^4.0.1",
 		"body-parser": "~1.18.2",
+		"chalk": "^4.0.0",
 		"code-parser": "^1.0.0",
 		"connect-ensure-login": "^0.1.1",
 		"connect-mongo": "^3.0.0",

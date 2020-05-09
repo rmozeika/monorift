@@ -90,18 +90,8 @@ class UserRoute extends Route {
 	}
 	// users postgres
 	async fetchUserList(req, res) {
-		// const auth = this.api.repositories['auth'];
-		// const token = auth.createJWT({ username: 'test'});
-		// auth.saveJWTCookie(res, token);
-		console.log(req.user);
-		// const username = this.getUserNameFromReq(req);
 		const user = this.getUserFromReq(req);
 		const { username } = user;
-		// if (!username) {
-		// 	const users = await this.repository.getUsersPostgres();
-		// 	res.send(users);
-		// 	return;
-		// }
 		const users = await this.repository.getUsersPostgresByFriendStatus(username);
 		res.send(users);
 	}

@@ -37,8 +37,10 @@ class AuthRepository extends Repository {
 		if (token == null) return res.sendStatus(401);
 
 		jwt.verify(token, JWT_SECRET, (err, user) => {
-			console.log(err);
-			if (err) return res.sendStatus(403);
+			if (err) {
+				console.error(err);
+				return res.sendStatus(403);
+			}
 			req.user = user;
 			next();
 		});
@@ -46,8 +48,10 @@ class AuthRepository extends Repository {
 	parseToken(token) {
 		return new Promise((resolve, reject) => {
 			jwt.verify(token, JWT_SECRET, (err, user) => {
-				console.log(err);
-				if (err) return resolve(false);
+				if (err) {
+					console.error(err);
+					return resolve(false);
+				}
 				resolve(user);
 			});
 		});

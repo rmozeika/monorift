@@ -69,27 +69,29 @@ class UsersList extends React.PureComponent {
 			<Layout style={[styles.userListLayout, {}]}>
 				<SearchBar />
 				<AutoSizer>
-					{({ height, width }) => (
-						<List
-							itemData={users}
-							height={height}
-							width={width}
-							itemSize={itemHeight}
-							itemCount={users.length}
-							// renderItem={this.renderItem}
-							style={styles.list}
-							showsVerticalScrollIndicator={false}
-							contentContainerStyle={styles.listContentContainer}
-							// numColumns={2}
-							// columnWrapperStyle={styles.columnWrapper}
-							initialNumToRender={8}
-							keyExtractor={this._keyExtractor}
-							itemKey={this.itemKey}
-							useIsScrolling
-						>
-							{this.renderItem}
-						</List>
-					)}
+					{({ height, width }) => {
+						return (
+							<List
+								itemData={users}
+								height={height - 54}
+								width={width}
+								itemSize={itemHeight}
+								itemCount={users.length}
+								// renderItem={this.renderItem}
+								style={styles.list}
+								showsVerticalScrollIndicator={false}
+								contentContainerStyle={styles.listContentContainer}
+								// numColumns={2}
+								// columnWrapperStyle={styles.columnWrapper}
+								initialNumToRender={8}
+								keyExtractor={this._keyExtractor}
+								itemKey={this.itemKey}
+								useIsScrolling
+							>
+								{this.renderItem}
+							</List>
+						);
+					}}
 				</AutoSizer>
 				{/* <Layout style={styles.floatingButtonContainer}>
 					<Button style={{}}>Call</Button>

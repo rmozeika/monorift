@@ -20,13 +20,7 @@ const Socket = require('./socket');
 const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 
-console.log('VERSION', '1.1');
-const chalk = require('chalk');
-const util = require('util');
-console.log(chalk.green('hi'));
-const testObject = { type: 'hello' };
-console.log(util.inspect(testObject, { colors: false }));
-console.log(chalk.blue(util.inspect(testObject, { colors: false })));
+console.log('VERSION', '0.3.3');
 
 var app = express();
 // probably remove as this is already created in api.js

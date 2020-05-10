@@ -72,7 +72,7 @@ const setupDefaultRoute = () => {
 		console.log('Is remote');
 		const opts = {};
 
-		builpath = path.resolve(__dirname, './dist.web');
+		const builpath = path.resolve(__dirname, './dist.web');
 		// app.use(express.static(__dirname + './dist.web'));
 		// app.use('*', express.static(path.resolve(__dirname, './dist.web')));
 		app.get(['/about', '/admin'], (req, res, next) => {

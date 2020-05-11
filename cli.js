@@ -175,6 +175,32 @@ const argInterface = {
 				}
 			}
 		},
+		// tail docker logs
+		log: {
+			func: async ([roll]) => {
+				const cmd = 'docker';
+				const args = ['logs', '-ft', 'mrapp'];
+				const opts = {};
+				const ls = spawn(cmd, args, opts);
+				ls.stdout.on('data', data => {
+					const outData = data.toString();
+					// stream.write(outData);
+					console.log(outData);
+				});
+
+				ls.stderr.on('data', data => {
+					const outData = data.toString();
+					// stream.write(outData);
+					console.log(outData);
+				});
+
+				ls.on('close', code => {
+					console.log(`child process exited with code ${code}`);
+					// stream.end();
+					// resolve();
+				});
+			}
+		},
 		kill: {
 			func: async args => {
 				execFile('./dev.sh/docker-kill.sh', [], (error, stdout, stderr) => {

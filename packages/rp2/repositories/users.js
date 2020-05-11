@@ -80,7 +80,7 @@ class UserRepository extends Repository {
 				})
 				.then(proceed => {
 					if (proceed) {
-						this.createGravatar(oauth_id, email);
+						return this.createGravatar(oauth_id, email);
 					}
 				})
 				.then(gravatarData => {

@@ -95,7 +95,7 @@ const createSocketChannel = socket =>
 		socket.on('message', handler);
 		socket.on('disconnect', reason => {
 			console.log('disconnected');
-			socket.AddRemoveFriendect();
+			socket.connect();
 		});
 		const oldOnMsg = (msg, secondArg) => {
 			if (msg.type == 'candidate') {

@@ -18,7 +18,9 @@ const signIn = () => {
 	});
 };
 
-const GoToUsersIcon = () => <Icon name={'pointed-right'}></Icon>;
+const GoToUsersIcon = () => (
+	<Icon name={'pointed-right'} size={16} color={'#fff'}></Icon>
+);
 export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 	if (!checked) {
 		return (
@@ -64,7 +66,7 @@ export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 				</Button>
 				<Button
 					onPress={goToUsers}
-					icon={GoToUsersIcon}
+					accessoryRight={GoToUsersIcon}
 					style={[styles.button, { flexDirection: 'row-reverse' }]}
 				>
 					Continue as Guest

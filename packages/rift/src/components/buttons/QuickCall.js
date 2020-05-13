@@ -13,7 +13,7 @@ import {
 	useTheme
 } from '@ui-kitten/components';
 
-const QuickCall = ({ startCall, checked, calling, connected }) => {
+const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 	const styles = useStyleSheet(themedStyles);
 
 	const theme = useTheme();
@@ -33,6 +33,7 @@ const QuickCall = ({ startCall, checked, calling, connected }) => {
 		return (
 			<Layout style={[styles.container, { backgroundColor: 'rgb(0, 224, 150)' }]}>
 				<TouchableOpacity
+					onPress={endCall}
 					style={[
 						styles.touchableContainer,
 						{ backgroundColor: 'rgb(0, 224, 150)' }

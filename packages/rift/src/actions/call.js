@@ -128,3 +128,9 @@ export const answer = (answered, from) => ({
 	payload: answered || true,
 	id: from.oauth_id
 });
+
+export const END_CALL = 'END_CALL';
+export const endCall = id => ({
+	type: END_CALL,
+	id
+});

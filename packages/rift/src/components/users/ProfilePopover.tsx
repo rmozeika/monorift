@@ -140,6 +140,7 @@ class ProfilePopover extends React.Component<
 	public render(): React.ReactNode {
 		const { visible } = this.state;
 		return (
+			// @ts-ignore
 			<Popover
 				// @ts-ignore
 				visible={visible}

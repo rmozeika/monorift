@@ -36,6 +36,10 @@ class UserItem extends React.Component {
 		const { user, id } = this.props;
 		this.props.startCall('audio', { ...user, id });
 	};
+	endCall = () => {
+		const { id } = this.props;
+		this.props.endCall(id);
+	};
 	addFriend = e => {
 		// e.stopPropagation();
 		const { addFriend, user } = this.props;
@@ -105,6 +109,7 @@ class UserItem extends React.Component {
 				<Layout style={styles.statusBar}>
 					<QuickCall
 						startCall={this.startCall}
+						endCall={this.endCall}
 						calling={user.calling}
 						connected={user.connected}
 						checked={user.checked}
@@ -299,6 +304,7 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = dispatch => {
 	return {
 		startCall: (type = 'audio', user) => dispatch(Actions.startCall(type, user)),
+		endCall: id => dispatch(Actions.endCall(id)),
 		addToCall: user => dispatch(Actions.addToCall(user)),
 		removeFromCall: user => dispatch(Actions.removeFromCall(user)),
 		addFriend: user => dispatch(Actions.addFriend(user)),

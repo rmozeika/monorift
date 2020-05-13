@@ -5,6 +5,7 @@ import {
 	call,
 	delay,
 	put,
+	putResolve,
 	take,
 	takeLatest,
 	takeEvery,
@@ -33,6 +34,7 @@ const {
 	SET_REMOTE,
 	ANSWER_INCOMING,
 	START_CALL,
+	END_CALL,
 	setConstraints,
 	sendOffer,
 	setIncomingCall,
@@ -140,7 +142,8 @@ function* startCallSaga({ payload, mediaStream }) {
 		if (mediaStream) {
 			stream = mediaStream;
 		} else {
-			stream = yield getUserMedia(constraints);
+			stream = yield putResolve(Actions.getUserMedia(constraints));
+			// stream = yield getUserMedia(constraints);
 		}
 
 		let users = yield call(getUsers, user);
@@ -183,13 +186,22 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, id = false, user }) {
 		socket.emit('message', offer, { constraints, users: [users[i]] });
 	}
 }
-
-const start = async peerConstraints => {
+function* start(constraints) {
+	yield put(Actions.setPeerStarted(true));
+	console.log('START', 'getting usermedia');
+	// const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
+	const stream = yield putResolve(Actions.getUserMedia(constraints));
+	debugger; //remove
+	return stream;
+}
+const starts = async constraints => {
 	put(Actions.setPeerStarted(true));
 	console.log('START', 'getting usermedia');
 	console.log('getting user media');
 
-	const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
+	// const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
+	const stream = await putResolve(Actions.getUserMedia(constraints));
+	debugger; //remove
 	return stream;
 };
 function* gotMessageSaga({ message, constraints, from }) {
@@ -217,7 +229,8 @@ function* gotMessageSaga({ message, constraints, from }) {
 		} else {
 			// Maybe combine this with start conn above
 			console.log('getting user media');
-			const stream = yield navigator.mediaDevices.getUserMedia(constraints);
+			// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
+			const stream = yield putResolve(Actions.getUserMedia(constraints));
 			yield call(addTracks, conn_id, stream);
 		}
 		console.log('GOT_MESSAGE', 'setting remote desc');
@@ -283,6 +296,10 @@ function* sendCandidateSaga(action) {
 	// debugger; //remove
 	socket.emit('message', candidateToSend, { users });
 }
+
+function* endCallSaga({ id }) {
+	yield put(Actions.peerAction(id, 'close'));
+}
 function* rootSaga() {
 	yield all([
 		initCallSaga(),
@@ -290,7 +307,8 @@ function* rootSaga() {
 		takeLatest(SEND_OFFER, sendOfferSaga),
 		takeEvery(GOT_MESSAGE, gotMessageSaga),
 		takeEvery(START_CALL, startCallSaga),
-		takeLatest(ANSWER_INCOMING, answerCallSaga)
+		takeLatest(ANSWER_INCOMING, answerCallSaga),
+		takeLatest(END_CALL, endCallSaga)
 	]);
 }
 

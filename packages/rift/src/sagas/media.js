@@ -50,12 +50,7 @@ function* addIceListener(conn) {
 function* iceConnectionStateChange(conn, id) {
 	const chan = eventChannel(emit => {
 		conn.addEventListener('iceconnectionstatechange', event => {
-			console.log('ice connection state change');
-			// const peerConnection = event.target;
-			// const iceCandidate = event.candidate;
-			// if (conn.iceConnectionState === 'disconnected') {
-			// 	emit(Actions.endCall(id));
-			// }
+			console.log(`ice connection state change: ${conn.iceConnectionState}`);
 			switch (conn.iceConnectionState) {
 				case 'closed':
 				case 'failed':
@@ -63,11 +58,6 @@ function* iceConnectionStateChange(conn, id) {
 					emit(Actions.endCall(id));
 					break;
 			}
-			// if (iceCandidate && event.currentTarget.remoteDescription !== null) {
-			// 	const newIceCandidate = new RTCIceCandidate(iceCandidate);
-			// 	console.log('sending candidate');
-			// 	emit(newIceCandidate);
-			// }
 		});
 		return () => {};
 	});
@@ -158,18 +148,7 @@ function* addTrackListener(conn, id) {
 		yield put(Actions.addTrack(id, track));
 	}
 }
-// function* watchPeer() {
-// 	const conn = new RTCPeerConnection(config);
-// 	// yield put(Actions.setPeerConn(conn));
-// 	yield spawn(addIceListener, conn);
-// 	yield spawn(addTrackListener, conn);
-// 	yield spawn(iceConnectionStateChange, conn);
-// 	const peerChan = yield actionChannel('PEER_ACTION');
-// 	while (true) {
-// 		const { payload } = yield take(peerChan);
-// 		yield call(handlePeerAction, conn, payload);
-// 	}
-// }
+
 function* watchMultiPeer() {
 	const connections = {};
 	const peerChan = yield actionChannel('PEER_ACTION');
@@ -220,11 +199,6 @@ function cleanPeer(conn) {
 }
 
 function* rootSaga() {
-	yield all([
-		// watchPeer(),
-		watchMultiPeer()
-	]);
-	// yield
-	//  all([takeLatest(Actions.SET_PEER_CONN, configurePeerConnSaga)]);
+	yield all([watchMultiPeer()]);
 }
 export default rootSaga;

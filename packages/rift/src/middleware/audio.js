@@ -4,13 +4,15 @@ class AudioController {
 		this.context = new (window.AudioContext || window.webkitAudioContext)();
 		this.audioTag = new Audio();
 		this.inboundStream = new MediaStream();
+		this.userMediaStream = null;
 		this.initialized = false;
 		this.tracks = {};
 		window.audioStuff = {
 			audioTag: this.audioTag,
 			inboundStream: this.inboundStream,
 			context: this.context,
-			tracks: this.tracks
+			tracks: this.tracks,
+			userMediaStream: this.userMediaStream
 		};
 	}
 	storeTrack(id, track) {
@@ -44,6 +46,20 @@ class AudioController {
 		const track = this.inboundStream.getTrackById(track_id);
 		track.stop();
 		delete this.tracks[id];
+		this.endSendingTrack();
+	}
+	endSendingTrack() {
+		if (Object.keys(this.tracks).length < 1) {
+			this.userMediaStream.getTracks().forEach(track => track.stop());
+		}
+	}
+	async getUserMedia(constraints) {
+		if (this.userMediaStream) {
+			return this.userMediaStream;
+		}
+		stream = await navigator.mediaDevices.getUserMedia(constraints);
+		this.userMediaStream = stream; // make variable available to browser console
+		return stream;
 	}
 	connectToDestination(source) {
 		source.connect(this.context.destination);
@@ -59,7 +75,7 @@ class AudioController {
 }
 const audioMiddleware = store => {
 	const audioController = new AudioController();
-	return next => action => {
+	return next => async action => {
 		switch (action.type) {
 			case Actions.ADD_SOURCE: {
 				const source = audioController.addElementSource(action.source);
@@ -74,6 +90,12 @@ const audioMiddleware = store => {
 			case Actions.END_CALL: {
 				audioController.endTrack(action.id);
 				next(action); // let other reducers accept action
+				break;
+			}
+			case Actions.GET_USER_MEDIA: {
+				const stream = await audioController.getUserMedia(action.constraints);
+				return stream;
+				// break;
 			}
 
 			//         touchTone.play(action.tones);

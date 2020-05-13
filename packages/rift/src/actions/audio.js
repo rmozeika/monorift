@@ -10,3 +10,9 @@ export const addTrack = (id, track) => ({
 	id,
 	track
 });
+
+export const GET_USER_MEDIA = 'AUDIO/GET_USER_MEDIA';
+export const getUserMedia = (constraints = { audio: true, video: false }) => ({
+	type: GET_USER_MEDIA,
+	constraints
+});

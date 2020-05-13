@@ -13,7 +13,8 @@ import {
 	SET_REMOTE,
 	SET_STREAM,
 	CALL_INCOMING,
-	ANSWER_INCOMING
+	ANSWER_INCOMING,
+	END_CALL
 } from '@actions';
 
 export const initialState = {

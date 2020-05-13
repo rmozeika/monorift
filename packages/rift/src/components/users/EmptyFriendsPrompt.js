@@ -39,11 +39,12 @@ export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 				<Layout style={styles.buttonRow}>
 					<Button
 						onPress={goToUsers}
-						icon={GoToUsersIcon}
-						style={[
-							styles.button,
-							{ flexDirection: 'row-reverse', flexBasis: 'auto' }
-						]}
+						accessoryRight={GoToUsersIcon}
+						style={styles.button}
+						// style={[
+						// 	styles.button,
+						// 	{ flexDirection: 'row-reverse', flexBasis: 'auto' }
+						// ]}
 					>
 						Go To Users
 					</Button>
@@ -67,7 +68,7 @@ export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 				<Button
 					onPress={goToUsers}
 					accessoryRight={GoToUsersIcon}
-					style={[styles.button, { flexDirection: 'row-reverse' }]}
+					style={styles.button}
 				>
 					Continue as Guest
 				</Button>

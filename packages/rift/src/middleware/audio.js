@@ -5,7 +5,7 @@ class AudioController {
 		this.audioTag = new Audio();
 		this.inboundStream = new MediaStream();
 		this.initialized = false;
-		this.tracks = [];
+		this.tracks = {};
 		window.audioStuff = {
 			audioTag: this.audioTag,
 			inboundStream: this.inboundStream,
@@ -13,8 +13,8 @@ class AudioController {
 			tracks: this.tracks
 		};
 	}
-	storeTrack(track) {
-		this.tracks.push(track);
+	storeTrack(id, track) {
+		this.tracks[id] = track;
 	}
 	initInboundStream() {
 		this.audioTag.srcObject = this.inboundStream;
@@ -31,13 +31,19 @@ class AudioController {
 			return source;
 		}
 	}
-	addTrack(track) {
+	addTrack(id, track) {
 		if (!this.initialized) {
 			this.initInboundStream();
 		}
 		this.inboundStream.addTrack(track);
-		this.storeTrack(track);
+		this.storeTrack(id, track);
 		this.audioTag.play();
+	}
+	endTrack(id) {
+		const track_id = this.tracks[id].id;
+		const track = this.inboundStream.getTrackById(track_id);
+		track.stop();
+		delete this.tracks[id];
 	}
 	connectToDestination(source) {
 		source.connect(this.context.destination);
@@ -62,8 +68,12 @@ const audioMiddleware = store => {
 				// break;
 			}
 			case Actions.ADD_TRACK: {
-				audioController.addTrack(action.track);
+				audioController.addTrack(action.id, action.track);
 				break;
+			}
+			case Actions.END_CALL: {
+				audioController.endTrack(action.id);
+				next(action); // let other reducers accept action
 			}
 
 			//         touchTone.play(action.tones);

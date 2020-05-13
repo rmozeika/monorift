@@ -33,6 +33,7 @@ const {
 	SET_REMOTE,
 	ANSWER_INCOMING,
 	START_CALL,
+	END_CALL,
 	setConstraints,
 	sendOffer,
 	setIncomingCall,
@@ -283,6 +284,10 @@ function* sendCandidateSaga(action) {
 	// debugger; //remove
 	socket.emit('message', candidateToSend, { users });
 }
+
+function* endCallSaga({ id }) {
+	yield put(Actions.peerAction(id, 'close'));
+}
 function* rootSaga() {
 	yield all([
 		initCallSaga(),
@@ -290,7 +295,8 @@ function* rootSaga() {
 		takeLatest(SEND_OFFER, sendOfferSaga),
 		takeEvery(GOT_MESSAGE, gotMessageSaga),
 		takeEvery(START_CALL, startCallSaga),
-		takeLatest(ANSWER_INCOMING, answerCallSaga)
+		takeLatest(ANSWER_INCOMING, answerCallSaga),
+		takeLatest(END_CALL, endCallSaga)
 	]);
 }
 

@@ -12,6 +12,7 @@ import {
 	SET_SEARCH_FILTER,
 	UPDATE_USER,
 	CALL_ACTIVE,
+	END_CALL,
 	ADD_CONNECTION,
 	ANSWER_INCOMING,
 	ADD_USER
@@ -237,6 +238,11 @@ export const byId = (state = {}, action) => {
 				// 	active: false,
 				// 	incoming: false,
 				// };
+			}
+			case END_CALL: {
+				draft[action.id].connected = false;
+				draft[action.id].calling = false;
+				break;
 			}
 			// case SET_ONLINE_USERS:
 			// 	action.payload.forEach(user => {

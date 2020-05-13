@@ -47,7 +47,39 @@ function* addIceListener(conn) {
 		yield put(Actions.sendCandidate(candidate));
 	}
 }
-function* addTrackListener(conn) {
+function* iceConnectionStateChange(conn, id) {
+	const chan = eventChannel(emit => {
+		conn.addEventListener('iceconnectionstatechange', event => {
+			console.log('ice connection state change');
+			// const peerConnection = event.target;
+			// const iceCandidate = event.candidate;
+			// if (conn.iceConnectionState === 'disconnected') {
+			// 	emit(Actions.endCall(id));
+			// }
+			switch (conn.iceConnectionState) {
+				case 'closed':
+				case 'failed':
+				case 'disconnected':
+					emit(Actions.endCall(id));
+					break;
+			}
+			// if (iceCandidate && event.currentTarget.remoteDescription !== null) {
+			// 	const newIceCandidate = new RTCIceCandidate(iceCandidate);
+			// 	console.log('sending candidate');
+			// 	emit(newIceCandidate);
+			// }
+		});
+		return () => {};
+	});
+
+	while (true) {
+		const action = yield take(chan);
+		console.log(action);
+		yield put(action);
+		// yield put(Actions.sendCandidate(candidate));
+	}
+}
+function* addTrackListener(conn, id) {
 	const chan = eventChannel(emit => {
 		const onTrack = e => {
 			// CHANGE THIS select from store;
@@ -123,20 +155,21 @@ function* addTrackListener(conn) {
 
 	while (true) {
 		const track = yield take(chan);
-		yield put(Actions.addTrack(track));
+		yield put(Actions.addTrack(id, track));
 	}
 }
-function* watchPeer() {
-	const conn = new RTCPeerConnection(config);
-	// yield put(Actions.setPeerConn(conn));
-	yield spawn(addIceListener, conn);
-	yield spawn(addTrackListener, conn);
-	const peerChan = yield actionChannel('PEER_ACTION');
-	while (true) {
-		const { payload } = yield take(peerChan);
-		yield call(handlePeerAction, conn, payload);
-	}
-}
+// function* watchPeer() {
+// 	const conn = new RTCPeerConnection(config);
+// 	// yield put(Actions.setPeerConn(conn));
+// 	yield spawn(addIceListener, conn);
+// 	yield spawn(addTrackListener, conn);
+// 	yield spawn(iceConnectionStateChange, conn);
+// 	const peerChan = yield actionChannel('PEER_ACTION');
+// 	while (true) {
+// 		const { payload } = yield take(peerChan);
+// 		yield call(handlePeerAction, conn, payload);
+// 	}
+// }
 function* watchMultiPeer() {
 	const connections = {};
 	const peerChan = yield actionChannel('PEER_ACTION');
@@ -146,7 +179,8 @@ function* watchMultiPeer() {
 			connections[conn_id] = new RTCPeerConnection(config);
 			// yield put(Actions.setPeerConn(conn));
 			yield spawn(addIceListener, connections[conn_id]);
-			yield spawn(addTrackListener, connections[conn_id]);
+			yield spawn(addTrackListener, connections[conn_id], conn_id);
+			yield spawn(iceConnectionStateChange, connections[conn_id], conn_id);
 		}
 		yield call(handlePeerAction, connections[conn_id], payload);
 	}
@@ -163,11 +197,26 @@ function* handlePeerAction(conn, payload) {
 			result = yield conn[method]();
 		}
 		yield put({ type: 'PEER_ACTION_DONE', payload: result || true });
+		if (method === 'close') {
+			yield call(cleanPeer, conn);
+		}
 	} catch (e) {
 		console.log('error');
 		console.error(e);
 		debugger; //error
 	}
+}
+
+function cleanPeer(conn) {
+	conn.ontrack = null;
+	conn.onremovetrack = null;
+	conn.onremovestream = null;
+	conn.onicecandidate = null;
+	conn.oniceconnectionstatechange = null;
+	conn.onsignalingstatechange = null;
+	conn.onicegatheringstatechange = null;
+	conn.onnegotiationneeded = null;
+	conn = null;
 }
 
 function* rootSaga() {

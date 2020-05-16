@@ -5,29 +5,7 @@ import { StyleSheet } from 'react-native';
 
 import * as Actions from '@actions';
 import Controls from '@components/talk/Controls';
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		// height: '100%',
-		justifyContent: 'space-between'
-	},
-	row: {
-		width: '100%',
-		flexGrow: 1
-	},
-	buttonRow: {
-		width: '100%',
-		margin: 8,
-		flexGrow: 1,
-		flexBasis: '45%',
-		maxHeight: '50%'
-	},
-	video: {
-		width: '100%'
-	}
-});
+import VideoPlayer from '@components/talk/VideoPlayer';
 
 export class Media extends React.Component {
 	constructor(props) {
@@ -89,14 +67,7 @@ export class Media extends React.Component {
 			: { margin: 'auto' };
 		return (
 			<Layout style={styles.container}>
-				<Layout style={styles.row}>
-					<video
-						style={{ width: '100%', margin: 'auto' }}
-						autoPlay
-						playsInline
-						ref={videoRef}
-					/>
-				</Layout>
+				<VideoPlayer ref={videoRef} />
 				<Layout style={styles.row}>
 					<audio style={audioStyle} id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>
@@ -113,6 +84,29 @@ export class Media extends React.Component {
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		// height: '100%',
+		justifyContent: 'space-between'
+	},
+	row: {
+		width: '100%',
+		flexGrow: 1
+	},
+	buttonRow: {
+		width: '100%',
+		margin: 8,
+		flexGrow: 1,
+		flexBasis: '45%',
+		maxHeight: '50%'
+	},
+	video: {
+		width: '100%'
+	}
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {

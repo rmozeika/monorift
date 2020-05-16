@@ -16,3 +16,6 @@ export const getUserMedia = (constraints = { audio: true, video: false }) => ({
 	type: GET_USER_MEDIA,
 	constraints
 });
+
+export const PLAY_VIDEO = 'VIDEO/PlAY';
+export const playVideo = () => ({ type: PLAY_VIDEO });

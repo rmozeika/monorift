@@ -9,3 +9,6 @@ NodeJS backend [packages/rp2](https://github.com/rmozeika/monorift/tree/master/p
 
 Automated Kubernetes + Docker deployment [packages/devops](https://github.com/rmozeika/monorift/tree/master/packages/devops)
 
+![Screenshot](https://github.com/rmozeika/monorift/blob/0.3.5/packages/rift/src/static/monoriftiPhoneX.png?s=200)
+
+?raw=true =250x250)

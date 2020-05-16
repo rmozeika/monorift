@@ -3,8 +3,17 @@ var path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 var src = path.join(__dirname, './packages/rift/src');
-
-module.exports = {
+const baseConfig = require('./webpack.config.base.js');
+const config = {
+	mode: 'production',
+	...baseConfig,
+	devtool: 'source-map',
+	optimization: {
+		minimize: true
+	}
+};
+module.exports = config;
+const oldConfig = {
 	context: path.resolve(__dirname),
 	entry: [path.join(src, 'index.js')],
 	mode: 'production',
@@ -109,5 +118,8 @@ module.exports = {
 		publicPath: '/',
 		filename: '[name].bundle.js?ver[hash:6]'
 	},
-	devtool: 'source-map'
+	devtool: 'source-map',
+	optimization: {
+		minimize: true
+	}
 };

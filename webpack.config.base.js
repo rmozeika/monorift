@@ -4,25 +4,10 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const src = path.join(__dirname, './packages/rift/src');
 const publicDir = path.resolve(__dirname, 'packages', 'rp2', 'public');
 
-const baseConfig = require('./webpack.config.base.js');
-const config = {
-	mode: 'development',
-	...baseConfig,
-	devtool: 'source-map',
-	devServer: {
-		contentBase: path.join(__dirname, 'dist.web'),
-		port: 9000,
-		writeToDisk: true
-	},
-	optimization: {
-		minimize: false
-	}
-};
-module.exports = config;
-const oldConfig = {
+module.exports = {
 	context: path.resolve(__dirname),
 	entry: [path.join(src, 'index.js')],
-	mode: 'development',
+	// mode: 'development',
 	module: {
 		rules: [
 			{
@@ -169,14 +154,5 @@ const oldConfig = {
 		path: path.join(__dirname, 'dist.web'),
 		publicPath: '/',
 		filename: '[name].bundle.js?ver[hash:6]'
-	},
-	devtool: 'source-map',
-	devServer: {
-		contentBase: path.join(__dirname, 'dist.web'),
-		port: 9000,
-		writeToDisk: true
-	},
-	optimization: {
-		minimize: false
 	}
 };

@@ -53,25 +53,27 @@ class ProfilePopover extends React.Component<
 	}
 	private renderSigninIcon = ({ style }): React.ReactElement<ImageProps> => {
 		// const { themedStyle } = this.props;
-		return <Icon name="sign-in-alt" color={'#fff'} style={style} solid />;
+		return <Icon name="sign-in-alt" color={'#F7F9FC'} style={style} solid />;
 	};
 	private renderSignoutIcon = ({ style }): React.ReactElement<ImageProps> => {
-		return <Icon name="sign-out-alt" color={'#fff'} style={{ ...style }} solid />;
+		return (
+			<Icon name="sign-out-alt" color={'#F7F9FC'} style={{ ...style }} solid />
+		);
 	};
 	private renderAlertIcon = ({ style }): React.ReactElement<ImageProps> => {
 		return <Icon name="alert" color={'#FF3D71'} style={style} solid />;
 	};
 	private renderProfileIcon = ({ style }): React.ReactElement<ImageProps> => {
-		return <Icon name="caret-down" color={'#fff'} style={style} solid />;
+		return <Icon name="caret-down" color={'#F7F9FC'} style={style} solid />;
 	};
 	private renderProfileCloseIcon = ({
 		style
 	}): React.ReactElement<ImageProps> => {
-		return <Icon name="x" color={'#fff'} style={{ ...style }} solid />;
+		return <Icon name="x" color={'#F7F9FC'} style={{ ...style }} solid />;
 	};
 	private renderMenuIcon = ({ style }): React.ReactElement<ImageProps> => {
 		// const { themedStyle } = this.props;
-		return <Icon name="bars" color={'#fff'} style={{ ...style }} solid />;
+		return <Icon name="bars" color={'#F7F9FC'} style={{ ...style }} solid />;
 	};
 
 	private toggleProfilePopover = (): void => {
@@ -182,7 +184,8 @@ const styles = StyleSheet.create({
 		marginHorizontal: 8,
 		marginRight: 4,
 		height: gravatarDimensions,
-		width: gravatarDimensions
+		width: gravatarDimensions,
+		backgroundColor: 'inherit'
 		// maxHeight: gravatarDimensions || '10vh',
 		// maxWidth: gravatarDimensions || '10vh'
 	},
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
 		maxWidth: gravatarDimensions,
 		height: '100%',
 		width: '100%',
-		borderRadius: 0,
+		borderRadius: 100,
 		backgroundColor: 'inherit'
 	},
 	popoverLayout: {
@@ -214,7 +217,8 @@ const styles = StyleSheet.create({
 	myUsername: {
 		fontWeight: '600',
 		padding: 5,
-		fontSize: 12
+		fontSize: 12,
+		color: '#F7F9FC'
 	},
 	userIconContainer: {
 		flexDirection: 'column',

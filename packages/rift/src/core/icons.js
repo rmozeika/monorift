@@ -70,7 +70,7 @@ function FeatherIcon({
 }
 const defaultStyle = StyleSheet.create({
 	height: 40,
-	tintColor: 'white'
+	tintColor: '#F7F9FC'
 });
 function AwesomeIcon({
 	name,

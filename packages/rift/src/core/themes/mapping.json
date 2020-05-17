@@ -1,0 +1,57 @@
+{
+	"components": {
+		"Layout": {
+			"meta": {
+				"scope": "mobile",
+				"parameters": {
+					"backgroundColor": {
+						"type": "string"
+					}
+				},
+				"appearances": {
+					"default": {
+						"default": true
+					}
+				},
+				"variantGroups": {
+					"level": {
+						"1": {
+							"default": true
+						},
+						"2": {
+							"default": false
+						},
+						"3": {
+							"default": false
+						},
+						"4": {
+							"default": false
+						}
+					}
+				},
+				"states": {}
+			},
+			"appearances": {
+				"default": {
+					"mapping": {},
+					"variantGroups": {
+						"level": {
+							"1": {
+								"backgroundColor": "background-basic-color-4"
+							},
+							"2": {
+								"backgroundColor": "background-basic-color-2"
+							},
+							"3": {
+								"backgroundColor": "background-basic-color-3"
+							},
+							"4": {
+								"backgroundColor": "background-basic-color-4"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -14,7 +14,7 @@ import Talk from '../talk/Talk';
 import NavBarHeader from './NavBarHeader';
 import NavUserControls from '@components/navigation/NavUserControls';
 const Stack = createStackNavigator();
-const tabColor = 'rgb(26, 34, 55)';
+const tabColor = 'rgb(21, 26, 48);';
 
 export default class NavigationContiner extends React.Component {
 	constructor(props) {
@@ -42,7 +42,7 @@ export default class NavigationContiner extends React.Component {
 							backgroundColor: tabColor,
 							borderBottomColor: tabColor
 						},
-						headerTintColor: '#fff',
+						headerTintColor: '#F7F9FC',
 						headerTitleStyle: {
 							fontFamily: `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif`,
 							fontWeight: '600',
@@ -95,7 +95,7 @@ export default class NavigationContiner extends React.Component {
 							},
 							headerRightContainerStyle: {
 								marginRight: 10,
-								backgroundColor: 'white'
+								backgroundColor: '#F7F9FC'
 							},
 							showLabel: false,
 							headerRightContainerStyle: { showLabel: false },

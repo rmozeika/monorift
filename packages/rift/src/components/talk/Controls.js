@@ -73,7 +73,7 @@ function ShowHideButton(props) {
 const outerButtonGroupBoxShadow = {
 	boxShadow: `
 			inset 5px 5px 5px -15px rgba(0,0,0,0.1), 
-			inset -5px -5px 7px -15px rgba(255, 255, 255, 0.4), 
+			inset -5px -5px 7px -15px rgba(#F7F9FC, 0.4), 
 			-5px -5px 16px rgba(255, 255,255, 0.1), 
 			15px 15px 10px rgba(0,0,0,0.5)
 		`
@@ -82,14 +82,14 @@ const controlButtonBoxShadow = `inset 10px 10px 10px rgba(0,0,0,.1), inset -10px
 const buttonGroupBoxShadow = {
 	boxShadow: `
 		rgba(0, 0, 0, 0.9) 5px 5px 5px -15px, 
-		rgba(255, 255, 255, 0.2) -7px -7px 16px -10px, 
+		rgba(#F7F9FC, 0.2) -7px -7px 16px -10px, 
 		rgba(0, 0, 0, 4) 10px 10px 16px 0px
 		`,
 	borderWidth: 0
 };
 const innerButtonBoxShadow = {
 	boxShadow: `
-	rgba(255, 255, 255, 0.1) -5px -5px 5px -1px inset, 
+	rgba(#F7F9FC, 0.1) -5px -5px 5px -1px inset, 
 	rgba(0, 0, 0, 0.2) 5px 5px 5px -1px inset
 	`
 };
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
 		width: '88%',
 		borderRadius: 10,
 		...buttonGroupBoxShadow,
-		backgroundColor: 'white'
+		backgroundColor: '#F7F9FC'
 	},
 	innerButtonGroup: {
 		display: 'flex',

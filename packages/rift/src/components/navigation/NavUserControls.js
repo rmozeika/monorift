@@ -11,16 +11,19 @@ const styles = StyleSheet.create({
 export default NavUserControls = ({ navigation, toCall }) => {
 	return (
 		<Layout style={styles.container}>
-			<Button onPress={() => toCall(navigation)} title="Call" color="#fff">
+			{/* <Button onPress={() => toCall(navigation)} title="Call" color="#F7F9FC">
 				Profile
-			</Button>
+			</Button> */}
 			<Button
 				onPress={() => toCall(navigation)}
-				title="Call"
-				color="#fff"
-				status="basic"
+				title="video"
+				// color="#F7F9FC"
+				//	status="primary"
+				status="success"
+				// status="danger"
+				appearance="outline"
 			>
-				Call
+				video
 			</Button>
 		</Layout>
 	);

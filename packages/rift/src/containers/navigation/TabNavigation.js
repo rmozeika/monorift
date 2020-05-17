@@ -48,7 +48,8 @@ class TabNavigation extends React.Component {
 		return <UsersList listType={'master'} containerHeight={500}></UsersList>;
 	}
 	render() {
-		const tabColor = '#161c30';
+		// const tabColor = '#161c30';
+		const tabColor = 'rgb(21, 26, 48)'; //'#1A2138';
 		const { checked } = this.props;
 		// if (!this.props.checked) {
 		// 	return (null);
@@ -70,20 +71,13 @@ class TabNavigation extends React.Component {
 						}
 
 						// You can return any component that you like here!
-						return (
-							<Icon
-								color={'rgb(255, 255, 255)'}
-								size={size}
-								style={{}}
-								name={iconName}
-							/>
-						);
+						return <Icon color={color} size={size} style={{}} name={iconName} />;
 					}
 					// cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 				})}
 				tabBarOptions={{
-					// inactiveBackgroundColor: 'rgba(255, 255, 255, 0.1)',
-					// activeBackgroundColor: 'rgba(255, 255, 255, 0.1)',
+					// inactiveBackgroundColor: 'rgba(#F7F9FC, 0.1)',
+					// activeBackgroundColor: 'rgba(#F7F9FC, 0.1)',
 					style: {
 						backgroundColor: tabColor,
 						borderTopColor: tabColor
@@ -92,10 +86,11 @@ class TabNavigation extends React.Component {
 					labelStyle: {
 						fontFamily: `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif`
 					},
-					inactiveTintColor: 'white'
-
+					inactiveTintColor: '#F7F9FC',
+					activeTintColor: 'rgb(0, 122, 255)'
+					// activeTintColor: 'rgb(10, 132, 255)'//'#598BFF' //'#274BDB'
 					// labelStyle: {
-					// 	color: 'white'
+					// 	color: '#F7F9FC'
 					// }
 				}}
 			>

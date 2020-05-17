@@ -61,7 +61,7 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 			<Icon
 				size={style.height}
 				name="sign-in-alt"
-				color={'#fff'}
+				color={'#F7F9FC'}
 				style={style}
 				solid
 			/>
@@ -69,7 +69,7 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	};
 
 	private renderMenuIcon = ({ style }): React.ReactElement<ImageProps> => {
-		return <Icon name="bars" color={'#fff'} style={{ ...style }} solid />;
+		return <Icon name="bars" color={'#F7F9FC'} style={{ ...style }} solid />;
 	};
 
 	private onSignin(): void {
@@ -134,7 +134,7 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	}
 
 	public render(): React.ReactNode {
-		const tabColor = 'rgb(26, 34, 55)';
+		const tabColor = 'rgb(21, 26, 48);'; //'rgb(21, 26, 48);';
 
 		const { loggedIn, username } = this.props;
 		const title = loggedIn ? `Welcome ${username}` : 'Sign in';
@@ -150,12 +150,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 		// height: '90%'
 	},
-	topNavigation: { backgroundColor: 'rgb(26, 34, 55)' },
+	topNavigation: { backgroundColor: 'rgb(21, 26, 48);' },
 	title: { color: '#EDF1F7' },
 	subtitle: { color: '#C5CEE0' },
 	buttonText: {
 		// color: '#EDF1F7',
-		color: '#fff',
+		color: '#F7F9FC',
 		fontSize: 15,
 		fontWeight: '600',
 		marginLeft: 0,

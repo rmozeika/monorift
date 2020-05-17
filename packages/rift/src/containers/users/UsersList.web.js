@@ -35,7 +35,7 @@ class UsersList extends React.PureComponent {
 		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
 		// }
 		return (
-			<Layout style={style}>
+			<Layout style={style} level="4">
 				<UserItem key={user} id={user} isScrolling={isScrolling} />
 				{/* {isScrolling ? 'Scrolling' : <UserItem key={user} themedStyle={this.props.themedStyle.userItem} id={user} />} */}
 			</Layout>
@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
 		width: '100%',
 		// overflowY: 'scroll',
 		// height: '80vh',
-		height: '100%'
+		height: '100%',
+		backgroundColor: '#101426'
 	},
 	row: {
 		padding: 15,
@@ -167,14 +168,16 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	list: {
-		width: '100%'
+		width: '100%',
+		backgroundColor: '#101426'
 	},
 	listContentContainer: {
 		// flexShrink: 1,
 		// flexDirection: 'row',
 		// flexWrap: 'wrap',
 		order: -1,
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		backgroundColor: '#101426'
 	},
 	columnWrapper: {
 		flexBasis: 150,

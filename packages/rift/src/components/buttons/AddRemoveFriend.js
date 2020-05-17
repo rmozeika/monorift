@@ -5,6 +5,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 const AddFriendIcon = ({
 	style = {},
 	size = 20,
+	//color = '#E4E9F2'
 	color = 'rgb(0, 224, 150)'
 }) => {
 	return <Icon name="friend" size={size} color={color} />;
@@ -12,7 +13,7 @@ const AddFriendIcon = ({
 const FriendRequestSentIcon = ({
 	style = {},
 	size = 20,
-	color = '#C5CEE0'
+	color = 'rgb(16, 20, 38)'
 }) => {
 	const name = 'friend-sent-alt' || 'ellipsis' || 'check' || 'friend-sent';
 	return <Icon name={name} size={size} color={color} />;
@@ -20,14 +21,12 @@ const FriendRequestSentIcon = ({
 const FriendRequestIcon = ({ style }) => (
 	<Icon size={style.height} color={style.tintColor} name="friend-request" />
 );
-const RejectFriendIcon = ({ style = {}, size = 20, color = '#FF3D71' }) => (
+const RejectFriendIcon = ({ style = {}, size = 20, color = '#E4E9F2' }) => (
 	<Icon size={20} color={color} style={style} name="x" />
 );
-const AcceptFriendIcon = ({
-	style = {},
-	size = 20,
-	color = 'rgb(0, 224, 150)'
-}) => <Icon size={20} color={color} style={style} name={'check'} />;
+const AcceptFriendIcon = ({ style = {}, size = 20, color = '#E4E9F2' }) => (
+	<Icon size={20} color={color} style={style} name={'check'} />
+);
 
 export const createBoxShadow = (colorPrimary, colorAlt) => {
 	// const color = #3366FF
@@ -53,7 +52,8 @@ class AddRemoveFriend extends React.PureComponent {
 					Accessory: AddFriendIcon,
 					onPress: this.addFriend,
 					style: styles.touchableAdd,
-					textStyle: styles.sentText
+					textStyle: styles.addText,
+					text: 'add'
 				}
 			},
 			['S']: {
@@ -136,25 +136,28 @@ const FriendTouchable = ({ text, onPress, style, textStyle, Accessory }) => {
 		</TouchableOpacity>
 	);
 };
-
+const successColor = 'rgba(0, 224, 150, 0.94)'; // 'rgb(0, 224, 150)'
 const touchableStyle = {
 	flex: 1,
 	margin: 0,
-	minWidth: 10,
+	minWidth: 65,
 	flexBasis: 50,
+	flexGrow: 1,
+	maxHeight: 40,
 	// height: '80%',
 	// boxShadow:"inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb",
-	borderRadius: 10,
+	// borderRadius: 10,
 	borderWidth: 1,
-
+	borderBottomLeftRadius: 10,
+	borderBottomRightRadius: 10,
 	// color: '#EDF1F7',
 	color: '#C5CEE0',
 
-	flexDirection: 'column',
+	flexDirection: 'row',
 	// flexDirection: 'row',
 	alignItems: 'center',
 	textAlign: 'center',
-	alignSelf: 'center',
+	alignSelf: 'flex-start',
 	// justifyContent: 'center',
 	justifyContent: 'space-evenly',
 	// marginRight: 5,
@@ -162,9 +165,14 @@ const touchableStyle = {
 	width: 40,
 	// height: 75,
 	// width: 75,
-	flexGrow: 0,
+	//flexGrow: 0,
 	margin: 0,
-	backgroundColor: 'inherhit'
+	backgroundColor: 'inherhit',
+	alignSelf: 'flex-end',
+	marginRight: 10,
+	// borderBottomRightRadius: 0,
+	minHeight: 40,
+	minWidth: 70
 };
 const styles = StyleSheet.create({
 	button: {
@@ -178,8 +186,11 @@ const styles = StyleSheet.create({
 		color: '#EDF1F7',
 		flexDirection: 'column'
 	},
+	addText: {
+		color: 'rgb(0, 224, 150)' //'#EDF1F7'
+	},
 	sentText: {
-		color: '#C5CEE0'
+		color: 'rgb(16, 20, 38)' //'#C5CEE0'
 	},
 	touchable: {
 		flex: 1,
@@ -193,10 +204,11 @@ const styles = StyleSheet.create({
 		flexDirection: 'column'
 	},
 	iconAdd: {
-		color: 'rgb(0, 224, 150)'
+		color: '#C5CEE0' //'rgb(0, 224, 150)'
 	},
 	iconSent: {
-		color: '#C5CEE0'
+		// color: '#C5CEE0',
+		color: 'rgb(16, 20, 38)' // '#EDF1F7'
 	},
 	touchableAdd: {
 		...touchableStyle,
@@ -206,8 +218,13 @@ const styles = StyleSheet.create({
 		// margin: 0,
 		// borderWidth: 2,
 		// borderColor: '#1cac75',
-		borderColor: 'rgb(0, 224, 150)',
-		backgroundColor: 'rgba(44, 255, 187, 0.05)'
+		borderColor: successColor,
+		backgroundColor: successColor, //'rgb(0, 224, 150)',
+		borderWidth: 1,
+		backgroundColor: 'rgba(44, 255, 187, 0.05)',
+		borderColor: 'rgba(0, 224, 150, 0.18)'
+		// margin
+		// borderRadius: 0
 		// color: '#C5CEE0',
 		// justifyContent: 'space-evenly'
 	},
@@ -215,23 +232,31 @@ const styles = StyleSheet.create({
 		...touchableStyle,
 		// borderColor: 'rgba(51, 102, 255, 0.48)',
 		borderWidth: 0,
-		backgroundColor: 'inherhit', //'rgba(51, 102, 255, 0.1)',
-		color: '#C5CEE0'
+		backgroundColor: 'rgba(143, 155, 179, 0.5)', //'#EDF1F7', //'rgba(51, 102, 255, 0.1)',
+		color: '#C5CEE0',
+		opacity: 1
 	},
 	touchableAccept: {
 		...touchableStyle,
-		borderColor: 'rgb(0, 224, 150)',
-		backgroundColor: 'rgba(44, 255, 187, 0.05)',
-		borderTopRightRadius: 0,
-		borderBottomRightRadius: 0
+		// borderColor: 'rgba(0, 224, 150, 0.48)',
+		// backgroundColor: 'rgba(44, 255, 187, 0.05)',
+		borderColor: successColor,
+		backgroundColor: successColor,
+		marginBottom: 2
 	},
 	touchableCancel: {
 		...touchableStyle,
-		borderColor: 'rgba(255, 61, 113, 0.48)',
-		backgroundColor: 'rgba(255, 61, 113, 0.1)',
-		marginRight: 5,
-		borderTopLeftRadius: 0,
-		borderBottomLeftRadius: 0
+		// borderColor: 'rgba(255, 61, 113, 0.48)',
+		backgroundColor: '#FF3D71',
+		borderTopRightRadius: 10,
+		borderTopLeftRadius: 10,
+		borderBottomLeftRadius: 0,
+		borderBottomRightRadius: 0,
+		marginTop: 2
+		//borderWidth: 0
+		// marginRight: 5,
+		// borderTopLeftRadius: 0,
+		// borderBottomLeftRadius: 0
 	},
 	buttonContainer: {
 		// position: 'absolute',
@@ -244,7 +269,7 @@ const styles = StyleSheet.create({
 		flexBasis: '25%',
 		justifySelf: 'flex-end',
 		// width: '100%',
-		flexDirection: 'row'
+		flexDirection: 'column'
 	},
 	acceptButton: {
 		borderRightWidth: 0

@@ -39,8 +39,8 @@ const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 						{ backgroundColor: 'rgb(0, 224, 150)' }
 					]}
 				>
-					<Icon style={{}} size={22} name="phone" color={'#fff'}></Icon>
-					<Text style={[{ color: '#fff' }, styles.statusText]}>Connected</Text>
+					<Icon style={{}} size={22} name="phone" color={'#F7F9FC'}></Icon>
+					<Text style={[{ color: '#F7F9FC' }, styles.statusText]}>Connected</Text>
 				</TouchableOpacity>
 			</Layout>
 		);
@@ -49,6 +49,7 @@ const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 		return (
 			<TouchableOpacity onPress={startCall} style={styles.touchableContainer}>
 				<Icon style={{}} size={22} name="phone" color={'rgb(0, 224, 150)'}></Icon>
+				{/* <Icon style={{}} size={22} name="phone" color={theme['color-primary-500']}></Icon> */}
 				<Text style={[{ color: theme['color-success-500'] }, styles.statusText]}>
 					Quick Connect
 				</Text>
@@ -92,8 +93,8 @@ const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 			}}
 		>
 			<TouchableOpacity style={styles.touchableContainer}>
-				<Icon style={{}} size={22} name="phone" color={'#fff'}></Icon>
-				<Text style={[{ color: '#fff' }, styles.statusText]}>Calling...</Text>
+				<Icon style={{}} size={22} name="phone" color={'#F7F9FC'}></Icon>
+				<Text style={[{ color: '#F7F9FC' }, styles.statusText]}>Calling...</Text>
 			</TouchableOpacity>
 		</Animated.View>
 	);
@@ -189,7 +190,7 @@ const themedStyles = StyleService.create({
 		justifyContent: 'center',
 		alignItems: 'center', // stretch if change child to div
 		// flexDirection: 'row',
-		borderRadius: 10,
+		//borderRadius: 10,
 		borderBottomRightRadius: 0,
 		borderBottomLeftRadius: 0,
 		flexWrap: 'wrap'
@@ -211,8 +212,9 @@ const themedStyles = StyleService.create({
 	touchableContainer: {
 		flexBasis: 30,
 		height: 30,
-		borderRadius: 60,
+		//borderRadius: 60,
 		// backgroundColor: 'rgb(0, 224, 150)',
+		backgroundColor: 'transparent', //'rgba(44, 255, 187, 0.05)',
 		justifyItems: 'center',
 		alignSelf: 'center',
 		alignItems: 'center',

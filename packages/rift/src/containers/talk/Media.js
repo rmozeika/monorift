@@ -67,7 +67,7 @@ export class Media extends React.Component {
 			: { margin: 'auto' };
 		return (
 			<Layout style={styles.container}>
-				<VideoPlayer ref={videoRef} />
+				<VideoPlayer videoRef={videoRef} />
 				<Layout style={styles.row}>
 					<audio style={audioStyle} id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>

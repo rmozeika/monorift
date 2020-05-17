@@ -13,6 +13,7 @@ import {
 	AwesomeIconsPack
 	// FeatherIconsPack
 } from './core/icons';
+import content from './core/themes/mapping.json';
 
 import Navigation from './containers/navigation/Navigation';
 import About from './containers/misc/About';
@@ -66,7 +67,11 @@ class App extends React.Component<Props, State> {
 		return (
 			<ThemeContext.Provider value={contextValue}>
 				<IconRegistry icons={[AwesomeIconsPack]} />
-				<ApplicationProvider mapping={mapping} theme={themes[this.state.theme]}>
+				<ApplicationProvider
+					mapping={mapping}
+					theme={themes[this.state.theme]}
+					customMapping={content}
+				>
 					<View style={styles.parentView}>
 						<Router>
 							<Switch>

@@ -19,7 +19,7 @@ const signIn = () => {
 };
 
 const GoToUsersIcon = () => (
-	<Icon name={'pointed-right'} size={16} color={'#fff'}></Icon>
+	<Icon name={'pointed-right'} size={16} color={'#F7F9FC'}></Icon>
 );
 export default EmptyFriendsPrompt = ({ goToUsers, loggedIn, checked }) => {
 	if (!checked) {
@@ -101,6 +101,6 @@ const styles = StyleSheet.create({
 	},
 	providerIcon: {
 		height: 40,
-		tintColor: 'white'
+		tintColor: '#F7F9FC'
 	}
 });

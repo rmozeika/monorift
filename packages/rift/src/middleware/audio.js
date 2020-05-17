@@ -7,12 +7,14 @@ class AudioController {
 		this.userMediaStream = null;
 		this.initialized = false;
 		this.tracks = {};
+		this.videoPlayer = null;
 		window.audioStuff = {
 			audioTag: this.audioTag,
 			inboundStream: this.inboundStream,
 			context: this.context,
 			tracks: this.tracks,
-			userMediaStream: this.userMediaStream
+			userMediaStream: this.userMediaStream,
+			videoPlayer: this.videoPlayer
 		};
 	}
 	storeTrack(id, track) {
@@ -72,6 +74,9 @@ class AudioController {
 		}
 		return dest;
 	}
+	setVideoPlayer(ref) {
+		this.videoPlayer = ref;
+	}
 }
 const audioMiddleware = store => {
 	const audioController = new AudioController();
@@ -96,6 +101,10 @@ const audioMiddleware = store => {
 				const stream = await audioController.getUserMedia(action.constraints);
 				return stream;
 				// break;
+			}
+			case Actions.SET_VIDEO_PLAYER: {
+				audioController.setVideoPlayer(action.ref);
+				break;
 			}
 
 			//         touchTone.play(action.tones);

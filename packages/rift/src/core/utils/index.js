@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-
+export * from './notifications';
 export const originLink = type => {
 	const paths = {
 		login: '/auth/login',

@@ -2,12 +2,18 @@ import * as React from 'react';
 import { Layout, Button, ButtonGroup } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { StyleSheet } from 'react-native';
+import * as Actions from '@actions';
 
 export class VideoPlayer extends React.Component {
 	constructor(props) {
 		super(props);
+		this.setVideoPlayer();
+	}
+	setVideoPlayer() {
+		this.props.setVideoPlayer(this.props.videoRef);
 	}
 	render() {
+		const { videoRef } = this.props;
 		return (
 			<Layout style={styles.row}>
 				<video
@@ -42,5 +48,12 @@ const styles = StyleSheet.create({
 		width: '100%'
 	}
 });
-
-export default VideoPlayer;
+const mapStateToProps = state => {
+	return {};
+};
+const mapDispatchToProps = dispatch => {
+	return {
+		setVideoPlayer: ref => dispatch(Actions.setVideoPlayer(ref))
+	};
+};
+export default connect(mapStateToProps, mapDispatchToProps)(VideoPlayer);

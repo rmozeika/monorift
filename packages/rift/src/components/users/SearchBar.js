@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 		padding: 8,
 		display: 'flex',
 		flexDirection: 'row',
-		backgroundColor: 'rgb(26, 33, 56)'
+		backgroundColor: 'rgb(21, 26, 48);'
 	},
 	searchInput: {
 		flexBasis: '80%',

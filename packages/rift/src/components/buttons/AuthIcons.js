@@ -33,7 +33,7 @@ const SignInButton = props => {
 const styles = StyleSheet.create({
 	providerIcon: {
 		height: 40,
-		tintColor: 'white'
+		tintColor: '#F7F9FC'
 	},
 	iconContainer: {
 		display: 'flex',

@@ -1,5 +1,4 @@
 import * as Actions from '../actions';
-import { Media } from '@containers/talk/Media';
 class MediaInstance {
 	//videoPlayer = null;
 	#element = null;
@@ -35,27 +34,30 @@ class MediaInstance {
 	storeTrack = (id, track) => {
 		this.tracks[id] = track;
 	};
-	// addTrack = (id, track) => {
 	addTrack(id, track) {
 		if (!this.initialized) {
 			this.initInboundStream();
 		}
 		this.inboundStream.addTrack(track);
 		this.storeTrack(id, track);
-		this.element.play();
-		// super(id, track)
+		if (this.element?.play) {
+			this.element.play();
+		}
 	}
 	endTrack = id => {
 		console.log('instance: end track', id);
 		const track_id = this.tracks[id].id;
 		const track = this.inboundStream.getTrackById(track_id);
 		track.stop();
+		this.inboundStream.removeTrack(track);
 		delete this.tracks[id];
 		this.endSendingTrack();
 	};
 	endSendingTrack = () => {
+		// Don't end if active with another connection
 		if (Object.keys(this.tracks).length < 1) {
 			this.userMediaStream.getTracks().forEach(track => track.stop());
+			this.userMediaStream = null;
 		}
 	};
 	getUserMedia = async constraints => {
@@ -108,13 +110,17 @@ class VideoInstance extends MediaInstance {
 	constructor(element) {
 		super(element, 'video');
 	}
-	setVideoPlayer(element) {
-		console.log(this);
-		this.element = element.current;
+	setVideoPlayer(element, id) {
+		if (!id) {
+			this.element = element.current;
+			if (Object.keys(this.tracks).length > 0) {
+				this.initInboundStream();
+			}
+		}
 	}
 }
 // class AdvancedAudio extends Audio
-class AudioController {
+class MediaController {
 	audioTag = new Audio();
 	#audioInstance = null;
 
@@ -227,10 +233,10 @@ class AudioController {
 	}
 }
 const audioMiddleware = store => {
-	const audioController = new AudioController();
-	// const { proxiedInstances } = audioController;
-	//const audioInterface = audioController.audioProxy;
-	const mediaInterface = audioController.mediaInterface;
+	const mediaController = new MediaController();
+	// const { proxiedInstances } = MediaController;
+	//const audioInterface = MediaController.audioProxy;
+	const mediaInterface = mediaController.mediaInterface;
 	return next => async action => {
 		switch (action.type) {
 			case Actions.ADD_SOURCE: {
@@ -250,18 +256,14 @@ const audioMiddleware = store => {
 			case Actions.GET_USER_MEDIA: {
 				const stream = await mediaInterface.getUserMedia(action.constraints);
 				console.log('get user media stream', stream);
-				//const stream = await audioController.getUserMedia(action.constraints);
+				//const stream = await mediaController.getUserMedia(action.constraints);
 				return stream;
 				// break;
 			}
-			// CHANGE THIS
 			case Actions.SET_VIDEO_PLAYER: {
 				mediaInterface.setVideoPlayer(action.ref);
 				break;
 			}
-
-			//         touchTone.play(action.tones);
-			//         break;
 			default:
 				next(action);
 				break;

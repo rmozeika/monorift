@@ -14,28 +14,6 @@ let mediaStreamConstraints = {
 };
 const offerOptions = {};
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center'
-	},
-	row: {
-		padding: 15,
-		width: '100%',
-		flexGrow: 1
-	},
-	callButtonContainer: {
-		flexDirection: 'row',
-		width: '100%'
-	},
-	callButton: {
-		flexBasis: '50%'
-	},
-	video: {
-		width: '100%'
-	}
-});
-
 function getPeerName(peerConnection) {
 	return 'localConn';
 }
@@ -122,11 +100,9 @@ class Adapter extends React.PureComponent {
 				audioTag.play();
 				this.visualize(analyser);
 				if (1 == '1') return;
-				debugger; // remove
 				// var source = audioCtx.createMediaStreamSource(stream);
 				// source.connect(audioCtx.destination);
 				// audioRef.current.play();
-				debugger; // remove
 			} else {
 				if (!inboundStream) {
 					inboundStream = new MediaStream();
@@ -194,7 +170,6 @@ class Adapter extends React.PureComponent {
 		// var dest = audioCtx.createMediaStreamDestination();
 		// const source = this.props.addSource(audioFileRef.current);
 		const dest = this.props.addSource(audioFileRef.current);
-		debugger; //remove
 		// source.connect(dest);
 		var stream = dest.stream;
 		audioFileRef.current.play();
@@ -217,7 +192,6 @@ class Adapter extends React.PureComponent {
 
 		// const { setPeerInitiator } = this.props;
 		const stream = await this.getMediaFromFile(audioConstraints);
-		debugger; //remove
 		// setPeerInitiator(true);
 		// this.props.sendOffer({});
 		this.props.startCall(stream);
@@ -250,63 +224,12 @@ class Adapter extends React.PureComponent {
 		}
 	}
 	render() {
-		const { peerStore, peerConnStatus } = this.props;
-		const audio = (ref, onPress, key) => (
-			<Layout key={key} style={[styles.callButton]}>
-				{onPress ? <Button onPress={onPress}>Audio Call</Button> : null}
-				{/* <audio id={`audio-${connName}`} controls autoPlay ref={ref}></audio> */}
-			</Layout>
-		);
-		const video = (ref, onPress, key) => {
-			return (
-				<Layout key={key} style={[styles.callButton]}>
-					{onPress ? <Button onPress={onPress}>Video Call</Button> : null}
-					{/* <video style={{ width: '100%' }} autoPlay muted playsInline ref={ref} /> */}
-				</Layout>
-			);
-		};
-		const elements = [
-			{
-				type: 'audio',
-				handler: this.call.bind(this),
-				ref: this.audioRef,
-				key: 'audio-1'
-			},
-			{
-				type: 'video',
-				handler: this.videoCall.bind(this),
-				ref: this.videoRef,
-				key: 'video-1'
-			}
-		];
-
 		const loading = (
 			<Layout style={styles.row}>
 				<Text>Loading...</Text>
 			</Layout>
 		);
-		const toDisplay = () => {
-			if (peerConnStatus.created !== true) {
-				return loading;
-			}
-			const avComponentMap = { audio: audio, video: video };
-			const audioVideo = elements.map(({ type, handler, ref, key }) => {
-				const AVtype = avComponentMap[type];
-				return AVtype(ref, handler, key);
-			});
-			return audioVideo;
-		};
-		const AudioFileFunc = () => (
-			<Layout style={styles.callButton}>
-				<audio src="example.mp3"></audio>
-			</Layout>
-		);
-		const AudioFile = (
-			<Layout style={[styles.callButton, { padding: 0 }]}>
-				<audio style={{ margin: 'auto' }} src="example.mp3"></audio>
-			</Layout>
-		);
-		const audioElem = <audio src="example.mp3"></audio>;
+
 		const fileCall = this.fileCall.bind(this);
 		const callFunctions = {
 			audio: this.call.bind(this),
@@ -338,30 +261,7 @@ class Adapter extends React.PureComponent {
 							audioRef={this.audioRef}
 						/>
 					</Layout>
-					<Layout
-						style={[
-							styles.row,
-							{
-								padding: 0,
-								flexGrow: 0,
-								flexBasis: 100
-								// height: '100%'
-							}
-						]}
-					>
-						<Button onPress={fileCall} appearance="outline" status="warning">
-							Stream Audio from File
-						</Button>
-						<audio
-							ref={this.audioFileRef}
-							src={`/example.mp3?${Math.random()
-								.toString()
-								.substr(2)}`}
-							type="audio/mpeg"
-							controls
-							style={{ margin: 'auto' }}
-						></audio>
-					</Layout>
+
 					<CallActions />
 					{/* <Layout style={[styles.row, { padding: 2 }]}>
 						<Button onPress={fileCall} appearance="outline" status="warning">
@@ -382,6 +282,27 @@ class Adapter extends React.PureComponent {
 		);
 	}
 }
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center'
+	},
+	row: {
+		padding: 15,
+		width: '100%',
+		flexGrow: 1
+	},
+	callButtonContainer: {
+		flexDirection: 'row',
+		width: '100%'
+	},
+	callButton: {
+		flexBasis: '50%'
+	},
+	video: {
+		width: '100%'
+	}
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {

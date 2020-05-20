@@ -1,7 +1,7 @@
 import { applyMiddleware, createStore } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer, { initialState } from './reducers';
-import { audio } from './middleware';
+import { media } from './middleware';
 import rootSaga from './sagas';
 const bindMiddleware = middleware => {
 	if (process.env.NODE_ENV !== 'production') {
@@ -16,7 +16,7 @@ function configureStore(initialStates = {}) {
 	const store = createStore(
 		rootReducer,
 		initialState,
-		bindMiddleware([sagaMiddleware, audio])
+		bindMiddleware([sagaMiddleware, media])
 	);
 
 	store.sagaTask = sagaMiddleware.run(rootSaga);

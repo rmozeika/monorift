@@ -74,9 +74,14 @@ function* addTrackListener(conn, id) {
 		const onTrack = e => {
 			// CHANGE THIS select from store;
 			// const { mediaStreamConstraints } = this.props;
-			const mediaStreamConstraints = { audio: true, video: false };
+			// const mediaStreamConstraints = { audio: true, video: false };
 			console.log('ONTRACK called', e);
 			console.log('on track ID', e.track.id);
+			if (e.streams?.[0]) {
+				const stream = e.streams[0];
+				emit(e.track);
+				return;
+			}
 
 			if (mediaStreamConstraints.video && e.track.kind == 'video') {
 				if (!videoRef?.current) {

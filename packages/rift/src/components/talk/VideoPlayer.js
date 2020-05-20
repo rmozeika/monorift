@@ -7,9 +7,9 @@ import * as Actions from '@actions';
 export class VideoPlayer extends React.Component {
 	constructor(props) {
 		super(props);
-		this.setVideoPlayer();
+		//this.setVideoPlayer();
 	}
-	setVideoPlayer() {
+	componentDidMount() {
 		this.props.setVideoPlayer(this.props.videoRef);
 	}
 	render() {

@@ -208,12 +208,7 @@ class Adapter extends React.PureComponent {
 		setPeerInitiator(true);
 		this.props.sendOffer({});
 	}
-	videoCall() {
-		const { peerStore } = this.props;
-		const videoConstraints = { audio: true, video: true };
-		this.setMediaStreamConstraints(true, true);
-		this.startCall(videoConstraints);
-	}
+
 	async fileCall() {
 		const audioConstraints = { audio: true, video: false };
 
@@ -235,6 +230,13 @@ class Adapter extends React.PureComponent {
 		// this.setMediaStreamConstraints(true, false);
 		// peerStore.onicecandidate = e => {};
 		// this.startCall(audioConstraints);
+	}
+	videoCall() {
+		this.props.startCallSaga('video', {});
+		// const { peerStore } = this.props;
+		// const videoConstraints = { audio: true, video: true };
+		// this.setMediaStreamConstraints(true, true);
+		// this.startCall(videoConstraints);
 	}
 	handleConnection(event) {
 		console.log('got candidate onicecandidate event');
@@ -391,7 +393,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		setPeerInitiator: isInitiator =>
 			dispatch(Actions.setPeerInitiator(isInitiator)),
 		setStream: stream => dispatch(Actions.setStream(stream)),
-		startCallSaga: type => dispatch(Actions.startCall('audio')),
+		startCallSaga: type => dispatch(Actions.startCall(type)),
 		startCall: (stream, type = 'audio', user = false) =>
 			dispatch(Actions.startCall(type, user, stream)),
 		addSource: source => dispatch(Actions.addSource(source))

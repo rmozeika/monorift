@@ -42,8 +42,9 @@ class MediaInstance {
 		}
 		this.inboundStream.addTrack(track);
 		this.storeTrack(id, track);
-		this.element.play();
-		// super(id, track)
+		if (this.element.play) {
+			this.element.play();
+		}
 	}
 	endTrack = id => {
 		console.log('instance: end track', id);
@@ -114,7 +115,7 @@ class VideoInstance extends MediaInstance {
 	}
 }
 // class AdvancedAudio extends Audio
-class AudioController {
+class MediaController {
 	audioTag = new Audio();
 	#audioInstance = null;
 
@@ -227,10 +228,10 @@ class AudioController {
 	}
 }
 const audioMiddleware = store => {
-	const audioController = new AudioController();
-	// const { proxiedInstances } = audioController;
-	//const audioInterface = audioController.audioProxy;
-	const mediaInterface = audioController.mediaInterface;
+	const mediaController = new MediaController();
+	// const { proxiedInstances } = MediaController;
+	//const audioInterface = MediaController.audioProxy;
+	const mediaInterface = mediaController.mediaInterface;
 	return next => async action => {
 		switch (action.type) {
 			case Actions.ADD_SOURCE: {
@@ -250,18 +251,14 @@ const audioMiddleware = store => {
 			case Actions.GET_USER_MEDIA: {
 				const stream = await mediaInterface.getUserMedia(action.constraints);
 				console.log('get user media stream', stream);
-				//const stream = await audioController.getUserMedia(action.constraints);
+				//const stream = await mediaController.getUserMedia(action.constraints);
 				return stream;
 				// break;
 			}
-			// CHANGE THIS
 			case Actions.SET_VIDEO_PLAYER: {
 				mediaInterface.setVideoPlayer(action.ref);
 				break;
 			}
-
-			//         touchTone.play(action.tones);
-			//         break;
 			default:
 				next(action);
 				break;

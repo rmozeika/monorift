@@ -1,3 +1,3 @@
-import audioMiddleware from './audio';
+import mediaMiddleware from './media';
 
-export const audio = audioMiddleware;
+export const media = mediaMiddleware;

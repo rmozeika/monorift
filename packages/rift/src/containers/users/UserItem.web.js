@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
 		// backgroundColor: 'rgba(143, 155, 179, 0.24)',
 		//borderColor: 'rgba(51, 102, 255, 0.48)' ,//'rgba(0, 224, 150, 0.48)', // maybe remove
 		//backgroundColor: 'rgba(51, 102, 255, 0.05)',// 'rgba(44, 255, 187, 0.05)',
-		borderColor: 'rgba(0, 224, 150, 0.78)',
+		borderColor: 'rgba(0, 224, 150, 0.48)',
 		backgroundColor: 'rgba(44, 255, 187, 0.05)',
 		borderWidth: 1,
 		order: 5

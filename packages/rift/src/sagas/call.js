@@ -160,7 +160,8 @@ function* startCallSaga({ payload, mediaStream }) {
 
 function* getUsers(user) {
 	let users;
-	if (user) {
+	const userId = user?.oauth_id || user?.id;
+	if (userId) {
 		users = [user];
 	} else {
 		const checked = yield select(selectCheckedUsers);

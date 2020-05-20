@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
 	},
 	buttonRow: {
 		width: '100%',
-		margin: 8,
 		flexGrow: 1,
 		flexBasis: '45%',
 		maxHeight: '50%'

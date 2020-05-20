@@ -192,7 +192,6 @@ function* start(constraints) {
 	console.log('START', 'getting usermedia');
 	// const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
 	const stream = yield putResolve(Actions.getUserMedia(constraints));
-	debugger; //remove
 	return stream;
 }
 const starts = async constraints => {
@@ -202,7 +201,6 @@ const starts = async constraints => {
 
 	// const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
 	const stream = await putResolve(Actions.getUserMedia(constraints));
-	debugger; //remove
 	return stream;
 };
 function* gotMessageSaga({ message, constraints, from }) {
@@ -210,7 +208,6 @@ function* gotMessageSaga({ message, constraints, from }) {
 	const { isStarted, isInitiator } = peerStore;
 	console.log('GOT_MESSAGE', message);
 	const conn_id = from.oauth_id;
-	// debugger; //remove
 	if (message.type == 'offer') {
 		if (constraints) {
 			yield put(setConstraints({ mediaStream: constraints }));
@@ -294,7 +291,6 @@ function* sendCandidateSaga(action) {
 	const users = activeConnections.map(({ id }) => {
 		return { oauth_id: id };
 	});
-	// debugger; //remove
 	socket.emit('message', candidateToSend, { users });
 }
 

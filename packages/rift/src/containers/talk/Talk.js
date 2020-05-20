@@ -122,11 +122,9 @@ class Adapter extends React.PureComponent {
 				audioTag.play();
 				this.visualize(analyser);
 				if (1 == '1') return;
-				debugger; // remove
 				// var source = audioCtx.createMediaStreamSource(stream);
 				// source.connect(audioCtx.destination);
 				// audioRef.current.play();
-				debugger; // remove
 			} else {
 				if (!inboundStream) {
 					inboundStream = new MediaStream();
@@ -194,7 +192,6 @@ class Adapter extends React.PureComponent {
 		// var dest = audioCtx.createMediaStreamDestination();
 		// const source = this.props.addSource(audioFileRef.current);
 		const dest = this.props.addSource(audioFileRef.current);
-		debugger; //remove
 		// source.connect(dest);
 		var stream = dest.stream;
 		audioFileRef.current.play();
@@ -217,7 +214,6 @@ class Adapter extends React.PureComponent {
 
 		// const { setPeerInitiator } = this.props;
 		const stream = await this.getMediaFromFile(audioConstraints);
-		debugger; //remove
 		// setPeerInitiator(true);
 		// this.props.sendOffer({});
 		this.props.startCall(stream);

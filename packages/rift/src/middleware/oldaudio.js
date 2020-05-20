@@ -12,7 +12,6 @@ export default class OldAudio {
 				};
 			}
 		};
-		debugger; //remove
 		return new Proxy(obj, handler);
 	}
 	constructor() {

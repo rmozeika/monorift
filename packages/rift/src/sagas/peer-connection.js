@@ -167,6 +167,9 @@ function* watchMultiPeer() {
 			yield spawn(iceConnectionStateChange, connections[conn_id], conn_id);
 		}
 		yield call(handlePeerAction, connections[conn_id], payload);
+		if (payload.method === 'close') {
+			delete connections[conn_id];
+		}
 	}
 }
 

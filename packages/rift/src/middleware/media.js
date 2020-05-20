@@ -1,5 +1,4 @@
 import * as Actions from '../actions';
-import { Media } from '@containers/talk/Media';
 class MediaInstance {
 	//videoPlayer = null;
 	#element = null;
@@ -35,14 +34,13 @@ class MediaInstance {
 	storeTrack = (id, track) => {
 		this.tracks[id] = track;
 	};
-	// addTrack = (id, track) => {
 	addTrack(id, track) {
 		if (!this.initialized) {
 			this.initInboundStream();
 		}
 		this.inboundStream.addTrack(track);
 		this.storeTrack(id, track);
-		if (this.element.play) {
+		if (this.element?.play) {
 			this.element.play();
 		}
 	}
@@ -51,12 +49,15 @@ class MediaInstance {
 		const track_id = this.tracks[id].id;
 		const track = this.inboundStream.getTrackById(track_id);
 		track.stop();
+		this.inboundStream.removeTrack(track);
 		delete this.tracks[id];
 		this.endSendingTrack();
 	};
 	endSendingTrack = () => {
+		// Don't end if active with another connection
 		if (Object.keys(this.tracks).length < 1) {
 			this.userMediaStream.getTracks().forEach(track => track.stop());
+			this.userMediaStream = null;
 		}
 	};
 	getUserMedia = async constraints => {
@@ -109,9 +110,13 @@ class VideoInstance extends MediaInstance {
 	constructor(element) {
 		super(element, 'video');
 	}
-	setVideoPlayer(element) {
-		console.log(this);
-		this.element = element.current;
+	setVideoPlayer(element, id) {
+		if (!id) {
+			this.element = element.current;
+			if (Object.keys(this.tracks).length > 0) {
+				this.initInboundStream();
+			}
+		}
 	}
 }
 // class AdvancedAudio extends Audio

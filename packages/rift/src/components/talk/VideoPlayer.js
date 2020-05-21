@@ -16,16 +16,20 @@ export class VideoPlayer extends React.Component {
 		const { videoRef } = this.props;
 		return (
 			<Layout style={styles.row}>
-				<video
-					style={{ width: '100%', margin: 'auto' }}
-					autoPlay
-					playsInline
-					ref={videoRef}
-				/>
+				<video style={videoStyle} autoPlay playsInline ref={videoRef} />
 			</Layout>
 		);
 	}
 }
+// Stylesheet doesnt work with some web componenets
+const videoStyle = {
+	// width: '100%',
+	// margin: 'auto',
+	// objectFit: 'contain',
+	objectFit: 'cover',
+	flexGrow: 1,
+	flexBasis: '100%'
+};
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -35,17 +39,12 @@ const styles = StyleSheet.create({
 	},
 	row: {
 		width: '100%',
-		flexGrow: 1
-	},
-	buttonRow: {
-		width: '100%',
-		margin: 8,
 		flexGrow: 1,
-		flexBasis: '45%',
-		maxHeight: '50%'
+		flexBasis: '100%'
 	},
 	video: {
-		width: '100%'
+		width: '100%',
+		margin: 'auto'
 	}
 });
 const mapStateToProps = state => {

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Layout, Button, ButtonGroup } from '@ui-kitten/components';
-import { connect } from 'react-redux';
 import { StyleSheet } from 'react-native';
 
 import * as Actions from '@actions';
@@ -26,24 +25,7 @@ export class Media extends React.Component {
 		const setting = isHidden ? 'show' : 'hide';
 		return showHideSettings[setting];
 	};
-
-	componentDidUpdate(prevProps) {
-		if (this.props.stream !== prevProps.stream) {
-			this.createAudioContext(this.props.stream);
-		}
-	}
-
-	createAudioContext(stream) {
-		const audioControl = this.state == null ? null : this.state.audioControl;
-		if (audioControl !== null) return;
-		const myAudio = this.props.audioRef.current;
-		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-		var source = audioCtx.createMediaElementSource(myAudio);
-		var source1 = audioCtx.createBufferSource();
-		this.setState({ audioControl: source1 });
-		source.connect(audioCtx.destination);
-		audioCtx.suspend();
-	}
+	// TODO: CHANGE TO ACTIONS
 	play = () => {
 		this.props.audioRef.current.play();
 	};
@@ -106,28 +88,4 @@ const styles = StyleSheet.create({
 		width: '100%'
 	}
 });
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-	return {
-		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),
-		createPeerConn: config => dispatch(Actions.createPeerConn(config)),
-		sendOffer: message => dispatch(Actions.sendOffer(message)),
-		setConstraints: ({ mediaStream }) =>
-			dispatch(Actions.setConstraints({ mediaStream })),
-		setPeerInitiator: isInitiator =>
-			dispatch(Actions.setPeerInitiator(isInitiator))
-	};
-};
-const mapStateToProps = (state, ownProps) => {
-	const { call } = state;
-	const { peerStore, constraints } = call;
-	const { created, handlersAttached, conn, stream } = peerStore;
-	return {
-		stream,
-		peerStore,
-		conn,
-		peerConnStatus: { created, handlersAttached },
-		mediaStreamConstraints: constraints.mediaStream
-	};
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Media);
+export default Media;

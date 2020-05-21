@@ -53,7 +53,8 @@ export default class NavigationContiner extends React.Component {
 						},
 						headerRightContainerStyle: {
 							paddingHorizontal: 10
-						}
+						},
+						animationEnabled: true
 					}}
 				>
 					<Stack.Screen
@@ -61,6 +62,7 @@ export default class NavigationContiner extends React.Component {
 						name={'Friends'}
 						component={TabNavigation}
 						options={({ navigation, route }) => ({
+							animationEnabled: true,
 							headerTitle: () => <NavBarHeader></NavBarHeader>,
 							headerRight: () => (
 								<NavUserControls toCall={this.toCall} navigation={navigation} />
@@ -74,6 +76,7 @@ export default class NavigationContiner extends React.Component {
 						name={'Talk'}
 						component={Talk}
 						options={({ navigation }) => ({
+							animationEnabled: true,
 							headerRight: () => {
 								return (
 									<Button

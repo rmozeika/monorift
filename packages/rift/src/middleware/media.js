@@ -1,4 +1,5 @@
 import * as Actions from '../actions';
+
 class MediaInstance {
 	//videoPlayer = null;
 	#element = null;
@@ -61,10 +62,30 @@ class MediaInstance {
 		}
 	};
 	getUserMedia = async constraints => {
+		// REMOVE
+		// if (constraints.video) {
+		// 	return this.getUserMediaFacing(constraints);
+		// }
 		if (this.userMediaStream) {
 			return this.userMediaStream;
 		}
 		stream = await navigator.mediaDevices.getUserMedia(constraints);
+		this.userMediaStream = stream; // make variable available to browser console
+		return stream;
+	};
+	// REMOVE
+	getUserMediaFacing = async constraints => {
+		// const dimensions = { width: windowWidth, height: windowHeight };
+		const dimensions = { width: 441, height: 667 };
+		const sizeConstraints = {
+			video: {
+				...dimensions,
+				facingMode: 'user'
+			},
+			audio: true
+		};
+		console.log('GET USER MEDIA, SIZE CONSTRAINTS', sizeConstraints);
+		stream = await navigator.mediaDevices.getUserMedia(sizeConstraints);
 		this.userMediaStream = stream; // make variable available to browser console
 		return stream;
 	};

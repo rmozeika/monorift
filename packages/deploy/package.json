@@ -10,8 +10,5 @@
 		"express": "4.17.1",
 		"jsonwebtoken": "^8.5.1",
 		"node-env-file": "^0.1.8"
-	},
-	"devDependencies": {
-		"electron": "^9.0.0"
 	}
 }

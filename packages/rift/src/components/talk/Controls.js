@@ -15,7 +15,7 @@ class Controls extends React.Component {
 	render() {
 		const {
 			showHideMedia,
-			callFunctions,
+			startConnection,
 			play,
 			stop,
 			audioControlsHidden
@@ -39,13 +39,13 @@ class Controls extends React.Component {
 						<Layout style={[styles.callButtonContainer, { boxShadow: 'none' }]}>
 							<Button
 								style={[styles.callButtons, styles.callButtonLeft]}
-								onPress={callFunctions.audio}
+								onPress={startConnection.audio}
 							>
 								Audio Call
 							</Button>
 							<Button
 								style={[styles.callButtons, styles.callButtonRight]}
-								onPress={callFunctions.video}
+								onPress={startConnection.video}
 							>
 								Video Call
 							</Button>
@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		// height: '100%',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		backgroundColor: 'inherhit'
 	},
 	row: {
 		width: '100%',
@@ -152,6 +153,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		margin: 10,
 		borderRadius: 10,
+		backgroundColor: 'inherhit',
 		...innerButtonBoxShadow
 	},
 	outerButtonGroup: {
@@ -167,6 +169,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 4,
 		padding: 15,
+		backgroundColor: 'inherhit',
 		...outerButtonGroupBoxShadow
 	}
 });

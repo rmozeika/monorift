@@ -6,6 +6,7 @@ import * as Actions from '@actions';
 import Media from './Media';
 import CallActions from '@components/buttons/CallActions';
 import StreamAudioFile from '@components/talk/StreamAudioFile';
+import withConnectionAdapter from '@containers/talk/HOC/ConnectionAdapter';
 
 let mediaStreamConstraints = {
 	audio: true,
@@ -26,40 +27,14 @@ class Adapter extends React.PureComponent {
 		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
 
-		this.fileCall = this.fileCall.bind(this);
-		this.callFunctions = {
-			audio: this.call.bind(this),
-			video: this.videoCall.bind(this)
-		};
+		//this.fileCall = this.fileCall.bind(this);
+		// this.startConnection = {
+		// 	audio: this.call.bind(this),
+		// 	video: this.videoCall.bind(this)
+		// };
 		// this.getDisplayStyle = this.get
 	}
-	setMediaStreamConstraints(audio, video) {
-		const { setConstraints } = this.props;
-		mediaStreamConstraints = { audio, video };
-		setConstraints({ mediaStream: mediaStreamConstraints });
-	}
-	async getMediaFromFile() {
-		const { audioFileRef } = this;
-		const dest = this.props.addSource(audioFileRef.current);
-		// source.connect(dest);
-		var stream = dest.stream;
-		audioFileRef.current.play();
-		window.stream = stream; // make variable available to browser console
-		return stream;
-	}
-	async fileCall() {
-		const audioConstraints = { audio: true, video: false };
-		this.setMediaStreamConstraints(true, false);
-		const stream = await this.getMediaFromFile(audioConstraints);
-		this.props.startCall(stream);
-	}
-	call() {
-		// this.props.startCallSaga('audio', {});
-		this.props.startCall({ type: 'audio' });
-	}
-	videoCall() {
-		this.props.startCall({ type: 'video' });
-	}
+
 	render() {
 		const loading = (
 			<Layout style={styles.row}>
@@ -88,7 +63,7 @@ class Adapter extends React.PureComponent {
 						]}
 					>
 						<Media
-							callFunctions={this.callFunctions}
+							// startConnection={this.props.startConnection}
 							videoRef={this.videoRef}
 							audioRef={this.audioRef}
 						/>
@@ -136,12 +111,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 const mapStateToProps = (state, ownProps) => {
 	const { call, view } = state;
-	const { mobile, tab } = view;
 	const { constraints } = call;
 	return {
-		mediaStreamConstraints: constraints.mediaStream,
-		mobile,
-		tab
+		mediaStreamConstraints: constraints.mediaStream
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Adapter);
+// export default withConnectionAdapter(Adapter);
+export default Adapter;
+
+//export default connect(mapStateToProps, mapDispatchToProps)(Adapter);

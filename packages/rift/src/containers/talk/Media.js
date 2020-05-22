@@ -3,7 +3,9 @@ import { Layout, Button, ButtonGroup } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 
 import * as Actions from '@actions';
-import Controls from '@components/talk/Controls';
+import MediaControls from '@components/talk/MediaControls';
+import CallControls from '@components/talk/CallControls';
+
 import VideoPlayer from '@components/talk/VideoPlayer';
 
 export class Media extends React.Component {
@@ -11,39 +13,42 @@ export class Media extends React.Component {
 		super(props);
 		this.state = { audioControl: null, audioControlsHidden: true };
 	}
-	showHideMedia = isHidden => {
-		const showHideSettings = {
-			hide: {
-				onPress: this.hide,
-				text: 'Hide'
-			},
-			show: {
-				onPress: this.show,
-				text: 'Show'
-			}
-		};
-		const setting = isHidden ? 'show' : 'hide';
-		return showHideSettings[setting];
-	};
+	// showHideMedia = isHidden => {
+	// 	const showHideSettings = {
+	// 		hide: {
+	// 			onPress: this.hide,
+	// 			text: 'Hide'
+	// 		},
+	// 		show: {
+	// 			onPress: this.show,
+	// 			text: 'Show'
+	// 		}
+	// 	};
+	// 	const setting = isHidden ? 'show' : 'hide';
+	// 	return showHideSettings[setting];
+	// };
 	// TODO: CHANGE TO ACTIONS
-	play = () => {
-		this.props.audioRef.current.play();
-	};
-	stop = () => {
-		this.props.audioRef.current.pause();
-	};
-	live = () => {
-		this.props.audioRef.current.seekable.end();
-	};
-	hide = () => {
-		this.setState({ audioControlsHidden: true });
-	};
-	show = () => {
-		this.setState({ audioControlsHidden: false });
-	};
+	// play = () => {
+	// 	this.props.audioRef.current.play();
+	// };
+	// stop = () => {
+	// 	this.props.audioRef.current.pause();
+	// };
+	// live = () => {
+	// 	this.props.audioRef.current.seekable.end();
+	// };
+	// hide = () => {
+	// 	this.setState({ audioControlsHidden: true });
+	// };
+	// show = () => {
+	// 	this.setState({ audioControlsHidden: false });
+	// };
 	render() {
 		const { videoRef, audioRef } = this.props;
-		const { audioControlsHidden } = this.state;
+		// REMOVE
+		const { audioControlsHidden = true } = this.state;
+		// TODO
+		const mobile = true;
 		const audioStyle = audioControlsHidden
 			? { display: 'none' }
 			: { margin: 'auto' };
@@ -53,15 +58,20 @@ export class Media extends React.Component {
 				<Layout style={styles.row}>
 					<audio style={audioStyle} id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>
-				<Layout style={styles.buttonRow}>
-					<Controls
-						callFunctions={this.props.callFunctions}
+				<CallControls />
+				<MediaControls />
+				{/* <Layout style={mobile ? styles.floatingControls : styles.buttonRow}> */}
+				{/* <Layout style={audioControlsHidden ? styles.floatingControls : styles.floatingContainerOpened}> */}
+
+				{/* <Controls
+						startConnection={this.props.startConnection}
 						showHideMedia={this.showHideMedia}
 						audioControlsHidden={this.state.audioControlsHidden}
 						play={this.play}
 						stop={this.stop}
 					/>
-				</Layout>
+					<Button onPress={this.state.audioControlsHidden ? this.show : this.hide}>Open</Button> */}
+				{/* </Layout> */}
 			</Layout>
 		);
 	}
@@ -83,6 +93,26 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 		flexBasis: '45%',
 		maxHeight: '50%'
+	},
+	floatingControls: {
+		position: 'fixed',
+		bottom: 10,
+		right: 10,
+		backgroundColor: 'inherhit',
+		clipPath: 'circle(30% at 100% 100%)',
+		transition: 'clip-path .5s ease-in-out'
+	},
+	floatingContainerOpened: {
+		position: 'fixed',
+		bottom: 10,
+		right: 10,
+		backgroundColor: 'inherhit',
+
+		// backgroundColor: 'blue',
+		// clipPath: 'circle(100% at 100% 100%)',
+		clipPath: 'circle(75%)',
+
+		transition: 'clip-path .5s ease-in-out'
 	},
 	video: {
 		width: '100%'

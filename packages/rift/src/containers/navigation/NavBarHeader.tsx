@@ -134,7 +134,7 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	}
 
 	public render(): React.ReactNode {
-		const tabColor = 'rgb(21, 26, 48);'; //'rgb(21, 26, 48);';
+		const tabColor = 'inherhit'; //'rgb(21, 26, 48);'; //'rgb(21, 26, 48);';
 
 		const { loggedIn, username } = this.props;
 		const title = loggedIn ? `Welcome ${username}` : 'Sign in';
@@ -150,7 +150,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 		// height: '90%'
 	},
-	topNavigation: { backgroundColor: 'rgb(21, 26, 48);' },
+	topNavigation: {
+		backgroundColor: 'inherhit' //'rgb(21, 26, 48);'
+	},
 	title: { color: '#EDF1F7' },
 	subtitle: { color: '#C5CEE0' },
 	buttonText: {
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: 0
 	},
 	button: {
-		backgroundColor: '#1A2138',
+		backgroundColor: 'inherhit', //'#1A2138',
 		padding: 0,
 		paddingHorizontal: 0
 	}

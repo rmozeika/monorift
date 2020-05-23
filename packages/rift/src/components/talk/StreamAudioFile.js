@@ -16,7 +16,11 @@ const StreamAudioFile = ({ audioFileRef, fileCall }) => {
 				}
 			]}
 		>
-			<Button onPress={fileCall} appearance="outline" status="warning">
+			<Button
+				onPress={() => fileCall(audioFileRef)}
+				appearance="outline"
+				status="warning"
+			>
 				Stream Audio from File
 			</Button>
 			<audio

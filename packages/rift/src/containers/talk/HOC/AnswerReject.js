@@ -8,6 +8,7 @@ import * as CallSelectors from '@selectors/call';
 import * as UserSelectors from '@selectors/users';
 import * as AuthSelectors from '@selectors/auth';
 
+// TODO: migrate away from this HOC
 export default function withAnswerReject(WrappedComponent) {
 	class Base extends React.Component {
 		constructor(props) {

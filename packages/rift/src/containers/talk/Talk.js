@@ -5,20 +5,13 @@ import { StyleSheet, Linking, Platform, ScrollView } from 'react-native';
 import * as Actions from '@actions';
 import Media from './Media';
 import CallActions from '@components/buttons/CallActions';
-const trace = msg => {
-	console.log(msg);
-};
+import StreamAudioFile from '@components/talk/StreamAudioFile';
+import withConnectionAdapter from '@containers/talk/HOC/ConnectionAdapter';
+
 let mediaStreamConstraints = {
 	audio: true,
 	video: false
 };
-const offerOptions = {};
-
-function getPeerName(peerConnection) {
-	return 'localConn';
-}
-
-let connName = 'peerStore';
 
 class Adapter extends React.PureComponent {
 	constructor(props) {
@@ -33,196 +26,15 @@ class Adapter extends React.PureComponent {
 		this.canvasRef = React.createRef();
 		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
+
+		//this.fileCall = this.fileCall.bind(this);
+		// this.startConnection = {
+		// 	audio: this.call.bind(this),
+		// 	video: this.videoCall.bind(this)
+		// };
 		// this.getDisplayStyle = this.get
 	}
-	// remove just for debugging
-	componentWillMount() {
-		console.log('didmount');
-	}
-	componentWillUnmount() {
-		console.log('unmount');
-	}
 
-	componentDidUpdate() {
-		const { peerStore, peerConnStatus } = this.props;
-		const { audioRef, videoRef } = this;
-		const { conn } = peerStore;
-		let inboundStream = null;
-
-		const onTrack = e => {
-			const { mediaStreamConstraints } = this.props;
-			console.log('ONTRACK called', e);
-			console.log('on track ID', e.track.id);
-
-			if (mediaStreamConstraints.video && e.track.kind == 'video') {
-				if (!videoRef?.current) {
-					return;
-				}
-				if (e.streams?.[0]) {
-					videoRef.current.srcObject = e.streams[0];
-					videoRef.current.muted = true;
-				} else {
-					if (!inboundStream) {
-						inboundStream = new MediaStream();
-						videoRef.current.srcObject = inboundStream;
-					}
-					inboundStream.addTrack(e.track);
-				}
-				// if (videoRef.current.srcObject !== null) {
-				// 	return;
-				// }
-				// videoRef.current.srcObject = e.streams[0];
-				// return;
-				return;
-			}
-			if (!audioRef?.current) {
-				return;
-			}
-			if (e.streams?.[0]) {
-				const stream = e.streams[0];
-				// audioRef.current.srcObject = e.streams[0];
-				const audioTag = new Audio();
-				audioTag.srcObject = stream;
-				var audioCtx = new AudioContext();
-				const source = audioCtx.createMediaElementSource(audioTag);
-				var analyser = audioCtx.createAnalyser();
-				analyser.minDecibels = -90;
-				analyser.maxDecibels = -10;
-				analyser.smoothingTimeConstant = 0.85;
-				source.connect(analyser);
-				analyser.connect(audioCtx.destination);
-				var distortion = audioCtx.createWaveShaper();
-				var gainNode = audioCtx.createGain();
-				// var wavesurfer = WaveSurfer.create({
-				// 	container: document.querySelector('#wave'),
-				// 	backend: 'MediaElementWebAudio'
-				// });
-				audioTag.play();
-				this.visualize(analyser);
-				if (1 == '1') return;
-				// var source = audioCtx.createMediaStreamSource(stream);
-				// source.connect(audioCtx.destination);
-				// audioRef.current.play();
-			} else {
-				if (!inboundStream) {
-					inboundStream = new MediaStream();
-					videoRef.current.srcObject = inboundStream;
-				}
-				inboundStream.addTrack(e.track);
-			}
-
-			// if (e.track.kind == 'audio') {
-			// 	audioRef.current.srcObject = e.streams[0];
-			// this.props.setStream(e.streams[0]);
-			// }
-			// let audio = audioRef.current;
-			// audio.play();
-		};
-
-		if (peerConnStatus.created === true && conn.ontrack == null) {
-			console.log('handlers added: ontrack and onice');
-			// conn.ontrack = onTrack.bind(this);
-			// conn.ontrack = onTrack.bind(this);
-
-			// conn.addEventListener('track', e => {
-			// 	console.log('on EVENT track');
-			// });
-			// conn.addEventListener('icecandidate', this.handleConnection.bind(this));
-		}
-	}
-	setMediaStreamConstraints(audio, video) {
-		const { setConstraints } = this.props;
-		mediaStreamConstraints = { audio, video };
-		setConstraints({ mediaStream: mediaStreamConstraints });
-	}
-	gotMedia(stream) {
-		const { peerStore, mediaStreamConstraints } = this.props;
-		const { conn } = peerStore;
-		const audioTracks = stream.getAudioTracks();
-		console.log('Using audio device: ' + audioTracks[0].label);
-		stream.oninactive = function() {
-			console.log('Stream ended');
-		};
-		stream.getTracks().forEach(track => {
-			console.log('adding track', 'from getMedia after call');
-			console.log('added track ID', track.id);
-			console.log('track');
-			conn.addTrack(track, stream);
-		});
-	}
-	async getMedia(constraints, alternateConn) {
-		let stream = null;
-		const { peerStore } = this.props;
-		const { conn } = peerStore;
-		try {
-			stream = await navigator.mediaDevices.getUserMedia(constraints);
-			window.stream = stream; // make variable available to browser console
-			this.gotMedia(stream);
-		} catch (err) {
-			console.log(err);
-			/* handle the error */
-		}
-	}
-	async getMediaFromFile() {
-		const { audioFileRef } = this;
-		// var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-		// var source = audioCtx.createMediaElementSource(audioFileRef.current);
-		// var dest = audioCtx.createMediaStreamDestination();
-		// const source = this.props.addSource(audioFileRef.current);
-		const dest = this.props.addSource(audioFileRef.current);
-		// source.connect(dest);
-		var stream = dest.stream;
-		audioFileRef.current.play();
-		window.stream = stream; // make variable available to browser console
-		return stream;
-		// this.gotMedia(stream);
-	}
-	async startCall(constraints) {
-		const { peerStore, setPeerInitiator } = this.props;
-		await this.getMedia(constraints);
-		setPeerInitiator(true);
-		this.props.sendOffer({});
-	}
-
-	async fileCall() {
-		const audioConstraints = { audio: true, video: false };
-
-		const { peerStore } = this.props;
-		this.setMediaStreamConstraints(true, false);
-
-		// const { setPeerInitiator } = this.props;
-		const stream = await this.getMediaFromFile(audioConstraints);
-		// setPeerInitiator(true);
-		// this.props.sendOffer({});
-		this.props.startCall(stream);
-	}
-	call() {
-		this.props.startCallSaga('audio', {});
-		// const audioConstraints = { audio: true, video: false };
-
-		// const { peerStore } = this.props;
-		// this.setMediaStreamConstraints(true, false);
-		// peerStore.onicecandidate = e => {};
-		// this.startCall(audioConstraints);
-	}
-	videoCall() {
-		this.props.startCallSaga('video', {});
-		// const { peerStore } = this.props;
-		// const videoConstraints = { audio: true, video: true };
-		// this.setMediaStreamConstraints(true, true);
-		// this.startCall(videoConstraints);
-	}
-	handleConnection(event) {
-		console.log('got candidate onicecandidate event');
-		const peerConnection = event.target;
-		const iceCandidate = event.candidate;
-
-		if (iceCandidate && event.currentTarget.remoteDescription !== null) {
-			const newIceCandidate = new RTCIceCandidate(iceCandidate);
-			console.log('sending candidate');
-			this.props.sendCandidate(newIceCandidate);
-		}
-	}
 	render() {
 		const loading = (
 			<Layout style={styles.row}>
@@ -230,11 +42,6 @@ class Adapter extends React.PureComponent {
 			</Layout>
 		);
 
-		const fileCall = this.fileCall.bind(this);
-		const callFunctions = {
-			audio: this.call.bind(this),
-			video: this.videoCall.bind(this)
-		};
 		return (
 			<ScrollView
 				style={{
@@ -256,27 +63,13 @@ class Adapter extends React.PureComponent {
 						]}
 					>
 						<Media
-							callFunctions={callFunctions}
+							// startConnection={this.props.startConnection}
 							videoRef={this.videoRef}
 							audioRef={this.audioRef}
 						/>
 					</Layout>
-
+					{/* <StreamAudioFile fileCall={this.fileCall} audioFileRef={this.audioFileRef} /> */}
 					<CallActions />
-					{/* <Layout style={[styles.row, { padding: 2 }]}>
-						<Button onPress={fileCall} appearance="outline" status="warning">
-							Stream Audio from File
-						</Button>
-						<audio
-							ref={this.audioFileRef}
-							src={`/example.mp3?${Math.random()
-								.toString()
-								.substr(2)}`}
-							type="audio/mpeg"
-							controls
-							style={{ margin: 'auto' }}
-						></audio>
-					</Layout> */}
 				</Layout>
 			</ScrollView>
 		);
@@ -306,32 +99,24 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
-		sendCandidate: candidate => dispatch(Actions.sendCandidate(candidate)),
-		createPeerConn: config => dispatch(Actions.createPeerConn(config)),
-		sendOffer: message => dispatch(Actions.sendOffer(message)),
+		// sendOffer: message => dispatch(Actions.sendOffer(message)),
 		setConstraints: ({ mediaStream }) =>
 			dispatch(Actions.setConstraints({ mediaStream })),
-		setPeerInitiator: isInitiator =>
-			dispatch(Actions.setPeerInitiator(isInitiator)),
-		setStream: stream => dispatch(Actions.setStream(stream)),
-		startCallSaga: type => dispatch(Actions.startCall(type)),
-		startCall: (stream, type = 'audio', user = false) =>
+		// setStream: stream => dispatch(Actions.setStream(stream)),
+		// startCallSaga: type => dispatch(Actions.startCall(type)),
+		startCall: ({ type = 'audio', user = false, stream }) =>
 			dispatch(Actions.startCall(type, user, stream)),
 		addSource: source => dispatch(Actions.addSource(source))
 	};
 };
 const mapStateToProps = (state, ownProps) => {
 	const { call, view } = state;
-	const { mobile, tab } = view;
-	const { peerStore, constraints } = call;
-	const { created, handlersAttached, conn } = peerStore;
+	const { constraints } = call;
 	return {
-		peerStore,
-		conn,
-		peerConnStatus: { created, handlersAttached },
-		mediaStreamConstraints: constraints.mediaStream,
-		mobile,
-		tab
+		mediaStreamConstraints: constraints.mediaStream
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Adapter);
+// export default withConnectionAdapter(Adapter);
+export default Adapter;
+
+//export default connect(mapStateToProps, mapDispatchToProps)(Adapter);

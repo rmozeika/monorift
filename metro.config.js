@@ -6,8 +6,8 @@ module.exports = {
 	watchFolders: [
 		path.resolve(__dirname, './node_modules'),
 		path.resolve(__dirname, './packages/rift')
-	],
-	projectRoot: path.resolve(__dirname, 'packages', 'rift')
+	]
+	// projectRoot: path.resolve(__dirname, 'packages', 'rift')
 };
 
 // old

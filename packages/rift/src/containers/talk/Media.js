@@ -94,26 +94,6 @@ const styles = StyleSheet.create({
 		flexBasis: '45%',
 		maxHeight: '50%'
 	},
-	floatingControls: {
-		position: 'fixed',
-		bottom: 10,
-		right: 10,
-		backgroundColor: 'inherhit',
-		clipPath: 'circle(30% at 100% 100%)',
-		transition: 'clip-path .5s ease-in-out'
-	},
-	floatingContainerOpened: {
-		position: 'fixed',
-		bottom: 10,
-		right: 10,
-		backgroundColor: 'inherhit',
-
-		// backgroundColor: 'blue',
-		// clipPath: 'circle(100% at 100% 100%)',
-		clipPath: 'circle(75%)',
-
-		transition: 'clip-path .5s ease-in-out'
-	},
 	video: {
 		width: '100%'
 	}

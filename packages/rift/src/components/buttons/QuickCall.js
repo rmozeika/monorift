@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 
 import {
 	Layout,
@@ -12,7 +12,7 @@ import {
 	useStyleSheet,
 	useTheme
 } from '@ui-kitten/components';
-
+import Spinner from '@components/animations/Spinner';
 const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 	const styles = useStyleSheet(themedStyles);
 
@@ -68,12 +68,13 @@ const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 				Animated.timing(colorAnim, {
 					toValue: 100,
 					duration
+				}),
+				Animated.timing(colorAnim, {
+					toValue: 0,
+					duration
 				})
 			]),
-			Animated.timing(colorAnim, {
-				toValue: 0,
-				duration
-			}),
+
 			{
 				iterations: 1
 			}
@@ -92,96 +93,20 @@ const QuickCall = ({ startCall, endCall, checked, calling, connected }) => {
 				backgroundColor: color // Bind opacity to animated value
 			}}
 		>
-			<TouchableOpacity style={styles.touchableContainer}>
-				<Icon style={{}} size={22} name="phone" color={'#F7F9FC'}></Icon>
+			<TouchableOpacity onPress={endCall} style={styles.touchableContainer}>
+				<Spinner
+					size={22}
+					render={spinner => <SpinnerIcon spinner={spinner} />}
+				></Spinner>
 				<Text style={[{ color: '#F7F9FC' }, styles.statusText]}>Calling...</Text>
 			</TouchableOpacity>
 		</Animated.View>
 	);
 };
-// const styles = StyleSheet.create({
-//     container: {
-//         flexBasis: 30,
-//         height:30,
-//         borderRadius: 60,
-//         // backgroundColor: 'rgb(0, 224, 150)',
-//         justifyItems: 'center',
-//         alignSelf: 'center',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         flex: 0,
+const SpinnerIcon = ({ spinner }) => (
+	<Icon style={{}} size={spinner.size} name="spinner" color={'#F7F9FC'} />
+);
 
-//     }
-// });
-// export const AnimatedQuickCall = ({ name, derivedHeight }) => {
-// 	const [fadeAnim] = React.useState(new Animated.Value(1));
-// 	const [colorAnim] = React.useState(new Animated.Value(0));
-
-// 	const styles = useStyleSheet(themedStyles);
-
-// 	React.useEffect(() => {
-// 		Animated.timing(fadeAnim, {
-// 			toValue: 1,
-// 			duration: 1000
-// 		}).start();
-// 	}, []);
-
-// 	const loop = () => {
-// 		const duration = 1000;
-// 		Animated.loop(
-// 			Animated.sequence([
-// 				Animated.timing(colorAnim, {
-// 					toValue: 0,
-// 					duration
-// 				}),
-// 				Animated.timing(colorAnim, {
-// 					toValue: 100,
-// 					duration
-// 				})
-// 			]),
-// 			Animated.timing(colorAnim, {
-// 				toValue: 0,
-// 				duration
-// 			}),
-// 			{
-// 				iterations: 1
-// 			}
-// 		).start(() => {
-// 			loop();
-// 		});
-// 	};
-
-// 	const theme = useTheme();
-
-// 	const color = colorAnim.interpolate({
-// 		inputRange: [0, 100],
-// 		outputRange: [theme['color-info-focus'], theme['color-info-hover']]
-// 	});
-// 	loop();
-
-// 	const msg = `from ${name}`;
-// 	return (
-// 		<Animated.View // Special animatable View
-// 			style={{
-// 				...styles.container,
-// 				height: derivedHeight,
-// 				opacity: fadeAnim,
-// 				backgroundColor: color // Bind opacity to animated value
-// 			}}
-// 		>
-// 			<Layout style={[styles.miniContainer, { backgroundColor: color }]}>
-// 				<Text category={'label'} style={styles.text}>
-// 					Incoming
-// 				</Text>
-// 			</Layout>
-// 			<Layout style={[styles.miniContainer, { backgroundColor: color }]}>
-// 				<Text category={'label'} style={styles.text}>
-// 					{msg}
-// 				</Text>
-// 			</Layout>
-// 		</Animated.View>
-// 	);
-// };
 const themedStyles = StyleService.create({
 	container: {
 		flexBasis: '100%',

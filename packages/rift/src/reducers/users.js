@@ -2,13 +2,10 @@ import { combineReducers } from 'redux';
 import produce from 'immer';
 import {
 	SET_USERS,
-	FETCH_ONLINE_USERS,
 	SET_ONLINE_USERS,
 	SET_FRIENDS,
 	ADD_CALL,
 	REMOVE_CALL,
-	ADD_ONLINE_USER,
-	REMOVE_ONLINE_USER,
 	SET_SEARCH_FILTER,
 	UPDATE_USER,
 	CALL_ACTIVE,

@@ -163,6 +163,8 @@ function createIconsMap() {
 		'caret-down': IconProvider('caret-down'),
 		phone: IconProvider('phone'),
 		'phone-volume': IconProvider('phone-volume'),
+		'phone-slash': IconProvider('phone-slash'),
+		spinner: IconProvider('spinner'),
 		alert: IconProvider('info-circle'),
 		// facebook: IconProvider('facebook'),
 		// google: IconProvider('google'),

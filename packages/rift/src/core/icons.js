@@ -164,6 +164,7 @@ function createIconsMap() {
 		phone: IconProvider('phone'),
 		'phone-volume': IconProvider('phone-volume'),
 		'phone-slash': IconProvider('phone-slash'),
+		microphone: IconProvider('microphone'),
 		spinner: IconProvider('spinner'),
 		alert: IconProvider('info-circle'),
 		// facebook: IconProvider('facebook'),

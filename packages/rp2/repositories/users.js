@@ -6,6 +6,7 @@ const fs = require('fs');
 const collection = 'users';
 const path = require('path');
 const bcrypt = require('bcrypt');
+const Jimp = require('jimp');
 const {
 	validateUsernamePassword
 } = require('../data-service/data-model/users.js');
@@ -45,10 +46,22 @@ class UserRepository extends Repository {
 			'gravatar',
 			`${filename}.png`
 		);
+		const gravatarPathJpg = path.resolve(
+			__dirname,
+			'../public',
+			'gravatar',
+			`${filename}.jpg`
+		);
 		const file = fs.createWriteStream(gravatarPath);
 		const response = await promiseGet(gravatarUrl);
 		response.pipe(file);
-		return { url: gravatarUrl, path: gravatarPath };
+		const pngImg = await Jimp.read(gravatarPath);
+		pngImg
+			// .resize(256, 256) // resize
+			// .quality(60) // set JPEG quality
+			// .greyscale() // set greyscale
+			.write(gravatarPathJpg); // save
+		return { url: gravatarUrl, path: gravatarPathJpg };
 	}
 
 	createUser(user, cb) {
@@ -123,6 +136,7 @@ class UserRepository extends Repository {
 				src: { email, ...src },
 				email,
 				oauth_id,
+				gravatar: src.gravatar.path,
 				guest
 			});
 		return id;
@@ -268,7 +282,8 @@ class UserRepository extends Repository {
 					'users.username',
 					'users.src',
 					'friendship.status',
-					'users.oauth_id'
+					'users.oauth_id',
+					'users.gravatar'
 				)
 				.from('users')
 				.where('id', '!=', id)

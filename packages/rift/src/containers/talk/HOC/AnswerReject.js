@@ -1,12 +1,7 @@
 import * as React from 'react';
-import { StyleSheet, Linking, Platform } from 'react-native';
-import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
-import * as Selectors from '@selectors';
 import * as CallSelectors from '@selectors/call';
-import * as UserSelectors from '@selectors/users';
-import * as AuthSelectors from '@selectors/auth';
 
 // TODO: migrate away from this HOC
 export default function withAnswerReject(WrappedComponent) {
@@ -41,7 +36,7 @@ export default function withAnswerReject(WrappedComponent) {
 	}
 	const mapStateToProps = (state, ownProps) => {
 		return {
-			incomingCall: CallSelectors.incomingCall(state)
+			incomingCall: CallSelectors.incomingConnections(state)
 		};
 	};
 	const mapDispatchToProps = (dispatch, ownProps) => {

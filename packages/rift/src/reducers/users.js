@@ -219,43 +219,16 @@ export const byId = (state = {}, action) => {
 				draft[action.id].connected = action.payload.active;
 				draft[action.id].calling = false;
 				break;
-				// return {
-				// 	id: action.id,
-				// // status: 'started',
-				// 	active: false,
-				// 	incoming: false,
-				// };
 			}
 			case ANSWER_INCOMING: {
 				draft[action.id].connected = action.payload;
 				break;
-				// return {
-				// 	id: action.id,
-				// // status: 'started',
-				// 	active: false,
-				// 	incoming: false,
-				// };
 			}
 			case END_CALL: {
 				draft[action.id].connected = false;
 				draft[action.id].calling = false;
 				break;
 			}
-			// case SET_ONLINE_USERS:
-			// 	action.payload.forEach(user => {
-			// 		const { oauth_id } = user;
-			// 		if (!draft[oauth_id]) return;
-			// 		draft[oauth_id].online = true;
-			// 	});
-			// 	break;
-			// case ADD_ONLINE_USER: {
-			// 	draft[action.id].online = true;
-			// 	break;
-			// }
-			// case REMOVE_ONLINE_USER: {
-			// 	draft[action.id].online = false;
-			// 	break;
-			// }
 			case ADD_CALL:
 				draft[action.payload.user.oauth_id].checked = true;
 				break;

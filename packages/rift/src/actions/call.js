@@ -123,10 +123,11 @@ export const setIncomingCall = from => ({
 });
 
 export const ANSWER_INCOMING = 'ANSWER_INCOMING';
-export const answer = (answered, from) => ({
+export const answer = (id, from, answered = true) => ({
 	type: ANSWER_INCOMING,
 	payload: answered || true,
-	id: from.oauth_id
+	id: id || from.oauth_id || from.id,
+	from
 });
 
 export const END_CALL = 'END_CALL';

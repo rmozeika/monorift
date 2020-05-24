@@ -46,6 +46,7 @@ const onError = e => {
 	console.log(e);
 	debugger; //error
 };
+// TODO: incoming change to connections
 const selectPeerStore = state => {
 	return state.call.peerStore;
 };
@@ -197,6 +198,7 @@ function* start(constraints) {
 }
 
 function* gotMessageSaga({ message, constraints, from }) {
+	// TODO: incoming change to connections
 	const peerStore = yield select(selectPeerStore);
 	const { isStarted, isInitiator } = peerStore;
 	console.log('GOT_MESSAGE', message);
@@ -254,6 +256,8 @@ function* answerCallSaga({ payload: answered }) {
 		// CHANGE THIS
 		return; // reject call action
 	}
+	// TODO: incoming change to connections
+
 	const peerStore = yield select(selectPeerStore);
 	// CHANGE THIS TO USE CONNECTIONS
 	const { incomingCall } = peerStore;

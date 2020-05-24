@@ -6,7 +6,7 @@ const shortcuts = {
 	3: { cmd: 'deleteAll', repo: 'users' },
 	4: { cmd: 'deleteUser', repo: 'users' }
 };
-const shortcut = 1;
+const shortcut = 3;
 // { getFriends, acceptFriend, addFriend }
 // const hardCodedArgs = { repo: false, cmd: false };
 const hardCodedShortcut = shortcuts[shortcut];

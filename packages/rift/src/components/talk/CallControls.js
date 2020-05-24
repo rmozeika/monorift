@@ -97,7 +97,7 @@ const floatingControlsStyle = {
 	left: 10,
 	backgroundColor: 'inherhit',
 	clipPath: 'circle(30% at 0% 100%)',
-	transition: 'clip-path .5s ease-in-out',
+	transition: 'clip-path .2s ease-in-out',
 	backgroundColor: 'rgb(51, 102, 255)'
 };
 const styles = StyleSheet.create({

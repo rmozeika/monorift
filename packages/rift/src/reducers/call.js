@@ -18,6 +18,7 @@ import {
 } from '@actions';
 
 export const initialState = {
+	// TODO: incoming change to connections
 	peerStore: {
 		conn: null,
 		created: false,

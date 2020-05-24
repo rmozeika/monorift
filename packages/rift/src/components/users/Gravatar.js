@@ -9,13 +9,14 @@ import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 // const GravatarPlaceholder = () => {
 
 // }
-function Gravatar({ style = {}, imageStyles = {}, id, isScrolling }) {
+function Gravatar({ uri, style = {}, imageStyles = {}, id, isScrolling }) {
+	const source = { uri: uri || `/gravatar/${id}.png` };
 	return (
 		<Layout style={style}>
 			{!isScrolling && (
 				<Image
 					style={imageStyles}
-					source={{ uri: `/gravatar/${id}.png` }}
+					source={source}
 					// source={{ uri: `/gravatar/robertmozeika.png` }}
 				/>
 			)}

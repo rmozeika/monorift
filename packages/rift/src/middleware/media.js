@@ -131,6 +131,10 @@ class VideoInstance extends MediaInstance {
 	constructor(element) {
 		super(element, 'video');
 	}
+	getUserMedia(constraints) {
+		constraints.video.facingMode = 'user';
+		super.getUserMedia(constraints);
+	}
 	setVideoPlayer(element, id) {
 		if (!id) {
 			this.element = element.current;

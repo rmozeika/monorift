@@ -2,10 +2,6 @@ import { createSelector } from 'reselect';
 
 import { getUserById, getUser } from './users';
 
-export const incomingCall = state => state.call.peerStore.incomingCall;
-export const incomingCallPending = state =>
-	state.call.peerStore.incomingCall.pending;
-
 export const incomingConnections = state => {
 	const connections = mapConnections(state);
 	const incoming = connections.filter(

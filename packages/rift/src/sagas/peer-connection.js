@@ -136,13 +136,6 @@ function* addTrackListener(conn, id) {
 				}
 				inboundStream.addTrack(e.track);
 			}
-
-			// if (e.track.kind == 'audio') {
-			// 	audioRef.current.srcObject = e.streams[0];
-			// this.props.setStream(e.streams[0]);
-			// }
-			// let audio = audioRef.current;
-			// audio.play();
 		};
 		conn.ontrack = onTrack;
 		return () => {};

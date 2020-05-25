@@ -1,13 +1,7 @@
 import * as React from 'react';
-import { StyleSheet, Linking, Platform } from 'react-native';
-import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
-import * as Selectors from '@selectors';
-import * as CallSelectors from '@selectors/call';
-import * as UserSelectors from '@selectors/users';
-import * as AuthSelectors from '@selectors/auth';
-import { useWindowDimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 
 export default function withConnectionAdapter(WrappedComponent) {
 	class ConnectionAdapter extends React.Component {
@@ -23,18 +17,12 @@ export default function withConnectionAdapter(WrappedComponent) {
 			};
 		}
 		async fileCall() {
-			const audioConstraints = { audio: true, video: false };
-			this.setMediaStreamConstraints(true, false);
-			const stream = await this.getMediaFromFile(audioConstraints);
-			this.props.startCall(stream);
+			this.props.startCall({ type: 'audio', stream });
 		}
 		async getMediaFromFile(audioFileRef) {
-			// const { audioFileRef } = this;
 			const dest = this.props.addSource(audioFileRef.current);
-			// source.connect(dest);
 			var stream = dest.stream;
 			audioFileRef.current.play();
-			window.stream = stream; // make variable available to browser console
 			return stream;
 		}
 		call() {
@@ -42,20 +30,18 @@ export default function withConnectionAdapter(WrappedComponent) {
 			this.props.startCall({ type: 'audio' });
 		}
 		videoCall() {
-			this.props.startCall({ type: 'video' });
+			// const { height, width } = this.state;
+			// const dimensions = { height, width };
+			const dimensions = this.getSize();
+			this.props.startCall({ type: 'video', dimensions });
 		}
 		getSize = () => {
-			const width = useWindowDimensions().width;
-			const height = useWindowDimensions().height;
+			const width = Dimensions.get('window').width;
+			const height = Dimensions.get('window').height;
 			const dimensions = { height, width };
 			this.setState(dimensions);
 			return dimensions;
 		};
-		setMediaStreamConstraints(audio, video) {
-			const { setConstraints } = this.props;
-			mediaStreamConstraints = { audio, video };
-			setConstraints({ mediaStream: mediaStreamConstraints });
-		}
 		render() {
 			const { props, getSize, state } = this;
 			const { height, width } = state;
@@ -74,25 +60,13 @@ export default function withConnectionAdapter(WrappedComponent) {
 	}
 	const mapDispatchToProps = (dispatch, ownProps) => {
 		return {
-			// sendOffer: message => dispatch(Actions.sendOffer(message)),
-			setConstraints: ({ mediaStream }) =>
-				dispatch(Actions.setConstraints({ mediaStream })),
-			// setStream: stream => dispatch(Actions.setStream(stream)),
-			// startCallSaga: type => dispatch(Actions.startCall(type)),
-			startCall: ({ type = 'audio', user = false, stream }) =>
-				dispatch(Actions.startCall(type, user, stream)),
+			startCall: ({ type = 'audio', user = false, stream, dimensions }) =>
+				dispatch(Actions.startCall({ type, user, stream, dimensions })),
 			addSource: source => dispatch(Actions.addSource(source))
 		};
 	};
 	const mapStateToProps = (state, ownProps) => {
-		const { call, view } = state;
-		const { mobile, tab } = view;
-		const { constraints } = call;
-		return {
-			mediaStreamConstraints: constraints.mediaStream,
-			mobile
-			// tab
-		};
+		return {};
 	};
 	return connect(mapStateToProps, mapDispatchToProps)(ConnectionAdapter);
 }

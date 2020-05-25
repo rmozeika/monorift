@@ -315,7 +315,8 @@ const mapStateToProps = (state, props) => {
 };
 const mapDispatchToProps = dispatch => {
 	return {
-		startCall: (type = 'audio', user) => dispatch(Actions.startCall(type, user)),
+		startCall: (type = 'audio', user) =>
+			dispatch(Actions.startCall({ type, user })),
 		endCall: id => dispatch(Actions.endCall(id)),
 		addToCall: user => dispatch(Actions.addToCall(user)),
 		removeFromCall: user => dispatch(Actions.removeFromCall(user)),

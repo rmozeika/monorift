@@ -73,9 +73,10 @@ export const setConstraints = ({ mediaStream, optionalOfferOptions = {} }) => {
 	};
 };
 export const ADD_CONNECTION = 'ADD_CONNECTION';
-export const addConnection = user_id => ({
+export const addConnection = (user_id, constraints) => ({
 	type: ADD_CONNECTION,
-	id: user_id
+	id: user_id,
+	constraints
 });
 
 export const EDIT_CONNECTION = 'EDIT_CONNECTION';
@@ -114,11 +115,12 @@ export const setStream = stream => ({
 	payload: stream
 });
 
-export const CALL_INCOMING = 'CALL_INCOMING';
-export const setIncomingCall = from => ({
-	type: CALL_INCOMING,
-	payload: from,
-	id: from.oauth_id
+export const INCOMING_CONNECTION = 'INCOMING_CONNECTION';
+export const setIncomingConnection = (id, constraints) => ({
+	type: INCOMING_CONNECTION,
+	// payload: from,
+	id,
+	constraints
 	// socket_id:
 });
 

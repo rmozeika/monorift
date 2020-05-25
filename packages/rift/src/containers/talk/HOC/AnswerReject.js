@@ -4,23 +4,27 @@ import * as Actions from '@actions';
 import * as CallSelectors from '@selectors/call';
 
 // TODO: migrate away from this HOC
-export default function withAnswerReject(WrappedComponent) {
-	class Base extends React.Component {
+function withAnswerReject(WrappedComponent) {
+	class AnswerRejectHOC extends React.Component {
 		constructor(props) {
 			super(props);
 		}
-		answer = () => {
+		answer = id => {
 			const { answer, incomingCall } = this.props;
-			const { from } = incomingCall;
-			answer(true, from);
+			// const { from } = incomingCall;
+			// answer(true, from);
 			// CHANGE THIS
 			// this.props.navigation.navigate('Talk');
+			const user = incomingCall.find(conn => conn.id == id);
+			answer(id, user, true);
 		};
-		reject = () => {
-			const { answer } = this.props;
-			const { from } = incomingCall;
+		reject = id => {
+			const { answer, incomingCall } = this.props;
+			// const { from } = incomingCall;
 
-			answer(false, from);
+			// answer(false, from);
+			const user = incomingCall.find(conn => conn.id == id);
+			answer(user.id, user, true);
 		};
 		render() {
 			const { incomingCall, answer, ...restProps } = this.props;
@@ -44,7 +48,10 @@ export default function withAnswerReject(WrappedComponent) {
 			answer: (answered, from) => dispatch(Actions.answer(answered, from))
 		};
 	};
-	const connected = connect(mapStateToProps, mapDispatchToProps)(Base);
+	const connected = connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)(AnswerRejectHOC);
 	// return withStyles(connected, theme => ({
 	//     callActions: {
 	//         backgroundColor: theme['color-primary-500']
@@ -52,3 +59,5 @@ export default function withAnswerReject(WrappedComponent) {
 	// }));
 	return connected;
 }
+
+export default withAnswerReject;

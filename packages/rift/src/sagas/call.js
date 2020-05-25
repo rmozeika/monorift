@@ -37,7 +37,7 @@ const {
 	END_CALL,
 	setConstraints,
 	sendOffer,
-	setIncomingCall,
+	setIncomingConnection,
 	setPeerInitiator
 } = Actions;
 
@@ -180,8 +180,8 @@ function* sendOfferSaga({ altConstraints, altOfferOptions, id = false, user }) {
 	yield put(Actions.setPeerInitiator(true));
 	let users = yield call(getUsers, user);
 	for (let i = 0; i < users.length; i++) {
-		yield put(Actions.addConnection(users[i].oauth_id));
 		const conn_id = users[i].oauth_id;
+		yield put(Actions.addConnection(conn_id, constraints));
 		yield put(Actions.peerAction(conn_id, 'createOffer', offerOpts));
 		const { payload: offer } = yield take('PEER_ACTION_DONE');
 		yield put(Actions.peerAction(conn_id, 'setLocalDescription', offer));
@@ -228,7 +228,8 @@ function* gotMessageSaga({ message, constraints, from }) {
 		}
 		console.log('GOT_MESSAGE', 'setting remote desc');
 		// CHANGE TO CONNECTION
-		yield put(setIncomingCall(from));
+		// yield put(setIncomingConnection(from));
+		yield put(Actions.setIncomingConnection(conn_id, constraints));
 	} else if (message.type === 'answer') {
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
 		yield put(
@@ -251,25 +252,24 @@ function* gotMessageSaga({ message, constraints, from }) {
 	}
 }
 
-function* answerCallSaga({ payload: answered }) {
+function* answerCallSaga({ payload: answered, id, from }) {
 	if (!answered) {
 		// CHANGE THIS
 		return; // reject call action
 	}
 	// TODO: incoming change to connections
 
-	const peerStore = yield select(selectPeerStore);
+	// const peerStore = yield select(selectPeerStore);
 	// CHANGE THIS TO USE CONNECTIONS
-	const { incomingCall } = peerStore;
-	const { from } = incomingCall;
-	const conn_id = from.oauth_id;
+	// const { incomingCall } = peerStore;
+	// const { from } = incomingCall;
+	const conn_id = id || from.oauth_id;
 	yield put(Actions.peerAction(conn_id, 'createAnswer'));
 
 	const { payload: answer } = yield take('PEER_ACTION_DONE');
 	console.log('GOT_MESSAGE', 'setting local desc');
 	yield put(Actions.peerAction(conn_id, 'setLocalDescription', answer));
 	console.log('GOT_MESSAGE', 'sending answer');
-	const sendBackTo = from;
 	socket.emit('message', answer, { users: [from] });
 }
 

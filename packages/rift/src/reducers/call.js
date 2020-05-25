@@ -12,7 +12,7 @@ import {
 	SET_PEER_INITIATOR,
 	SET_REMOTE,
 	SET_STREAM,
-	CALL_INCOMING,
+	INCOMING_CONNECTION,
 	ANSWER_INCOMING,
 	END_CALL
 } from '@actions';
@@ -37,7 +37,16 @@ export const initialState = {
 		// }
 	},
 	connections: {
-		// id: status
+		// 'google-oauth2|100323185772603201403': {
+		// 	id: 'google-oauth2|100323185772603201403',
+		// 	active: false,
+		// 	incoming: true
+		// },
+		// 'mock-auth0|371415858674846168435': {
+		// 	id: 'mock-auth0|371415858674846168435',
+		// 	active: false,
+		// 	incoming: true
+		// }
 	},
 	candidate: {},
 	constraints: {
@@ -59,7 +68,7 @@ export const candidate = (state = {}, action = {}) => {
 };
 export const incomingCall = (state = {}, action = {}) => {
 	switch (action.type) {
-		case CALL_INCOMING:
+		case INCOMING_CONNECTION:
 			return {
 				...state,
 				received: true,
@@ -91,10 +100,14 @@ export const peerStore = (state = [], action = {}) => {
 			return { ...state, isInitiator: action.initiator };
 		case SET_STREAM:
 			return { ...state, stream: action.payload };
-		case CALL_INCOMING:
-			return Object.assign({}, state, {
-				incomingCall: incomingCall(state.incomingCall, action)
-			});
+		// case INCOMING_CONNECTION:
+		// 	return Object.assign({}, state, {
+		// 		incomingCall: incomingCall(state.incomingCall, action)
+		// 	});
+		// case ANSWER_INCOMING:
+		// 	return Object.assign({}, state, {
+		// 		incomingCall: incomingCall(state.incomingCall, action)
+		// 	});
 
 		// return {
 		// 	...state,
@@ -105,10 +118,7 @@ export const peerStore = (state = [], action = {}) => {
 		// 		answered: false
 		// 	}
 		// };
-		case ANSWER_INCOMING:
-			return Object.assign({}, state, {
-				incomingCall: incomingCall(state.incomingCall, action)
-			});
+		//
 		// return {
 		// 	...state,
 		// 	incomingCall: {
@@ -127,7 +137,8 @@ const connection = (state = {}, action) => {
 				id: action.id,
 				// status: 'started',
 				active: false,
-				incoming: false
+				incoming: false,
+				constraints: action.constraints
 			};
 		}
 		case CALL_ACTIVE:
@@ -137,12 +148,13 @@ const connection = (state = {}, action) => {
 				...action.payload
 			};
 		}
-		case CALL_INCOMING: {
+		case INCOMING_CONNECTION: {
 			return {
 				...state,
 				id: action.id,
 				active: false,
-				incoming: true
+				incoming: true,
+				constraints: action.constraints
 			};
 		}
 		case ANSWER_INCOMING: {
@@ -162,7 +174,7 @@ export const connections = (state = {}, action) => {
 		case ADD_CONNECTION:
 		case EDIT_CONNECTION:
 		case CALL_ACTIVE:
-		case CALL_INCOMING:
+		case INCOMING_CONNECTION:
 		case ANSWER_INCOMING:
 			return {
 				...state,
@@ -172,7 +184,7 @@ export const connections = (state = {}, action) => {
 		// 	const { user_id, active } = action.payload;
 		// 	return Object.assign({}, state, { active: action.payload });
 		// }
-		// case CALL_INCOMING: {
+		// case INCOMING_CONNECTION: {
 		// 	return {
 		// 		...state,
 		// 		[action.id]: connection(state[action.id], action)

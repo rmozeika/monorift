@@ -7,13 +7,13 @@
 		"web": "node scripts/start.js",
 		"android": "./node_modules/.bin/react-native run-android ",
 		"ios": "./node_modules/.bin/react-native run-ios",
-		"start": "react-native start",
+		"start": "./node_modules/.bin/react-native start",
 		"compile": "npm run tsc -b --incremental",
 		"build": "node scripts/build.js",
 		"storybook": "start-storybook",
 		"dev": "webpack-dev-server --mode development",
 		"link": "react-native link react-native-svg",
-		"clean": "react-native clean",
+		"clean": ".bin/clear-android.sh",
 		"nativeupgrade": "./node_modules/.bin/react-native upgrade"
 	},
 	"dependencies": {

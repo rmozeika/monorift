@@ -6,12 +6,6 @@ import * as Actions from '@actions';
 import Media from './Media';
 import CallActions from '@components/buttons/CallActions';
 import StreamAudioFile from '@components/talk/StreamAudioFile';
-import withConnectionAdapter from '@containers/talk/HOC/ConnectionAdapter';
-
-let mediaStreamConstraints = {
-	audio: true,
-	video: false
-};
 
 class Adapter extends React.PureComponent {
 	constructor(props) {
@@ -97,26 +91,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-	return {
-		// sendOffer: message => dispatch(Actions.sendOffer(message)),
-		setConstraints: ({ mediaStream }) =>
-			dispatch(Actions.setConstraints({ mediaStream })),
-		// setStream: stream => dispatch(Actions.setStream(stream)),
-		// startCallSaga: type => dispatch(Actions.startCall(type)),
-		startCall: ({ type = 'audio', user = false, stream }) =>
-			dispatch(Actions.startCall(type, user, stream)),
-		addSource: source => dispatch(Actions.addSource(source))
-	};
-};
-const mapStateToProps = (state, ownProps) => {
-	const { call, view } = state;
-	const { constraints } = call;
-	return {
-		mediaStreamConstraints: constraints.mediaStream
-	};
-};
-// export default withConnectionAdapter(Adapter);
 export default Adapter;
-
-//export default connect(mapStateToProps, mapDispatchToProps)(Adapter);

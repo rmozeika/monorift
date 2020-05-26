@@ -13,47 +13,43 @@ export const sendCandidate = candidate => ({
 	payload: candidate
 });
 export const ADD_CANDIDATE = 'ADD_CANDIDATE';
-export const CREATE_PEER_CONN = 'CREATE_PEER_CONN';
-export const SET_PEER_CONN = 'SET_PEER_CONN';
-export const SET_PEER_STARTED = 'SET_PEER_STARTED';
-export const SET_PEER_INITIATOR = 'SET_PEER_INITIATOR';
-export const createPeerConn = (config = {}) => ({
-	type: CREATE_PEER_CONN,
-	config
-});
 
-export const setPeerConn = conn => ({
-	type: SET_PEER_CONN,
-	conn
-});
-export const setPeerStarted = started => ({
-	type: SET_PEER_STARTED,
-	started
-});
-export const setPeerInitiator = initiator => ({
-	type: SET_PEER_STARTED,
-	initiator
-});
 export const START_CALL = 'START_CALL';
 // if user false, send offer from checked (user for quick call mostly)
-export const startCall = (type = 'audio', user = {}, stream = false) => ({
+export const startCall = ({
+	type = 'audio',
+	user = {},
+	stream = false,
+	dimensions = {}
+}) => ({
 	type: START_CALL,
+	id: user.id || false,
 	payload: {
 		type,
-		id: user.id || false,
+		dimensions, // for video
+		mediaStream: stream,
 		user
-	},
-	mediaStream: stream
+	}
 });
 export const SEND_OFFER = 'SEND_OFFER';
 //probably remove other than user
-export const sendOffer = ({ id, user }) => ({
-	type: SEND_OFFER,
-	// offer: message.desc,
-	// constraints: message.constraints,
-	user,
-	id: id || user?.oauth_id || false
-});
+export const sendOffer = ({ id, user, offerOptions, constraints }) => {
+	const offerVideo = { offerToReceiveVideo: true, offerToReceiveAudio: true };
+	const offerAudio = { offerToReceiveVideo: false, offerToReceiveAudio: true };
+	const videoEnabled = constraints.video;
+	const derivedOfferOptions = {
+		...offerAudio,
+		...(videoEnabled && offerVideo),
+		...offerOptions
+	};
+	return {
+		type: SEND_OFFER,
+		constraints,
+		offerOptions: derivedOfferOptions,
+		user,
+		id: id || user?.oauth_id || false
+	};
+};
 export const GOT_MESSAGE = 'GOT_MESSAGE';
 export const HANDLERS_SET = 'HANDLERS_SET';
 
@@ -73,9 +69,10 @@ export const setConstraints = ({ mediaStream, optionalOfferOptions = {} }) => {
 	};
 };
 export const ADD_CONNECTION = 'ADD_CONNECTION';
-export const addConnection = user_id => ({
+export const addConnection = (user_id, constraints) => ({
 	type: ADD_CONNECTION,
-	id: user_id
+	id: user_id,
+	constraints
 });
 
 export const EDIT_CONNECTION = 'EDIT_CONNECTION';
@@ -108,25 +105,21 @@ export const removeFromCall = user => ({
 	payload: { user }
 });
 
-export const SET_STREAM = 'SET_STREAM';
-export const setStream = stream => ({
-	type: SET_STREAM,
-	payload: stream
-});
-
-export const CALL_INCOMING = 'CALL_INCOMING';
-export const setIncomingCall = from => ({
-	type: CALL_INCOMING,
-	payload: from,
-	id: from.oauth_id
+export const INCOMING_CONNECTION = 'INCOMING_CONNECTION';
+export const setIncomingConnection = (id, constraints) => ({
+	type: INCOMING_CONNECTION,
+	// payload: from,
+	id,
+	constraints
 	// socket_id:
 });
 
 export const ANSWER_INCOMING = 'ANSWER_INCOMING';
-export const answer = (answered, from) => ({
+export const answer = (id, from, answered = true) => ({
 	type: ANSWER_INCOMING,
 	payload: answered || true,
-	id: from.oauth_id
+	id: id || from.oauth_id || from.id,
+	from
 });
 
 export const END_CALL = 'END_CALL';

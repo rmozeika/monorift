@@ -2,13 +2,10 @@ import { combineReducers } from 'redux';
 import produce from 'immer';
 import {
 	SET_USERS,
-	FETCH_ONLINE_USERS,
 	SET_ONLINE_USERS,
 	SET_FRIENDS,
 	ADD_CALL,
 	REMOVE_CALL,
-	ADD_ONLINE_USER,
-	REMOVE_ONLINE_USER,
 	SET_SEARCH_FILTER,
 	UPDATE_USER,
 	CALL_ACTIVE,
@@ -17,9 +14,7 @@ import {
 	ANSWER_INCOMING,
 	ADD_USER
 } from '@actions';
-const isFriendFromStatus = friendStatus => {
-	return ['A', 'P', 'S'].some(key => key == friendStatus);
-};
+
 export const initialState = {
 	status: {
 		gotOnline: false, //remove
@@ -57,52 +52,7 @@ export const status = (state = {}, action) => {
 			return state;
 	}
 };
-// export const online = (state = {}, action) => {
-// 	switch (action.type) {
-// 		case SET_ONLINE_USERS:
-// 			const users = action.payload.map(user => ({
-// 				...user,
-// 				checked: false
-// 			}));
-// 			return { ...state, gotOnlineUsers: true, users };
-// 		case ADD_ONLINE_USER:
-// 			const userPresent = state.users.some(user => user.oauth_id == action.id);
-// 			if (userPresent) return state;
-// 			let usersAdd = [...state.users, { ...action.payload, checked: false }];
-// 			const addedToState = { ...state, users: usersAdd };
-// 			return addedToState;
-// 		case REMOVE_ONLINE_USER:
-// 			let usersRemoved = state.users.filter(user => action.id !== user.oauth_id);
-// 			return { ...state, users: usersRemoved };
-// 		case ADD_CALL:
-// 			let addUsers = state.users.map(({ checked, oauth_id }, index) => {
-// 				if (action.payload.index == index) {
-// 					return { oauth_id, checked: true };
-// 				}
-// 				return { checked, oauth_id };
-// 			});
-// 			return { ...state, users: addUsers };
-// 		case REMOVE_CALL:
-// 			let removeUsers = state.users.map(({ checked, oauth_id }, index) => {
-// 				if (action.payload.index == index) {
-// 					return { oauth_id, checked: false };
-// 				}
-// 				return { checked, oauth_id };
-// 			});
-// 			return { ...state, users: removeUsers };
 
-// 		default:
-// 			return state;
-// 	}
-// };
-// export const friends = (state = {}, action) => {
-// 	switch (action.type) {
-// 		case SET_FRIENDS:
-// 			return [...state, action.payload];
-// 		default:
-// 			return state;
-// 	}
-// };
 export const queued = (state = [], action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
@@ -126,46 +76,53 @@ export const queued = (state = [], action) => {
 	});
 	return resultProduce;
 };
+const isFriendFromStatus = friendStatus => {
+	return ['A', 'P', 'S'].some(key => key == friendStatus);
+};
+const getFriendDataFromStatus = status => {
+	return {
+		isFriend: status == 'P' || status == 'A' || status == 'S',
+		friendStatus: status || null
+	};
+};
+const userDataDefault = {
+	checked: false,
+	calling: false,
+	connected: false
+};
 const userData = (state = {}, action) => {
 	switch (action.type) {
 		case SET_USERS: {
 			const { status, online } = state;
+			const friendData = getFriendDataFromStatus(status);
 			const added = {
 				...state,
-				isFriend: status == 'P' || status == 'A' || status == 'S',
-				friendStatus: status,
+				...friendData,
 				online,
-				checked: false,
-				calling: false,
-				connected: false
+				...userDataDefault
 			};
 			return added;
 		}
 		case ADD_USER: {
 			const { user } = action;
-			const { status, isFriend } = user;
+			const { status, isFriend, online } = user;
+			const friendData = getFriendDataFromStatus(status);
 			return {
 				...user,
-				isFriend: isFriend || status == 'P' || status == 'A' || status == 'S',
-				friendStatus: status,
-				online: false,
-				checked: false,
-				calling: false,
-				connected: false
+				...friendData,
+				online,
+				...userDataDefault
 			};
 		}
 		// fallinback, this shouldn't be happening, upsert if doesnt exisst
 		case UPDATE_USER: {
 			const { user, data } = action.payload;
 			const status = data.status || user.status;
+			const friendData = getFriendDataFromStatus(status);
 			return {
 				...user,
-				isFriend: status == 'P' || status == 'A' || status == 'S',
-				friendStatus: status,
-				online: false,
-				checked: false,
-				calling: false,
-				connected: false,
+				...friendData,
+				...userDataDefault,
 				...data
 			};
 		}
@@ -222,43 +179,16 @@ export const byId = (state = {}, action) => {
 				draft[action.id].connected = action.payload.active;
 				draft[action.id].calling = false;
 				break;
-				// return {
-				// 	id: action.id,
-				// // status: 'started',
-				// 	active: false,
-				// 	incoming: false,
-				// };
 			}
 			case ANSWER_INCOMING: {
 				draft[action.id].connected = action.payload;
 				break;
-				// return {
-				// 	id: action.id,
-				// // status: 'started',
-				// 	active: false,
-				// 	incoming: false,
-				// };
 			}
 			case END_CALL: {
 				draft[action.id].connected = false;
 				draft[action.id].calling = false;
 				break;
 			}
-			// case SET_ONLINE_USERS:
-			// 	action.payload.forEach(user => {
-			// 		const { oauth_id } = user;
-			// 		if (!draft[oauth_id]) return;
-			// 		draft[oauth_id].online = true;
-			// 	});
-			// 	break;
-			// case ADD_ONLINE_USER: {
-			// 	draft[action.id].online = true;
-			// 	break;
-			// }
-			// case REMOVE_ONLINE_USER: {
-			// 	draft[action.id].online = false;
-			// 	break;
-			// }
 			case ADD_CALL:
 				draft[action.payload.user.oauth_id].checked = true;
 				break;

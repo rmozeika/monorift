@@ -25,36 +25,21 @@ let mediaStreamConstraints = {
 	video: false
 };
 const {
-	AUTH,
 	ADD_CANDIDATE,
-	CREATE_PEER_CONN,
 	SEND_CANDIDATE,
 	SEND_OFFER,
 	GOT_MESSAGE,
-	SET_REMOTE,
 	ANSWER_INCOMING,
 	START_CALL,
 	END_CALL,
 	setConstraints,
-	sendOffer,
-	setIncomingCall,
-	setPeerInitiator
+	sendOffer
 } = Actions;
 
 import io from 'socket.io-client';
 const onError = e => {
 	console.log(e);
 	debugger; //error
-};
-const selectPeerStore = state => {
-	return state.call.peerStore;
-};
-const selectIncomingCall = state => {
-	return state.call.peerStore.incomingCall;
-};
-const selectConstraints = state => {
-	const { mediaStream, offerOptions } = state.call.constraints;
-	return { mediaStream, offerOptions };
 };
 const selectMe = state => {
 	const { username } = state.auth.user;
@@ -131,27 +116,29 @@ function* addTracks(conn_id, stream) {
 		yield put(Actions.peerAction(conn_id, 'addTrack', tracks[i], stream));
 	}
 }
-function* startCallSaga({ payload, mediaStream }) {
-	const { type, id, user } = payload;
-	yield put(setPeerInitiator(true));
-	const constraints = { audio: true, video: type == 'video' };
-	yield put(setConstraints({ mediaStream: constraints }));
-
+function* startCallSaga({ id, payload }) {
+	const { type, user, mediaStream, dimensions } = payload;
+	const constraints = {
+		audio: true,
+		video: type == 'video' ? dimensions : false
+	};
 	try {
 		let stream;
 		if (mediaStream) {
 			stream = mediaStream;
 		} else {
-			stream = yield putResolve(Actions.getUserMedia(constraints));
-			// stream = yield getUserMedia(constraints);
+			// give full video to receiver / request custom resolution from reciever
+			let sendConstraints = { audio: true, video: type == 'video' };
+			stream = yield call(getUserMediaStream, sendConstraints);
 		}
 
+		// R
 		let users = yield call(getUsers, user);
 		for (let i = 0; i < users.length; i++) {
 			const conn_id = users[i].oauth_id;
 			yield call(addTracks, conn_id, stream);
 		}
-		yield put(sendOffer({ id, user }));
+		yield put(sendOffer({ id, user, constraints }));
 	} catch (err) {
 		console.log(err);
 		debugger; //error
@@ -169,42 +156,29 @@ function* getUsers(user) {
 	}
 	return users;
 }
-function* sendOfferSaga({ altConstraints, altOfferOptions, id = false, user }) {
+function* sendOfferSaga({ constraints, offerOptions, id = false, user }) {
 	console.log('Sending offer');
-
-	// TODO: change this, constraints change for each connection
-	const { mediaStream, offerOptions } = yield select(selectConstraints);
-	const constraints = { ...mediaStream, ...altConstraints };
-	const offerOpts = { ...offerOptions, ...altOfferOptions };
-	yield put(Actions.setPeerInitiator(true));
 	let users = yield call(getUsers, user);
 	for (let i = 0; i < users.length; i++) {
-		yield put(Actions.addConnection(users[i].oauth_id));
 		const conn_id = users[i].oauth_id;
-		yield put(Actions.peerAction(conn_id, 'createOffer', offerOpts));
+		yield put(Actions.addConnection(conn_id, constraints));
+		yield put(Actions.peerAction(conn_id, 'createOffer', offerOptions));
 		const { payload: offer } = yield take('PEER_ACTION_DONE');
 		yield put(Actions.peerAction(conn_id, 'setLocalDescription', offer));
 		yield take('PEER_ACTION_DONE');
 		socket.emit('message', offer, { constraints, users: [users[i]] });
 	}
 }
-function* start(constraints) {
-	yield put(Actions.setPeerStarted(true));
+function* getUserMediaStream(constraints) {
 	console.log('START', 'getting usermedia');
-	// const stream = await navigator.mediaDevices.getUserMedia(peerConstraints);
 	const stream = yield putResolve(Actions.getUserMedia(constraints));
 	return stream;
 }
 
 function* gotMessageSaga({ message, constraints, from }) {
-	const peerStore = yield select(selectPeerStore);
-	const { isStarted, isInitiator } = peerStore;
 	console.log('GOT_MESSAGE', message);
 	const conn_id = from.oauth_id;
 	if (message.type == 'offer') {
-		if (constraints) {
-			yield put(setConstraints({ mediaStream: constraints }));
-		}
 		yield put(
 			Actions.peerAction(
 				conn_id,
@@ -212,21 +186,11 @@ function* gotMessageSaga({ message, constraints, from }) {
 				new RTCSessionDescription(message)
 			)
 		);
-		const result = yield take('PEER_ACTION_DONE');
-
-		if (!isInitiator && !isStarted) {
-			const stream = yield call(start, constraints);
-			yield call(addTracks, conn_id, stream);
-		} else {
-			// Maybe combine this with start conn above
-			console.log('getting user media');
-			// const stream = yield navigator.mediaDevices.getUserMedia(constraints);
-			const stream = yield putResolve(Actions.getUserMedia(constraints));
-			yield call(addTracks, conn_id, stream);
-		}
+		yield take('PEER_ACTION_DONE');
+		const stream = yield call(getUserMediaStream, constraints);
+		yield call(addTracks, conn_id, stream);
 		console.log('GOT_MESSAGE', 'setting remote desc');
-		// CHANGE TO CONNECTION
-		yield put(setIncomingCall(from));
+		yield put(Actions.setIncomingConnection(conn_id, constraints));
 	} else if (message.type === 'answer') {
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
 		yield put(
@@ -236,10 +200,16 @@ function* gotMessageSaga({ message, constraints, from }) {
 				new RTCSessionDescription(message)
 			)
 		);
-		const { mediaStream } = yield select(selectConstraints);
 		yield put(Actions.setCallActive(from.oauth_id, true));
 		console.log('ADDED TRACK');
 		console.log('set remote desc');
+		// GETUSERMEDIA AFTER
+		const stream = yield call(getUserMediaStream, constraints);
+		// let users = yield call(getUsers, user);
+		// for (let i = 0; i < users.length; i++) {
+		// 	const conn_id = users[i].oauth_id;
+		yield call(addTracks, conn_id, stream);
+		// }
 	} else if (message.type == 'candidate') {
 		console.log('GOT_MESSAGE', 'candidate');
 		const altCandid = new RTCIceCandidate({
@@ -249,23 +219,18 @@ function* gotMessageSaga({ message, constraints, from }) {
 	}
 }
 
-function* answerCallSaga({ payload: answered }) {
+function* answerCallSaga({ payload: answered, id, from }) {
 	if (!answered) {
 		// CHANGE THIS
 		return; // reject call action
 	}
-	const peerStore = yield select(selectPeerStore);
-	// CHANGE THIS TO USE CONNECTIONS
-	const { incomingCall } = peerStore;
-	const { from } = incomingCall;
-	const conn_id = from.oauth_id;
+	const conn_id = id || from.oauth_id;
 	yield put(Actions.peerAction(conn_id, 'createAnswer'));
 
 	const { payload: answer } = yield take('PEER_ACTION_DONE');
 	console.log('GOT_MESSAGE', 'setting local desc');
 	yield put(Actions.peerAction(conn_id, 'setLocalDescription', answer));
 	console.log('GOT_MESSAGE', 'sending answer');
-	const sendBackTo = from;
 	socket.emit('message', answer, { users: [from] });
 }
 

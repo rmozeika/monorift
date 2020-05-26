@@ -43,6 +43,7 @@
 		"ios": "yarn workspace rift ios",
 		"studio": "yarn workspace rift run studio",
 		"compile": "tsc -b --incremental",
+		"tsbuild": "tsc",
 		"backup": "./dev.sh/backup-cloud.sh",
 		"update:server": "./dev.sh/send-dist-server.sh",
 		"clear:code": "cd ./packages/rp2/dev && mongo ./dcode.js",
@@ -55,6 +56,10 @@
 	"workspaces": {
 		"packages": [
 			"packages/*"
+		],
+		"nohoist": [
+			"**/react-native",
+			"**/react-native/**"
 		]
 	},
 	"husky": {

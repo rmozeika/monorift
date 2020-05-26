@@ -1,5 +1,3 @@
-export const FETCH_ONLINE_USERS = 'FETCH_ONLINE_USERS';
-export const SET_ONLINE_USERS = 'SET_ONLINE_USERS';
 export const FETCH_USERS = 'FETCH_USERS';
 export const fetchUsers = () => ({
 	type: FETCH_USERS
@@ -25,14 +23,6 @@ export const addUser = (id, user) => ({
 	type: ADD_USER,
 	user,
 	id
-});
-
-export const fetchOnlineUsers = () => ({
-	type: FETCH_ONLINE_USERS
-});
-export const setOnlineUsers = users => ({
-	type: SET_ONLINE_USERS,
-	payload: users
 });
 
 export const FETCH_FRIENDS = 'FETCH_FRIENDS';

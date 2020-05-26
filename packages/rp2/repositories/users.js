@@ -6,6 +6,7 @@ const fs = require('fs');
 const collection = 'users';
 const path = require('path');
 const bcrypt = require('bcrypt');
+const Jimp = require('jimp');
 const {
 	validateUsernamePassword
 } = require('../data-service/data-model/users.js');
@@ -32,6 +33,23 @@ class UserRepository extends Repository {
 		super(api, collection);
 		this.findByUsername.bind(this);
 	}
+	async insertUserIntoPostgres(_id, user) {
+		const { username, src, email, oauth_id, guest = false } = user;
+		const [id] = await this.postgresInstance
+			.knex('users')
+			.returning('id')
+			// .returning('id').as('BIT_ID')
+			.insert({
+				username: username,
+				mongo_id: _id,
+				src: { email, ...src },
+				email,
+				oauth_id,
+				gravatar: src.gravatar.uri,
+				guest
+			});
+		return id;
+	}
 	async createGravatar(filename, email) {
 		const gravatarUrl = gravatar.url(
 			email,
@@ -45,10 +63,36 @@ class UserRepository extends Repository {
 			'gravatar',
 			`${filename}.png`
 		);
+
 		const file = fs.createWriteStream(gravatarPath);
 		const response = await promiseGet(gravatarUrl);
 		response.pipe(file);
-		return { url: gravatarUrl, path: gravatarPath };
+		const usePng = true; // probably stick with png due to nature of gravatar
+		if (usePng == true) {
+			return {
+				url: gravatarUrl,
+				path: gravatarPath,
+				uri: `/gravatar/${filename}.png`
+			};
+		}
+
+		const gravatarPathJpg = path.resolve(
+			__dirname,
+			'../public',
+			'gravatar',
+			`${filename}.jpg`
+		);
+		const pngImg = await Jimp.read(gravatarPath);
+		pngImg
+			// .resize(256, 256) // resize
+			// .quality(60) // set JPEG quality
+			// .greyscale() // set greyscale
+			.write(gravatarPathJpg); // save
+		return {
+			url: gravatarUrl,
+			path: gravatarPathJpg,
+			uri: `/gravatar/${filename}.jpg`
+		};
 	}
 
 	createUser(user, cb) {
@@ -111,39 +155,6 @@ class UserRepository extends Repository {
 				});
 		});
 	}
-	async insertUserIntoPostgres(_id, user) {
-		const { username, src, email, oauth_id, guest = false } = user;
-		const [id] = await this.postgresInstance
-			.knex('users')
-			.returning('id')
-			// .returning('id').as('BIT_ID')
-			.insert({
-				username: username,
-				mongo_id: _id,
-				src: { email, ...src },
-				email,
-				oauth_id,
-				guest
-			});
-		return id;
-	}
-	async getBitIdByUsername(username) {
-		const opts = { project: { bit_id: 1 } };
-		const { bit_id = false } = await this.findOne({ doc: { username }, opts });
-		return bit_id;
-	}
-	async findByUsername(username, cb) {
-		return this.findOne({ username }, cb);
-	}
-	async findById(id) {
-		return this.findOne({ oauth_id: id });
-	}
-	async existingUser(id, username) {
-		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
-	}
-	getPublicUser({ bit_id, _id, socket_id, ...user }) {
-		return user;
-	}
 	async importProfile(profile, cb) {
 		const { id, email, emails, nickname, mocked = false } = profile;
 		const oauth_id = profile.oauth_id || id;
@@ -202,6 +213,24 @@ class UserRepository extends Repository {
 		// 			return this.mongoInstance.insertOne(this.collection, userData);
 		// 		})
 	}
+	async getBitIdByUsername(username) {
+		const opts = { project: { bit_id: 1 } };
+		const { bit_id = false } = await this.findOne({ doc: { username }, opts });
+		return bit_id;
+	}
+	async findByUsername(username, cb) {
+		return this.findOne({ username }, cb);
+	}
+	async findById(id) {
+		return this.findOne({ oauth_id: id });
+	}
+	async existingUser(id, username) {
+		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
+	}
+	getPublicUser({ bit_id, _id, socket_id, ...user }) {
+		return user;
+	}
+
 	update({ doc, filter }, opts = {}) {
 		return this.update({ filter, doc: { $set: doc }, opts }, type);
 	}
@@ -268,7 +297,8 @@ class UserRepository extends Repository {
 					'users.username',
 					'users.src',
 					'friendship.status',
-					'users.oauth_id'
+					'users.oauth_id',
+					'users.gravatar'
 				)
 				.from('users')
 				.where('id', '!=', id)

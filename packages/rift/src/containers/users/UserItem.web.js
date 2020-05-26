@@ -74,7 +74,7 @@ class UserItem extends React.Component {
 	};
 	render() {
 		const { id, user, key, isScrolling } = this.props;
-		const { username } = user;
+		const { username, gravatar } = user;
 		// console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
@@ -94,6 +94,7 @@ class UserItem extends React.Component {
 						<Gravatar
 							style={styles.gravatarContainer}
 							// online={online}
+							uri={gravatar}
 							id={id}
 							imageStyles={gravatarStyle}
 							// onlineBorderColor={onlineBorderColor}
@@ -314,7 +315,8 @@ const mapStateToProps = (state, props) => {
 };
 const mapDispatchToProps = dispatch => {
 	return {
-		startCall: (type = 'audio', user) => dispatch(Actions.startCall(type, user)),
+		startCall: (type = 'audio', user) =>
+			dispatch(Actions.startCall({ type, user })),
 		endCall: id => dispatch(Actions.endCall(id)),
 		addToCall: user => dispatch(Actions.addToCall(user)),
 		removeFromCall: user => dispatch(Actions.removeFromCall(user)),

@@ -123,7 +123,7 @@ const mapStateToProps = (state, ownProps) => {
 	// const { online } = users;
 	const { gotUsers } = users.status;
 	const { mobile } = view;
-
+	// TODO: incoming change to connections
 	const { incomingCall } = call.peerStore;
 
 	return {

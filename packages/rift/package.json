@@ -7,13 +7,13 @@
 		"web": "node scripts/start.js",
 		"android": "./node_modules/.bin/react-native run-android ",
 		"ios": "./node_modules/.bin/react-native run-ios",
-		"start": "react-native start",
+		"start": "./node_modules/.bin/react-native start",
 		"compile": "npm run tsc -b --incremental",
 		"build": "node scripts/build.js",
 		"storybook": "start-storybook",
 		"dev": "webpack-dev-server --mode development",
 		"link": "react-native link react-native-svg",
-		"clean": "react-native clean",
+		"clean": ".bin/clear-android.sh",
 		"nativeupgrade": "./node_modules/.bin/react-native upgrade"
 	},
 	"dependencies": {
@@ -43,6 +43,7 @@
 		"babel-preset-react-native": "^4.0.1",
 		"code-parser": "^1.0.0",
 		"fireworks": "^2.2.5",
+		"graphql-express": "^2.0.2",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.2.0",
 		"immer": "^5.3.6",

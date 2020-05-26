@@ -38,35 +38,7 @@ function* fetchUsers() {
 		console.warn(err);
 	}
 }
-function* onlineUsersSaga() {
-	yield (data = call(loadOnlineUsersSaga, 'online', Actions.setOnlineUsers));
 
-	// yield put = put(Actions.setOnlineUsers);
-	// yield put(setUsersSuccess(Users));
-}
-function* loadOnlineUsersSaga(nsp, onComplete) {
-	try {
-		const origin = originLink(nsp || 'online');
-
-		const res = yield fetch(origin, { method: 'POST' });
-		const data = yield res.json();
-		yield put(onComplete(data));
-		// yield put(setOnlineUsers(data));
-	} catch (err) {
-		console.warn(err);
-	}
-}
-function* loadFriendsSaga() {
-	try {
-		const origin = originLink('friends');
-
-		const res = yield fetch(origin, { method: 'POST' });
-		const data = yield res.json();
-		yield put(Actions.setFriends(data));
-	} catch (err) {
-		console.warn(err);
-	}
-}
 function* addFriendSaga(action) {
 	try {
 		const origin = originLink('addFriend');
@@ -252,7 +224,7 @@ function* updateUsernameSaga({ payload }) {
 function* amOnlineSaga({ payload }) {
 	yield put(Actions.closeUserSocket(true));
 	// yield put({ type: Actions.START_USER_SOCKET });
-
+	yield put(Actions.fetchUsers());
 	socket.emit('AM_ONLINE');
 }
 function* addUserSaga({ payload, id }) {
@@ -273,8 +245,7 @@ function* rootSaga() {
 		// onlineUsersSaga(),
 		fetchUsers(),
 		takeLatest(Actions.FETCH_USERS, fetchUsers),
-		takeLatest(Actions.FETCH_ONLINE_USERS, onlineUsersSaga),
-		takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
+		// takeLatest(Actions.FETCH_FRIENDS, loadFriendsSaga),
 		takeLatest(Actions.ADD_FRIEND, addFriendSaga),
 		takeLatest(Actions.RESPOND_FRIEND_REQUEST, respondFriendRequestSaga),
 		takeLatest(Actions.UPDATE_USERNAME, updateUsernameSaga),

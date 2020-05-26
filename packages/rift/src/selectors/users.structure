@@ -1,0 +1,7 @@
+filteredUsersByOnline
+- getSearchFilter, 
+
+- getUsersDataByOnlineCached
+    - cachedDenormUsers
+        - getUsers
+        - getUserIdsByList

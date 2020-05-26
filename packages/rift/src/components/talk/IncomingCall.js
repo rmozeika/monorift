@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Animated } from 'react-native';
 import {
 	Layout,
+	Button,
 	Text,
 	StyleService,
 	useStyleSheet,
@@ -11,7 +12,7 @@ import {
 // TODO: add this to config
 let animationsEnabled = true;
 
-const IncomingCall = ({ name, derivedHeight }) => {
+const IncomingCall = ({ name, derivedHeight, answer, reject }) => {
 	const [fadeAnim] = React.useState(new Animated.Value(1));
 	const [colorAnim] = React.useState(new Animated.Value(0));
 
@@ -58,31 +59,92 @@ const IncomingCall = ({ name, derivedHeight }) => {
 	if (animationsEnabled) {
 		loop();
 	}
-
+	const buttons = [
+		// {
+		// 	name: 'Talk',
+		// 	onPress: onPress,
+		// 	condition: mobile == true && incomingCall.pending == false,
+		// 	status: 'primary',
+		// 	key: 'button-talk'
+		// },
+		{
+			name: 'Answer',
+			onPress: answer,
+			// condition: incomingCall.pending == true,
+			status: 'success',
+			key: 'button-answer'
+		},
+		{
+			name: 'Reject',
+			onPress: reject,
+			// condition: incomingCall.pending == true,
+			status: 'danger',
+			key: 'button-reject'
+		}
+	];
 	const msg = `from ${name}`;
 	return (
-		<Animated.View // Special animatable View
-			style={{
-				...styles.container,
-				height: derivedHeight,
-				opacity: fadeAnim,
-				backgroundColor: color // Bind opacity to animated value
-			}}
-		>
-			<Layout style={[styles.miniContainer, { backgroundColor: color }]}>
-				<Text category={'label'} style={styles.text}>
-					Incoming
-				</Text>
+		<Layout style={[styles.userActionContainer, { height: derivedHeight }]}>
+			<Animated.View // Special animatable View
+				style={{
+					...styles.container,
+					height: derivedHeight,
+					opacity: fadeAnim,
+					backgroundColor: color // Bind opacity to animated value
+				}}
+			>
+				<Layout style={[styles.miniContainer, { backgroundColor: color }]}>
+					<Text category={'label'} style={styles.text}>
+						Incoming
+					</Text>
+				</Layout>
+				<Layout style={[styles.miniContainer, { backgroundColor: color }]}>
+					<Text category={'label'} style={styles.text}>
+						{msg}
+					</Text>
+				</Layout>
+			</Animated.View>
+			<Layout style={styles.buttonRow}>
+				{buttons.map(({ name, onPress, status, key }) => (
+					<Button style={styles.button} status={status} onPress={onPress} key={key}>
+						{name}
+					</Button>
+				))}
 			</Layout>
-			<Layout style={[styles.miniContainer, { backgroundColor: color }]}>
-				<Text category={'label'} style={styles.text}>
-					{msg}
-				</Text>
-			</Layout>
-		</Animated.View>
+		</Layout>
 	);
 };
 const themedStyles = StyleService.create({
+	userActionContainer: {
+		display: 'flex',
+		flexWrap: 'wrap',
+		flexDirection: 'row',
+		// justifySelf: 'flex-end',
+		// alignSelf: 'flex-end'
+		// position: 'absolute',
+		width: '100%'
+		// bottom: 0
+	},
+	button: {
+		margin: 15,
+		height: '100%',
+		margin: 0,
+		flexGrow: 1,
+		borderRadius: 0,
+		height: '100%'
+	},
+	buttonRow: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		margin: 0,
+		height: '10vh',
+		flexDirection: 'row',
+		flexBasis: '100%',
+		flexGrow: 1,
+		backgroundColor: '#3366FF',
+		height: '50%'
+	},
 	container: {
 		flexBasis: '100%',
 		flexGrow: 1,
@@ -90,7 +152,7 @@ const themedStyles = StyleService.create({
 		justifyContent: 'center',
 		alignItems: 'center', // stretch if change child to div
 		flexDirection: 'row',
-		borderRadius: 10,
+		// borderRadius: 10,
 		borderBottomRightRadius: 0,
 		borderBottomLeftRadius: 0,
 		flexWrap: 'wrap'

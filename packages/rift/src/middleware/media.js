@@ -132,7 +132,7 @@ class VideoInstance extends MediaInstance {
 		super(element, 'video');
 	}
 	getUserMedia(constraints) {
-		constraints.video.facingMode = 'user';
+		if (constraints.video.width) constraints.video.facingMode = 'user';
 		super.getUserMedia(constraints);
 	}
 	setVideoPlayer(element, id) {

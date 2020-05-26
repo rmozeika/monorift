@@ -127,11 +127,12 @@ function* startCallSaga({ id, payload }) {
 		if (mediaStream) {
 			stream = mediaStream;
 		} else {
-			// GETUSERMEDIA AFTER
-			stream = yield call(getUserMediaStream, constraints);
+			// give full video to receiver / request custom resolution from reciever
+			let sendConstraints = { audio: true, video: type == 'video' };
+			stream = yield call(getUserMediaStream, sendConstraints);
 		}
 
-		// GETUSERMEDIA AFTER
+		// R
 		let users = yield call(getUsers, user);
 		for (let i = 0; i < users.length; i++) {
 			const conn_id = users[i].oauth_id;

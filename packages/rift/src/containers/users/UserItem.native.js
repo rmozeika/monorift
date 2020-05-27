@@ -92,15 +92,6 @@ class UserItem extends React.Component {
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				<Layout style={styles.statusBar}>
-					<QuickCall
-						startCall={this.startCall}
-						endCall={this.endCall}
-						calling={user.calling}
-						connected={user.connected}
-						checked={user.checked}
-					></QuickCall>
-				</Layout>
 				<AddRemoveFriendButton
 					addFriend={this.addFriend}
 					removeFriend={this.removeFriend}
@@ -110,6 +101,15 @@ class UserItem extends React.Component {
 					rejectFriend={this.rejectFriend}
 					user={username}
 				/>
+				<Layout style={styles.statusBar}>
+					<QuickCall
+						startCall={this.startCall}
+						endCall={this.endCall}
+						calling={user.calling}
+						connected={user.connected}
+						checked={user.checked}
+					></QuickCall>
+				</Layout>
 			</ListItem>
 		);
 	}
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
 		borderColor: '#00E096'
 	},
 	listItemMain: {
-		backgroundColor: 'inherhit',
+		// backgroundColor: 'inherit',
 		flexBasis: '25%',
 		zIndex: 10,
 		justifyContent: 'center',
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
 		flexBasis: 50,
 		flex: 0,
 		marginLeft: 10,
-		backgroundColor: 'inherit',
+		// backgroundColor: 'inherit',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
 	},
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
 		maxWidth: 40,
 		height: '100%',
 		width: '100%',
-		borderRadius: 100,
-		backgroundColor: 'inherit'
+		borderRadius: 100
+		// backgroundColor: 'inherit'
 	},
 	gravatarOnline: {
 		minWidth: 20,
@@ -175,14 +175,14 @@ const styles = StyleSheet.create({
 		height: '100%',
 		width: '100%',
 		borderRadius: 100,
-		backgroundColor: 'inherit',
+		// backgroundColor: 'inherit',
 		borderWidth: 2,
 		borderColor: '#00E096'
 	},
 	titleContainer: {
 		flexBasis: '50%',
 		flexGrow: 1,
-		backgroundColor: 'inherit',
+		// backgroundColor: 'inherit',
 		alignContent: 'center',
 		justifyContent: 'center'
 	},
@@ -195,20 +195,20 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		borderColor: 'rgba(0, 224, 150, 0.48)',
 		backgroundColor: 'rgba(44, 255, 187, 0.05)',
-		borderWidth: 1,
-		order: 5
+		borderWidth: 1
+		// order: 5
 	},
 	listItemTitle: {
 		fontSize: 13,
-		fontWeight: 600,
-		textAlign: 'start',
+		fontWeight: '600',
+		textAlign: 'left',
 		paddingLeft: 10,
 		color: '#EDF1F7'
 	},
 	listItemDetails: {
 		fontSize: 10,
-		fontWeight: 400,
-		textAlign: 'start',
+		fontWeight: '400',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingRight: 20,
 		paddingLeft: 10,

@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
 	},
 	searchIconContainer: {
 		justifyContent: 'center',
-		marginLeft: 5,
-		backgroundColor: 'inherhit'
+		marginLeft: 5
+		// backgroundColor: 'inherhit'
 	}
 });
 

@@ -116,13 +116,29 @@ const argInterface = {
 	main: {
 		cm: {
 			func: async () => {
-				console.log('test');
+				console.log('Committing...');
 				const child = execFile('./.bin/mr.sh', ['cm'], (error, stdout, stderr) => {
 					if (error) {
 						throw error;
 					}
 					console.log(stdout);
 				});
+			}
+		},
+		build: {
+			func: async () => {
+				console.log('Building docker locally for remote deployment...');
+				const child = execFile(
+					'./packages/deploy/.bin/update-stage.sh',
+					[],
+					{ cwd: __dirname },
+					(error, stdout, stderr) => {
+						if (error) {
+							throw error;
+						}
+						console.log(stdout);
+					}
+				);
 			}
 		},
 		start: {

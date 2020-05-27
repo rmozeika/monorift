@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
 		// height: '90%'
 	},
 	topNavigation: {
-		backgroundColor: 'inherhit' //'rgb(21, 26, 48);'
+		// backgroundColor: 'inherhit' //'rgb(21, 26, 48);'
 	},
 	title: { color: '#EDF1F7' },
 	subtitle: { color: '#C5CEE0' },
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: 0
 	},
 	button: {
-		backgroundColor: 'inherhit', //'#1A2138',
+		// backgroundColor: 'inherhit', //'#1A2138',
 		padding: 0,
 		paddingHorizontal: 0
 	}

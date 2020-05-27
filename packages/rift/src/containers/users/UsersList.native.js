@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
 		// flexShrink: 1,
 		// flexDirection: 'row',
 		// flexWrap: 'wrap',
-		order: -1,
 		justifyContent: 'space-between',
 		backgroundColor: '#101426'
 	},

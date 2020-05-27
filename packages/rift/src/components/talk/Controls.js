@@ -100,7 +100,7 @@
 // 		alignItems: 'center',
 // 		// height: '100%',
 // 		justifyContent: 'space-between',
-// 		backgroundColor: 'inherhit'
+// 		// backgroundColor: 'inherhit'
 // 	},
 // 	row: {
 // 		width: '100%',
@@ -153,7 +153,7 @@
 // 		alignItems: 'center',
 // 		margin: 10,
 // 		borderRadius: 10,
-// 		backgroundColor: 'inherhit',
+// 		// backgroundColor: 'inherhit',
 // 		...innerButtonBoxShadow
 // 	},
 // 	outerButtonGroup: {
@@ -169,7 +169,7 @@
 // 		alignItems: 'center',
 // 		borderRadius: 4,
 // 		padding: 15,
-// 		backgroundColor: 'inherhit',
+// 		// backgroundColor: 'inherhit',
 // 		...outerButtonGroupBoxShadow
 // 	}
 // });

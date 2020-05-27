@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 		alignContent: 'flex-end'
 	},
 	listItemMain: {
-		backgroundColor: 'inherhit',
+		// backgroundColor: 'inherhit',
 		flexBasis: '50%',
 		zIndex: 10,
 		// MAY NEED TO REACTIVATE FOR FLEX POSITION
@@ -99,15 +99,15 @@ const styles = StyleSheet.create({
 	},
 	listItemTitle: {
 		fontSize: 13,
-		fontWeight: 600,
-		textAlign: 'start',
+		fontWeight: '600',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingLeft: 10
 	},
 	listItemDetails: {
 		fontSize: 10,
-		fontWeight: 400,
-		textAlign: 'start',
+		fontWeight: '400',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingRight: 20
 		// paddingLeft: 10

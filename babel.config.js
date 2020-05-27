@@ -6,7 +6,15 @@ module.exports = function(api) {
 	api.cache(true);
 	const moduleResolverConfig = {
 		root: path.resolve('./'),
-		extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
+		extensions: [
+			'.native.js',
+			'.ios.js',
+			'.android.js',
+			'.js',
+			'.ts',
+			'.tsx',
+			'.json'
+		],
 		alias: {
 			'@kitten/theme': path.resolve(Config.KITTEN_PATH, 'theme'),
 			'@kitten/ui': path.resolve(Config.KITTEN_PATH, 'ui'),

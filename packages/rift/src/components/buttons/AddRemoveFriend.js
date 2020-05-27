@@ -167,7 +167,7 @@ const touchableStyle = {
 	// width: 75,
 	//flexGrow: 0,
 	margin: 0,
-	backgroundColor: 'inherhit',
+	// backgroundColor: 'inherhit',
 	alignSelf: 'flex-end',
 	marginRight: 10,
 	// borderBottomRightRadius: 0,

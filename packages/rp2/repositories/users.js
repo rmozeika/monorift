@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const Jimp = require('jimp');
 const {
 	validateUsernamePassword
-} = require('../data-service/data-model/users.js');
+} = require('../data-service/data-model/users/users.js');
 
 // friendship status
 // A = accepted

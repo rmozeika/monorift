@@ -68,10 +68,7 @@ function FeatherIcon({
 		/>
 	);
 }
-const defaultStyle = StyleSheet.create({
-	height: 40,
-	tintColor: '#F7F9FC'
-});
+
 function AwesomeIcon({
 	name,
 	style,

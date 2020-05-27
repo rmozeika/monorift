@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexWrap: 'wrap',
 		flexDirection: 'row',
-		// justifySelf: 'flex-end',
 		// alignSelf: 'flex-end'
 		position: 'absolute',
 		width: '100%',

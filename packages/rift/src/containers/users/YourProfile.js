@@ -27,36 +27,24 @@ const styles = StyleSheet.create({
 	listItem: {
 		margin: 4,
 		borderRadius: 12,
-		// boxShadow: `-8px 8px 5px #111522, 8px -8px 5px #334168;`,
 		boxShadow: ` 8px 8px 5px #161c30, 
 		-8px -8px 5px #1e2640`,
 
-		// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
 		backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
-
-		// boxShadow: `20px 60px #171d2f, -20px -20px 60px #2d395b`
 		flexBasis: '90%',
 		flexGrow: 1,
-		// flexWrap: 'wrap',
 		display: 'flex',
 		flexDirection: 'column',
 		overflow: 'hidden',
-		// flexShrink: 1
-		// shadowColor: '#000',
-		// shadowOffset: { width: 0, height: 1 },
-		// shadowOpacity: 0.8,
-		// shadowRadius: 1,
 		padding: 0,
 		paddingHorizontal: 0,
 		paddingVertical: 0,
 		zIndex: 9,
 		// MAY NEED TO DIABLE -REACTIVATE FOR FLEX POSITION
 		alignContent: 'flex-end'
-		// marginHorizontal: 0,
-		// marginVertical:0
 	},
 	listItemMain: {
-		backgroundColor: 'inherhit',
+		// backgroundColor: 'inherhit',
 		flexBasis: '50%',
 		zIndex: 10,
 		// MAY NEED TO REACTIVATE FOR FLEX POSITION
@@ -97,7 +85,7 @@ const styles = StyleSheet.create({
 		// height:'20%',
 		// width: '25%'
 		flexBasis: '25%',
-		justifySelf: 'flex-end',
+		// justifySelf: 'flex-end',
 		width: '100%'
 	},
 	statusBar: {
@@ -106,20 +94,20 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
-		justifySelf: 'flex-end',
+		// justifySelf: 'flex-end',
 		width: '100%'
 	},
 	listItemTitle: {
 		fontSize: 13,
-		fontWeight: 600,
-		textAlign: 'start',
+		fontWeight: '600',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingLeft: 10
 	},
 	listItemDetails: {
 		fontSize: 10,
-		fontWeight: 400,
-		textAlign: 'start',
+		fontWeight: '400',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingRight: 20
 		// paddingLeft: 10

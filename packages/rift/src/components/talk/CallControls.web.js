@@ -7,15 +7,29 @@ import {
 	ButtonGroup
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import withMediaAdapter from '@containers/talk/HOC/ConnectionAdapter';
+import withConnectionAdapter from '@containers/talk/HOC/ConnectionAdapter';
 
-class MediaControls extends React.Component {
+class CallControls extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			controlsHidden: true
 		};
 	}
+	showHideMedia = isHidden => {
+		const showHideSettings = {
+			hide: {
+				onPress: this.hide,
+				text: 'Hide'
+			},
+			show: {
+				onPress: this.show,
+				text: 'Show'
+			}
+		};
+		const setting = isHidden ? 'show' : 'hide';
+		return showHideSettings[setting];
+	};
 	showHideMedia = isHidden => {
 		const showHideSettings = {
 			hide: {
@@ -38,25 +52,33 @@ class MediaControls extends React.Component {
 	};
 	render() {
 		const { props, state, showHideMedia, show, hide } = this;
-		const { play, stop } = props;
+
+		const { startConnection } = props;
 		const { controlsHidden } = state;
+
 		return (
 			<Layout
 				style={
 					controlsHidden ? styles.floatingControls : styles.floatingContainerOpened
 				}
 			>
-				<Layout style={styles.innerButtonGroup}>
-					<ButtonGroup style={styles.buttonGroup}>
-						{/* <Button onPress={this.createAudioContext}>Start</Button> */}
-						<Button style={styles.controlButton} onPress={play}>
-							Play
+				{/* <Layout style={styles.container}> */}
+				{/* <Layout style={styles.outerButtonGroup}> */}
+				<Layout style={[styles.innerButtonGroup, { flexBasis: '50%' }]}>
+					<Layout style={styles.callButtonContainer}>
+						<Button
+							style={[styles.callButtons, styles.callButtonLeft]}
+							onPress={startConnection.audio}
+						>
+							Audio Call
 						</Button>
-						<Button style={styles.controlButton} onPress={stop}>
-							Stop
+						<Button
+							style={[styles.callButtons, styles.callButtonRight]}
+							onPress={startConnection.video}
+						>
+							Video Call
 						</Button>
-						<ShowHideButton {...showHideMedia(controlsHidden)}></ShowHideButton>
-					</ButtonGroup>
+					</Layout>
 				</Layout>
 				<Button
 					style={styles.openControlsButton}
@@ -68,50 +90,37 @@ class MediaControls extends React.Component {
 		);
 	}
 }
-function ShowHideButton(props) {
-	const { onPress, text, style, ...otherProps } = props;
-	return (
-		<Button
-			style={[styles.controlButton, style]}
-			onPress={onPress}
-			{...otherProps}
-		>
-			{text}
-		</Button>
-	);
-}
+
 const floatingControlsStyle = {
 	position: 'fixed',
 	bottom: 10,
-	right: 10,
-	backgroundColor: 'inherhit',
-	clipPath: 'circle(30% at 100% 100%)',
+	left: 10,
+	// backgroundColor: 'inherhit',
+	clipPath: 'circle(30% at 0% 100%)',
 	transition: 'clip-path .2s ease-in-out',
 	backgroundColor: 'rgb(51, 102, 255)'
 };
 const styles = StyleSheet.create({
 	floatingControls: {
-		...floatingControlsStyle,
-		clipPath: 'circle(30% at 100% 100%)'
+		...floatingControlsStyle
 	},
 	floatingContainerOpened: {
 		...floatingControlsStyle,
 		clipPath: 'circle(75%)'
 	},
 	openControlsButton: {
-		justifyContent: 'flex-end',
-		marginRight: 0,
-		paddingRight: 0
+		justifyContent: 'flex-start',
+		marginLeft: 0,
+		paddingLeft: 0
 	},
 	openControlsButtonText: {
-		justifyContent: 'flex-end',
-		marginRight: 0,
-		paddingRight: 0
+		justifyContent: 'flex-start',
+		marginLeft: 0,
+		paddingLeft: 0
 	},
 	controlButton: {
 		flexGrow: 1,
 		flexBasis: 40
-		// boxShadow: controlButtonBoxShadow
 	},
 	callButtonContainer: {
 		height: '100%',
@@ -122,7 +131,6 @@ const styles = StyleSheet.create({
 	callButtons: {
 		flexGrow: 1,
 		flexBasis: '40%',
-		// boxShadow: controlButtonBoxShadow,
 		borderRadius: 10
 	},
 	callButtonLeft: {
@@ -141,23 +149,20 @@ const styles = StyleSheet.create({
 		height: '70%',
 		width: '88%',
 		borderRadius: 10,
-		// ...buttonGroupBoxShadow,
 		backgroundColor: '#F7F9FC'
 	},
 	innerButtonGroup: {
 		display: 'flex',
-		// height: '100%',
 		flexBasis: '30%',
 		width: '100%',
 		justifyContent: 'center',
-		justifySelf: 'center',
+		// justifySelf: 'center',
 		alignSelf: 'center',
 		alignItems: 'center',
 		margin: 10,
-		borderRadius: 10,
-		backgroundColor: 'inherhit'
-		// ...innerButtonBoxShadow
+		borderRadius: 10
+		// backgroundColor: 'inherhit'
 	}
 });
 
-export default withMediaAdapter(MediaControls);
+export default withConnectionAdapter(CallControls);

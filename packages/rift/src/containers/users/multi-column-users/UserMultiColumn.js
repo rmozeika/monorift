@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 		// marginVertical:0
 	},
 	listItemMain: {
-		backgroundColor: 'inherhit',
+		// backgroundColor: 'inherhit',
 		flexBasis: '50%',
 		zIndex: 10,
 		// MAY NEED TO REACTIVATE FOR FLEX POSITION
@@ -82,7 +82,8 @@ const styles = StyleSheet.create({
 		// height:'20%',
 		// width: '25%'
 		flexBasis: '25%',
-		justifySelf: 'flex-end',
+		// deactivated for native
+		// justifySelf: 'flex-end',
 		width: '100%'
 
 		// width: '100%'
@@ -93,21 +94,22 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
-		justifySelf: 'flex-end',
+		// deactivated for native
+		// justifySelf: 'flex-end',
 		width: '100%'
 	},
 	listItemTitle: {
 		fontSize: 13,
-		fontWeight: 600,
-		textAlign: 'start',
+		fontWeight: '600',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingLeft: 10,
 		color: '#EDF1F7'
 	},
 	listItemDetails: {
 		fontSize: 10,
-		fontWeight: 400,
-		textAlign: 'start',
+		fontWeight: '400',
+		textAlign: 'left',
 		alignContent: 'center',
 		paddingRight: 20
 		// paddingLeft: 10

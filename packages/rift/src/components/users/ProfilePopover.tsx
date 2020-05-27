@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
 		marginHorizontal: 8,
 		marginRight: 4,
 		height: gravatarDimensions,
-		width: gravatarDimensions,
-		backgroundColor: 'inherit'
+		width: gravatarDimensions
+		// backgroundColor: 'inherit'
 		// maxHeight: gravatarDimensions || '10vh',
 		// maxWidth: gravatarDimensions || '10vh'
 	},
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
 		maxWidth: gravatarDimensions,
 		height: '100%',
 		width: '100%',
-		borderRadius: 100,
-		backgroundColor: 'inherit'
+		borderRadius: 100
+		// backgroundColor: 'inherit'
 	},
 	popoverLayout: {
 		flexDirection: 'column',
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
 	},
 	signoutPopoverItem: {
 		flexDirection: 'row',
-		marginVertical: 15,
-		backgroundColor: 'inherit'
+		marginVertical: 15
+		// backgroundColor: 'inherit'
 	},
 	signoutButton: {
 		flexGrow: 1
@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
 		color: '#F7F9FC'
 	},
 	userIconContainer: {
-		flexDirection: 'column',
-		backgroundColor: 'inherit'
+		flexDirection: 'column'
+		// backgroundColor: 'inherit'
 	},
 	userIcons: {
 		alignItems: 'center',

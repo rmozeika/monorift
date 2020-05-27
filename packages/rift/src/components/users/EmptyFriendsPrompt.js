@@ -98,9 +98,5 @@ const styles = StyleSheet.create({
 	},
 	message: {
 		marginTop: '20%'
-	},
-	providerIcon: {
-		height: 40,
-		tintColor: '#F7F9FC'
 	}
 });

@@ -175,17 +175,6 @@ const touchableStyle = {
 	minWidth: 70
 };
 const styles = StyleSheet.create({
-	button: {
-		flex: 1,
-		margin: 0,
-		marginRight: 0,
-		minWidth: 10,
-		height: '100%',
-		boxShadow: `inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb`,
-		borderRadius: 0,
-		color: '#EDF1F7',
-		flexDirection: 'column'
-	},
 	addText: {
 		color: 'rgb(0, 224, 150)' //'#EDF1F7'
 	},
@@ -197,7 +186,6 @@ const styles = StyleSheet.create({
 		margin: 0,
 		minWidth: 10,
 		height: '50%',
-		// boxShadow:"inset 6px 6px 12px #1cac75, inset -6px -6px 12px #2cffbb",
 		borderRadius: 0,
 		// color: '#EDF1F7',
 		color: '#C5CEE0',
@@ -253,22 +241,10 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 0,
 		borderBottomRightRadius: 0,
 		marginTop: 2
-		//borderWidth: 0
-		// marginRight: 5,
-		// borderTopLeftRadius: 0,
-		// borderBottomLeftRadius: 0
 	},
 	buttonContainer: {
-		// position: 'absolute',
-		// right: '0px
-		// left: '70%',
-		// right: '-5%',
-		// top: '0%',
-		// height:'20%',
-		// width: '25%'
 		flexBasis: '25%',
-		justifySelf: 'flex-end',
-		// width: '100%',
+		// justifySelf: 'flex-end',
 		flexDirection: 'column'
 	},
 	acceptButton: {

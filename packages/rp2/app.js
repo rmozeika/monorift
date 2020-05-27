@@ -19,8 +19,9 @@ const passportSocketIo = require('passport.socketio');
 const Socket = require('./socket');
 const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
-
-console.log('VERSION', '0.3.3');
+const graphqlHTTP = require('express-graphql');
+const { Schema } = require('./data-service/data-model/users/schema.js');
+console.log('VERSION', '0.5.1');
 
 var app = express();
 // probably remove as this is already created in api.js
@@ -76,6 +77,14 @@ const setupDefaultRoute = () => {
 	}
 };
 const setFurtherRoutes = () => {
+	app.use(
+		'/graphql',
+		graphqlHTTP({
+			schema: Schema,
+			// rootValue: root,
+			graphiql: true
+		})
+	);
 	app.use(
 		function(req, res, next) {
 			var err = new Error('Not Found');

@@ -119,11 +119,7 @@ const themedStyles = StyleService.create({
 		display: 'flex',
 		flexWrap: 'wrap',
 		flexDirection: 'row',
-		// justifySelf: 'flex-end',
-		// alignSelf: 'flex-end'
-		// position: 'absolute',
 		width: '100%'
-		// bottom: 0
 	},
 	button: {
 		margin: 15,
@@ -152,15 +148,9 @@ const themedStyles = StyleService.create({
 		justifyContent: 'center',
 		alignItems: 'center', // stretch if change child to div
 		flexDirection: 'row',
-		// borderRadius: 10,
 		borderBottomRightRadius: 0,
 		borderBottomLeftRadius: 0,
 		flexWrap: 'wrap'
-		// justifySelf: 'flex-end',
-		// backgroundColor: theme['color-primary-500'],
-		// position: 'absolute',
-		// width: '100%',
-		// bottom: 0
 	},
 	miniContainer: {
 		flexBasis: '90%',

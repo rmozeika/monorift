@@ -11,7 +11,7 @@ import QuickCall from '@components/buttons/QuickCall';
 class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
-		// remove
+		// Only used in web (react-window)
 		this.state = { gravatarRendered: false };
 	}
 	shouldComponentUpdate(nextProps) {
@@ -73,7 +73,7 @@ class UserItem extends React.Component {
 		this.setState({ gravatarRendered: true });
 	};
 	render() {
-		const { id, user, key, isScrolling } = this.props;
+		const { id, user, isScrolling } = this.props;
 		const { username, gravatar } = user;
 		// console.log(`rendered ${username}`);
 
@@ -93,12 +93,9 @@ class UserItem extends React.Component {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							// online={online}
 							uri={gravatar}
 							id={id}
 							imageStyles={gravatarStyle}
-							// onlineBorderColor={onlineBorderColor}
-							// isScrolling={isScrolling}
 							isScrolling={isScrolling}
 						/>
 						<Layout style={styles.titleContainer}>
@@ -124,7 +121,6 @@ class UserItem extends React.Component {
 					acceptFriend={this.acceptFriend}
 					rejectFriend={this.rejectFriend}
 					user={username}
-					// style={buttonStyleAlt}
 				/>
 			</Layout>
 		);
@@ -137,13 +133,7 @@ const listItemStyleBase = {
 	boxShadow: `6px 6px 12px #080912, 
 	-6px -6px 12px #181f3a;
 	`,
-	//boxShadow: ` 8px 8px 5px #101426,
-	//-8px -8px 5px #151A30`,
-	// boxShadow: ` 8px 8px 5px #12172c,
-	// -8px -8px 5px #0e1120`,
-	// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #151A30`,
 	backgroundColor: `linear-gradient(225deg, #151A30, #101426)`,
-	// backgroundColor: '#101426',
 	flexBasis: 75,
 	flexGrow: 1,
 	alignItems: 'stretch',
@@ -166,32 +156,20 @@ const styles = StyleSheet.create({
 		backgroundColor: 'inherhit',
 		flexBasis: '25%',
 		zIndex: 10,
-		// MAY NEED TO REACTIVATE FOR FLEX POSITION
-		// height: '55%',
 		justifyContent: 'center',
-		// alignSelf: 'center',
 		display: 'flex',
 		flexDirection: 'row',
-		// alignContent: 'center',
-		// alignItems: 'center',
 		width: '100%',
 		flexGrow: 1,
 		flexShrink: 1
-		// height: 50
-
-		// justifyContent: 'center'
 	},
 	gravatarContainer: {
 		flexBasis: 50,
 		flex: 0,
 		marginLeft: 10,
 		backgroundColor: 'inherit',
-		// alignContent: 'center',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
-
-		// alignItems: 'flex-end'
-		// borderRadius: '50%',
 	},
 	gravatar: {
 		minWidth: 20,
@@ -215,9 +193,6 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		borderColor: '#00E096'
 	},
-	// gravatarContainerOnline: {
-
-	// }
 	titleContainer: {
 		flexBasis: '50%',
 		flexGrow: 1,
@@ -225,42 +200,22 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		justifyContent: 'center'
 	},
-	buttonContainer: {
-		// position: 'absolute',
-		// right: '0px
-		// left: '70%',
-		// right: '-5%',
-		// top: '0%',
-		// height:'20%',
-		// width: '25%'
-		flexBasis: '25%',
-		justifySelf: 'flex-end'
-		// width: '100%'
-	},
 	statusBar: {
 		flexBasis: '15%',
-		// flexBasis: '100%',
-		// alignItems: 'center',
 		alignItems: 'stretch',
 		textAlign: 'center',
 		borderTopRightRadius: 12,
 		borderBottomRightRadius: 12,
-		// justifySelf: 'flex-end',
 		justifyContent: 'center',
-		// backgroundColor: 'rgba(143, 155, 179, 0.24)',
-		//borderColor: 'rgba(51, 102, 255, 0.48)' ,//'rgba(0, 224, 150, 0.48)', // maybe remove
-		//backgroundColor: 'rgba(51, 102, 255, 0.05)',// 'rgba(44, 255, 187, 0.05)',
 		borderColor: 'rgba(0, 224, 150, 0.48)',
 		backgroundColor: 'rgba(44, 255, 187, 0.05)',
 		borderWidth: 1,
 		order: 5
-		// width: '100%'
 	},
 	listItemTitle: {
 		fontSize: 13,
 		fontWeight: 600,
 		textAlign: 'start',
-		// alignContent: 'center',
 		paddingLeft: 10,
 		color: '#EDF1F7'
 	},
@@ -273,33 +228,6 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 		color: '#00E096'
 	},
-	icon: {
-		width: 24,
-		height: 24,
-		marginHorizontal: 8,
-		tintColor: '#8F9BB3'
-		// position: 'absolute'
-	},
-	iconContainer: {
-		position: 'absolute',
-		// left: '-100px'
-		top: -140,
-		left: -150
-		// left: '-180px'
-	},
-	activityContainer: {
-		position: 'absolute',
-		// left: '-100px'
-		left: '5%',
-		// top: '50%',
-		backgroundColor: 'inherit',
-		zIndex: 20,
-		top: '5%'
-		// left:
-	},
-	button: {
-		flex: 1
-	},
 	listItemTouchable: {
 		height: '100%',
 		width: '100%',
@@ -308,7 +236,6 @@ const styles = StyleSheet.create({
 	}
 });
 const mapStateToProps = (state, props) => {
-	// const { }
 	return {
 		user: getUser(state, props)
 	};
@@ -324,7 +251,6 @@ const mapDispatchToProps = dispatch => {
 		removeFriend: user => dispatch(Actions.removeFriend(user)),
 		respondFriendRequest: (user, didAccept) =>
 			dispatch(Actions.respondFriendRequest(user, didAccept))
-		// dispatch(actionCreator)
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UserItem);

@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
 	controlButton: {
 		flexGrow: 1,
 		flexBasis: 40
-		// boxShadow: controlButtonBoxShadow
 	},
 	callButtonContainer: {
 		height: '100%',
@@ -122,7 +121,6 @@ const styles = StyleSheet.create({
 	callButtons: {
 		flexGrow: 1,
 		flexBasis: '40%',
-		// boxShadow: controlButtonBoxShadow,
 		borderRadius: 10
 	},
 	callButtonLeft: {
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
 		flexBasis: '30%',
 		width: '100%',
 		justifyContent: 'center',
-		justifySelf: 'center',
+		// justifySelf: 'center',
 		alignSelf: 'center',
 		alignItems: 'center',
 		margin: 10,

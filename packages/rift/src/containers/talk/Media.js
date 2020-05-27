@@ -60,18 +60,6 @@ export class Media extends React.Component {
 				</Layout>
 				<CallControls />
 				<MediaControls />
-				{/* <Layout style={mobile ? styles.floatingControls : styles.buttonRow}> */}
-				{/* <Layout style={audioControlsHidden ? styles.floatingControls : styles.floatingContainerOpened}> */}
-
-				{/* <Controls
-						startConnection={this.props.startConnection}
-						showHideMedia={this.showHideMedia}
-						audioControlsHidden={this.state.audioControlsHidden}
-						play={this.play}
-						stop={this.stop}
-					/>
-					<Button onPress={this.state.audioControlsHidden ? this.show : this.hide}>Open</Button> */}
-				{/* </Layout> */}
 			</Layout>
 		);
 	}

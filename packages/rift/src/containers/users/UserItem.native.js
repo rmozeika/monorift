@@ -12,7 +12,6 @@ import QuickCall from '@components/buttons/QuickCall';
 class UserItem extends React.Component {
 	constructor(props) {
 		super(props);
-		// remove
 	}
 	shouldComponentUpdate(nextProps) {
 		if (this.props.user !== nextProps.user) {
@@ -26,6 +25,10 @@ class UserItem extends React.Component {
 	startCall = () => {
 		const { user, id } = this.props;
 		this.props.startCall('audio', { ...user, id });
+	};
+	endCall = () => {
+		const { id } = this.props;
+		this.props.endCall(id);
 	};
 	addFriend = e => {
 		// e.stopPropagation();
@@ -58,19 +61,19 @@ class UserItem extends React.Component {
 	};
 
 	render() {
-		const { id, themedStyle, user, key } = this.props;
-		const { username } = user;
+		const { id, themedStyle, user } = this.props;
+		const { username, gravatar } = user;
 		// console.log(`rendered ${username}`);
 
 		const { src = {}, checked, online } = user;
 		const { displayName = '' } = src;
-		const onlineBorderColor = themedStyle['iconOnline'].color;
-		const border = user.checked
-			? { borderWidth: 3, borderColor: onlineBorderColor }
-			: {};
+		const listItemStyle = user.checked
+			? styles.listItemSelected
+			: styles.listItem;
+		const gravatarStyle = online ? styles.gravatarOnline : styles.gravatar;
 
 		return (
-			<ListItem style={[styles.listItem, border, { padding: 0 }]}>
+			<ListItem style={listItemStyle}>
 				<Layout style={styles.listItemMain}>
 					<TouchableOpacity
 						onClick={checked ? this.removeUserFromCall : this.addUserToCall}
@@ -78,44 +81,35 @@ class UserItem extends React.Component {
 					>
 						<Gravatar
 							style={styles.gravatarContainer}
-							online={online}
+							uri={gravatar}
 							id={id}
-							onlineBorderColor={onlineBorderColor}
+							imageStyles={gravatarStyle}
+							isScrolling={false}
 						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{username}</Text>
-							{online && (
-								<Text style={[styles.listItemDetails, themedStyle.statusText]}>
-									online
-								</Text>
-							)}
+							{online && <Text style={styles.listItemDetails}>online</Text>}
 						</Layout>
 					</TouchableOpacity>
 				</Layout>
-				{/* <QuickCall></QuickCall> */}
-				{/* {user.online && ( */}
-				<Layout style={[styles.statusBar, themedStyle.statusBar]}>
+				<Layout style={styles.statusBar}>
 					<QuickCall
 						startCall={this.startCall}
+						endCall={this.endCall}
 						calling={user.calling}
 						connected={user.connected}
 						checked={user.checked}
 					></QuickCall>
-
-					{/* <Text style={[themedStyle.statusText, { fontSize: 10, lineHeight: 10 }]}>Quick connect</Text> */}
 				</Layout>
-				{/* )} */}
-				{user.friendStatus !== 'A' && (
-					<AddRemoveFriendButton
-						onAdd={this.addFriend}
-						removeFriend={this.removeFriend}
-						isFriend={user.isFriend}
-						friendStatus={user.friendStatus}
-						acceptFriend={this.acceptFriend}
-						rejectFriend={this.rejectFriend}
-						// style={buttonStyleAlt}
-					/>
-				)}
+				<AddRemoveFriendButton
+					addFriend={this.addFriend}
+					removeFriend={this.removeFriend}
+					isFriend={user.isFriend}
+					friendStatus={user.friendStatus}
+					acceptFriend={this.acceptFriend}
+					rejectFriend={this.rejectFriend}
+					user={username}
+				/>
 			</ListItem>
 		);
 	}
@@ -124,10 +118,8 @@ class UserItem extends React.Component {
 const listItemStyleBase = {
 	margin: 10,
 	borderRadius: 12,
-	boxShadow: ` 8px 8px 5px #161c30, 
-	-8px -8px 5px #1e2640`,
-	// LATEST boxShadow: `-23px 23px 46px #171d2f, 23px -23px 46px #2d395b`,
-	backgroundColor: `linear-gradient(225deg, #242e4a, #1f273e)`,
+	// TODO: Don't think this works in native
+	backgroundColor: '#1f273e', //`linear-gradient(225deg, #242e4a, #1f273e)`,
 	flexBasis: 75,
 	flexGrow: 1,
 	alignItems: 'stretch',
@@ -150,32 +142,20 @@ const styles = StyleSheet.create({
 		backgroundColor: 'inherhit',
 		flexBasis: '25%',
 		zIndex: 10,
-		// MAY NEED TO REACTIVATE FOR FLEX POSITION
-		// height: '55%',
 		justifyContent: 'center',
-		// alignSelf: 'center',
 		display: 'flex',
 		flexDirection: 'row',
-		// alignContent: 'center',
-		// alignItems: 'center',
 		width: '100%',
 		flexGrow: 1,
 		flexShrink: 1
-		// height: 50
-
-		// justifyContent: 'center'
 	},
 	gravatarContainer: {
 		flexBasis: 50,
 		flex: 0,
 		marginLeft: 10,
 		backgroundColor: 'inherit',
-		// alignContent: 'center',
 		justifyContent: 'center',
 		alignItems: 'flex-end'
-
-		// alignItems: 'flex-end'
-		// borderRadius: '50%',
 	},
 	gravatar: {
 		minWidth: 20,
@@ -199,9 +179,6 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		borderColor: '#00E096'
 	},
-	// gravatarContainerOnline: {
-
-	// }
 	titleContainer: {
 		flexBasis: '50%',
 		flexGrow: 1,
@@ -209,36 +186,22 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		justifyContent: 'center'
 	},
-	buttonContainer: {
-		// position: 'absolute',
-		// right: '0px
-		// left: '70%',
-		// right: '-5%',
-		// top: '0%',
-		// height:'20%',
-		// width: '25%'
-		flexBasis: '25%',
-		justifySelf: 'flex-end'
-		// width: '100%'
-	},
 	statusBar: {
 		flexBasis: '15%',
-		// flexBasis: '100%',
-		// alignItems: 'center',
 		alignItems: 'stretch',
 		textAlign: 'center',
-		borderTopRightRadius: 4,
-		borderTopRightRadius: 4,
-		// justifySelf: 'flex-end',
+		borderTopRightRadius: 12,
+		borderBottomRightRadius: 12,
 		justifyContent: 'center',
-		backgroundColor: 'rgba(143, 155, 179, 0.24)'
-		// width: '100%'
+		borderColor: 'rgba(0, 224, 150, 0.48)',
+		backgroundColor: 'rgba(44, 255, 187, 0.05)',
+		borderWidth: 1,
+		order: 5
 	},
 	listItemTitle: {
 		fontSize: 13,
 		fontWeight: 600,
 		textAlign: 'start',
-		// alignContent: 'center',
 		paddingLeft: 10,
 		color: '#EDF1F7'
 	},
@@ -251,43 +214,11 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 		color: '#00E096'
 	},
-	icon: {
-		width: 24,
-		height: 24,
-		marginHorizontal: 8,
-		tintColor: '#8F9BB3'
-		// position: 'absolute'
-	},
-	iconContainer: {
-		position: 'absolute',
-		// left: '-100px'
-		top: -140,
-		left: -150
-		// left: '-180px'
-	},
-	activityContainer: {
-		position: 'absolute',
-		// left: '-100px'
-		left: '5%',
-		// top: '50%',
-		backgroundColor: 'inherit',
-		zIndex: 20,
-		top: '5%'
-		// left:
-	},
-	button: {
-		flex: 1
-	},
 	listItemTouchable: {
 		height: '100%',
 		width: '100%',
 		display: 'flex',
 		flexDirection: 'row'
-	},
-	// REMOVE
-	pseudoButtonGroup: {
-		maxWidth: '50%',
-		display: 'flex'
 	}
 });
 const mapStateToProps = (state, props) => {
@@ -299,14 +230,15 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = dispatch => {
 	return {
-		startCall: (type = 'audio', user) => dispatch(Actions.startCall(type, user)),
+		startCall: (type = 'audio', user) =>
+			dispatch(Actions.startCall({ type, user })),
+		endCall: id => dispatch(Actions.endCall(id)),
 		addToCall: user => dispatch(Actions.addToCall(user)),
 		removeFromCall: user => dispatch(Actions.removeFromCall(user)),
 		addFriend: user => dispatch(Actions.addFriend(user)),
 		removeFriend: user => dispatch(Actions.removeFriend(user)),
 		respondFriendRequest: (user, didAccept) =>
 			dispatch(Actions.respondFriendRequest(user, didAccept))
-		// dispatch(actionCreator)
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UserItem);

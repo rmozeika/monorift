@@ -9,7 +9,7 @@ import * as UserSelectors from '@selectors/users';
 import * as AuthSelectors from '@selectors/auth';
 
 import UserItem from './UserItem.native';
-import YourProfile from './YourProfile';
+// import YourProfile from './YourProfile';
 import SearchBar from '@components/users/SearchBar';
 import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
 import CallActions from '@components/buttons/CallActions';
@@ -31,7 +31,11 @@ class UsersList extends React.PureComponent {
 		// if (user == 'self') {
 		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
 		// }
-		return <UserItem themedStyle={this.props.themedStyle.userItem} id={user} />;
+		return (
+			<Layout style={styles.itemContainer}>
+				<UserItem key={user} id={user} />
+			</Layout>
+		);
 	};
 
 	render() {
@@ -53,12 +57,12 @@ class UsersList extends React.PureComponent {
 						checked={checked}
 						goToUsers={this.goToUsers}
 					/>
-					<CallActions themedStyle={themedStyle.callActions} />
+					<CallActions themedStyle={styles.callActions} />
 				</Layout>
 			);
 		}
 		return (
-			<Layout style={[styles.userListLayout, {}]}>
+			<Layout style={styles.userListLayout}>
 				<SearchBar />
 				<List
 					data={users}
@@ -71,10 +75,7 @@ class UsersList extends React.PureComponent {
 					initialNumToRender={8}
 					keyExtractor={this._keyExtractor}
 				/>
-				{/* <Layout style={styles.floatingButtonContainer}>
-					<Button style={{}}>Call</Button>
-				</Layout> */}
-				<CallActions themedStyle={themedStyle.callActions} />
+				<CallActions themedStyle={styles.callActions} />
 			</Layout>
 		);
 	}
@@ -86,64 +87,38 @@ export const UsersListWithStyles = withStyles(UsersList, theme => ({
 		marginHorizontal: 0
 	},
 	callActions: {
-		backgroundColor: theme['color-primary-500']
+		backgroundColor: theme['color-primary-500'],
+		position: 'absolute',
+		width: '100%',
+		bottom: 0
 	},
-	userItem: {
-		onlineColor: theme['color-success-500'],
-		statusBar: {
-			backgroundcolor: theme['color-basic-transparent-disabled-border']
-		},
-		statusText: {
-			color: theme['color-success-500'] // CHANGE THIS!
-		},
-		iconOnline: {
-			backgroundColor: theme['color-primary-100'],
-			// color: theme['color-basic-800']
-			color: theme['color-success-500']
-		}
+	// only used in native
+	itemContainer: {
+		height: 90
 	},
-
 	container: { backgroundColor: '#1A2138' }
 }));
 
 const styles = StyleSheet.create({
-	container: {
-		display: 'flex',
-		flex: 1,
-		alignItems: 'center',
-		flexDirection: 'row',
-		flexWrap: 'wrap'
-	},
-	loadingContainer: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center'
+	list: {
+		width: '100%',
+		backgroundColor: '#101426'
 	},
 	userListLayout: {
 		width: '100%',
-		// overflowY: 'scroll',
-		// height: '80vh',
-		height: '100%'
+		height: '100%',
+		backgroundColor: '#101426'
 	},
-	row: {
-		padding: 15,
-		width: '100%',
-		alignItems: 'center'
+	listContentContainer: {
+		// flexShrink: 1,
+		// flexDirection: 'row',
+		// flexWrap: 'wrap',
+		order: -1,
+		justifyContent: 'space-between',
+		backgroundColor: '#101426'
 	},
-	userBlock: {
-		flex: 1,
-		flexBasis: 50,
-		flexDirection: 'row',
-		borderRadius: 10,
-		borderStyle: 'solid',
-		borderWidth: 0.5,
-		borderColor: '#4C3C1B',
-		margin: 1,
-		padding: 15,
-		height: 'auto',
-		width: 'auto',
-		flexShrink: 1
-	},
+
+	// unused (unless multi column enabled)
 	column: {
 		padding: 15,
 		height: 'auto',
@@ -152,29 +127,11 @@ const styles = StyleSheet.create({
 		flexShrink: 0,
 		flexGrow: 1
 	},
-	button: {
-		flex: 1
-	},
-	list: {
-		width: '100%'
-	},
-	listContentContainer: {
-		// flexShrink: 1,
-		// flexDirection: 'row',
-		// flexWrap: 'wrap',
-		order: -1,
-		justifyContent: 'space-between'
-	},
 	columnWrapper: {
 		flexBasis: 150,
 		flexGrow: 1,
 		flexShrink: 1,
 		marginVertical: 4
-	},
-	floatingButtonContainer: {
-		position: 'fixed',
-		right: '10%',
-		bottom: '10%'
 	}
 });
 

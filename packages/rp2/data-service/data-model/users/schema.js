@@ -1,4 +1,58 @@
-module.exports = {
+const {
+	GraphQLSchema,
+	GraphQLObjectType,
+	GraphQLString,
+	GraphQLBoolean,
+	GraphQLInt,
+	GraphQLList
+} = require('graphql');
+const User = new GraphQLObjectType({
+	name: 'user',
+	fields: () => ({
+		username: { type: GraphQLString },
+		email: { type: GraphQLString },
+		// email: { type: GraphQLString },
+		// email: { type: GraphQLString },
+		usingTempUsername: { type: GraphQLBoolean },
+		mocked: { type: GraphQLBoolean },
+		bit_id: { type: GraphQLInt },
+		src: { type: Src }
+	})
+});
+const Src = new GraphQLObjectType({
+	name: 'src',
+	fields: () => ({
+		first_name: { type: GraphQLString },
+		last_name: { type: GraphQLString },
+		displayName: { type: GraphQLString },
+		gravatar: { type: GravatarSrc }
+	})
+});
+
+const GravatarSrc = new GraphQLObjectType({
+	name: 'gravatar',
+	fields: () => ({
+		uri: { type: GraphQLString },
+		path: { type: GraphQLString },
+		url: { type: GraphQLString }
+	})
+});
+
+const RootQuery = new GraphQLObjectType({
+	name: 'RootQueryType',
+	fields: {
+		users: {
+			type: new GraphQLList(User)
+		}
+	}
+});
+const Schema = new GraphQLSchema({
+	query: RootQuery
+});
+
+module.exports = { Schema, User };
+
+const mongodbScheme = {
 	$jsonSchema: {
 		required: ['email', 'username', 'oauth_id'],
 		properties: {

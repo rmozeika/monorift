@@ -82,7 +82,8 @@ const styles = StyleSheet.create({
 		// height:'20%',
 		// width: '25%'
 		flexBasis: '25%',
-		justifySelf: 'flex-end',
+		// deactivated for native
+		// justifySelf: 'flex-end',
 		width: '100%'
 
 		// width: '100%'
@@ -93,7 +94,8 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		borderTopRightRadius: 4,
 		borderTopRightRadius: 4,
-		justifySelf: 'flex-end',
+		// deactivated for native
+		// justifySelf: 'flex-end',
 		width: '100%'
 	},
 	listItemTitle: {

@@ -65,7 +65,7 @@ class CallControls extends React.Component {
 				{/* <Layout style={styles.container}> */}
 				{/* <Layout style={styles.outerButtonGroup}> */}
 				<Layout style={[styles.innerButtonGroup, { flexBasis: '50%' }]}>
-					<Layout style={[styles.callButtonContainer, { boxShadow: 'none' }]}>
+					<Layout style={styles.callButtonContainer}>
 						<Button
 							style={[styles.callButtons, styles.callButtonLeft]}
 							onPress={startConnection.audio}
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
 	controlButton: {
 		flexGrow: 1,
 		flexBasis: 40
-		// boxShadow: controlButtonBoxShadow
 	},
 	callButtonContainer: {
 		height: '100%',
@@ -132,7 +131,6 @@ const styles = StyleSheet.create({
 	callButtons: {
 		flexGrow: 1,
 		flexBasis: '40%',
-		// boxShadow: controlButtonBoxShadow,
 		borderRadius: 10
 	},
 	callButtonLeft: {
@@ -151,22 +149,19 @@ const styles = StyleSheet.create({
 		height: '70%',
 		width: '88%',
 		borderRadius: 10,
-		// ...buttonGroupBoxShadow,
 		backgroundColor: '#F7F9FC'
 	},
 	innerButtonGroup: {
 		display: 'flex',
-		// height: '100%',
 		flexBasis: '30%',
 		width: '100%',
 		justifyContent: 'center',
-		justifySelf: 'center',
+		// justifySelf: 'center',
 		alignSelf: 'center',
 		alignItems: 'center',
 		margin: 10,
 		borderRadius: 10,
 		backgroundColor: 'inherhit'
-		// ...innerButtonBoxShadow
 	}
 });
 

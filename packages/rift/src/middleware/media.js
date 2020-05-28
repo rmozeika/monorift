@@ -1,5 +1,5 @@
 import * as Actions from '../actions';
-
+import { AudioElement, AppAudioContext } from './media-elements/audio';
 class MediaInstance {
 	//videoPlayer = null;
 	#element = null;
@@ -96,7 +96,7 @@ class MediaInstance {
 class AudioInstance extends MediaInstance {
 	constructor(element) {
 		super(element, 'audio');
-		this.context = new (window.AudioContext || window.webkitAudioContext)();
+		this.context = new AppAudioContext();
 		this.addTrack = this.addTrack.bind(this);
 	}
 	// addTrack = (id, track) => {
@@ -146,7 +146,7 @@ class VideoInstance extends MediaInstance {
 }
 // class AdvancedAudio extends Audio
 class MediaController {
-	audioTag = new Audio();
+	audioTag = new AudioElement();
 	#audioInstance = null;
 
 	#videoInstance = null; //new VideoInstance(null);

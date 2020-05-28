@@ -179,6 +179,29 @@ class UserRepository extends Repository {
 		};
 		return this.createUser(obj, cb);
 	}
+	userDataBase(data) {
+		const {
+			email,
+			username,
+			oauth_id,
+			guest = false,
+			mocked = false,
+			src = {},
+			usingTempUsername = false
+		} = data;
+		if (!username) {
+			return new Error('username undefined');
+		}
+		return {
+			username,
+			oauth_id: oauth_id || `monorift|${username}`,
+			email: email || `${username}@monorift.com`,
+			usingTempUsername,
+			src,
+			mocked,
+			guest
+		};
+	}
 	async createGuest(inputUsername, password) {
 		const { username, error } = validateUsernamePassword(inputUsername, password);
 		if (error) return { error: error, success: false };
@@ -275,6 +298,16 @@ class UserRepository extends Repository {
 			username
 		);
 		return { taken: false, success: true };
+	}
+	// postgres
+	// async getUser(query) {
+
+	// }
+	async getUserById(id) {
+		const [user = {}] = await this.getUsersPostgres({ id });
+		return user;
+		// .postgresInstance.knex('users')
+		// 	.where(id)
 	}
 	async getUsersPostgres(query = {}) {
 		const users = await this.postgresInstance
@@ -492,6 +525,73 @@ class UserRepository extends Repository {
 	// resetUsers() {
 
 	// }
+}
+
+function userDataBase(data) {
+	const {
+		email,
+		username,
+		oauth_id,
+		guest = false,
+		mocked = false,
+		src = {},
+		usingTempUsername = false
+	} = data;
+	if (!username) {
+		return new Error('username undefined');
+	}
+	return {
+		username,
+		oauth_id: oauth_id || `monorift|${username}`,
+		email: email || `${username}@monorift.com`,
+		usingTempUsername,
+		src,
+		mocked,
+		guest
+	};
+}
+class User {
+	constructor(
+		{
+			email,
+			username,
+			oauth_id,
+			guest = false,
+			mocked = false,
+			src = {},
+			usingTempUsername = false
+		},
+		repo
+	) {
+		this.repo = repo;
+		this.username = username;
+
+		this.email = email || `${username}@monorift.com`;
+		this.usingTempUsername = usingTempUsername;
+		this.src = src;
+		this.mocked = mocked;
+		this.guest = guest;
+		if (oauth_id) {
+			this.checkUsernameExists();
+		}
+		this.oauth_id = oauth_id || `monorift|${username}`;
+	}
+	//unused
+	async isOAuthUser() {
+		return !/^monorift/.test(oauth_id);
+	}
+	async checkUsernameExists() {
+		const { username } = this;
+		const existingUser = await this.repo.findOne({ username });
+		// need to add random to stop breaking upon multiple temps
+		// const tempUsername = existingUser && username + '_temp';
+		if (existingUser) {
+			this.username = username + '_temp';
+			this.usingTempUsername = true;
+			return;
+		}
+		// this.usingTempUsername = !!tempUsername;
+	}
 }
 
 module.exports = UserRepository;

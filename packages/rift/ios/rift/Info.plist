@@ -75,5 +75,7 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+		<string>Allow $(PRODUCT_NAME) to access your microphone</string>
 </dict>
 </plist>

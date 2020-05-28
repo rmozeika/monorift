@@ -20,7 +20,7 @@ const Socket = require('./socket');
 const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 const graphqlHTTP = require('express-graphql');
-const { Schema } = require('./data-service/data-model/users/schema.js');
+const Schema = require('./data-service/data-model/users/schema.js');
 console.log('VERSION', '0.5.1');
 
 var app = express();
@@ -77,10 +77,11 @@ const setupDefaultRoute = () => {
 	}
 };
 const setFurtherRoutes = () => {
+	const userSchema = new Schema(api);
 	app.use(
 		'/graphql',
 		graphqlHTTP({
-			schema: Schema,
+			schema: userSchema.Schema,
 			// rootValue: root,
 			graphiql: true
 		})
@@ -114,6 +115,7 @@ api.init(app).then(() => {
 	setFurtherRoutes();
 	console.log('api ready');
 });
+// exports.api = api;
 app.use('/profile', express.static(path.join(__dirname, 'site')));
 
 let buildpath;

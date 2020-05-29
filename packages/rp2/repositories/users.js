@@ -21,13 +21,79 @@ const friendStatus = {
 	pending: 'P',
 	rejected: 'R'
 };
-const promiseGet = url => {
-	return new Promise((resolve, reject) => {
-		http.get(url, response => {
-			resolve(response);
+
+class UserModel {
+	constructor(
+		{
+			email,
+			username,
+			oauth_id,
+			guest = false,
+			mocked = false,
+			src = {},
+			usingTempUsername = false
+		},
+		repo
+	) {
+		this.repo = repo;
+		this.username = username;
+
+		this.email = email || `${username}@monorift.com`;
+		this.usingTempUsername = usingTempUsername;
+		this.src = src;
+		this.mocked = mocked;
+		this.guest = guest;
+		// if (oauth_id) {
+		// 	this.checkUsernameExists();
+		// }
+		this.oauth_id = oauth_id || `monorift|${username}`;
+	}
+	async initFields() {
+		await this.generateOAuthId();
+		await this.checkUsernameExists();
+	}
+	// await extends 'thenables'
+	// e.g. const user = await new UserModel(...args)
+	then(resolve, reject) {
+		this.initFields().then(() => {
+			const data = this.data;
+			resolve(data);
 		});
-	});
-};
+	}
+	get data() {
+		const { username, email, usingTempUsername, src, mocked, guest } = this;
+		return {
+			username,
+			email,
+			usingTempUsername,
+			src,
+			mocked,
+			guest
+		};
+	}
+	async generateOAuthId() {
+		if (this.isMonoriftProviderUser()) {
+			const salt = await bcrypt.genSalt();
+			this.oauth_id = `${this.oauth_id}${salt}`.substring(0, 24);
+			return;
+		}
+	}
+	isMonoriftProviderUser() {
+		return !/^monorift/.test(this.oauth_id);
+	}
+	async checkUsernameExists() {
+		const { username } = this;
+		const existingUser = await this.repo.findOne({ username });
+		// need to add random to stop breaking upon multiple temps
+		// const tempUsername = existingUser && username + '_temp';
+		if (existingUser) {
+			this.username = username + '_temp';
+			this.usingTempUsername = true;
+			return;
+		}
+		// this.usingTempUsername = !!tempUsername;
+	}
+}
 class UserRepository extends Repository {
 	constructor(api) {
 		super(api, collection);
@@ -99,14 +165,15 @@ class UserRepository extends Repository {
 		return new Promise(async (resolve, reject) => {
 			// let user;
 
-			let { username, src, email, oauth_id } = user;
-			if (/monorift\|/.test(oauth_id)) {
-				const salt = await bcrypt.genSalt();
-				oauth_id = `${oauth_id}${salt}`.substring(0, 24);
-				// user.oauth_id = oauth
-			}
-			const userData = { ...user, username, src, email, oauth_id };
-
+			// let { username, src, email, oauth_id } = user;
+			// if (/monorift\|/.test(oauth_id)) {
+			// 	const salt = await bcrypt.genSalt();
+			// 	oauth_id = `${oauth_id}${salt}`.substring(0, 24);
+			// 	// user.oauth_id = oauth
+			// }
+			// const userData = { ...user, username, src, email, oauth_id };
+			const userData = await new UserModel(user, this);
+			console.log(userData);
 			this.existingUser(oauth_id, username)
 				// this.findByUsername(username)
 				.then(foundUser => {
@@ -550,48 +617,12 @@ function userDataBase(data) {
 		guest
 	};
 }
-class User {
-	constructor(
-		{
-			email,
-			username,
-			oauth_id,
-			guest = false,
-			mocked = false,
-			src = {},
-			usingTempUsername = false
-		},
-		repo
-	) {
-		this.repo = repo;
-		this.username = username;
-
-		this.email = email || `${username}@monorift.com`;
-		this.usingTempUsername = usingTempUsername;
-		this.src = src;
-		this.mocked = mocked;
-		this.guest = guest;
-		if (oauth_id) {
-			this.checkUsernameExists();
-		}
-		this.oauth_id = oauth_id || `monorift|${username}`;
-	}
-	//unused
-	async isOAuthUser() {
-		return !/^monorift/.test(oauth_id);
-	}
-	async checkUsernameExists() {
-		const { username } = this;
-		const existingUser = await this.repo.findOne({ username });
-		// need to add random to stop breaking upon multiple temps
-		// const tempUsername = existingUser && username + '_temp';
-		if (existingUser) {
-			this.username = username + '_temp';
-			this.usingTempUsername = true;
-			return;
-		}
-		// this.usingTempUsername = !!tempUsername;
-	}
+function promiseGet(url) {
+	return new Promise((resolve, reject) => {
+		http.get(url, response => {
+			resolve(response);
+		});
+	});
 }
 
 module.exports = UserRepository;

@@ -69,6 +69,7 @@ class ProfilePopover extends React.Component<
 	private renderProfileCloseIcon = ({
 		style
 	}): React.ReactElement<ImageProps> => {
+		// return <Icon name="x" color={'#F7F9FC'} style={{ ...style, backgroundColor: 'rgb(34, 43, 69)' }} solid />;
 		return <Icon name="x" color={'#F7F9FC'} style={{ ...style }} solid />;
 	};
 	private renderMenuIcon = ({ style }): React.ReactElement<ImageProps> => {
@@ -86,13 +87,6 @@ class ProfilePopover extends React.Component<
 			console.error('An error occurred', err);
 		});
 	}
-	private renderAnchor2 = (): React.ReactElement<ImageProps> => {
-		return (
-			<Layout>
-				<Text>Anchor</Text>
-			</Layout>
-		);
-	};
 	private renderAnchor = (): React.ReactElement<ImageProps> => {
 		return (
 			<TouchableOpacity
@@ -114,29 +108,6 @@ class ProfilePopover extends React.Component<
 
 				<Text style={styles.myUsername}>{this.props.username}</Text>
 			</TouchableOpacity>
-		);
-	};
-	private renderContent = (): React.ReactElement<ImageProps> => {
-		return (
-			<Layout style={styles.popoverLayout}>
-				<Layout style={styles.signoutPopoverItem}>
-					<Button
-						style={{ flexGrow: 1 }}
-						size={'small'}
-						status={'danger'}
-						onPress={this.onSignout}
-					>
-						Sign out
-					</Button>
-					<Button
-						size={'small'}
-						appearance={'ghost'}
-						onPress={this.toggleProfilePopover}
-						accessoryLeft={this.renderProfileCloseIcon}
-					/>
-				</Layout>
-				<UpdateTempUsername />
-			</Layout>
 		);
 	};
 	public render(): React.ReactNode {
@@ -162,6 +133,7 @@ class ProfilePopover extends React.Component<
 						<Button
 							size={'small'}
 							appearance={'ghost'}
+							style={styles.profileCloseButton}
 							onPress={this.toggleProfilePopover}
 							accessoryLeft={this.renderProfileCloseIcon}
 						/>
@@ -227,6 +199,10 @@ const styles = StyleSheet.create({
 	userIcons: {
 		alignItems: 'center',
 		textAlign: 'center'
+	},
+	profileCloseButton: {
+		//backgroundColor: 'rgb(34, 43, 69)'
+		backgroundColor: 'rgb(26, 34, 55)'
 	}
 });
 

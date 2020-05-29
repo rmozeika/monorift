@@ -11,7 +11,9 @@ import {
 	takeEvery,
 	actionChannel,
 	select,
-	fork
+	fork,
+	cancel,
+	cancelled
 } from 'redux-saga/effects';
 import { eventChannel, runSaga } from 'redux-saga';
 import { originLink } from '../core/utils';
@@ -97,64 +99,37 @@ const createSocketChannel = socket =>
 			//socket.off('login', handler);
 		};
 	});
-function* initCallSocketSaga() {
+function* socketListener() {
 	const socket = yield call(connect);
 	const socketChannel = yield call(createSocketChannel, socket);
+	console.log('created call socket channel');
 	while (true) {
 		const { message, constraints, users, from } = yield take(socketChannel);
 		try {
 			yield put({ type: GOT_MESSAGE, message, constraints, users, from });
 		} catch (e) {
 			console.log('Call Saga Error', e);
+		} finally {
+			if (yield cancelled()) {
+				console.log('cancelled call socket');
+				socketChannel.close();
+			}
 		}
 	}
 }
 function* startSocketSaga() {
-	const task = yield fork(initCallSocketSaga);
+	const task = yield fork(socketListener);
 	const restart = yield take(Actions.CLOSE_USER_SOCKET);
 	yield cancel(task);
 	if (restart) {
-		const newTask = yield fork(initCallSocketSaga);
+		const newTask = yield fork(socketListener);
 		yield take(Actions.CLOSE_USER_SOCKET);
 		yield cancel(newTask);
 	} else {
 		while (yield take(Actions.START_USER_SOCKET)) {
-			const newTask = yield fork(initCallSocketSaga);
+			const newTask = yield fork(socketListener);
 			yield take(Actions.CLOSE_USER_SOCKET);
 			yield cancel(newTask);
-		}
-	}
-}
-function* initUserSocketSaga() {
-	const socket = yield call(connect);
-
-	const socketChannel = yield call(createSocketChannel, socket);
-
-	try {
-		console.log('create user socket channel');
-		while (true) {
-			const message = yield take(socketChannel);
-			try {
-				const { id, data, user } = message;
-				yield put(Actions.updateUser(id, data, user));
-				if (data.online == true) {
-					const user = { username: message.username, oauth_id: id };
-					yield put(Actions.addOnlineUser(user));
-				} else if (message.online == false) {
-					const user = { username: message.username, oauth_id: id };
-					yield put(Actions.removeOnlineUser(user));
-				}
-			} catch (e) {
-				console.warn(e);
-			}
-		}
-	} catch (e) {
-		console.warn(e);
-	} finally {
-		if (yield cancelled()) {
-			console.log('cancelled socketsaga');
-			socketChannel.close();
-			console.log('countdown cancelled');
 		}
 	}
 }
@@ -300,7 +275,7 @@ function* endCallSaga({ id }) {
 }
 function* rootSaga() {
 	yield all([
-		initCallSocketSaga(),
+		startSocketSaga(),
 		takeLatest(SEND_CANDIDATE, sendCandidateSaga),
 		takeLatest(SEND_OFFER, sendOfferSaga),
 		takeEvery(GOT_MESSAGE, gotMessageSaga),

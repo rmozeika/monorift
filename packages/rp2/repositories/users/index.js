@@ -1,15 +1,6 @@
-var Repository = require('./repository.js');
-var gravatar = require('gravatar');
-const promisfy = require('util').promisify;
-const http = require('http');
-const fs = require('fs');
+var Repository = require('../repository.js');
+const UserModel = require('./Model');
 const collection = 'users';
-const path = require('path');
-const bcrypt = require('bcrypt');
-const Jimp = require('jimp');
-const {
-	validateUsernamePassword
-} = require('../data-service/data-model/users/users.js');
 
 // friendship status
 // A = accepted
@@ -22,78 +13,6 @@ const friendStatus = {
 	rejected: 'R'
 };
 
-class UserModel {
-	constructor(
-		{
-			email,
-			username,
-			oauth_id,
-			guest = false,
-			mocked = false,
-			src = {},
-			usingTempUsername = false
-		},
-		repo
-	) {
-		this.repo = repo;
-		this.username = username;
-
-		this.email = email || `${username}@monorift.com`;
-		this.usingTempUsername = usingTempUsername;
-		this.src = src;
-		this.mocked = mocked;
-		this.guest = guest;
-		// if (oauth_id) {
-		// 	this.checkUsernameExists();
-		// }
-		this.oauth_id = oauth_id || `monorift|${username}`;
-	}
-	async initFields() {
-		await this.generateOAuthId();
-		await this.checkUsernameExists();
-	}
-	// await extends 'thenables'
-	// e.g. const user = await new UserModel(...args)
-	then(resolve, reject) {
-		this.initFields().then(() => {
-			const data = this.data;
-			resolve(data);
-		});
-	}
-	get data() {
-		const { username, email, usingTempUsername, src, mocked, guest } = this;
-		return {
-			username,
-			email,
-			usingTempUsername,
-			src,
-			mocked,
-			guest
-		};
-	}
-	async generateOAuthId() {
-		if (this.isMonoriftProviderUser()) {
-			const salt = await bcrypt.genSalt();
-			this.oauth_id = `${this.oauth_id}${salt}`.substring(0, 24);
-			return;
-		}
-	}
-	isMonoriftProviderUser() {
-		return !/^monorift/.test(this.oauth_id);
-	}
-	async checkUsernameExists() {
-		const { username } = this;
-		const existingUser = await this.repo.findOne({ username });
-		// need to add random to stop breaking upon multiple temps
-		// const tempUsername = existingUser && username + '_temp';
-		if (existingUser) {
-			this.username = username + '_temp';
-			this.usingTempUsername = true;
-			return;
-		}
-		// this.usingTempUsername = !!tempUsername;
-	}
-}
 class UserRepository extends Repository {
 	constructor(api) {
 		super(api, collection);
@@ -116,50 +35,6 @@ class UserRepository extends Repository {
 			});
 		return id;
 	}
-	async createGravatar(filename, email) {
-		const gravatarUrl = gravatar.url(
-			email,
-			{ s: '40', r: 'x', d: 'retro' },
-			false
-		);
-		const getPromise = promisfy(http.get);
-		const gravatarPath = path.resolve(
-			__dirname,
-			'../public',
-			'gravatar',
-			`${filename}.png`
-		);
-
-		const file = fs.createWriteStream(gravatarPath);
-		const response = await promiseGet(gravatarUrl);
-		response.pipe(file);
-		const usePng = true; // probably stick with png due to nature of gravatar
-		if (usePng == true) {
-			return {
-				url: gravatarUrl,
-				path: gravatarPath,
-				uri: `/gravatar/${filename}.png`
-			};
-		}
-
-		const gravatarPathJpg = path.resolve(
-			__dirname,
-			'../public',
-			'gravatar',
-			`${filename}.jpg`
-		);
-		const pngImg = await Jimp.read(gravatarPath);
-		pngImg
-			// .resize(256, 256) // resize
-			// .quality(60) // set JPEG quality
-			// .greyscale() // set greyscale
-			.write(gravatarPathJpg); // save
-		return {
-			url: gravatarUrl,
-			path: gravatarPathJpg,
-			uri: `/gravatar/${filename}.jpg`
-		};
-	}
 
 	createUser(user, cb) {
 		return new Promise(async (resolve, reject) => {
@@ -172,54 +47,75 @@ class UserRepository extends Repository {
 			// 	// user.oauth_id = oauth
 			// }
 			// const userData = { ...user, username, src, email, oauth_id };
-			const userData = await new UserModel(user, this);
-			console.log(userData);
-			this.existingUser(oauth_id, username)
-				// this.findByUsername(username)
-				.then(foundUser => {
-					if (foundUser) {
-						if (foundUser.username !== username) {
-							userData.oauth_id = oauth_id + '1';
-							return true;
+			try {
+				const userModel = new UserModel(user, this);
+				const userData = await userModel;
+				console.log(userData);
+				const insertUserOp = await userModel.insert();
+				console.log(userModel.data);
+				resolve(userModel.data);
+				// const userData = await new UserModel(user, this);
+				// const insertMongoOp = await this.mongoInstance.insertOne(this.collection, userData);
+				// const insertMongoOp = await this.insertOne(userData);
+
+				// const _id = insertMongoOp.insertedId.toString();
+				// const bit_id = await this.insertUserIntoPostgres(_id, userData);
+				// const updateBitOp = await this.updateByOAuthId(oauth_id, { bit_id });
+			} catch (e) {
+				reject(e);
+			}
+			// .catch(e => {
+			// 	reject(e);
+			// });
+			if (false == true) {
+				console.log(userData);
+				this.existingUser(oauth_id, username)
+					// this.findByUsername(username)
+					.then(foundUser => {
+						if (foundUser) {
+							if (foundUser.username !== username) {
+								userData.oauth_id = oauth_id + '1';
+								return true;
+							}
+							const message = `Username '${username}' already exists`;
+							reject(message);
+							throw new Error(message);
+							return false;
 						}
-						const message = `Username '${username}' already exists`;
-						reject(message);
-						throw new Error(message);
-						return false;
-					}
-					return true;
-				})
-				.then(proceed => {
-					if (proceed) {
-						return this.createGravatar(oauth_id, email);
-					}
-				})
-				.then(gravatarData => {
-					userData.src['gravatar'] = gravatarData;
-					return;
-				})
-				.then(() => this.findByUsername(username))
-				.then(foundUser => {
-					if (foundUser) return false;
-					return this.mongoInstance.insertOne(this.collection, userData);
-				})
-				.then(result => {
-					// user = user;
-					if (result == false) return false;
-					const _id = result.insertedId.toString();
-					return this.insertUserIntoPostgres(_id, userData);
-				})
-				.then(async bit_id => {
-					const updateOp = await this.updateByOAuthId(oauth_id, { bit_id });
-					return { ...userData, bit_id };
-				})
-				.then(result => {
-					if (cb) return cb(result);
-					resolve(result);
-				})
-				.catch(e => {
-					console.error(e);
-				});
+						return true;
+					})
+					.then(proceed => {
+						if (proceed) {
+							return this.createGravatar(oauth_id, email);
+						}
+					})
+					.then(gravatarData => {
+						userData.src['gravatar'] = gravatarData;
+						return;
+					})
+					.then(() => this.findByUsername(username))
+					.then(foundUser => {
+						if (foundUser) return false;
+						return this.mongoInstance.insertOne(this.collection, userData);
+					})
+					.then(result => {
+						// user = user;
+						if (result == false) return false;
+						const _id = result.insertedId.toString();
+						return this.insertUserIntoPostgres(_id, userData);
+					})
+					.then(async bit_id => {
+						const updateOp = await this.updateByOAuthId(oauth_id, { bit_id });
+						return { ...userData, bit_id };
+					})
+					.then(result => {
+						if (cb) return cb(result);
+						resolve(result);
+					})
+					.catch(e => {
+						console.error(e);
+					});
+			}
 		});
 	}
 	async importProfile(profile, cb) {
@@ -269,7 +165,14 @@ class UserRepository extends Repository {
 			guest
 		};
 	}
-	async createGuest(inputUsername, password) {
+	async createGuest(username, password) {
+		const user = await this.createUser({ username, password }).catch(e => {
+			console.error(e);
+			return Promise.reject(e);
+		});
+		return user;
+	}
+	async createGuestOld(inputUsername, password) {
 		const { username, error } = validateUsernamePassword(inputUsername, password);
 		if (error) return { error: error, success: false };
 		const id = 'guest'; // TODO: get id
@@ -616,13 +519,6 @@ function userDataBase(data) {
 		mocked,
 		guest
 	};
-}
-function promiseGet(url) {
-	return new Promise((resolve, reject) => {
-		http.get(url, response => {
-			resolve(response);
-		});
-	});
 }
 
 module.exports = UserRepository;

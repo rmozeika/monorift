@@ -113,7 +113,8 @@ const UsersInput = new GraphQLInputObjectType({
 		// email: { type: GraphQLString },
 		usingTempUsername: { type: GraphQLBoolean },
 		mocked: { type: GraphQLBoolean },
-		bit_id: { type: GraphQLInt }
+		bit_id: { type: GraphQLInt },
+		password: { type: GraphQLString }
 	})
 });
 const Src = new GraphQLObjectType({

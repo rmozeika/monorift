@@ -8,7 +8,7 @@ const path = require('path');
 
 const {
 	validateUsernamePassword
-} = require('../../data-service/data-model/users/users.js');
+} = require('../../data-service/data-model/users/validation.js');
 
 class UserModel {
 	constructor(

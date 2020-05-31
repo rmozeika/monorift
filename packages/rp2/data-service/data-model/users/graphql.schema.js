@@ -209,32 +209,6 @@ const User = new GraphQLObjectType({
 		src: { type: Src }
 	})
 });
-// const UserWithFriends = new GraphQLObjectType({
-// 	name: 'user_friends',
-// 	fields: () => ({
-// 		id: { type: GraphQLInt },
-// 		username: { type: GraphQLString },
-// 		email: { type: GraphQLString },
-// 		// email: { type: GraphQLString },
-// 		// email: { type: GraphQLString },
-// 		usingTempUsername: { type: GraphQLBoolean },
-// 		mocked: { type: GraphQLBoolean },
-// 		bit_id: { type: GraphQLInt },
-// 		src: { type: Src },
-// 		friends: {
-// 			type: new GraphQLList(Friend),
-// 			resolve: (parent, args) => {
-
-// 			}
-// 		}
-// 	})
-// })
-var schema = buildSchema(`
-  input createMonoriftUserInput {
-	username: String!
-	password: String!
-  }
-`);
 
 const UserInput = new GraphQLInputObjectType({
 	name: 'UserInput',
@@ -242,8 +216,6 @@ const UserInput = new GraphQLInputObjectType({
 		id: { type: GraphQLInt },
 		username: { type: GraphQLString },
 		email: { type: GraphQLString },
-		// email: { type: GraphQLString },
-		// email: { type: GraphQLString },
 		usingTempUsername: { type: GraphQLBoolean },
 		mocked: { type: GraphQLBoolean },
 		bit_id: { type: GraphQLInt },
@@ -285,40 +257,3 @@ const FriendInput = new GraphQLInputObjectType({
 	})
 });
 module.exports = UserSchema;
-const mongodbScheme = {
-	$jsonSchema: {
-		required: ['email', 'username', 'oauth_id'],
-		properties: {
-			email: {
-				bsonType: 'string',
-				description: 'must be a string and is required'
-			},
-			username: {
-				bsonType: 'string',
-				description: 'must be a string and is required'
-			},
-			oauth_id: {
-				bsonType: 'string',
-				description: 'id used globally: must be a string and is required'
-			},
-			src: {
-				bsonType: 'object',
-				required: [],
-				properties: {
-					firstname: { bsonType: 'string' },
-					lastname: { bsonType: 'string' },
-					// 'email': { bsonType: 'string' },
-					displayName: { bsonType: 'string' },
-					email: { bsonType: 'string' },
-					gravatar: { bsonType: 'object' }
-				}
-			},
-			mocked: {
-				bsonType: 'boolean'
-			},
-			bit_id: {
-				bsonType: 'integar'
-			}
-		}
-	}
-};

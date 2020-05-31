@@ -7,7 +7,13 @@ const collection = 'users.auth';
 // UNUSED
 class AuthRepository extends Repository {
 	constructor(api) {
-		super(api, collection);
+		super(api);
+	}
+	static getNamespaces() {
+		return {
+			collection: 'users.auth',
+			table: null
+		};
 	}
 	extractJWTData(user) {
 		const { bit_id, id, username, oauth_id, admin = false } = user;

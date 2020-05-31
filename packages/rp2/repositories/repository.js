@@ -11,16 +11,40 @@ const extendedMethods = [
 ];
 
 class Repository {
-	constructor(api, collection, subcollections) {
+	constructor(api, subcollections) {
 		this.api = api;
+		const { collection = null, table = null } = this.constructor.getNamespaces();
 		this.collection = collection;
-
+		this.table = table;
 		this.mongoInstance = api.mongoInstance;
 		this.postgresInstance = api.postgresInstance;
+		if (this.table !== null) this.db = this.postgresInstance.knex(this.table);
 
 		this.extendMethods();
 	}
 
+	// defaults to andWhere
+	async query(query = {}, select = '*') {
+		const queryFields = this.postgresInstance.buildWhereQueryValues(query);
+
+		const data = await this.postgresInstance
+			.knex(this.table)
+			.where(this.postgresInstance.whereQueryBuilder(queryFields))
+			.select(select);
+
+		return data;
+	}
+	// 'orWhere' instead of queries default 'andWhere'
+	async queryMatching(query = {}, select = '*') {
+		const queryFields = this.postgresInstance.buildWhereQueryValues(query);
+
+		const data = await this.postgresInstance
+			.knex(this.table)
+			.where(this.postgresInstance.whereQueryBuilder(queryFields, { useOr: true }))
+			.select(select);
+
+		return data;
+	}
 	extendMethods() {
 		this.mongoInstance.getMethodNames().forEach(method => {
 			this[method] = (object, subcollection, opts, cb) => {
@@ -43,6 +67,7 @@ class Repository {
 				});
 		});
 	}
+
 	findAll(cb) {
 		return new Promise((resolve, reject) => {
 			if (cb) {

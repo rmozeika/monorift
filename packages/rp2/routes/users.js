@@ -47,7 +47,15 @@ class UserRoute extends Route {
 				this.api.bruteforce.prevent,
 				this.registerAsGuest.bind(this)
 			);
+			this.router.get('/id', this.getUserById.bind(this));
 		});
+	}
+	async getUserById(req, res) {
+		const { query } = req;
+		const { id } = query;
+		const idNum = Number(id);
+		const user = await this.repository.query({ id: idNum });
+		res.send(user);
 	}
 	getUserFromReq(req) {
 		if (!useSession) {

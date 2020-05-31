@@ -36,29 +36,16 @@ module.exports = function(api) {
 			'@babel/plugin-proposal-object-rest-spread'
 		]
 	];
-	if (true) {
-		return {
-			presets: ['module:metro-react-native-babel-preset', '@babel/react'],
-			plugins: [
-				'@babel/plugin-proposal-optional-chaining',
-				['module-resolver', moduleResolverConfig],
-				'react-native-web',
-				'@babel/plugin-syntax-dynamic-import',
-				'@babel/plugin-proposal-object-rest-spread',
-				'transform-class-properties'
-			]
-		};
-	}
-	if (true)
-		return {
-			plugins,
-			presets: ['module:metro-react-native-babel-preset']
-		};
 	return {
-		presets: ['@babel/preset-env', '@babel/react'],
+		presets: ['module:metro-react-native-babel-preset', '@babel/react'],
 		plugins: [
-			'@babel/plugin-proposal-do-expressions',
-			['react-native-web', { commonjs: true }]
+			'relay',
+			'@babel/plugin-proposal-optional-chaining',
+			['module-resolver', moduleResolverConfig],
+			'react-native-web',
+			'@babel/plugin-syntax-dynamic-import',
+			'@babel/plugin-proposal-object-rest-spread',
+			'transform-class-properties'
 		]
 	};
 };

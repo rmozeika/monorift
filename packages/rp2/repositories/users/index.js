@@ -1,7 +1,7 @@
-var Repository = require('../repository.js');
+const Repository = require('../repository.js');
 const UserModel = require('./Model');
 const collection = 'users';
-
+const tableName = 'users';
 // friendship status
 // A = accepted
 // S = SENT
@@ -15,9 +15,23 @@ const friendStatus = {
 
 class UserRepository extends Repository {
 	constructor(api) {
-		super(api, collection);
+		super(api);
 		this.findByUsername.bind(this);
+		this.testQuery();
 	}
+	static getNamespaces() {
+		return {
+			collection: 'users',
+			table: 'users'
+		};
+	}
+
+	async getUsersPostgres(query = {}) {
+		console.log(this.db);
+		const users = await this.query(query);
+		return users;
+	}
+
 	async insertUserIntoPostgres(_id, user) {
 		const { username, src, email, oauth_id, guest = false } = user;
 		const [id] = await this.postgresInstance
@@ -142,29 +156,6 @@ class UserRepository extends Repository {
 		};
 		return this.createUser(obj, cb);
 	}
-	userDataBase(data) {
-		const {
-			email,
-			username,
-			oauth_id,
-			guest = false,
-			mocked = false,
-			src = {},
-			usingTempUsername = false
-		} = data;
-		if (!username) {
-			return new Error('username undefined');
-		}
-		return {
-			username,
-			oauth_id: oauth_id || `monorift|${username}`,
-			email: email || `${username}@monorift.com`,
-			usingTempUsername,
-			src,
-			mocked,
-			guest
-		};
-	}
 	async createGuest(username, password) {
 		const user = await this.createUser({ username, password }).catch(e => {
 			console.error(e);
@@ -274,18 +265,12 @@ class UserRepository extends Repository {
 
 	// }
 	async getUserById(id) {
-		const [user = {}] = await this.getUsersPostgres({ id });
+		const users = await this.query({ id: id });
+		console.log(users);
+		const [user] = users;
 		return user;
-		// .postgresInstance.knex('users')
-		// 	.where(id)
 	}
-	async getUsersPostgres(query = {}) {
-		const users = await this.postgresInstance
-			.knex('users')
-			.where(query)
-			.select('*');
-		return users;
-	}
+
 	async getUsersPostgresByFriendStatus(username) {
 		// console.log
 		let users;
@@ -355,108 +340,7 @@ class UserRepository extends Repository {
 		// const ids = users.map(({ id }) => id);
 		return ids;
 	}
-	async publishFriendStatus(status, to, from) {
-		if (typeof to == 'string') {
-			return this.api.redisAsync(
-				'publish',
-				`${user}:friend_request`,
-				`${friend}:${status}`
-			);
-		}
-		return this.api.redisAsync(
-			'publish',
-			`${to.oauth_id}:friend_request`,
-			`${from.oauth_id}:${status}`
-		);
-	}
-	async acceptFriend(username, friendUsername) {
-		const [user, friend] = await this.getUserColumnsByUsername(
-			[username, friendUsername],
-			['oauth_id', 'id']
-		);
-		const accepted = await this.postgresInstance
-			.knex('friendship')
-			.update('status', friendStatus.accepted)
-			.where({ member1_id: user.id, member2_id: friend.id })
-			.orWhere({ member1_id: friend.id, member2_id: user.id });
-		const updateToFriend = await this.publishFriendStatus(
-			friendStatus.accepted,
-			friend,
-			user
-		);
-		const updateToSelf = await this.publishFriendStatus(
-			friendStatus.accepted,
-			user,
-			friend
-		);
 
-		return accepted;
-	}
-
-	async rejectFriend(username, friendUsername) {
-		const [user, friend] = await this.getUserColumnsByUsername(
-			[username, friendUsername],
-			['oauth_id', 'id']
-		);
-		const reject = await this.postgresInstance
-			.knex('friendship')
-			.update('status', friendStatus.rejected)
-			.where({ member1_id: user.id, member2_id: friend.id })
-			.orWhere({ member1_id: friend.id, member2_id: user.id });
-		const updateToFriend = await this.publishFriendStatus(
-			friendStatus.rejected,
-			friend,
-			user
-		);
-		const updateToSelf = await this.publishFriendStatus(
-			friendStatus.rejected,
-			user,
-			friend
-		);
-
-		return { reject };
-	}
-	async addFriend(username, friendUsername, mocked = false) {
-		// const [userId, friendId] = await this.getUsersIdsByUsername([
-		// 	username,
-		// 	friend
-		// ]);
-
-		const [user, friend] = await this.getUserColumnsByUsername(
-			[username, friendUsername],
-			['oauth_id', 'id']
-		);
-		const existing = await this.postgresInstance
-			.knex('friendship')
-			.select('status')
-			.where('member1_id', '=', user.id)
-			.andWhere('member2_id', '=', friend.id);
-		if (existing.length > 0) return {};
-		const inserted1 = await this.postgresInstance.knex('friendship').insert({
-			member1_id: user.id,
-			member2_id: friend.id,
-			status: friendStatus['sent'],
-			mocked
-		});
-		const inserted2 = await this.postgresInstance.knex('friendship').insert({
-			member1_id: friend.id,
-			member2_id: user.id,
-			status: friendStatus['pending'],
-			mocked
-		});
-		const updateToFriend = await this.publishFriendStatus(
-			friendStatus.pending,
-			friend,
-			user
-		);
-		const updateToSelf = await this.publishFriendStatus(
-			friendStatus.sent,
-			user,
-			friend
-		);
-
-		return { inserted1, inserted2 };
-	}
 	async getFriendsForUser(username) {
 		const friends = await this.postgresInstance
 			.knex('users')
@@ -492,33 +376,17 @@ class UserRepository extends Repository {
 			.del();
 		return { deleteMongo, deletePsql };
 	}
-	// resetUsers() {
-
-	// }
-}
-
-function userDataBase(data) {
-	const {
-		email,
-		username,
-		oauth_id,
-		guest = false,
-		mocked = false,
-		src = {},
-		usingTempUsername = false
-	} = data;
-	if (!username) {
-		return new Error('username undefined');
+	async testQuery() {
+		const users = await this.query({
+			id: [9391, 9401],
+			username: 'jcrosher3'
+		});
+		const usersOr = await this.queryMatching({
+			id: [9391, 9401],
+			username: 'kriccir'
+		});
+		console.log(users, usersOr);
 	}
-	return {
-		username,
-		oauth_id: oauth_id || `monorift|${username}`,
-		email: email || `${username}@monorift.com`,
-		usingTempUsername,
-		src,
-		mocked,
-		guest
-	};
 }
 
 module.exports = UserRepository;

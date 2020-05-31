@@ -21,7 +21,7 @@ const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 const graphqlHTTP = require('express-graphql');
 const Schema = require('./data-service/data-model/users/graphql.schema.js');
-console.log('VERSION', '0.5.1');
+console.log('VERSION', '0.5.3');
 
 var app = express();
 // probably remove as this is already created in api.js

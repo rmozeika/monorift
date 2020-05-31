@@ -32,6 +32,45 @@ class PostgresService {
 	async insert(table, user, columns) {
 		await client.query('INSERT INTO users(data) VALUES($1)', [newUser]);
 	}
+	buildWhereQueryValues(query) {
+		const queryFields = {
+			whereIn: {
+				// column: null,
+				// values: null,
+			},
+			where: {}
+		};
+		Object.entries(query).forEach(([key, value]) => {
+			if (Array.isArray(value)) {
+				queryFields.whereIn = { column: key, values: value };
+				return;
+			}
+			queryFields.where[key] = value;
+		});
+		return queryFields;
+	}
+	whereQueryBuilder(queryFields = {}, { useOr = false } = {}) {
+		// const { useOr = false } = opts;
+		return function(builder) {
+			let querier = builder;
+			const { column, values } = queryFields.whereIn;
+			if (column && values) {
+				querier = builder.whereIn(column, values);
+			}
+			const queryField = queryFields.where;
+			if (Object.keys(queryField).length > 0) {
+				if (useOr) {
+					Object.entries(queryField).forEach(([key, value]) => {
+						querier = querier.orWhere(key, value);
+					});
+					// querier = querier.andWhere(queryFields.where);
+				} else {
+					querier = querier.andWhere(queryField);
+				}
+			}
+			return querier;
+		};
+	}
 	createMethods(extendMethods) {
 		extendMethods.forEach(method => {
 			if (method.combine) {

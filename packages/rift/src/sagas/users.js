@@ -135,28 +135,28 @@ const createSocketChannel = socket =>
 	});
 
 function* startSocketSaga() {
-	const task = yield fork(initSocketSaga);
+	const task = yield fork(socketListener);
 	const restart = yield take(Actions.CLOSE_USER_SOCKET);
 	yield cancel(task);
 	if (restart) {
-		const newTask = yield fork(initSocketSaga);
+		const newTask = yield fork(socketListener);
 		yield take(Actions.CLOSE_USER_SOCKET);
 		yield cancel(newTask);
 	} else {
 		while (yield take(Actions.START_USER_SOCKET)) {
-			const newTask = yield fork(initSocketSaga);
+			const newTask = yield fork(socketListener);
 			yield take(Actions.CLOSE_USER_SOCKET);
 			yield cancel(newTask);
 		}
 	}
 }
-function* initSocketSaga() {
+function* socketListener() {
 	const socket = yield call(connect);
 
 	const socketChannel = yield call(createSocketChannel, socket);
 
 	try {
-		console.log('create user socket channel');
+		console.log('created user socket channel');
 		while (true) {
 			const message = yield take(socketChannel);
 			try {
@@ -177,9 +177,8 @@ function* initSocketSaga() {
 		console.warn(e);
 	} finally {
 		if (yield cancelled()) {
-			console.log('cancelled socketsaga');
+			console.log('cancelled user socket');
 			socketChannel.close();
-			console.log('countdown cancelled');
 		}
 	}
 }

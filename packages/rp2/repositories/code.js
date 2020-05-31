@@ -12,9 +12,14 @@ const readdir = util.promisify(fs.readdir);
 class CodeRepository extends Repository {
 	constructor(api) {
 		const subcollections = 'code.class';
-		super(api, collection); //, subcollections);
+		super(api); //, subcollections);
 	}
-
+	static getNamespaces() {
+		return {
+			collection: 'code',
+			table: null
+		};
+	}
 	async initRepo(user = 'rmozeika', repoName = 'rift', srcPath = './') {
 		try {
 			const repo = await this.clone(user, repoName);

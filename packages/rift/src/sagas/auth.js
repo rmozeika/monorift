@@ -75,7 +75,20 @@ function* createGuestSaga(action) {
 	try {
 		const { username, password } = action.payload;
 		const origin = originLink('createGuest');
-		const { user, success, error } = yield post(origin, { username, password });
+		// yield post({
+		// 	method: 'POST',
+		// 	headers: {
+		// 	  'Content-Type': 'application/json',
+		// 	  'Accept': 'application/json',
+		// 	},
+		// 	body: JSON.stringify({query: "{ hello }"})
+		//   }
+		const { data: user, success, error } = yield post('/graphql', {
+			query: `{ createUser: { username }`,
+			variables: { username, password }
+		});
+		debugger; //remove
+		// const { user, success, error } = yield post(origin, { username, password });
 
 		// console.log(result);
 		try {

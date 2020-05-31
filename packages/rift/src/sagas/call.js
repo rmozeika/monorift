@@ -11,7 +11,9 @@ import {
 	takeEvery,
 	actionChannel,
 	select,
-	fork
+	fork,
+	cancel,
+	cancelled
 } from 'redux-saga/effects';
 import { eventChannel, runSaga } from 'redux-saga';
 import { originLink } from '../core/utils';
@@ -97,19 +99,41 @@ const createSocketChannel = socket =>
 			//socket.off('login', handler);
 		};
 	});
-
-function* initCallSaga() {
+function* socketListener() {
 	const socket = yield call(connect);
 	const socketChannel = yield call(createSocketChannel, socket);
+	console.log('created call socket channel');
 	while (true) {
 		const { message, constraints, users, from } = yield take(socketChannel);
 		try {
 			yield put({ type: GOT_MESSAGE, message, constraints, users, from });
 		} catch (e) {
 			console.log('Call Saga Error', e);
+		} finally {
+			if (yield cancelled()) {
+				console.log('cancelled call socket');
+				socketChannel.close();
+			}
 		}
 	}
 }
+function* startSocketSaga() {
+	const task = yield fork(socketListener);
+	const restart = yield take(Actions.CLOSE_USER_SOCKET);
+	yield cancel(task);
+	if (restart) {
+		const newTask = yield fork(socketListener);
+		yield take(Actions.CLOSE_USER_SOCKET);
+		yield cancel(newTask);
+	} else {
+		while (yield take(Actions.START_USER_SOCKET)) {
+			const newTask = yield fork(socketListener);
+			yield take(Actions.CLOSE_USER_SOCKET);
+			yield cancel(newTask);
+		}
+	}
+}
+
 function* addTracks(conn_id, stream) {
 	const tracks = stream.getTracks();
 	for (i = 0; i < tracks.length; i++) {
@@ -251,7 +275,7 @@ function* endCallSaga({ id }) {
 }
 function* rootSaga() {
 	yield all([
-		initCallSaga(),
+		startSocketSaga(),
 		takeLatest(SEND_CANDIDATE, sendCandidateSaga),
 		takeLatest(SEND_OFFER, sendOfferSaga),
 		takeEvery(GOT_MESSAGE, gotMessageSaga),

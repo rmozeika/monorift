@@ -1,16 +1,7 @@
-var Repository = require('./repository.js');
-var gravatar = require('gravatar');
-const promisfy = require('util').promisify;
-const http = require('http');
-const fs = require('fs');
+const Repository = require('../repository.js');
+const UserModel = require('./Model');
 const collection = 'users';
-const path = require('path');
-const bcrypt = require('bcrypt');
-const Jimp = require('jimp');
-const {
-	validateUsernamePassword
-} = require('../data-service/data-model/users/users.js');
-
+const tableName = 'users';
 // friendship status
 // A = accepted
 // S = SENT
@@ -21,18 +12,26 @@ const friendStatus = {
 	pending: 'P',
 	rejected: 'R'
 };
-const promiseGet = url => {
-	return new Promise((resolve, reject) => {
-		http.get(url, response => {
-			resolve(response);
-		});
-	});
-};
+
 class UserRepository extends Repository {
 	constructor(api) {
-		super(api, collection);
+		super(api);
 		this.findByUsername.bind(this);
+		this.testQuery();
 	}
+	static getNamespaces() {
+		return {
+			collection: 'users',
+			table: 'users'
+		};
+	}
+
+	async getUsersPostgres(query = {}) {
+		console.log(this.db);
+		const users = await this.query(query);
+		return users;
+	}
+
 	async insertUserIntoPostgres(_id, user) {
 		const { username, src, email, oauth_id, guest = false } = user;
 		const [id] = await this.postgresInstance
@@ -50,109 +49,87 @@ class UserRepository extends Repository {
 			});
 		return id;
 	}
-	async createGravatar(filename, email) {
-		const gravatarUrl = gravatar.url(
-			email,
-			{ s: '40', r: 'x', d: 'retro' },
-			false
-		);
-		const getPromise = promisfy(http.get);
-		const gravatarPath = path.resolve(
-			__dirname,
-			'../public',
-			'gravatar',
-			`${filename}.png`
-		);
-
-		const file = fs.createWriteStream(gravatarPath);
-		const response = await promiseGet(gravatarUrl);
-		response.pipe(file);
-		const usePng = true; // probably stick with png due to nature of gravatar
-		if (usePng == true) {
-			return {
-				url: gravatarUrl,
-				path: gravatarPath,
-				uri: `/gravatar/${filename}.png`
-			};
-		}
-
-		const gravatarPathJpg = path.resolve(
-			__dirname,
-			'../public',
-			'gravatar',
-			`${filename}.jpg`
-		);
-		const pngImg = await Jimp.read(gravatarPath);
-		pngImg
-			// .resize(256, 256) // resize
-			// .quality(60) // set JPEG quality
-			// .greyscale() // set greyscale
-			.write(gravatarPathJpg); // save
-		return {
-			url: gravatarUrl,
-			path: gravatarPathJpg,
-			uri: `/gravatar/${filename}.jpg`
-		};
-	}
 
 	createUser(user, cb) {
 		return new Promise(async (resolve, reject) => {
 			// let user;
 
-			let { username, src, email, oauth_id } = user;
-			if (/monorift\|/.test(oauth_id)) {
-				const salt = await bcrypt.genSalt();
-				oauth_id = `${oauth_id}${salt}`.substring(0, 24);
-				// user.oauth_id = oauth
-			}
-			const userData = { ...user, username, src, email, oauth_id };
+			// let { username, src, email, oauth_id } = user;
+			// if (/monorift\|/.test(oauth_id)) {
+			// 	const salt = await bcrypt.genSalt();
+			// 	oauth_id = `${oauth_id}${salt}`.substring(0, 24);
+			// 	// user.oauth_id = oauth
+			// }
+			// const userData = { ...user, username, src, email, oauth_id };
+			try {
+				const userModel = new UserModel(user, this);
+				const userData = await userModel;
+				console.log(userData);
+				const insertUserOp = await userModel.insert();
+				console.log(userModel.data);
+				resolve(userModel.data);
+				// const userData = await new UserModel(user, this);
+				// const insertMongoOp = await this.mongoInstance.insertOne(this.collection, userData);
+				// const insertMongoOp = await this.insertOne(userData);
 
-			this.existingUser(oauth_id, username)
-				// this.findByUsername(username)
-				.then(foundUser => {
-					if (foundUser) {
-						if (foundUser.username !== username) {
-							userData.oauth_id = oauth_id + '1';
-							return true;
+				// const _id = insertMongoOp.insertedId.toString();
+				// const bit_id = await this.insertUserIntoPostgres(_id, userData);
+				// const updateBitOp = await this.updateByOAuthId(oauth_id, { bit_id });
+			} catch (e) {
+				reject(e);
+			}
+			// .catch(e => {
+			// 	reject(e);
+			// });
+			if (false == true) {
+				console.log(userData);
+				this.existingUser(oauth_id, username)
+					// this.findByUsername(username)
+					.then(foundUser => {
+						if (foundUser) {
+							if (foundUser.username !== username) {
+								userData.oauth_id = oauth_id + '1';
+								return true;
+							}
+							const message = `Username '${username}' already exists`;
+							reject(message);
+							throw new Error(message);
+							return false;
 						}
-						const message = `Username '${username}' already exists`;
-						reject(message);
-						throw new Error(message);
-						return false;
-					}
-					return true;
-				})
-				.then(proceed => {
-					if (proceed) {
-						return this.createGravatar(oauth_id, email);
-					}
-				})
-				.then(gravatarData => {
-					userData.src['gravatar'] = gravatarData;
-					return;
-				})
-				.then(() => this.findByUsername(username))
-				.then(foundUser => {
-					if (foundUser) return false;
-					return this.mongoInstance.insertOne(this.collection, userData);
-				})
-				.then(result => {
-					// user = user;
-					if (result == false) return false;
-					const _id = result.insertedId.toString();
-					return this.insertUserIntoPostgres(_id, userData);
-				})
-				.then(async bit_id => {
-					const updateOp = await this.updateByOAuthId(oauth_id, { bit_id });
-					return { ...userData, bit_id };
-				})
-				.then(result => {
-					if (cb) return cb(result);
-					resolve(result);
-				})
-				.catch(e => {
-					console.error(e);
-				});
+						return true;
+					})
+					.then(proceed => {
+						if (proceed) {
+							return this.createGravatar(oauth_id, email);
+						}
+					})
+					.then(gravatarData => {
+						userData.src['gravatar'] = gravatarData;
+						return;
+					})
+					.then(() => this.findByUsername(username))
+					.then(foundUser => {
+						if (foundUser) return false;
+						return this.mongoInstance.insertOne(this.collection, userData);
+					})
+					.then(result => {
+						// user = user;
+						if (result == false) return false;
+						const _id = result.insertedId.toString();
+						return this.insertUserIntoPostgres(_id, userData);
+					})
+					.then(async bit_id => {
+						const updateOp = await this.updateByOAuthId(oauth_id, { bit_id });
+						return { ...userData, bit_id };
+					})
+					.then(result => {
+						if (cb) return cb(result);
+						resolve(result);
+					})
+					.catch(e => {
+						console.error(e);
+					});
+			}
 		});
 	}
 	async importProfile(profile, cb) {
@@ -179,7 +156,14 @@ class UserRepository extends Repository {
 		};
 		return this.createUser(obj, cb);
 	}
-	async createGuest(inputUsername, password) {
+	async createGuest(username, password) {
+		const user = await this.createUser({ username, password }).catch(e => {
+			console.error(e);
+			return Promise.reject(e);
+		});
+		return user;
+	}
+	async createGuestOld(inputUsername, password) {
 		const { username, error } = validateUsernamePassword(inputUsername, password);
 		if (error) return { error: error, success: false };
 		const id = 'guest'; // TODO: get id
@@ -276,13 +260,17 @@ class UserRepository extends Repository {
 		);
 		return { taken: false, success: true };
 	}
-	async getUsersPostgres(query = {}) {
-		const users = await this.postgresInstance
-			.knex('users')
-			.where(query)
-			.select('*');
-		return users;
+	// postgres
+	// async getUser(query) {
+
+	// }
+	async getUserById(id) {
+		const users = await this.query({ id: id });
+		console.log(users);
+		const [user] = users;
+		return user;
 	}
+
 	async getUsersPostgresByFriendStatus(username) {
 		// console.log
 		let users;
@@ -352,108 +340,7 @@ class UserRepository extends Repository {
 		// const ids = users.map(({ id }) => id);
 		return ids;
 	}
-	async publishFriendStatus(status, to, from) {
-		if (typeof to == 'string') {
-			return this.api.redisAsync(
-				'publish',
-				`${user}:friend_request`,
-				`${friend}:${status}`
-			);
-		}
-		return this.api.redisAsync(
-			'publish',
-			`${to.oauth_id}:friend_request`,
-			`${from.oauth_id}:${status}`
-		);
-	}
-	async acceptFriend(username, friendUsername) {
-		const [user, friend] = await this.getUserColumnsByUsername(
-			[username, friendUsername],
-			['oauth_id', 'id']
-		);
-		const accepted = await this.postgresInstance
-			.knex('friendship')
-			.update('status', friendStatus.accepted)
-			.where({ member1_id: user.id, member2_id: friend.id })
-			.orWhere({ member1_id: friend.id, member2_id: user.id });
-		const updateToFriend = await this.publishFriendStatus(
-			friendStatus.accepted,
-			friend,
-			user
-		);
-		const updateToSelf = await this.publishFriendStatus(
-			friendStatus.accepted,
-			user,
-			friend
-		);
 
-		return accepted;
-	}
-
-	async rejectFriend(username, friendUsername) {
-		const [user, friend] = await this.getUserColumnsByUsername(
-			[username, friendUsername],
-			['oauth_id', 'id']
-		);
-		const reject = await this.postgresInstance
-			.knex('friendship')
-			.update('status', friendStatus.rejected)
-			.where({ member1_id: user.id, member2_id: friend.id })
-			.orWhere({ member1_id: friend.id, member2_id: user.id });
-		const updateToFriend = await this.publishFriendStatus(
-			friendStatus.rejected,
-			friend,
-			user
-		);
-		const updateToSelf = await this.publishFriendStatus(
-			friendStatus.rejected,
-			user,
-			friend
-		);
-
-		return { reject };
-	}
-	async addFriend(username, friendUsername, mocked = false) {
-		// const [userId, friendId] = await this.getUsersIdsByUsername([
-		// 	username,
-		// 	friend
-		// ]);
-
-		const [user, friend] = await this.getUserColumnsByUsername(
-			[username, friendUsername],
-			['oauth_id', 'id']
-		);
-		const existing = await this.postgresInstance
-			.knex('friendship')
-			.select('status')
-			.where('member1_id', '=', user.id)
-			.andWhere('member2_id', '=', friend.id);
-		if (existing.length > 0) return {};
-		const inserted1 = await this.postgresInstance.knex('friendship').insert({
-			member1_id: user.id,
-			member2_id: friend.id,
-			status: friendStatus['sent'],
-			mocked
-		});
-		const inserted2 = await this.postgresInstance.knex('friendship').insert({
-			member1_id: friend.id,
-			member2_id: user.id,
-			status: friendStatus['pending'],
-			mocked
-		});
-		const updateToFriend = await this.publishFriendStatus(
-			friendStatus.pending,
-			friend,
-			user
-		);
-		const updateToSelf = await this.publishFriendStatus(
-			friendStatus.sent,
-			user,
-			friend
-		);
-
-		return { inserted1, inserted2 };
-	}
 	async getFriendsForUser(username) {
 		const friends = await this.postgresInstance
 			.knex('users')
@@ -489,9 +376,17 @@ class UserRepository extends Repository {
 			.del();
 		return { deleteMongo, deletePsql };
 	}
-	// resetUsers() {
-
-	// }
+	async testQuery() {
+		const users = await this.query({
+			id: [9391, 9401],
+			username: 'jcrosher3'
+		});
+		const usersOr = await this.queryMatching({
+			id: [9391, 9401],
+			username: 'kriccir'
+		});
+		console.log(users, usersOr);
+	}
 }
 
 module.exports = UserRepository;

@@ -202,13 +202,23 @@ const User = new GraphQLObjectType({
 		id: { type: GraphQLInt },
 		username: { type: GraphQLString },
 		email: { type: GraphQLString },
-		// email: { type: GraphQLString },
-		// email: { type: GraphQLString },
-		usingTempUsername: { type: GraphQLBoolean },
+		oauth_id: { type: GraphQLString },
+		mongo_id: { type: GraphQLString },
+		guest: { type: GraphQLBoolean },
 		mocked: { type: GraphQLBoolean },
-		bit_id: { type: GraphQLInt },
-		src: { type: Src }
+		gravatar: { type: GraphQLString }
 	})
+});
+
+const UserMongo = new GraphQLObjectType({
+	id: { type: GraphQLInt },
+	username: { type: GraphQLString },
+	email: { type: GraphQLString },
+	oauth_id: { type: GraphQLString },
+	usingTempUsername: { type: GraphQLBoolean },
+	mocked: { type: GraphQLBoolean },
+	bit_id: { type: GraphQLInt },
+	src: { type: Src }
 });
 
 const UserInput = new GraphQLInputObjectType({

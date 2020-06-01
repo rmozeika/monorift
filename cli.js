@@ -166,6 +166,29 @@ const argInterface = {
 				}
 			}
 		},
+		// shorthand: i for 'rift' and 2 for 'rp2
+		add: {
+			func: async ([type, addToPackage, ...packagesToAdd]) => {
+				const shorthand = { i: 'packages/rift', '2': 'packages/rp2' };
+
+				let addTo = shorthand[addToPackage] || addToPackage;
+				const addOpts = await Promise.all(
+					packagesToAdd.map(async packageName => {
+						let cmd = `lerna add ${packageName} ${addTo}`;
+
+						const { stdout, stderr } = await execa(cmd, { cwd: __dirname });
+						// const addOperation = await exec(cmd, { cwd: __dirname });
+
+						console.log(packageName, stdout);
+						console.error(packageName, stderr);
+					})
+				);
+				console.log(`
+					done adding to ${addTo}
+					${packagesToAdd.join(' ')}
+				`);
+			}
+		},
 		clean: {
 			func: async (...args) => {
 				execFile('./dev.sh/clean.sh', [], (error, stdout, stderr) => {

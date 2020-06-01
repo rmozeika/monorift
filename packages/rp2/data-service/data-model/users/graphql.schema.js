@@ -61,7 +61,7 @@ class UserSchema extends GraphqlSchemaInstance {
 				},
 				users: {
 					type: new GraphQLList(User),
-					resolve: async (parent, args) => {
+					resolve: async (parent, args, context) => {
 						// const { member2_id: id } = parent;
 						// const user = await this.repository.getUserById(id);
 						// const users = await this.repository.query({ id });
@@ -89,8 +89,9 @@ class UserSchema extends GraphqlSchemaInstance {
 				friends: {
 					// type: new GraphQLList(this.UserFriend),
 					type: this.FriendsList,
-					resolve: async (parent, args) => {
-						const { id } = parent;
+					resolve: async (parent, args, context) => {
+						const { id, admin } = context.user;
+						// const { id } = parent;
 						const user = await this.api.repositories.friends.query({
 							member1_id: id
 						});

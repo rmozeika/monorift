@@ -10,6 +10,7 @@
 		"docker": "docker build -f ../devops/Dockerfile ."
 	},
 	"dependencies": {
+		"apollo-server": "^2.14.1",
 		"apollo-server-express": "^2.14.1",
 		"babel-eslint": "^10.1.0",
 		"bcrypt": "^4.0.1",

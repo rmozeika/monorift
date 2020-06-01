@@ -1,4 +1,97 @@
 const GraphqlSchemaInstance = require('../Schema');
+const { ApolloServer, gql } = require('apollo-server-express');
+
+const typeDefs = gql`
+	type User {
+		id: Int!
+		username: String!
+		oauth_id: String!
+		email: String
+		mongo_id: String
+		mocked: Boolean
+		guest: Boolean
+		gravatar: String
+	}
+	fragment UserData on User {
+		oauth_id
+		username
+		gravatar
+	}
+
+	type UserMongo {
+		id: Int!
+		oauth_id: String!
+		username: String!
+		email: String
+		usingTempUsername: Boolean
+		mocked: Boolean
+		src: Src
+		bit_id: String
+	}
+
+	type Src {
+		first_name: String
+		last_name: String
+		displayName: String
+		gravatar: GravatarSrc
+	}
+
+	type GravatarSrc {
+		uri: String
+		path: String
+		url: String
+	}
+
+	input UserInput {
+		id: Int
+		username: String
+		oauth_id: String
+		email: String
+		mongo_id: String
+		mocked: Boolean
+		guest: Boolean
+		gravatar: String
+	}
+
+	input createMonoriftUserInput {
+		username: String!
+		password: String!
+	}
+
+	type createUserPayload {
+		user: User
+		status: String
+	}
+	type UserWithFriends {
+		id: Int!
+		username: String!
+		email: String
+		usingTempUsername: Boolean
+		mocked: Boolean
+		bit_id: Int
+		src: Src
+		friends: FriendsList
+	}
+	type FriendsList {
+		ids: [String]
+		users: [User]
+	}
+
+	type Mutation {
+		createUser(input: UserInput!): createUserPayload
+		createMonoriftUser(input: createMonoriftUserInput!): createUserPayload
+	}
+
+	type Query {
+		user(input: UserInput!): User
+		users(input: UserInput!): [User]
+		allUsers: [User]
+		friends(input: UserInput!): [User]
+		getFriendsForUser(input: UserInput!): UserWithFriends
+	}
+`;
+// import { makeExecutableSchema } from 'graphql-tools';
+const { makeExecutableSchema } = require('graphql-tools');
 
 const {
 	buildSchema,
@@ -22,7 +115,7 @@ class UserSchema extends GraphqlSchemaInstance {
 	static getRepoName() {
 		return 'users';
 	}
-	createSchema() {
+	createSchema2() {
 		this.UserFriend = new GraphQLObjectType({
 			name: 'user_friend',
 			// type: User,
@@ -101,7 +194,97 @@ class UserSchema extends GraphqlSchemaInstance {
 			})
 		});
 	}
+	createContext() {
+		this.context = async ({ req }) => {
+			const user = await this.api.repositories.auth.graphqlToken(req);
+			return { user };
+		};
+	}
+	createResolvers() {
+		this.resolvers = {
+			Query: {
+				user: (parent, args) => {
+					const { id } = args;
+					return this.repository.getUserById(id);
+					// return repository.findById(id);
+				},
+				users: (parent, args) => {
+					console.log(args);
+					const { input = {} } = args;
+					return this.repository.getUsersPostgres(input);
+				},
+				allUsers: () => {
+					return repository.getUsersPostgres();
+				},
+				getFriendsForUser: async (parent, args) => {
+					console.log(args);
+					const { input = {} } = args;
+					const users = await this.repository.getUsersPostgres(input);
+					const [user] = users;
+					return user;
+				},
+				friends: async (parent, args) => {
+					const { input } = args;
+					const user = await this.api.repositories.friends.query({
+						member1_id: input.id
+					});
+					return user;
+				}
+			},
+
+			Mutation: {
+				createUser: async (parent, args) => {
+					const { input } = args;
+					const user = await this.repository.createUser(input);
+					return user;
+				}
+			},
+
+			UserWithFriends: {
+				friends: async (parent, args, context) => {
+					const { id, admin } = context.user;
+					// const { id } = parent;
+					const user = await this.api.repositories.friends.query({
+						member1_id: id
+					});
+					return user;
+				}
+			},
+			FriendsList: {
+				ids: (parent, args) => {
+					const output = [];
+					parent.forEach(({ member2_id }) => output.push(member2_id));
+					return output;
+				},
+				users: async (parent, args, context) => {
+					// const { member2_id: id } = parent;
+					// const user = await this.repository.getUserById(id);
+					// const users = await this.repository.query({ id });
+					// const [ user ] = users;
+					// console.log(user);
+					const ids = parent.map(({ member2_id }) => member2_id);
+					const users = await this.repository.query({ id: ids });
+					//  ptr
+					return users;
+				}
+			}
+		};
+	}
+	createSchema() {
+		this.createResolvers();
+		this.createContext();
+	}
 	createRootQuery() {
+		this.createSchema();
+		this.serverConfig = {
+			typeDefs,
+			resolvers: this.resolvers,
+			context: this.context
+		};
+		// const apolloSchema = makeExecutableSchema(this.serverConfig);
+		// this.RootQuery = apolloSchema;
+	}
+	createRootQuery2() {
 		this.createSchema();
 		const { repository, UserWithFriends } = this;
 		this.RootQuery = new GraphQLObjectType({
@@ -210,17 +393,6 @@ const User = new GraphQLObjectType({
 	})
 });
 
-const UserMongo = new GraphQLObjectType({
-	id: { type: GraphQLInt },
-	username: { type: GraphQLString },
-	email: { type: GraphQLString },
-	oauth_id: { type: GraphQLString },
-	usingTempUsername: { type: GraphQLBoolean },
-	mocked: { type: GraphQLBoolean },
-	bit_id: { type: GraphQLInt },
-	src: { type: Src }
-});
-
 const UserInput = new GraphQLInputObjectType({
 	name: 'UserInput',
 	fields: () => ({
@@ -242,7 +414,19 @@ const Src = new GraphQLObjectType({
 		gravatar: { type: GravatarSrc }
 	})
 });
-
+const UserMongo = new GraphQLObjectType({
+	name: 'user_mongo',
+	fields: () => ({
+		id: { type: GraphQLInt },
+		username: { type: GraphQLString },
+		email: { type: GraphQLString },
+		oauth_id: { type: GraphQLString },
+		usingTempUsername: { type: GraphQLBoolean },
+		mocked: { type: GraphQLBoolean },
+		bit_id: { type: GraphQLInt },
+		src: { type: Src }
+	})
+});
 const GravatarSrc = new GraphQLObjectType({
 	name: 'gravatar',
 	fields: () => ({

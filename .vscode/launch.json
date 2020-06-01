@@ -57,7 +57,7 @@
 			"request": "launch",
 			"name": "cli add",
 			"program": "${workspaceFolder}/cli.js",
-			"args": ["add", "2", "apollo-server-express"]
+			"args": ["add", "2", "viewjs", "cropperjs"]
 		},
 		{
 			"type": "node",

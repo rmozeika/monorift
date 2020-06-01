@@ -176,13 +176,19 @@ const argInterface = {
 					packagesToAdd.map(async packageName => {
 						let cmd = `lerna add ${packageName} ${addTo}`;
 
-						const { stdout, stderr } = await execa(cmd, { cwd: __dirname });
+						const { stdout, stderr } = await execa(cmd, { cwd: __dirname }).catch(
+							e => {
+								console.error(e);
+							}
+						);
 						// const addOperation = await exec(cmd, { cwd: __dirname });
 
 						console.log(packageName, stdout);
 						console.error(packageName, stderr);
 					})
-				);
+				).catch(e => {
+					console.error(e);
+				});
 				console.log(`
 					done adding to ${addTo}
 					${packagesToAdd.join(' ')}

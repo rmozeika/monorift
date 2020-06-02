@@ -16,13 +16,17 @@ class Api {
 	}
 
 	async init(app) {
-		this.app = app;
-		await this._connectMongo();
-		await this._connectPostgres();
-		await this._connectRedis();
-		this._initBruteProtection();
-		this._registerRoutes();
-		// this._createRootUser();
+		try {
+			this.app = app;
+			await this._connectMongo();
+			await this._connectPostgres();
+			await this._connectRedis();
+			this._initBruteProtection();
+			this._registerRoutes();
+			// this._createRootUser();
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	_connectMongo() {

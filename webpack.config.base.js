@@ -59,8 +59,9 @@ module.exports = {
 			{
 				test: /\.(web.js|js|jsx|mjs|ts|tsx)$/,
 				include: [
-					path.resolve(__dirname, 'node_modules/react-native-elements'),
-					path.resolve(__dirname, 'node_modules/react-native-elements/src'),
+					// path.resolve(__dirname, 'node_modules/react-native-elements'),
+					// path.resolve(__dirname, 'node_modules/react-native-elements/src'),
+					path.resolve(__dirname, 'node_modules/react-native-svg-web'),
 					path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
 					path.resolve(__dirname, 'node_modules/react-native-ratings'),
 					path.resolve(__dirname, 'node_modules/native-base-shoutem-theme'),

@@ -77,10 +77,13 @@ const setupDefaultRoute = () => {
 		app.use(express.static(buildpath, opts));
 	}
 };
-const setFurtherRoutes = () => {
+const setFurtherRoutes = async () => {
 	const userSchema = new Schema(api);
+	const apolloConfig = await userSchema.createSchema();
+
 	const server = new ApolloServer(userSchema.serverConfig);
 	server.applyMiddleware({ app });
+	app.use('/profile', express.static(path.join(__dirname, 'site')));
 
 	// app.use(
 	// 	'/graphql',
@@ -120,7 +123,6 @@ api.init(app).then(() => {
 	console.log('api ready');
 });
 // exports.api = api;
-app.use('/profile', express.static(path.join(__dirname, 'site')));
 
 let buildpath;
 

@@ -1,0 +1,95 @@
+type User {
+	id: Int!
+	username: String!
+	oauth_id: String!
+	email: String
+	mongo_id: String
+	mocked: Boolean
+	guest: Boolean
+	gravatar: String
+}
+fragment UserData on User {
+	oauth_id
+	username
+	gravatar
+}
+
+type UserMongo {
+	id: Int!
+	oauth_id: String!
+	username: String!
+	email: String
+	usingTempUsername: Boolean
+	mocked: Boolean
+	src: Src
+	bit_id: String
+}
+
+type Src {
+	first_name: String
+	last_name: String
+	displayName: String
+	gravatar: GravatarSrc
+}
+
+type GravatarSrc {
+	uri: String
+	path: String
+	url: String
+}
+
+input UserInput {
+	id: Int
+	username: String
+	oauth_id: String
+	email: String
+	mongo_id: String
+	mocked: Boolean
+	guest: Boolean
+	gravatar: String
+}
+
+input createMonoriftUserInput {
+	username: String!
+	password: String!
+}
+
+type createUserPayload {
+	user: User
+	status: String
+}
+
+type Friend {
+	status: String
+	member1_id: Int
+	member2_id: Int
+	mocked: Boolean
+}
+
+type UserWithFriends {
+	id: Int!
+	username: String!
+	email: String
+	usingTempUsername: Boolean
+	mocked: Boolean
+	bit_id: Int
+	src: Src
+	friends: FriendsList
+}
+type FriendsList {
+	ids: [String]
+	users: [User]
+}
+
+type Mutation {
+	createUser(input: UserInput!): createUserPayload
+	createMonoriftUser(input: createMonoriftUserInput!): createUserPayload
+}
+
+type Query {
+	user(input: UserInput!): User
+	users(input: UserInput!): [User]
+	allUsers: [User]
+	friends(input: UserInput!): [User]
+	getFriendsForUser(input: UserInput!): UserWithFriends
+}

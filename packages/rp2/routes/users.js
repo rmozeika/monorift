@@ -24,18 +24,7 @@ class UserRoute extends Route {
 			this.router.post('/createUser', authenticate, this.createUser.bind(this));
 			// this.router.post('/online', authenticate, this.createUser.bind(this));
 			this.router.post('/online', this.fetchOnlineUsers.bind(this));
-			this.router.post('/friends', authenticate, this.fetchFriends.bind(this));
-			this.router.post('/friends/add', authenticate, this.addFriend.bind(this));
-			this.router.post(
-				'/friends/accept',
-				authenticate,
-				this.acceptFriend.bind(this)
-			);
-			this.router.post(
-				'/friends/reject',
-				authenticate,
-				this.rejectFriend.bind(this)
-			);
+
 			this.router.get('/username', authenticate, this.getUser.bind(this));
 			this.router.post(
 				'/username/temp',
@@ -57,28 +46,16 @@ class UserRoute extends Route {
 		const user = await this.repository.query({ id: idNum });
 		res.send(user);
 	}
-	getUserFromReq(req) {
-		if (!useSession) {
-			const { user = {} } = req;
-			return user;
-		} else {
-			const { user = {} } = req.session && req.session.passport;
-			return user;
-		}
-	}
 
 	retrieveAll(req, res) {
-		// var accessGroups = 'sysadmin';
-		// if (!this.checkPermission({ req, res }, accessGroups)) return;
-		const test = async () => {
-			// const user = await this.repository.findByUsername('darkness94');
-			const users = await this.repository.findAll();
-			res.send(users);
-		};
-		test();
-		// this.repository.findAll((err, data) => {
-		//     res.send(data);
-		// });
+		const users = this.repository
+			.findAll()
+			.then(() => {
+				res.send(users);
+			})
+			.catch(e => {
+				res.error(e);
+			});
 	}
 
 	createUser(req, res) {
@@ -132,30 +109,7 @@ class UserRoute extends Route {
 			res.send(objUsers);
 		});
 	}
-	// unused
-	async fetchFriends(req, res) {
-		const { username } = this.getUserFromReq(req);
 
-		const friends = await this.repository.getFriendsForUser(username);
-		res.send(friends);
-	}
-	async addFriend(req, res) {
-		const { username } = this.getUserFromReq(req);
-		const { friend } = req.body;
-		const result = await this.repository.addFriend(username, friend.username);
-		res.send(true);
-	}
-	async acceptFriend(req, res) {
-		const { username } = this.getUserFromReq(req);
-		const { friend } = req.body;
-		this.repository.acceptFriend(username, friend.username);
-		res.send(true);
-	}
-	async rejectFriend(req, res) {
-		const { username } = this.getUserFromReq(req);
-		const { friend } = req.body;
-		this.repository.rejectFriend(username, friend.username);
-	}
 	async updateTempUsername(req, res) {
 		const user = this.getUserFromReq(req);
 		const { username: tempUsername } = user;

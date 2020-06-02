@@ -53,8 +53,7 @@ class AuthRepository extends Repository {
 	}
 	graphqlToken(req) {
 		return new Promise((resolve, reject) => {
-			const authHeader = req.headers['authorization'];
-			const token = authHeader && authHeader.split(' ')[1];
+			const token = req.cookies.token;
 			if (token == null) return resolve({});
 
 			jwt.verify(token, JWT_SECRET, (err, user) => {

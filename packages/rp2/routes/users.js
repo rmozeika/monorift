@@ -13,32 +13,23 @@ const authenticate = !useSession ? authenticateToken : authenticateSession;
 class UserRoute extends Route {
 	constructor(api) {
 		super(api, routeName, repoName);
-		setImmediate(() => {
-			this.router.get('/', authenticate, this.retrieveAll.bind(this));
-			// this.router.get('/all', authenticate, this.fetchUserList.bind(this));
-			// this.router.post('/all', authenticate, this.fetchUserList.bind(this));
-			this.router.get('/all', this.fetchUserList.bind(this));
-			this.router.post('/all', this.fetchUserList.bind(this));
-
-			this.router.post('/', authenticate, this.retrieveAll.bind(this));
-			this.router.post('/createUser', authenticate, this.createUser.bind(this));
-			// this.router.post('/online', authenticate, this.createUser.bind(this));
-			this.router.post('/online', this.fetchOnlineUsers.bind(this));
-
-			this.router.get('/username', authenticate, this.getUser.bind(this));
-			this.router.post(
-				'/username/temp',
-				authenticate,
-				this.updateTempUsername.bind(this)
-			);
-			this.router.post(
-				'/guest/register',
-				this.api.bruteforce.prevent,
-				this.registerAsGuest.bind(this)
-			);
-			this.router.get('/id', this.getUserById.bind(this));
-		});
 	}
+	retrieveAllRoute = this.route`get/${this.retrieveAll}${authenticate}`;
+	retrieveAllRoutePost = this.route`post/${this.retrieveAll}${authenticate}`;
+	fetchUserListRoute = this.route`get/all${this.fetchUserList}`;
+	fetchUserListRoutePost = this.route`post/all${this.fetchUserList}`;
+	// change this on frontend
+	createUserRoute = this
+		.route`post/create/user${this.createUser}${authenticate}`;
+	fetchOnlineRoute = this
+		.route`post/online${this.fetchOnlineUsers}${authenticate}`;
+	getUserRoute = this.route`get/username${this.getUser}${authenticate}`;
+	updateTempUsernameRoute = this
+		.route`post/username/temp${this.updateTempUsername}${authenticate}`;
+	registerAsGuestRoute = this
+		.route`post/guest/register${this.registerAsGuest}${this.api.bruteforce.prevent}`;
+	getUserByIdRoute = this.route`get/id${this.getUserById}${authenticate}`;
+
 	async getUserById(req, res) {
 		const { query } = req;
 		const { id } = query;

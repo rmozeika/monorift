@@ -10,13 +10,7 @@ class Route {
 		if (repoName) {
 			this.repository = api.repositories[repoName];
 		}
-		this.makeRoutesNew();
-		if (this.constructor.routeTypes) {
-			this.makeRoutesNew();
-			// const  rese = this.publicStaticMethod();
-			// const privvy = this.constructor.staticNewField;
-			// console.log(rese, privvy);
-		}
+
 		// extends methods, add config for this
 		if (false) {
 			setImmediate(() => {
@@ -27,6 +21,8 @@ class Route {
 			});
 		}
 	}
+	// used as template literal tag
+	// e.g. createUser = route`post/users/create${function}${middleware}`
 	route([route], handler, ...restMiddleware) {
 		// const [ prefix, routePath = '/' ] = route[0].split('/');
 		const [full, requestType, routePath] = /(post|get|put)?(\/.*)/.exec(route);
@@ -38,27 +34,6 @@ class Route {
 		]);
 		// console.log([...args]);
 		return [routePath];
-	}
-	makeRoutesNew() {
-		if (!this.routeTypes) return;
-
-		const routeTypes = this.routeTypes;
-		// const protectRoutes = this.protectRoutes;
-
-		if (routeTypes) {
-			Object.entries(routeTypes).forEach(
-				([route, [requestType = 'post', handler, ...restMiddleware]]) => {
-					const routeBind = handler.bind(this);
-					const handlerWithMiddleware = [route, ...restMiddleware, routeBind];
-					// const middleware = protectRoutes[route];
-					this.router[requestType].apply(this.router, handlerWithMiddleware);
-				}
-			);
-		}
-		// const other = this.routeTypes2;
-		// const  rese = this.publicStaticMethod();
-		// const privvy = this.staticNewField;
-		// console.log(rese, privvy);
 	}
 
 	makeRoute(method) {

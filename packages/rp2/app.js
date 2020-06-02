@@ -21,7 +21,8 @@ const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 const graphqlHTTP = require('express-graphql');
 const Schema = require('./data-service/data-model/users/graphql.schema.js');
-console.log('VERSION', '0.5.1');
+console.log('VERSION', '0.5.3');
+const { ApolloServer, gql } = require('apollo-server-express');
 
 var app = express();
 // probably remove as this is already created in api.js
@@ -76,16 +77,22 @@ const setupDefaultRoute = () => {
 		app.use(express.static(buildpath, opts));
 	}
 };
-const setFurtherRoutes = () => {
+const setFurtherRoutes = async () => {
 	const userSchema = new Schema(api);
-	app.use(
-		'/graphql',
-		graphqlHTTP({
-			schema: userSchema.Schema,
-			// rootValue: root,
-			graphiql: true
-		})
-	);
+	const apolloConfig = await userSchema.createSchema();
+
+	const server = new ApolloServer(userSchema.serverConfig);
+	server.applyMiddleware({ app });
+	app.use('/profile', express.static(path.join(__dirname, 'site')));
+
+	// app.use(
+	// 	'/graphql',
+	// 	graphqlHTTP({
+	// 		schema: userSchema.Schema,
+	// 		// rootValue: root,
+	// 		graphiql: true
+	// 	})
+	// );
 	app.use(
 		function(req, res, next) {
 			var err = new Error('Not Found');
@@ -116,7 +123,6 @@ api.init(app).then(() => {
 	console.log('api ready');
 });
 // exports.api = api;
-app.use('/profile', express.static(path.join(__dirname, 'site')));
 
 let buildpath;
 

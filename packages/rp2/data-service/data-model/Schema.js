@@ -1,19 +1,13 @@
-const {
-	GraphQLSchema,
-	GraphQLObjectType,
-	GraphQLString,
-	GraphQLBoolean,
-	GraphQLInt,
-	GraphQLList
-} = require('graphql');
+const { gql } = require('apollo-server-express');
+const getRawSchema = require('data-model');
 
 class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
-		// Get repo name from subclass;
-		const repo = this.constructor.getRepoName(); //this.repo || 'users';
-		this.repository = api.repositories[repo];
-		this.createRootQuery();
+		// Get repoName name from subclass;
+		this.repoName = this.constructor.getRepoName(); //this.repoName || 'users';
+		this.repository = api.repositories[this.repoName];
+		// this.createRootQuery();
 	}
 	// createRootQuery() {
 	// 	this.RootQuery = new GraphQLObjectType({
@@ -37,18 +31,43 @@ class GraphqlSchemaInstance {
 	// 		}
 	// 	});
 	// }
+	async createSchema() {
+		await this.createTypeDefs();
+		this.createResolvers();
+		this.createContext();
+		this.serverConfig = {
+			typeDefs: this.typeDefs,
+			resolvers: this.resolvers,
+			context: this.context
+		};
+		return this.serverConfig;
+	}
+	async createTypeDefs() {
+		const rawSchema = await getRawSchema(this.repoName);
+		this.typeDefs = gql`
+			${rawSchema}
+		`;
+		return;
+	}
+	// unused
+	async createRootQuery() {
+		this.createSchema();
+		this.serverConfig = {
+			typeDefs: this.typeDefs,
+			resolvers: this.resolvers,
+			context: this.context
+		};
+		// const apolloSchema = makeExecutableSchema(this.serverConfig);
+		// this.RootQuery = apolloSchema;
+	}
 	get schemas() {
 		return this._schemas;
 	}
-	_schemas = {
-		// User,
-		// Src,
-		// GravatarSrc,
-	};
-	get Schema() {
-		const Schema = new GraphQLSchema({
-			query: this.RootQuery
-		});
-	}
+	_schemas = {};
+	// get Schema() {
+	// 	const Schema = new GraphQLSchema({
+	// 		query: this.RootQuery
+	// 	});
+	// }
 }
 module.exports = GraphqlSchemaInstance;

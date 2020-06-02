@@ -37,9 +37,6 @@ module.exports = {
 			{
 				test: /\.(js|jsx|mjs)$/,
 				include: [
-					path.resolve(__dirname, 'node_modules/react-native-elements'),
-					path.resolve(__dirname, 'node_modules/react-native-elements/src'),
-
 					path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
 					path.resolve(__dirname, 'node_modules/react-native-ratings')
 				],

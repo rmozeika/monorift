@@ -1,5 +1,6 @@
 const express = require('express');
 var config = require('../config.js');
+const { useSession } = require('../config');
 
 class Route {
 	constructor(api, routeName, repoName) {
@@ -9,6 +10,7 @@ class Route {
 		if (repoName) {
 			this.repository = api.repositories[repoName];
 		}
+
 		// extends methods, add config for this
 		if (false) {
 			setImmediate(() => {
@@ -18,6 +20,20 @@ class Route {
 				});
 			});
 		}
+	}
+	// used as template literal tag
+	// e.g. createUser = route`post/users/create${function}${middleware}`
+	route([route], handler, ...restMiddleware) {
+		// const [ prefix, routePath = '/' ] = route[0].split('/');
+		const [full, requestType, routePath] = /(post|get|put)?(\/.*)/.exec(route);
+		// const boundHandler = handler.bind(this);
+		this.router[requestType].apply(this.router, [
+			routePath,
+			...restMiddleware,
+			handler.bind(this)
+		]);
+		// console.log([...args]);
+		return [routePath];
 	}
 
 	makeRoute(method) {
@@ -66,6 +82,16 @@ ${util.inspect(req.user, false, null)}
 
 	getRouter() {
 		return this.router;
+	}
+
+	getUserFromReq(req) {
+		if (!useSession) {
+			const { user = {} } = req;
+			return user;
+		} else {
+			const { user = {} } = req.session && req.session.passport;
+			return user;
+		}
 	}
 }
 

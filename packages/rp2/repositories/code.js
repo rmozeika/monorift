@@ -1,6 +1,5 @@
 var Repository = require('./repository.js');
 const path = require('path');
-const esprima = require('esprima');
 const collection = 'code';
 const fs = require('fs');
 const util = require('util');

@@ -55,7 +55,14 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "cli build",
+			"name": "cli add",
+			"program": "${workspaceFolder}/cli.js",
+			"args": ["add", "2", "viewjs", "cropperjs"]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "cli xfer",
 			"program": "${workspaceFolder}/cli.js",
 			"args": ["transfer", "dist"]
 		},

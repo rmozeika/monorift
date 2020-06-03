@@ -53,10 +53,5 @@ class GraphqlSchemaInstance {
 		return this._schemas;
 	}
 	_schemas = {};
-	// get Schema() {
-	// 	const Schema = new GraphQLSchema({
-	// 		query: this.RootQuery
-	// 	});
-	// }
 }
 module.exports = GraphqlSchemaInstance;

@@ -21,12 +21,10 @@ const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 const graphqlHTTP = require('express-graphql');
 const Schema = require('./data-service/data-model/users/graphql.schema.js');
-console.log('VERSION', '0.6.1');
+console.log('VERSION', '0.6.2');
 const { ApolloServer, gql } = require('apollo-server-express');
 
 var app = express();
-// probably remove as this is already created in api.js
-// let client = redis.createClient(redisPort, redisConnectionString);
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
@@ -55,22 +53,17 @@ const setupDefaultRoute = () => {
 		const webpackConfig =
 			debug == 'false'
 				? require('../../webpack.config.prod.js')
-				: // : require('../../webpack.config.prod.js');
-				  require('../../webpack.config.js');
+				: require('../../webpack.config.js');
 		const buildpath = path.resolve(webpackConfig.output.path);
 		app.get(['/about', '/admin'], (req, res, next) => {
 			res.sendFile(path.resolve(buildpath, 'index.html'));
 		});
 		app.use(express.static(buildpath, opts));
-		// app.use('*', express.static(path.resolve(webpackConfig.output.path)));
-		// app.use('*', express.static(path.resolve(webpackConfig.output.path)));
 	} else {
 		console.log('Is remote');
 		const opts = {};
 
 		const buildpath = path.resolve(__dirname, './dist.web');
-		// app.use(express.static(__dirname + './dist.web'));
-		// app.use('*', express.static(path.resolve(__dirname, './dist.web')));
 		app.get(['/about', '/admin'], (req, res, next) => {
 			res.sendFile(path.resolve(buildpath, 'index.html'));
 		});
@@ -85,14 +78,6 @@ const setFurtherRoutes = async () => {
 	server.applyMiddleware({ app });
 	app.use('/profile', express.static(path.join(__dirname, 'site')));
 
-	// app.use(
-	// 	'/graphql',
-	// 	graphqlHTTP({
-	// 		schema: userSchema.Schema,
-	// 		// rootValue: root,
-	// 		graphiql: true
-	// 	})
-	// );
 	app.use(
 		function(req, res, next) {
 			var err = new Error('Not Found');
@@ -119,19 +104,14 @@ setupDefaultRoute();
 appSession(app);
 app.use(jwtMiddleware.userFromToken);
 api.init(app).then(() => {
-	setFurtherRoutes();
 	console.log('api ready');
+	setFurtherRoutes();
+	console.log('App ready!');
 });
-// exports.api = api;
 
-let buildpath;
-
-console.log('App ready!');
 app.api = api;
 const socketIO = io();
 app.io = socketIO;
-// api.redis = client;
-// api.redis = client;
 
 function onAuthorizeSuccess(data, accept) {
 	console.log('successful connection to socket.io');
@@ -150,47 +130,14 @@ app.io.on('connection', async socket => {
 	const { oauth_id } = await api.repositories.auth.userFromSocket(socket);
 	const userData = oauth_id ? await usersRepo.findById(oauth_id) : false;
 	const user = usersRepo.getPublicUser(userData);
-	// 	if (isUser) {
-	// 		const key = client.sadd('online_users', user.oauth_id);
-	// 		client.setbit('online_bit', user.bit_id, 1);
-	// 		client.set(user.oauth_id, socket.id);
-	// 		client.hmset(`user:${user.username}`, [
-	// 			'socketid',
-	// 			socket.id,
-	// 			'key',
-	// 			user.oauth_id
-	// 		]);
-	// 	}
-	// 	app.api.repositories.users
-	// 		.updateByUsername(user.username, { socket_id: socket.id })
-	// 		.then(result => {
-	// 			console.log(result);
-	// 		});
+
 	socket.on('check_auth', async ack => {
 		if (user) {
-			// const token = jwt.sign(user, JWT_SECRET);
 			ack({ user });
 			return;
 		}
-		// const token = jwt.sign(session, JWT_SECRET);
 		ack({ user: false });
-		// ack({ user: false, token });
 	});
-	// 	socket.on('disconnect', socket => {
-	// 		// client.setbit('online_bit', user.bit_id, 1);
-
-	// 		console.log('disconnected');
-	// 		if (user.username) {
-	// 			client.srem('online_users', user.oauth_id);
-	// 		}
-	// 	});
 });
-// app.io.on('disconnect', async socket => {
-// 	console.log('disconnected');
-// });
-
-// app.io.on('message', function(msg) {
-// 	// console.log(msg);
-// });
 
 module.exports = app;

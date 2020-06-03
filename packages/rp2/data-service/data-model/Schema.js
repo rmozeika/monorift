@@ -1,5 +1,11 @@
 const { gql, SchemaDirectiveVisitor } = require('apollo-server-express');
-const getRawSchema = require('data-model');
+const { remote } = require('../../config');
+let getRawSchema;
+if (remote == 'false') {
+	getRawSchema = require('data-model');
+} else {
+	getRawSchema = require('../../../data-model/index.js');
+}
 
 class GraphqlSchemaInstance {
 	constructor(api) {

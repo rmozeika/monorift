@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const { gql, SchemaDirectiveVisitor } = require('apollo-server-express');
 const getRawSchema = require('data-model');
 
 class GraphqlSchemaInstance {
@@ -9,36 +9,17 @@ class GraphqlSchemaInstance {
 		this.repository = api.repositories[this.repoName];
 		// this.createRootQuery();
 	}
-	// createRootQuery() {
-	// 	this.RootQuery = new GraphQLObjectType({
-	// 		name: 'RootQueryType',
-	// 		fields: {
-	// 			users: {
-	// 				type: new GraphQLList(User),
-	// 				resolve: () => {
-	// 					return api.repositories.users.getUsersPostgres();
-	// 				}
-	// 			},
-	// 			user: {
-	// 				type: User,
-	// 				args: {
-	// 					id: { type: GraphQLString }
-	// 				},
-	// 				resolve: (id) => {
-	// 					api.repositories.users.getUserById(id);
-	// 				}
-	// 			}
-	// 		}
-	// 	});
-	// }
+
 	async createSchema() {
 		await this.createTypeDefs();
 		this.createResolvers();
 		this.createContext();
+		await this.createDirectiveResolvers();
 		this.serverConfig = {
 			typeDefs: this.typeDefs,
 			resolvers: this.resolvers,
-			context: this.context
+			context: this.context,
+			directiveResolvers: this.directiveResolvers
 		};
 		return this.serverConfig;
 	}
@@ -49,12 +30,14 @@ class GraphqlSchemaInstance {
 		`;
 		return;
 	}
+	async createDirectiveResolvers() {}
 	// unused
 	async createRootQuery() {
-		this.createSchema();
+		this.serverConfig = await this.createSchema();
 		this.serverConfig = {
 			typeDefs: this.typeDefs,
 			resolvers: this.resolvers,
+			directiveResolvers: this.directiveResolvers,
 			context: this.context
 		};
 		// const apolloSchema = makeExecutableSchema(this.serverConfig);

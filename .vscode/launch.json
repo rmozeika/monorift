@@ -69,6 +69,13 @@
 		{
 			"type": "node",
 			"request": "launch",
+			"name": "cli build",
+			"program": "${workspaceFolder}/cli.js",
+			"args": ["build"]
+		},
+		{
+			"type": "node",
+			"request": "launch",
 			"name": "deploy-server",
 			"program": "${workspaceFolder}/packages/deploy/hooks.js",
 			"smartStep": true

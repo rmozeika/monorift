@@ -54,6 +54,7 @@ services:
    - ../../../private/mongodb.env
   volumes:
    - ../data/db:/data/db
+   - ../../data-model:/data-model
    - ../data/logs/mongo:/data/logs
    - ../data/etc/mongo/mongod.conf:/etc/mongod.conf
   command:

@@ -6,6 +6,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { exec, execFile, spawn } = require('child_process');
 const execa = util.promisify(require('child_process').exec);
+const execFileAsync = util.promisify(execFile);
 const transferFiles = require('./scripts/xfer-files.js');
 
 let args = process.argv.slice(2);
@@ -128,17 +129,19 @@ const argInterface = {
 		build: {
 			func: async () => {
 				console.log('Building docker locally for remote deployment...');
-				const child = execFile(
+				const child = await execFileAsync(
 					'./packages/deploy/.bin/update-stage.sh',
 					[],
-					{ cwd: __dirname },
-					(error, stdout, stderr) => {
-						if (error) {
-							throw error;
-						}
-						console.log(stdout);
-					}
+					{ cwd: __dirname }
 				);
+				console.log(child);
+				// (error, stdout, stderr) => {
+				// 	if (error) {
+				// 		throw error;
+				// 	}
+				// 	console.log(stdout);
+				// }
+				// );
 			}
 		},
 		start: {

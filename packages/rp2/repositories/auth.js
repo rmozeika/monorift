@@ -51,9 +51,14 @@ class AuthRepository extends Repository {
 			next();
 		});
 	}
+	getTokenFromHeader(req) {
+		const authHeader = req.headers['authorization'];
+		const token = authHeader && authHeader.split(' ')[1];
+		return token;
+	}
 	graphqlToken(req) {
 		return new Promise((resolve, reject) => {
-			const token = req.cookies.token;
+			let token = req.cookies.token || this.getTokenFromHeader(req);
 			if (token == null) return resolve({});
 
 			jwt.verify(token, JWT_SECRET, (err, user) => {

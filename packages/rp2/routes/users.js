@@ -74,7 +74,7 @@ class UserRoute extends Route {
 	async registerAsGuest(req, res) {
 		const { username, password } = req.body;
 		console.log('Registering guest', username);
-		const { success, error, ...user } = await this.repository
+		const { success, error, user } = await this.repository
 			.createGuest(username, password)
 			.catch(e => {
 				return { success: false, error: e };

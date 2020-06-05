@@ -15,6 +15,7 @@ import 'isomorphic-unfetch';
 
 import * as Actions from '@actions';
 import { get, post } from '@core/api';
+import { createGuest } from '@core/api/apollo';
 
 const { AUTH } = Actions;
 import io from 'socket.io-client';
@@ -75,6 +76,9 @@ function* createGuestSaga(action) {
 	try {
 		const { username, password } = action.payload;
 		const origin = originLink('createGuest');
+		const { success, error, user } = yield call(createGuest, username, password);
+		debugger; //remove
+
 		// yield post({
 		// 	method: 'POST',
 		// 	headers: {
@@ -83,11 +87,10 @@ function* createGuestSaga(action) {
 		// 	},
 		// 	body: JSON.stringify({query: "{ hello }"})
 		//   }
-		const { data: user, success, error } = yield post('/graphql', {
-			query: `{ createUser: { username }`,
-			variables: { username, password }
-		});
-		debugger; //remove
+		// const { data: user, success, error } = yield post('/graphql', {
+		// 	query: `{ createUser: { username }`,
+		// 	variables: { username, password }
+		// });
 		// const { user, success, error } = yield post(origin, { username, password });
 
 		// console.log(result);
@@ -103,8 +106,8 @@ function* createGuestSaga(action) {
 			yield put({ type: AUTH.LOGIN.FAILURE, error: 'Please try again' });
 		}
 	} catch (e) {
+		console.error(e);
 		debugger; //error
-		console.log(e);
 	}
 }
 

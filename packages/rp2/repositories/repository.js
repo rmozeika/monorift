@@ -45,6 +45,44 @@ class Repository {
 
 		return data;
 	}
+	async update(user, doc, opts = {}) {
+		const operations = {};
+		if (this.collection) {
+			let filter = this.Model.convertToMongo(user);
+			let data = this.Model.convertToMongo(doc);
+			const mongoOp = await this.updateMany({
+				filter,
+				doc: { $set: data },
+				opts
+			}).catch(e => {
+				console.log(e);
+			});
+			operations.mongo = mongoOp;
+		}
+		if (this.table) {
+			let filter = user;
+			let data = doc;
+			if (this.Model) {
+				filter = this.Model.convertToPg(user);
+				data = this.Model.convertToPg(doc);
+				console.log(user);
+
+				// const userModel = new this.Model.(filter, this);
+				// // const userData = await userModel;
+				// data = userModel.mapPg();
+			}
+			const pgOp = await this.updateRow(filter, data);
+			operations.pg = pgOp;
+		}
+		return operations;
+	}
+	async updateRow(where, data) {
+		const op = await this.postgresInstance
+			.knex(this.table)
+			.where(where)
+			.update(data);
+		return op;
+	}
 	extendMethods() {
 		this.mongoInstance.getMethodNames().forEach(method => {
 			this[method] = (object, subcollection, opts, cb) => {

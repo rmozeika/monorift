@@ -19,7 +19,7 @@ import 'isomorphic-unfetch';
 import io from 'socket.io-client';
 import { get, post } from '@core/api';
 
-import { getFriends } from '@core/api/apollo';
+import { getFriends, getUserById } from '@core/api/apollo';
 
 import * as Actions from '@actions';
 import { originLink } from '@core/utils';
@@ -33,7 +33,8 @@ const selectUsers = state => {
 // }
 function* fetchUsers() {
 	try {
-		const friends = yield getFriends();
+		const friends = yield call(getFriends);
+		console.log(testUser);
 		debugger; //remove
 		console.log(friends);
 		const origin = originLink('userList');

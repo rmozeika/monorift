@@ -1,8 +1,13 @@
-import ApolloClient, { gql } from 'apollo-boost';
+// import ApolloClient, { gql } from 'apollo-clienr';
+import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client';
+
 // or you can use `import gql from 'graphql-tag';` instead
 
 const client = new ApolloClient({
-	uri: 'https://monorift.com/graphql'
+	cache: new InMemoryCache(),
+	link: new HttpLink({
+		uri: 'https://monorift.com/graphql'
+	})
 });
 const GET_FRIENDS = gql`
 	{
@@ -121,10 +126,10 @@ export async function createGuest(username, password) {
 				//   }
 			}
 		});
-		console.log(res);
+		// console.log(res.data.createGuest);
 		debugger; //remove
 
-		return res;
+		return res.data.createGuest;
 	} catch (e) {
 		console.error(e);
 		debugger; //remove

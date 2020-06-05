@@ -168,9 +168,9 @@ class UserRepository extends Repository {
 		});
 		if (success == false) return { success, error };
 
-		const publicUserData = this.Model.publicData(user);
+		//const publicUserData = this.Model.publicData(user);
 
-		return { error, success, user: publicUserData };
+		return { error, success, user };
 	}
 	async createGuestOld(inputUsername, password) {
 		const { username, error } = validateUsernamePassword(inputUsername, password);

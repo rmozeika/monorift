@@ -12,9 +12,9 @@ class UserSchema extends GraphqlSchemaInstance {
 	}
 
 	createContext() {
-		this.context = async ({ req }) => {
+		this.context = async ({ req, res }) => {
 			const user = await this.api.repositories.auth.graphqlToken(req);
-			return { user };
+			return { user, res };
 		};
 	}
 	createResolvers() {
@@ -84,8 +84,12 @@ class UserSchema extends GraphqlSchemaInstance {
 					return user;
 				},
 				createGuest: async (parent, args, context) => {
+					const { res } = context;
 					const { username, password } = args.input;
 					const op = await this.repository.createGuest(username, password);
+					if (op.error) return op;
+					const token = this.api.repositories.auth.initJWT(res, op.user);
+
 					return op;
 				}
 			},

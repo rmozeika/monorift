@@ -26,16 +26,16 @@ const authReducer = createReducer(
 	{
 		[LOGIN.SUCCESS]: (authState, action) => {
 			const { src, username, usingTempUsername, oauth_id } = action.payload;
-			const { picture, displayName, ...restSrc } = src;
+			// const { picture, displayName, ...restSrc } = src;
 			// if (usingTempUsername)
 			return {
 				user: {
-					picture,
+					// picture,
 					username,
-					displayName,
+					// displayName,
 					usingTempUsername,
 					oauth_id,
-					src: restSrc
+					src
 				},
 				loggedIn: true,
 				checked: true,

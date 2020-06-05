@@ -18,6 +18,7 @@
 		"nativeupgrade": "./node_modules/.bin/react-native upgrade"
 	},
 	"dependencies": {
+		"@apollo/client": "^3.0.0-rc.1",
 		"@apollo/react-hooks": "^3.1.5",
 		"@babel/plugin-proposal-optional-chaining": "^7.9.0",
 		"@babel/plugin-transform-classes": "^7.9.0",

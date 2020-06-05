@@ -39,7 +39,7 @@ class UserModel {
 	) {
 		this.repo = repo;
 
-		this.username = username;
+		this.username = username.toLowerCase();
 
 		this.usingTempUsername = usingTempUsername;
 		this.src = src;

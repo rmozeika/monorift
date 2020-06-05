@@ -34,7 +34,6 @@ const selectUsers = state => {
 function* fetchUsers() {
 	try {
 		const friends = yield call(getFriends);
-		console.log(testUser);
 		debugger; //remove
 		console.log(friends);
 		const origin = originLink('userList');

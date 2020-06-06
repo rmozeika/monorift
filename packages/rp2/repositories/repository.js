@@ -1,26 +1,8 @@
-const extendedMethods = [
-	'find',
-	'findOne',
-	'insertOne',
-	'insertMany',
-	'deleteOne',
-	'deleteMany',
-	'updateOne',
-	'updateMany',
-	'findOneAndUpdate'
-];
+const RepositoryBase = require('./repository.base');
 
-class Repository {
+class Repository extends RepositoryBase {
 	constructor(api, subcollections) {
-		this.api = api;
-		const { collection = null, table = null } = this.constructor.getNamespaces();
-		this.collection = collection;
-		this.table = table;
-		this.mongoInstance = api.mongoInstance;
-		this.postgresInstance = api.postgresInstance;
-		if (this.table !== null) this.db = this.postgresInstance.knex(this.table);
-
-		this.extendMethods();
+		super(api, subcollections);
 	}
 
 	// defaults to andWhere
@@ -45,27 +27,68 @@ class Repository {
 
 		return data;
 	}
-	extendMethods() {
-		this.mongoInstance.getMethodNames().forEach(method => {
-			this[method] = (object, subcollection, opts, cb) => {
-				return new Promise((resolve, reject) => {
-					return this.mongoInstance[method](subcollection || this.collection, object) //{collection: this.collection, ...object})
-						.then(result => {
-							if (cb) return cb(result);
-							resolve(result);
-						});
-				});
-			};
-		});
+	getDataByDb(data) {
+		const preMongoData = this.structuredClone(data);
+		const prePgData = this.structuredClone(data);
+		const result = {
+			mongo: false,
+			pg: false
+		};
+		if (this.collection) {
+			result.mongo = this.Model
+				? this.Model.convertToMongo(preMongoData)
+				: preMongoData;
+		}
+		if (this.table) {
+			result.pg = this.Model ? this.Model.convertToPg(prePgData) : prePgData;
+		}
+		return result;
 	}
-	createMethod(object, collection, method, cb) {
-		return new Promise((resolve, reject) => {
-			return this.mongoInstance[method](collection, object) //{collection: this.collection, ...object})
-				.then(result => {
-					if (cb) return cb(result);
-					resolve(result);
-				});
-		});
+	async update(toUpdate, doc, opts = {}) {
+		const operations = {};
+		const filter = this.getDataByDb(toUpdate);
+		const data = this.getDataByDb(doc);
+		if (filter.mongo && data.mongo) {
+			const mongoOp = await this.update({
+				filter: filter.mongo,
+				doc: { $set: data.mongo },
+				opts
+			}).catch(e => {
+				console.log(e);
+			});
+
+			operations.mongo = mongoOp;
+			// }
+		}
+
+		if (filter.pg && data.pg) {
+			const pgOp = await this.updateRow(filter.pg, data.pg);
+			operations.pg = pgOp;
+		}
+		return operations;
+	}
+	async updateRow(where, data) {
+		const op = await this.postgresInstance
+			.knex(this.table)
+			.where(where)
+			.update(data);
+		return op;
+	}
+	// overwrite default insert
+	async insert(doc) {
+		const data = this.getDataByDb(doc);
+		const operation = {};
+		if (data.mongo) {
+			operation.mongo = await this._insert(data.mongo);
+		}
+		if (data.pg) {
+			operation.pg = await this.insertRow(data.pg);
+		}
+		return operation;
+	}
+	async insertRow(data) {
+		const op = await this.postgresInstance.knex(this.table).insert(data);
+		return op;
 	}
 
 	findAll(cb) {
@@ -101,9 +124,6 @@ class Repository {
 	// updateById(_id, obj, subcollection, cb) {
 	//   return this.mongoInstance.update(subcollection || this.collection, {_id: safeObjectId(_id)}, obj);
 	// }
-	getExtendedMethodNames() {
-		return this.mongoInstance.getMethodNames();
-	}
 }
 
 module.exports = Repository;

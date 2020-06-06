@@ -11,6 +11,18 @@ const {
 } = require('../../data-service/data-model/users/validation.js');
 
 class UserModel {
+	static mongoFields = [
+		'_id',
+		'bit_id',
+		'username',
+		'email',
+		'oauth_id',
+		'guest',
+		'mocked',
+		'src',
+		'username',
+		'usingTempUsername'
+	];
 	constructor(
 		{
 			email,
@@ -22,13 +34,13 @@ class UserModel {
 			usingTempUsername = false,
 			password = false
 		},
-		repo
+		repo,
+		isNewUser
 	) {
 		this.repo = repo;
 
-		this.username = username;
+		this.username = username.toLowerCase();
 
-		this.email = email || `${username}@monorift.com`;
 		this.usingTempUsername = usingTempUsername;
 		this.src = src;
 		this.mocked = mocked;
@@ -36,8 +48,11 @@ class UserModel {
 		// if (oauth_id) {
 		// 	this.checkUsernameExists();
 		// }
-		this.oauth_id = oauth_id || `monorift|${username}`;
 		this.password = password;
+		if (isNewUser !== false) {
+			this.oauth_id = oauth_id || `monorift|${username}`;
+			this.email = email || `${username}@monorift.com`;
+		}
 	}
 	async initFields() {
 		await this.generateOAuthId();
@@ -58,6 +73,7 @@ class UserModel {
 	}
 	get data() {
 		const {
+			id,
 			username,
 			email,
 			usingTempUsername,
@@ -68,6 +84,7 @@ class UserModel {
 			bit_id
 		} = this;
 		return {
+			id: id || bit_id,
 			oauth_id,
 			username,
 			email,
@@ -75,9 +92,97 @@ class UserModel {
 			src,
 			mocked,
 			guest,
-			bit_id
+			bit_id: bit_id || id
 		};
 	}
+	static publicData({ _id, socket_id, ...user }, includeNull = true) {
+		return user;
+	}
+	static convertToMongo(user, includeNull = false) {
+		const mongoData = {};
+		this.mongoFields.forEach(key => {
+			const val = user[key] || null;
+			if (includeNull || (val !== null && val !== undefined)) {
+				mongoData[key] = val;
+			}
+			return;
+		});
+		// Object.entries(user).forEach(([key, value])=> {
+		// 	if (this.mongoFields.indexOf(key)) {
+		// 		mongoData[key] = value;
+		// 	}
+		// });
+		return mongoData;
+	}
+	static convertToPg(user, includeNull = false) {
+		const { pgMappings } = this;
+		const pgData = {};
+		Object.entries(pgMappings).forEach(([key, value]) => {
+			let resultValue;
+			if (typeof value == 'function') {
+				resultValue = value(user);
+				return;
+			} else {
+				resultValue = user[value];
+			}
+			if (includeNull || (resultValue !== null && resultValue !== undefined)) {
+				pgData[key] = resultValue;
+			}
+		});
+		return pgData;
+	}
+	static get pgMappings() {
+		return {
+			id: 'bit_id',
+			username: 'username',
+			mongo_id: '_id',
+			src: 'src',
+			email: 'email',
+			oauth_id: 'oauth_id',
+			gravatar: base => {
+				return base?.src?.gravatar?.uri;
+			},
+			guest: 'guest',
+			mocked: 'mocked'
+		};
+	}
+	mapPg(base = this, includeNull = false) {
+		// if (base)
+		const { pgMappings } = this;
+		const pgData = {};
+		Object.entries(pgMappings).forEach(([key, value]) => {
+			let resultValue;
+			if (typeof value == 'function') {
+				resultValue = value(base);
+				return;
+			} else {
+				resultValue = base[value];
+			}
+			if (includeNull || resultValue !== null || resultValue !== undefined) {
+				pgData[key] = resultValue;
+			}
+		});
+		return pgData;
+	}
+	gravatarFromSource(src) {
+		return src.gravatar.uri;
+	}
+	get postgresData() {
+		const { username, oauth_id, _id, bit_id, id, email, src, guest } = this;
+		const data = {
+			username: username,
+			mongo_id: _id,
+			// id: bit_id,
+			src: { email, ...src },
+			email,
+			oauth_id,
+			gravatar: src.gravatar.uri,
+			guest
+		};
+		if (bit_id || id) data.id = bit_id || id;
+		return data;
+	}
+	get mongoData() {}
 	async insert() {
 		try {
 			await this.generateOAuthId();
@@ -85,7 +190,8 @@ class UserModel {
 			await this.createGravatar();
 			const insertMongoOp = await this.repo.insertOne(this.data);
 			this._id = insertMongoOp.insertedId.toString();
-			this.bit_id = await this.repo.insertUserIntoPostgres(this._id, this.data);
+			this.id = await this.repo.insertUserIntoPostgres(this._id, this.data);
+			this.bit_id = this.id;
 			const updateBitOp = await this.repo.updateByOAuthId(this.oauth_id, {
 				bit_id: this.bit_id
 			});

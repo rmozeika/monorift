@@ -12,9 +12,9 @@ class UserSchema extends GraphqlSchemaInstance {
 	}
 
 	createContext() {
-		this.context = async ({ req }) => {
+		this.context = async ({ req, res }) => {
 			const user = await this.api.repositories.auth.graphqlToken(req);
-			return { user };
+			return { user, res };
 		};
 	}
 	createResolvers() {
@@ -25,12 +25,21 @@ class UserSchema extends GraphqlSchemaInstance {
 					return this.repository.getUserById(id);
 					// return repository.findById(id);
 				},
+				userById: async (parent, args, context) => {
+					const { id } = args;
+					const [user] = await this.repository.query({ id });
+					return user;
+				},
 				users: (parent, args) => {
 					console.log(args);
 					const { input = {} } = args;
 					return this.repository.getUsersPostgres(input);
 				},
-				allUsers: () => {
+				// publicUsers: (parent, args, context) => {
+				// 	return this.repository.getUsersPostgres(input);
+				// },
+				allUsers: (parent, args, context) => {
+					// if ()
 					return repository.getUsersPostgres();
 				},
 				getFriendsForUser: async (parent, args) => {
@@ -40,12 +49,14 @@ class UserSchema extends GraphqlSchemaInstance {
 					const [user] = users;
 					return user;
 				},
-				friends: async (parent, args) => {
-					const { input } = args;
-					const user = await this.api.repositories.friends.query({
-						member1_id: input.id
+				friends: async (parent, args, context) => {
+					const { user } = context;
+					if (!user?.id) return [];
+					console.log(user?.id);
+					const friends = await this.api.repositories.friends.query({
+						member1_id: user.id
 					});
-					return user;
+					return friends;
 				}
 			},
 
@@ -54,6 +65,32 @@ class UserSchema extends GraphqlSchemaInstance {
 					const { input } = args;
 					const user = await this.repository.createUser(input);
 					return user;
+				},
+				updateUser: async (parent, args, context) => {
+					if (!context.user) return; // 'not signed in';
+					let query;
+					if (context.user.admin === true) {
+						const { input = {}, data } = args;
+						if (Object.keys(input).length > 0) {
+							query = input;
+						}
+					}
+					// update self if not admin
+					if (!query) {
+						query = context.user.id;
+					}
+					const op = await this.repository.update(query, args);
+					const user = await this.repository.query(query);
+					return user;
+				},
+				createGuest: async (parent, args, context) => {
+					const { res } = context;
+					const { username, password } = args.input;
+					const op = await this.repository.createGuest(username, password);
+					if (op.error) return op;
+					const token = this.api.repositories.auth.initJWT(res, op.user);
+
+					return op;
 				}
 			},
 
@@ -83,6 +120,12 @@ class UserSchema extends GraphqlSchemaInstance {
 					const users = await this.repository.query({ id: ids });
 					//  ptr
 					return users;
+				}
+			},
+			User: {
+				online: async (parent, args, context) => {
+					const status = await this.repository.getOnlineStatus(parent);
+					return status;
 				}
 			}
 		};

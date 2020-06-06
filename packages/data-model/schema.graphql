@@ -2,6 +2,7 @@ type User {
 	id: Int!
 	username: String!
 	oauth_id: String!
+	online: Boolean
 	email: String
 	mongo_id: String
 	mocked: Boolean
@@ -11,6 +12,7 @@ type User {
 fragment UserData on User {
 	oauth_id
 	username
+	online
 	gravatar
 }
 
@@ -56,7 +58,8 @@ input createMonoriftUserInput {
 
 type createUserPayload {
 	user: User
-	status: String
+	success: Boolean
+	error: String
 }
 
 type Friend {
@@ -83,13 +86,15 @@ type FriendsList {
 
 type Mutation {
 	createUser(input: UserInput!): createUserPayload
-	createMonoriftUser(input: createMonoriftUserInput!): createUserPayload
+	updateUser(data: UserInput, input: UserInput): User
+	createGuest(input: createMonoriftUserInput!): createUserPayload
 }
 
 type Query {
 	user(input: UserInput!): User
-	users(input: UserInput!): [User]
+	userById(id: Int!): User
+	users(input: UserInput): [User]
 	allUsers: [User]
-	friends(input: UserInput!): [User]
-	getFriendsForUser(input: UserInput!): UserWithFriends
+	friends: FriendsList
+	getFriendsForUser(input: UserInput): UserWithFriends
 }

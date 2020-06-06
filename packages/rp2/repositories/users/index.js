@@ -17,7 +17,7 @@ class UserRepository extends Repository {
 	constructor(api) {
 		super(api);
 		this.findByUsername.bind(this);
-		this.testQuery();
+		//this.testQuery();
 	}
 	static getNamespaces() {
 		return {
@@ -25,7 +25,7 @@ class UserRepository extends Repository {
 			table: 'users'
 		};
 	}
-
+	Model = UserModel;
 	async getUsersPostgres(query = {}) {
 		console.log(this.db);
 		const users = await this.query(query);
@@ -157,11 +157,20 @@ class UserRepository extends Repository {
 		return this.createUser(obj, cb);
 	}
 	async createGuest(username, password) {
-		const user = await this.createUser({ username, password }).catch(e => {
+		const { success = true, error, ...user } = await this.createUser({
+			username,
+			password
+		}).catch(e => {
 			console.error(e);
-			return Promise.reject(e);
+			// return Promise.resolve({ error: e.message, success: false });
+			return { error: e.message, success: false };
+			//return Promise.reject(e);
 		});
-		return user;
+		if (success == false) return { success, error };
+
+		//const publicUserData = this.Model.publicData(user);
+
+		return { error, success, user };
 	}
 	async createGuestOld(inputUsername, password) {
 		const { username, error } = validateUsernamePassword(inputUsername, password);
@@ -211,19 +220,25 @@ class UserRepository extends Repository {
 	async existingUser(id, username) {
 		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
 	}
-	getPublicUser({ bit_id, _id, socket_id, ...user }) {
+	getPublicUser({ _id, socket_id, ...user }) {
 		return user;
 	}
 
-	update({ doc, filter }, opts = {}) {
-		return this.update({ filter, doc: { $set: doc }, opts }, type);
-	}
 	updateByOAuthId(id, doc, opts) {
 		return this.updateOne({
 			filter: { oauth_id: id },
 			doc: { $set: doc },
 			opts
 		});
+	}
+	getId(query) {
+		return this.query(query, 'id');
+	}
+	getDbIds(query) {
+		return this.query(query, { pgID: 'id', mongoID: 'mongo_id' });
+	}
+	async updateUser(query) {
+		const { pgID, mongoID } = await this.getDbIds(query); // this.query(query, 'id');
 	}
 	updateByUsername(username, doc, opts = {}) {
 		return this.updateOne({
@@ -314,6 +329,29 @@ class UserRepository extends Repository {
 
 		return usersWithOnlineStatus;
 	}
+	async getOnlineStatus(user) {
+		let id;
+		if (Number.isInteger(user)) {
+			id = user;
+		} else {
+			id = user.id;
+		}
+		if (!id) return false;
+		const online = await this.api.redisAsync('getbit', 'online_bit', id);
+		return online == 1;
+	}
+	async addOnlineStatus(users) {
+		const usersList = Array.isArray(users) ? users : [users];
+
+		const usersWithOnlineStatus = await Promise.all(
+			usersList.map(async user => {
+				const online = await this.api.redisAsync('getbit', 'online_bit', user.id);
+				return { ...user, online };
+			})
+		);
+
+		return usersWithOnlineStatus;
+	}
 	async getUserColumnsByUsername(usernames, columns) {
 		const users = await this.postgresInstance
 			.knex('users')
@@ -377,6 +415,12 @@ class UserRepository extends Repository {
 		return { deleteMongo, deletePsql };
 	}
 	async testQuery() {
+		const updateOp = await this.update(
+			{ bit_id: 9403 },
+			{ mocked: true, newField: 'test' }
+		);
+
+		// const updateOp1 = await this.update({ doc: { mocked: true, newField: 'test' }, filter: { bit_id: 9403 } });
 		const users = await this.query({
 			id: [9391, 9401],
 			username: 'jcrosher3'

@@ -17,7 +17,7 @@ class UserRepository extends Repository {
 	constructor(api) {
 		super(api);
 		this.findByUsername.bind(this);
-		this.testQuery();
+		//this.testQuery();
 	}
 	static getNamespaces() {
 		return {

@@ -36,7 +36,11 @@ const extendMethods = [
 	},
 	{
 		name: 'insert',
-		combine: true
+		combine: true,
+		resolve: data => {
+			if (Array.isArray(data)) return 'Many';
+			return 'One';
+		}
 	},
 	{
 		name: 'delete',
@@ -79,7 +83,6 @@ class MongoService {
 	getDb() {
 		return this._db;
 	}
-	// DELETE
 	getMethodNames() {
 		let methodNames = [];
 		extendMethods.forEach(method => {
@@ -87,6 +90,7 @@ class MongoService {
 			methodNames = methodNames.concat(
 				method.suffixes.map(suffix => method.name + suffix)
 			);
+			if (method.combine) methodNames.push(method.name);
 		});
 
 		return methodNames;
@@ -100,14 +104,20 @@ class MongoService {
 			if (!method.suffixes) {
 				method.suffixes = [''];
 			}
-
-			this._createMethods(method.name, method.suffixes, method.attach);
+			const opts = {
+				resolve: method.resolve,
+				attach: method.attach,
+				combine: method.combine,
+				defaultMethod: method.defaultMethod
+			};
+			this._createMethods(method.name, method.suffixes, opts);
 		});
 	}
 
-	_createMethods(method, suffixes, attach) {
-		suffixes.forEach((suffix, suffixIndex) => {
-			this[method + suffix] = (collection, obj = {}, cb) => {
+	_createMethods(method, suffixes, { resolve, attach, combine, defaultMethod }) {
+		// let initialValue
+		const methods = suffixes.reduce((acc, suffix) => {
+			const operation = (collection, obj = {}, cb) => {
 				const args = this.parseArguments(obj);
 				var func = LogCallback(method, suffix, cb);
 				var collection = this._db.collection(collection);
@@ -135,7 +145,19 @@ class MongoService {
 					}
 				}
 			};
-		});
+			this[method + suffix] = operation;
+			acc[suffix] = operation;
+			return acc;
+		}, {});
+		if (resolve) {
+			this[method] = (collection, obj = {}, cb) => {
+				const resolvedSuffix = resolve(obj);
+				return methods[resolvedSuffix](collection, obj, cb);
+			};
+		}
+		if (defaultMethod) {
+			this[method] = methods[defaultMethod];
+		}
 	}
 	parseArguments(obj) {
 		const { filter, doc, opts } = obj;

@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const fileMap = {
-	users: 'schema.graphql'
+	users: 'schema.graphql',
+	groups: 'groups.schema.graphql'
 };
 module.exports = type => {
 	return new Promise((resolve, reject) => {

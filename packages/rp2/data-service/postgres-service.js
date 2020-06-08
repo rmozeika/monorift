@@ -41,6 +41,7 @@ class PostgresService {
 			where: {}
 		};
 		Object.entries(query).forEach(([key, value]) => {
+			if (typeof value == 'undefined') return;
 			if (Array.isArray(value)) {
 				queryFields.whereIn = { column: key, values: value };
 				return;

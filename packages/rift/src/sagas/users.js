@@ -20,7 +20,7 @@ import io from 'socket.io-client';
 import { get, post } from '@core/api';
 
 import { getFriends, getUserById } from '@core/api/apollo';
-
+import { getGroupMembers } from '@core/api/graphql/groups';
 import * as Actions from '@actions';
 import { originLink } from '@core/utils';
 const socketServerURL = originLink();
@@ -28,14 +28,9 @@ let socket;
 const selectUsers = state => {
 	return state.users.list;
 };
-// const selectUser = state => {
-// 	return state.users.byId[]
-// }
+
 function* fetchUsers() {
 	try {
-		const friends = yield call(getFriends);
-		debugger; //remove
-		console.log(friends);
 		const origin = originLink('userList');
 		const data = yield post(origin);
 		yield put(Actions.setUsers(data));
@@ -43,6 +38,18 @@ function* fetchUsers() {
 	} catch (err) {
 		console.warn(err);
 	}
+}
+
+function* fetchFriends() {
+	try {
+		const friends = yield call(getFriends);
+		yield put(Actions.setUsers(data));
+	} catch (err) {
+		console.warn(err);
+	}
+}
+function* fetchGroupMembers({ gid }) {
+	const groupMembers = yield call(getGroupMembers, 1);
 }
 
 function* addFriendSaga(action) {

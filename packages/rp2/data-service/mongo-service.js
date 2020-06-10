@@ -1,21 +1,12 @@
 const { ObjectId, MongoClient } = require('mongodb');
+const util = require('util');
+
 const {
 	mongoConnectionString: uri,
 	mongoUser,
 	mongoPassword
 } = require('../config.js');
 
-function LogCallback(method, suffix, cb) {
-	const util = require('util');
-
-	return (fn = (err, res) => {
-		console.log(`Mongodb Operation - ${method + suffix}:
-Result:
-${util.inspect(res, false, null)}
-`);
-		cb(err, res);
-	});
-}
 // Mongodb methods to be extended to repository
 //
 // Options:
@@ -172,6 +163,16 @@ class MongoService {
 		const args = [filterWithId, doc, opts];
 		return args.filter(o => o);
 	}
+}
+
+function LogCallback(method, suffix, cb) {
+	return (fn = (err, res) => {
+		console.log(`Mongodb Operation - ${method + suffix}:
+Result:
+${util.inspect(res, false, null)}
+`);
+		cb(err, res);
+	});
 }
 
 module.exports = MongoService;

@@ -1,10 +1,12 @@
 const { gql, SchemaDirectiveVisitor } = require('apollo-server-express');
+const { makeExecutableSchema } = require('graphql-tools');
+
 const { remote } = require('../../config');
 let getRawSchema;
 if (remote == 'false') {
 	getRawSchema = require('data-model');
 } else {
-	getRawSchema = require('../../../data-model/index.js');
+	getRawSchema = require('../../../data-model');
 }
 
 class GraphqlSchemaInstance {
@@ -19,14 +21,23 @@ class GraphqlSchemaInstance {
 	async createSchema() {
 		await this.createTypeDefs();
 		this.createResolvers();
-		this.createContext();
+		//this.createContext();
 		await this.createDirectiveResolvers();
-		this.serverConfig = {
+		this.schema = {
 			typeDefs: this.typeDefs,
-			resolvers: this.resolvers,
-			context: this.context,
-			directiveResolvers: this.directiveResolvers
+			resolvers: this.resolvers
+			// context: this.context,
+			// directiveResolvers: this.directiveResolvers
 		};
+		if (this.schema) {
+			return this.schema;
+		}
+		// this.serverConfig = {
+		// 	schema: this.schema,
+		// 	//context:
+		// }
+		const eSchema = makeExecutableSchema(this.schema);
+		return eSchema;
 		return this.serverConfig;
 	}
 	async createTypeDefs() {
@@ -54,4 +65,5 @@ class GraphqlSchemaInstance {
 	}
 	_schemas = {};
 }
+
 module.exports = GraphqlSchemaInstance;

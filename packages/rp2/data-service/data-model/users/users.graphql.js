@@ -1,4 +1,4 @@
-const GraphqlSchemaInstance = require('../Schema');
+const GraphqlSchemaInstance = require('../GraphqlSchema');
 
 class UserSchema extends GraphqlSchemaInstance {
 	repoName = 'users';
@@ -106,8 +106,7 @@ class UserSchema extends GraphqlSchemaInstance {
 			},
 			FriendsList: {
 				ids: (parent, args) => {
-					const output = [];
-					parent.forEach(({ member2_id }) => output.push(member2_id));
+					const output = parent.map(({ member2_id }) => member2_id);
 					return output;
 				},
 				users: async (parent, args, context) => {

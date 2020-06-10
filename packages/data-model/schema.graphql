@@ -84,13 +84,13 @@ type FriendsList {
 	users: [User]
 }
 
-type Mutation {
+extend type Mutation {
 	createUser(input: UserInput!): createUserPayload
 	updateUser(data: UserInput, input: UserInput): User
 	createGuest(input: createMonoriftUserInput!): createUserPayload
 }
 
-type Query {
+extend type Query {
 	user(input: UserInput!): User
 	userById(id: Int!): User
 	users(input: UserInput): [User]

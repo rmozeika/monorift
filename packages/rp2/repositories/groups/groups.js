@@ -3,13 +3,17 @@ const Repository = require('../repository.js');
 class GroupsRepository extends Repository {
 	constructor(api) {
 		super(api);
-		this.add('mongo15');
+		//this.add('mongo15');
 	}
 	static getNamespaces() {
 		return {
 			collection: 'groups',
 			table: 'groups'
 		};
+	}
+	async get({ gid, name } = {}) {
+		const groups = await this.query({ name, gid });
+		return groups;
 	}
 	async add(name) {
 		console.log('read');

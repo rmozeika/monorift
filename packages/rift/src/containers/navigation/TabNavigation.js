@@ -6,7 +6,8 @@ import 'react-native-gesture-handler';
 // import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import UsersList from '../users/UsersList.web';
-import UsersList from '../users/UsersList';
+import UsersList from '../users/UsersList.native.js';
+import GroupTab from './GroupsTab';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,6 +36,15 @@ class TabNavigation extends React.Component {
 				},
 				condition: true, //checked,
 				render: UsersList
+			},
+			{
+				name: 'Groups',
+				key: 'groups',
+				initialParams: {
+					listType: 'master'
+				},
+				condition: true, //checked,
+				render: GroupTab
 			}
 		];
 		return tabs.filter(({ condition }) => condition);
@@ -68,6 +78,8 @@ class TabNavigation extends React.Component {
 						} else if (route.name === 'Users') {
 							iconName = 'users';
 							// iconName = focused ? 'ios-list-box' : 'ios-list';
+						} else if (route.name === 'Groups') {
+							iconName = 'groups';
 						}
 
 						// You can return any component that you like here!
@@ -100,7 +112,7 @@ class TabNavigation extends React.Component {
 							initialParams={initialParams}
 							key={key}
 							name={name}
-							component={UsersList}
+							component={render}
 						/>
 					);
 				})}

@@ -1,8 +1,7 @@
-# import User from './schema.graphql'
-
 type Group {
 	name: String
 	gid: Int
+	creator: Int
 }
 type Member {
 	id: Int
@@ -16,12 +15,21 @@ type GroupMembersPayload {
 	group: Group
 	members: Members
 }
+type GroupLists {
+	master: [Int]
+	memberOf: [Int]
+}
+type GroupsPayload {
+	data: [Group]
+	lists: GroupLists
+}
 # type Mutation {
 # 	createUser(input: UserInput!): createUserPayload
 
 # }
 
-type Query {
+extend type Query {
 	group(name: String, gid: Int): Group
+	groups(creator: Int): GroupsPayload
 	groupMembers(name: String, gid: Int): GroupMembersPayload
 }

@@ -20,14 +20,36 @@ class GroupSchema extends GraphqlSchemaInstance {
 			Query: {
 				group: async (parent, args, context) => {
 					const { gid, name } = args;
-					const group = await this.repository.get({ gid, name });
+					const [group] = await this.repository.get({ gid, name });
 					return group;
+					// return repository.findById(id);
+				},
+				groups: async (parent, args, context) => {
+					const { gid, name } = args;
+					const groups = await this.repository.get();
+					return groups;
 					// return repository.findById(id);
 				},
 				groupMembers: async (parent, args, context) => {
 					const { gid, name } = args;
 					const group = await this.repository.get({ gid, name });
 					return group;
+				}
+			},
+			GroupsPayload: {
+				data: parent => parent,
+				lists: async (parent, args, context) => {
+					return parent;
+				}
+			},
+			GroupLists: {
+				master: (parent, args, context) => {
+					const allIds = parent.map(({ gid }) => gid);
+					return allIds;
+				},
+				memberOf: (parent, args, context) => {
+					const allIds = parent.map(({ gid }) => gid);
+					return allIds;
 				}
 			},
 			GroupMembersPayload: {

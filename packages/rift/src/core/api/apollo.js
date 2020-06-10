@@ -9,6 +9,7 @@ const client = new ApolloClient({
 		uri: 'https://monorift.com/graphql'
 	})
 });
+export default client;
 const GET_FRIENDS = gql`
 	{
 		friends {

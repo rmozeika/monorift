@@ -4,6 +4,7 @@ import auth, * as fromAuth from './auth';
 import callReducer, * as fromCall from './call';
 import usersReducer, * as fromUsers from './users';
 import viewReducer, * as fromView from './view';
+import groupsReducer, * as fromGroups from './groups';
 
 import { combineReducers } from 'redux';
 export const initialState = {
@@ -12,6 +13,7 @@ export const initialState = {
 	call: { ...fromCall.initialState },
 	users: { ...fromUsers.initialState },
 	view: { ...fromView.initialState },
+	groups: { ...fromGroups.initialState },
 	// currently unused
 	code: { ...fromCode.initialState }
 };
@@ -22,6 +24,7 @@ export default combineReducers({
 	auth,
 	call: callReducer,
 	users: usersReducer,
+	groups: groupsReducer,
 	view: viewReducer
 });
 

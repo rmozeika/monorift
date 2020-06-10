@@ -14,7 +14,7 @@ import SearchBar from '@components/users/SearchBar';
 import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
 import CallActions from '@components/buttons/CallActions';
 import UpdateTempUsername from '@components/users/UpdateTempUsername';
-
+const ITEM_HEIGHT = 90;
 class UsersList extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -32,12 +32,14 @@ class UsersList extends React.PureComponent {
 		// 	return (<YourProfile themedStyle={this.props.themedStyle.userItem} />);
 		// }
 		return (
-			<Layout style={styles.itemContainer}>
-				<UserItem key={user} id={user} />
-			</Layout>
+			// <Layout style={styles.itemContainer}>
+			<UserItem key={user} id={user} />
+			// </Layout>
 		);
 	};
-
+	getItemLayout(data, index) {
+		return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+	}
 	render() {
 		const {
 			incomingCall,
@@ -74,6 +76,7 @@ class UsersList extends React.PureComponent {
 					// columnWrapperStyle={styles.columnWrapper}
 					initialNumToRender={8}
 					keyExtractor={this._keyExtractor}
+					getItemLayout={this.getItemLayout}
 				/>
 				<CallActions themedStyle={styles.callActions} />
 			</Layout>

@@ -11,9 +11,9 @@ class GroupsRepository extends Repository {
 			table: 'groups'
 		};
 	}
-	async get({ gid, name }) {
-		const [group] = await this.query({ name, gid });
-		return group;
+	async get({ gid, name } = {}) {
+		const groups = await this.query({ name, gid });
+		return groups;
 	}
 	async add(name) {
 		console.log('read');

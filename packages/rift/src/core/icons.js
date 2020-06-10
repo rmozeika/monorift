@@ -148,6 +148,7 @@ function createIconsMap() {
 		'reject-friend': IconProvider('user-slash'),
 		friends: IconProvider('user-friends'),
 		check: IconProvider('check'),
+		groups: IconProvider('id-badge'),
 		minus: IconProvider('minus'),
 		search: IconProvider('search'),
 		ellipsis: IconProvider('ellipsis-h'),

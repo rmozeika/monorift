@@ -29,6 +29,9 @@ class GraphqlSchemaInstance {
 			// context: this.context,
 			// directiveResolvers: this.directiveResolvers
 		};
+		if (this.schema) {
+			return this.schema;
+		}
 		// this.serverConfig = {
 		// 	schema: this.schema,
 		// 	//context:

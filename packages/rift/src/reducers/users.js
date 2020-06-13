@@ -12,7 +12,8 @@ import {
 	END_CALL,
 	ADD_CONNECTION,
 	ANSWER_INCOMING,
-	ADD_USER
+	ADD_USER,
+	LOGIN
 } from '@actions';
 
 export const initialState = {
@@ -126,6 +127,16 @@ const userData = (state = {}, action) => {
 				...data
 			};
 		}
+		case LOGIN.SUCCESS: {
+			return {
+				...state,
+				isFriend: false,
+				friendStatus: null,
+				online: true,
+				self: true,
+				...userDataDefault
+			};
+		}
 		default:
 			return state;
 	}
@@ -150,6 +161,10 @@ export const byId = (state = {}, action) => {
 				// 	};
 				// }, {});
 				break;
+			}
+			case LOGIN.SUCCESS: {
+				const user = action.payload;
+				draft[user.oauth_id] = userData(user, action);
 			}
 			case UPDATE_USER: {
 				const { payload, id } = action;

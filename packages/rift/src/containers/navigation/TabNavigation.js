@@ -7,17 +7,51 @@ import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import UsersList from '../users/UsersList.web';
 import UsersList from '../users/UsersList.native.js';
-import GroupTab from './GroupsTab';
+import GroupTab from '../groups/GroupsTab';
 
 const Tab = createBottomTabNavigator();
 
 class TabNavigation extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			tabs: [
+				{
+					name: 'Friends',
+					key: 'friends',
+					initialParams: {
+						listType: 'friends'
+					},
+					condition: true, // possible change this to not render if not signed in
+					// render: this.createFriendComponent
+					render: UsersList
+				},
+				{
+					name: 'Users',
+					key: 'users',
+					initialParams: {
+						listType: 'master'
+					},
+					condition: true, //checked,
+					render: UsersList
+				},
+				{
+					name: 'Groups',
+					key: 'groups',
+					initialParams: {
+						listType: 'master'
+					},
+					condition: true, //checked,
+					render: GroupTab,
+					renderFunc: this.createGroupsTab
+				}
+			]
+		};
 	}
 	getActiveTabs = () => {
+		const { tabs } = this.state;
 		const { loggedIn, checked } = this.props;
-		const tabs = [
+		const tabsOld = [
 			{
 				name: 'Friends',
 				key: 'friends',
@@ -47,6 +81,7 @@ class TabNavigation extends React.Component {
 				render: GroupTab
 			}
 		];
+
 		return tabs.filter(({ condition }) => condition);
 	};
 	createFriendComponent({ initialParams: { listType } }) {
@@ -57,6 +92,26 @@ class TabNavigation extends React.Component {
 		// const listType = props.route.name.toLowerCase();
 		return <UsersList listType={'master'} containerHeight={500}></UsersList>;
 	}
+	// createGroupMembersComponent({listType, })
+	createGroupsTab = props => {
+		return <GroupTab addTab={this.addTab} {...props} />;
+	};
+	addTab = ({ listType, name, gid, ...extraParams }) => {
+		this.setState((state, props) => {
+			const newTabs = [
+				{
+					name,
+					key: 'members' + listType,
+					initialParams: { listType, gid, ...extraParams },
+					condition: true,
+					render: UsersList
+				}
+			];
+
+			const tabs = state.tabs.concat(newTabs);
+			return { tabs };
+		});
+	};
 	render() {
 		// const tabColor = '#161c30';
 		const tabColor = 'rgb(21, 26, 48)'; //'#1A2138';
@@ -79,6 +134,8 @@ class TabNavigation extends React.Component {
 							iconName = 'users';
 							// iconName = focused ? 'ios-list-box' : 'ios-list';
 						} else if (route.name === 'Groups') {
+							iconName = 'groups';
+						} else {
 							iconName = 'groups';
 						}
 
@@ -106,16 +163,22 @@ class TabNavigation extends React.Component {
 					// }
 				}}
 			>
-				{this.getActiveTabs().map(({ name, render, key, initialParams }) => {
-					return (
-						<Tab.Screen
-							initialParams={initialParams}
-							key={key}
-							name={name}
-							component={render}
-						/>
-					);
-				})}
+				{this.getActiveTabs().map(
+					({ name, render, key, initialParams, renderFunc }) => {
+						let component;
+						if (renderFunc) {
+							component = renderFunc;
+						}
+						return (
+							<Tab.Screen
+								initialParams={initialParams}
+								key={key}
+								name={name}
+								component={component || render}
+							/>
+						);
+					}
+				)}
 			</Tab.Navigator>
 		);
 	}

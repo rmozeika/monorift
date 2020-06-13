@@ -32,7 +32,15 @@ class GroupSchema extends GraphqlSchemaInstance {
 				},
 				groupMembers: async (parent, args, context) => {
 					const { gid, name } = args;
-					const group = await this.repository.get({ gid, name });
+					const [group] = await this.repository.get({ gid, name });
+					return group;
+				}
+			},
+			Mutation: {
+				createGroup: async (parent, args, context) => {
+					const { name } = args;
+					const { user } = context;
+					const group = await this.repository.create(name, user);
 					return group;
 				}
 			},
@@ -52,6 +60,16 @@ class GroupSchema extends GraphqlSchemaInstance {
 					return allIds;
 				}
 			},
+			Group: {
+				creator_oauth_id: async (parent, args, context) => {
+					const [user] = await this.usersRepo.query(
+						{ id: parent.creator },
+						'oauth_id'
+					);
+					const { oauth_id } = user;
+					return oauth_id;
+				}
+			},
 			GroupMembersPayload: {
 				group: async (parent, args, context) => {
 					return parent;
@@ -66,6 +84,10 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const uids = parent.map(({ uid }) => uid);
 					return uids;
 				},
+				oauth_ids: (parent, args, context) => {
+					const oauth_ids = parent.map(({ oauth_id }) => oauth_id);
+					return oauth_ids;
+				},
 				users: async (parent, args, context) => {
 					const ids = parent.map(({ uid }) => uid);
 					//  ptr
@@ -73,14 +95,6 @@ class GroupSchema extends GraphqlSchemaInstance {
 					return users;
 				}
 			}
-			// Mutation: {
-			// 	createUser: async (parent, args) => {
-			// 		const { input } = args;
-			// 		const user = await this.repository.createUser(input);
-			// 		return user;
-			// 	},
-
-			// },
 		};
 	}
 }

@@ -9,7 +9,7 @@ module.exports = {
 	users,
 	friends,
 	auth,
-	groups,
 	members,
+	groups,
 	code
 };

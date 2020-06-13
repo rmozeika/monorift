@@ -7,6 +7,7 @@ import * as Selectors from '@selectors';
 import * as CallSelectors from '@selectors/call';
 import * as UserSelectors from '@selectors/users';
 import * as AuthSelectors from '@selectors/auth';
+import * as GroupSelectors from '@selectors/groups';
 
 import UserItem from './UserItem.native';
 // import YourProfile from './YourProfile';
@@ -145,12 +146,19 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = (state, props) => {
 	const { view, auth } = state;
-	const { listType } = props.route.params;
 	const { tab, mobile } = view;
 	const { loggedIn, checked } = auth;
 	// const listType = route.initialParams.listType;
 
-	const visibleUsers = UserSelectors.filteredUsersByOnline(state, props);
+	const { listType, group } = props.route.params;
+
+	let visibleUsers;
+
+	if (!group) {
+		visibleUsers = UserSelectors.filteredUsersByOnline(state, props);
+	} else {
+		visibleUsers = GroupSelectors.filteredMembers(state, props);
+	}
 	// const visibleUsers = UserSelectors.getUsersByOnlineCached(state, props);
 	return {
 		tab,

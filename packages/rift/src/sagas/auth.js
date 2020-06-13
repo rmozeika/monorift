@@ -77,7 +77,6 @@ function* createGuestSaga(action) {
 		const { username, password } = action.payload;
 		const origin = originLink('createGuest');
 		const { success, error, user } = yield call(createGuest, username, password);
-		debugger; //remove
 
 		// yield post({
 		// 	method: 'POST',

@@ -5,9 +5,9 @@ import 'react-native-gesture-handler';
 
 // import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import UsersList from '../users/UsersList.web';
-import UsersList from '../users/UsersList.native.js';
-import GroupTab from '../groups/GroupsTab';
+import UsersView from '../views/UsersView';
+import GroupsView from '../views/GroupsView';
+import GroupView from '../views/GroupView';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,8 +23,7 @@ class TabNavigation extends React.Component {
 						listType: 'friends'
 					},
 					condition: true, // possible change this to not render if not signed in
-					// render: this.createFriendComponent
-					render: UsersList
+					render: UsersView
 				},
 				{
 					name: 'Users',
@@ -33,7 +32,7 @@ class TabNavigation extends React.Component {
 						listType: 'master'
 					},
 					condition: true, //checked,
-					render: UsersList
+					render: UsersView
 				},
 				{
 					name: 'Groups',
@@ -42,7 +41,7 @@ class TabNavigation extends React.Component {
 						listType: 'master'
 					},
 					condition: true, //checked,
-					render: GroupTab,
+					render: GroupsView,
 					renderFunc: this.createGroupsTab
 				}
 			]
@@ -50,65 +49,52 @@ class TabNavigation extends React.Component {
 	}
 	getActiveTabs = () => {
 		const { tabs } = this.state;
-		const { loggedIn, checked } = this.props;
-		const tabsOld = [
-			{
-				name: 'Friends',
-				key: 'friends',
-				initialParams: {
-					listType: 'friends'
-				},
-				condition: true, // possible change this to not render if not signed in
-				// render: this.createFriendComponent
-				render: UsersList
-			},
-			{
-				name: 'Users',
-				key: 'users',
-				initialParams: {
-					listType: 'master'
-				},
-				condition: true, //checked,
-				render: UsersList
-			},
-			{
-				name: 'Groups',
-				key: 'groups',
-				initialParams: {
-					listType: 'master'
-				},
-				condition: true, //checked,
-				render: GroupTab
-			}
-		];
-
 		return tabs.filter(({ condition }) => condition);
 	};
-	createFriendComponent({ initialParams: { listType } }) {
-		// const listType = props.route.name.toLowerCase();
-		return <UsersList listType={'friends'} containerHeight={500}></UsersList>;
-	}
-	createUserComponent({ initialParams: { listType } }) {
-		// const listType = props.route.name.toLowerCase();
-		return <UsersList listType={'master'} containerHeight={500}></UsersList>;
-	}
+
 	// createGroupMembersComponent({listType, })
 	createGroupsTab = props => {
-		return <GroupTab addTab={this.addTab} {...props} />;
+		return <GroupsView addTab={this.addTab} {...props} />;
 	};
-	addTab = ({ listType, name, gid, ...extraParams }) => {
-		this.setState((state, props) => {
-			const newTabs = [
-				{
-					name,
-					key: 'members' + listType,
-					initialParams: { listType, gid, ...extraParams },
-					condition: true,
-					render: UsersList
-				}
-			];
+	createGroupTab = props => {
+		return <GroupView removeTab={this.removeTab} {...props} />;
+	};
+	addTab = ({ listType, name, gid, ...extraParams }, navigateTo = true) => {
+		this.setState(
+			(state, props) => {
+				const key = `members_${listType}`;
+				const newTabs = [
+					{
+						name,
+						key,
+						initialParams: { listType, key, gid, ...extraParams },
+						condition: true,
+						render: GroupView,
+						renderFunc: this.createGroupTab
+					}
+				];
 
-			const tabs = state.tabs.concat(newTabs);
+				const tabs = state.tabs.concat(newTabs);
+				return { tabs };
+			},
+			() => {
+				if (navigateTo) this.props.navigation.navigate(name);
+			}
+		);
+	};
+	removeTab = ({ key, name }) => {
+		const { navigation } = this.props;
+		navigation.goBack();
+		this.setState((state, props) => {
+			const tabs = state.tabs.filter(tab => {
+				if (key) {
+					return key !== tab.key;
+				}
+				if (name) {
+					return name !== tab.name;
+				}
+				return true;
+			});
 			return { tabs };
 		});
 	};
@@ -116,13 +102,10 @@ class TabNavigation extends React.Component {
 		// const tabColor = '#161c30';
 		const tabColor = 'rgb(21, 26, 48)'; //'#1A2138';
 		const { checked } = this.props;
-		// if (!this.props.checked) {
-		// 	return (null);
-		// }
 		return (
 			<Tab.Navigator
 				headerMode={'none'}
-				screenOptions={({ route }) => ({
+				screenOptions={({ route, ...rest }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
 						if (route.name === 'Friends') {

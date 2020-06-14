@@ -1,20 +1,14 @@
 import * as React from 'react';
-import { StyleSheet, Linking, Platform, FlatList } from 'react-native';
-import { Layout, List, withStyles, Text, Button } from '@ui-kitten/components';
+import { StyleSheet } from 'react-native';
+import { List } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
-import * as Selectors from '@selectors';
-import * as CallSelectors from '@selectors/call';
 import * as UserSelectors from '@selectors/users';
-import * as AuthSelectors from '@selectors/auth';
 import * as GroupSelectors from '@selectors/groups';
 
+import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
 import UserItem from './UserItem.native';
 // import YourProfile from './YourProfile';
-import SearchBar from '@components/users/SearchBar';
-import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
-import CallActions from '@components/buttons/CallActions';
-import UpdateTempUsername from '@components/users/UpdateTempUsername';
 const ITEM_HEIGHT = 90;
 class UsersList extends React.PureComponent {
 	constructor(props) {
@@ -42,66 +36,34 @@ class UsersList extends React.PureComponent {
 		return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
 	}
 	render() {
-		const {
-			incomingCall,
-			users,
-			listType,
-			loggedIn,
-			checked,
-			themedStyle
-		} = this.props;
+		const { incomingCall, users, listType, loggedIn, checked } = this.props;
 
 		const emptyFriends = users.length == 0;
 		if (listType == 'friends' && emptyFriends) {
 			return (
-				<Layout style={[styles.userListLayout, {}]}>
-					<EmptyFriendsPrompt
-						loggedIn={loggedIn}
-						checked={checked}
-						goToUsers={this.goToUsers}
-					/>
-					<CallActions themedStyle={styles.callActions} />
-				</Layout>
+				<EmptyFriendsPrompt
+					loggedIn={loggedIn}
+					checked={checked}
+					goToUsers={this.goToUsers}
+				/>
 			);
 		}
 		return (
-			<Layout style={styles.userListLayout}>
-				<SearchBar />
-				<List
-					data={users}
-					renderItem={this.renderItem}
-					style={styles.list}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.listContentContainer}
-					// numColumns={2}
-					// columnWrapperStyle={styles.columnWrapper}
-					initialNumToRender={8}
-					keyExtractor={this._keyExtractor}
-					getItemLayout={this.getItemLayout}
-				/>
-				<CallActions themedStyle={styles.callActions} />
-			</Layout>
+			<List
+				data={users}
+				renderItem={this.renderItem}
+				style={styles.list}
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={styles.listContentContainer}
+				// numColumns={2}
+				// columnWrapperStyle={styles.columnWrapper}
+				initialNumToRender={8}
+				keyExtractor={this._keyExtractor}
+				getItemLayout={this.getItemLayout}
+			/>
 		);
 	}
 }
-
-export const UsersListWithStyles = withStyles(UsersList, theme => ({
-	buttonGroup: {
-		backgroundColor: theme['color-primary-100'],
-		marginHorizontal: 0
-	},
-	callActions: {
-		backgroundColor: theme['color-primary-500'],
-		position: 'absolute',
-		width: '100%',
-		bottom: 0
-	},
-	// only used in native
-	itemContainer: {
-		height: 90
-	},
-	container: { backgroundColor: '#1A2138' }
-}));
 
 const styles = StyleSheet.create({
 	list: {
@@ -171,7 +133,4 @@ const mapStateToProps = (state, props) => {
 		// self: AuthSelectors.getSelfUser(state)
 	};
 };
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(UsersListWithStyles);
+export default connect(mapStateToProps, mapDispatchToProps)(UsersList);

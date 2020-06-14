@@ -11,7 +11,7 @@ import {
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 
-export const CallActions = ({ themedStyle, incomingCall, answer, reject }) => {
+export const CallActions = ({ incomingCall, answer, reject }) => {
 	// const mobile = useSelector(state => state.view.mobile);
 	return (
 		<Layout style={styles.container}>

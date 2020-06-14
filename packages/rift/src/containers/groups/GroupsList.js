@@ -29,7 +29,6 @@ class GroupsTab extends React.PureComponent {
 	}
 	goToMembers = ({ name, gid }) => {
 		this.props.addTab({ name, gid, listType: gid, group: true });
-		this.props.navigation.navigate(name);
 	};
 	renderItem = ({ item: group, index, ...restProps }) => {
 		// IF REACTIVATE PROFILE
@@ -51,33 +50,24 @@ class GroupsTab extends React.PureComponent {
 	render() {
 		const { groups } = this.props;
 		return (
-			<Layout style={styles.groupListLayout}>
-				<SearchBar />
-				<List
-					data={groups}
-					renderItem={this.renderItem}
-					style={styles.list}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.listContentContainer}
-					// numColumns={2}
-					// columnWrapperStyle={styles.columnWrapper}
-					initialNumToRender={8}
-					keyExtractor={this._keyExtractor}
-					getItemLayout={this.getItemLayout}
-				/>
-				{/* <CallActions themedStyle={styles.callActions} /> */}
-			</Layout>
+			<List
+				data={groups}
+				renderItem={this.renderItem}
+				style={styles.list}
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={styles.listContentContainer}
+				// numColumns={2}
+				// columnWrapperStyle={styles.columnWrapper}
+				initialNumToRender={8}
+				keyExtractor={this._keyExtractor}
+				getItemLayout={this.getItemLayout}
+			/>
 		);
 	}
 }
 const styles = StyleSheet.create({
 	list: {
 		width: '100%',
-		backgroundColor: '#101426'
-	},
-	groupListLayout: {
-		width: '100%',
-		height: '100%',
 		backgroundColor: '#101426'
 	},
 	listContentContainer: {

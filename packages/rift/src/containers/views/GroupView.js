@@ -18,8 +18,8 @@ class GroupView extends React.Component {
 	render() {
 		return (
 			<Layout style={styles.container}>
-				<GroupActionBar close={this.close} />
 				<SearchBar />
+				<GroupActionBar name={this.props.route.name} close={this.close} />
 				<UsersList {...this.props} />
 				<CallActions />
 			</Layout>

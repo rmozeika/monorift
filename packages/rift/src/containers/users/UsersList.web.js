@@ -8,6 +8,8 @@ import * as Actions from '@actions';
 import * as Selectors from '@selectors';
 import * as CallSelectors from '@selectors/call';
 import * as UserSelectors from '@selectors/users';
+import * as GroupSelectors from '@selectors/groups';
+
 import * as AuthSelectors from '@selectors/auth';
 
 import UserItem from './UserItem.web';
@@ -157,11 +159,17 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = (state, props) => {
 	const { view, auth } = state;
-	const { listType } = props.route.params;
+	const { listType, group } = props.route.params;
+
 	const { tab, mobile } = view;
 	const { loggedIn, checked } = auth;
+	let visibleUsers;
 
-	const visibleUsers = UserSelectors.filteredUsersByOnline(state, props);
+	if (!group) {
+		visibleUsers = UserSelectors.filteredUsersByOnline(state, props);
+	} else {
+		visibleUsers = Group;
+	}
 	return {
 		tab,
 		mobile,

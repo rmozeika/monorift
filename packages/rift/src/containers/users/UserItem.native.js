@@ -101,6 +101,7 @@ class UserItem extends React.Component {
 					acceptFriend={this.acceptFriend}
 					rejectFriend={this.rejectFriend}
 					user={username}
+					self={user.self}
 				/>
 				<Layout style={styles.statusBar}>
 					<QuickCall

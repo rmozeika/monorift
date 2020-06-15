@@ -2,6 +2,7 @@ type Group {
 	name: String
 	gid: Int
 	creator: Int
+	creator_oauth_id: String
 }
 type Member {
 	id: Int
@@ -9,6 +10,7 @@ type Member {
 }
 type Members {
 	uids: [Int]
+	oauth_ids: [String]
 	users: [User]
 }
 type GroupMembersPayload {
@@ -28,8 +30,18 @@ type GroupsPayload {
 
 # }
 
+type CreateGroupPayload {
+	group: Group
+	success: Boolean
+	error: String
+}
+
 extend type Query {
 	group(name: String, gid: Int): Group
 	groups(creator: Int): GroupsPayload
 	groupMembers(name: String, gid: Int): GroupMembersPayload
+}
+
+extend type Mutation {
+	createGroup(name: String!): CreateGroupPayload
 }

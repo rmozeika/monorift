@@ -111,7 +111,7 @@ class AddRemoveFriend extends React.PureComponent {
 	};
 	render() {
 		const { props, negative, empty } = this.buttonProps;
-		if (empty) {
+		if (empty || this.props.self) {
 			return null;
 		}
 		return (

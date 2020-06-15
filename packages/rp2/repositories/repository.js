@@ -75,20 +75,29 @@ class Repository extends RepositoryBase {
 		return op;
 	}
 	// overwrite default insert
-	async insert(doc) {
+	async insert(doc, returning) {
 		const data = this.getDataByDb(doc);
 		const operation = {};
 		if (data.mongo) {
 			operation.mongo = await this._insert(data.mongo);
 		}
 		if (data.pg) {
-			operation.pg = await this.insertRow(data.pg);
+			operation.pg = await this.insertRow(data.pg, returning);
+			if (returning) return operation.pg;
 		}
 		return operation;
 	}
-	async insertRow(data) {
-		const op = await this.postgresInstance.knex(this.table).insert(data);
-		return op;
+	async insertRow(data, returning) {
+		let result;
+		if (returning) {
+			result = await this.postgresInstance
+				.knex(this.table)
+				.returning(returning)
+				.insert(data);
+		} else {
+			result = await this.postgresInstance.knex(this.table).insert(data);
+		}
+		return result;
 	}
 
 	findAll(cb) {

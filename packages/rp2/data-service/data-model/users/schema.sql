@@ -13,7 +13,8 @@ CREATE TABLE public.users
     oauth_id character varying COLLATE pg_catalog."default" NOT NULL,
     guest boolean,
     gravatar text COLLATE pg_catalog."default",
-    CONSTRAINT users_pkey PRIMARY KEY (id)
+    CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT oauth_id UNIQUE (oauth_id)
 )
 WITH (
     OIDS = FALSE

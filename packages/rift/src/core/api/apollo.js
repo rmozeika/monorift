@@ -110,7 +110,6 @@ export async function getFriendsForId(id = 11392) {
             }
         }
     `);
-	debugger; //remove
 
 	console.log(result);
 	return result;
@@ -127,19 +126,15 @@ export async function createGuest(username, password) {
 				//   }
 			}
 		});
-		// console.log(res.data.createGuest);
-		debugger; //remove
-
 		return res.data.createGuest;
 	} catch (e) {
 		console.error(e);
-		debugger; //remove
+		debugger; // error
 	}
 }
 
 export async function getUserById(id = 9391) {
 	try {
-		debugger; //remove
 		const res = await client.query({
 			query: GET_USER_BY_ID,
 			variables: { id }
@@ -147,8 +142,6 @@ export async function getUserById(id = 9391) {
 		console.log(res);
 		return res;
 	} catch (e) {
-		debugger; //remove
-
 		console.error(e);
 		return e;
 	}

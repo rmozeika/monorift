@@ -28,6 +28,9 @@ export default class NavigationContiner extends React.Component {
 	toFriends(navigation) {
 		navigation.navigate('Friends');
 	}
+	toGroupMembers(navigation) {
+		navigation.navigate('Members');
+	}
 	renderSigninIcon(style = { height: 24 }) {
 		return <Icon name="sign-in-alt" style={{ ...style }} solid />;
 	}
@@ -71,6 +74,20 @@ export default class NavigationContiner extends React.Component {
 							...TransitionPresets.ModalSlideFromBottomIOS
 						})}
 					/>
+					{/* <Stack.Screen
+						key={'members'}
+						name={'Members'}
+						component={Userslist}
+						options={({ navigation, route }) => ({
+							animationEnabled: true,
+							headerTitle: () => <NavBarHeader></NavBarHeader>,
+							headerRight: () => (
+								<NavUserControls toCall={this.toCall} navigation={navigation} />
+							),
+							// ...TransitionPresets.forModalPresentationIOS,
+							...TransitionPresets.ModalSlideFromBottomIOS
+						})}
+					/> */}
 					<Stack.Screen
 						key={'talk'}
 						name={'Talk'}

@@ -9,7 +9,10 @@ const config = {
 	...baseConfig,
 	devtool: 'source-map',
 	optimization: {
-		minimize: true
+		minimize: true,
+		splitChunks: {
+			chunks: 'all'
+		}
 	}
 };
 module.exports = config;
@@ -120,6 +123,9 @@ const oldConfig = {
 	},
 	devtool: 'source-map',
 	optimization: {
-		minimize: true
+		minimize: true,
+		splitChunks: {
+			chunks: 'all'
+		}
 	}
 };

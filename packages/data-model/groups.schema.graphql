@@ -3,6 +3,7 @@ type Group {
 	gid: Int
 	creator: Int
 	creator_oauth_id: String
+	gravatar: String
 }
 type Member {
 	id: Int
@@ -36,10 +37,16 @@ type CreateGroupPayload {
 	error: String
 }
 
+type GroupsDataAndIds {
+	data: [Group]
+	gids: [Int]
+}
+
 extend type Query {
 	group(name: String, gid: Int): Group
 	groups(creator: Int): GroupsPayload
 	groupMembers(name: String, gid: Int): GroupMembersPayload
+	memberOfGroups: GroupsDataAndIds
 }
 
 extend type Mutation {

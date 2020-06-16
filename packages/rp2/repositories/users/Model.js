@@ -95,6 +95,17 @@ class UserModel {
 			bit_id: bit_id || id
 		};
 	}
+	static pgId(data) {
+		let id;
+		if (typeof data == 'string') {
+			// change to oauth_id then get id from that
+			return data;
+		}
+		if (typeof data == 'number') {
+			return data;
+		}
+		return data.id || data.uid;
+	}
 	static publicData({ _id, socket_id, ...user }, includeNull = true) {
 		return user;
 	}

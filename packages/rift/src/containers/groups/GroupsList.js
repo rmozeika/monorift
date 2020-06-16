@@ -103,8 +103,11 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
+	const { listType } = ownProps.route.params;
+	const FETCH_ACTION =
+		listType == 'memberOf' ? Actions.FETCH_MY_GROUPS : Actions.FETCH_GROUPS;
 	return {
-		fetchGroups: () => dispatch({ type: Actions.FETCH_GROUPS }),
+		fetchGroups: () => dispatch({ type: FETCH_ACTION }),
 		fetchGroupMembers: gid => dispatch(Actions.fetchGroupMembers(gid))
 	};
 };

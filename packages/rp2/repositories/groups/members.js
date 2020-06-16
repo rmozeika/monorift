@@ -11,6 +11,14 @@ class MembersRepository extends Repository {
 			table: 'members'
 		};
 	}
+	async memberOfGroups(user) {
+		// const uid = (typeof user === 'string') ? user : user.id;
+		// const testUser = this.api.repositories.users.modelUser(user);
+		const uid = this.api.repositories.users.Model.pgId(user);
+		const entries = await this.query({ uid });
+		return entries;
+		console.log(entries);
+	}
 	async groupMembers(gid) {
 		const members = await this.query({ gid });
 		return members;

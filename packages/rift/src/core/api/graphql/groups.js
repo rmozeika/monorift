@@ -25,6 +25,7 @@ export const GROUP_MEMBERS_ONLY_IDS = gql`
 				gid
 				name
 				creator
+				gravatar
 			}
 			members {
 				oauth_ids
@@ -40,9 +41,24 @@ export const GROUPS = gql`
 				gid
 				name
 				creator_oauth_id
+				gravatar
 			}
 			lists {
 				master
+			}
+		}
+	}
+`;
+
+export const GROUPS_MEMBER_OF = gql`
+	{
+		memberOfGroups {
+			gids
+			data {
+				gid
+				name
+				creator_oauth_id
+				gravatar
 			}
 		}
 	}
@@ -54,6 +70,8 @@ export const ALL_GROUPS = gql`
 			data {
 				gid
 				name
+				gravatar
+				creator_oauth_id
 			}
 			lists {
 				master
@@ -110,4 +128,22 @@ export function allGroupsData(raw) {
 	const { data, lists } = raw.data.groups;
 
 	return { data, lists };
+}
+
+export async function getGroupsMemberOf() {
+	try {
+		const res = await client.query({
+			query: GROUPS_MEMBER_OF
+		});
+		return myGroupsData(res);
+	} catch (e) {
+		console.error(e);
+		return e;
+	}
+}
+
+export function myGroupsData(raw) {
+	const { data, gids } = raw.data.memberOfGroups;
+
+	return { data, lists: { memberOf: gids } };
 }

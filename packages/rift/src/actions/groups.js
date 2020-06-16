@@ -1,4 +1,5 @@
 export const FETCH_GROUPS = 'FETCH_GROUPS';
+export const FETCH_MY_GROUPS = 'FETCH_GROUPS';
 
 export const SET_GROUPS = 'SET_GROUPS';
 export const setGroups = ({ lists, data }) => ({

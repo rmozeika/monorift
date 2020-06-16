@@ -73,9 +73,7 @@ export async function getFriends() {
 		return res;
 	} catch (e) {
 		console.error(e);
-		debugger; //remove
 	}
-	// debugger; //remove
 	// const result = await query(`
 	//     {
 	//         getFriendsForUser() {
@@ -90,7 +88,6 @@ export async function getFriends() {
 	//         }
 	//     }
 	// `);
-	// debugger; //remove
 
 	// console.log(result);
 }

@@ -7,6 +7,8 @@ import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import UsersView from '../views/UsersView';
 import GroupsView from '../views/GroupsView';
+import MyGroupsView from '../views/MyGroupsView';
+
 import GroupView from '../views/GroupView';
 
 const Tab = createBottomTabNavigator();
@@ -37,6 +39,16 @@ class TabNavigation extends React.Component {
 					render: UsersView
 				},
 				{
+					name: 'My Groups',
+					key: 'memberOf',
+					initialParams: {
+						listType: 'memberOf'
+					},
+					condition: true, //checked,
+					render: MyGroupsView,
+					renderFunc: this.createMyGroupsTab
+				},
+				{
 					name: 'Groups',
 					key: 'groups',
 					initialParams: {
@@ -58,6 +70,9 @@ class TabNavigation extends React.Component {
 	createGroupsTab = props => {
 		return <GroupsView addTab={this.addTab} {...props} />;
 	};
+	createMyGroupsTab = props => {
+		return <MyGroupsView addTab={this.addTab} {...props} />;
+	};
 	createGroupTab = props => {
 		return <GroupView removeTab={this.removeTab} {...props} />;
 	};
@@ -65,6 +80,7 @@ class TabNavigation extends React.Component {
 		this.setState(
 			(state, props) => {
 				const key = `members_${listType}`;
+				if (state.tabs.some(tab => tab.key == key)) return {};
 				const newTabs = [
 					{
 						name,

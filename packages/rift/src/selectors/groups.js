@@ -82,7 +82,6 @@ export const filteredMembers = createCachedSelector(
 
 // FOR GROUP LIST
 //
-// CHANGE THIS to use whatever filter for visible groups
 export const getVisibleGroupGids = (state, props) => {
 	// listtype is memberOf or master
 	const listType = listTypeCacheKey(state, props);

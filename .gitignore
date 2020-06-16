@@ -19,6 +19,9 @@ packages/cli/**
 **/history
 **/yarn-error.log
 packages/rp2/public/gravatar/*
+packages/rp2/public/groups/*
+!packages/rp2/public/groups/.gitalive
+
 !packages/rp2/public/gravatar/.gitalive
 packages/deploy/history
 logs/compose

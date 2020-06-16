@@ -27,19 +27,22 @@ class GroupItem extends React.PureComponent {
 		// this.props.navigation.navigate(name);
 	};
 	render() {
-		const { name, gid, active = true } = this.props.group;
+		const { name, gid, active = true, gravatar } = this.props.group;
 		return (
 			<ListItem style={styles.listItem}>
 				<Layout style={styles.listItemMain}>
 					<TouchableOpacity style={styles.listItemTouchable} onPress={this.onClick}>
+						<Gravatar
+							style={styles.gravatarContainer}
+							uri={gravatar}
+							// id={id}
+							imageStyles={styles.gravatar}
+							isScrolling={false}
+						/>
 						<Layout style={styles.titleContainer}>
 							<Text style={styles.listItemTitle}>{name}</Text>
 							{active && <Text style={styles.listItemDetails}>active</Text>}
 						</Layout>
-						{/* <Layout>
-							<Text>{name}</Text>
-							<Text>{gid}</Text>
-						</Layout> */}
 					</TouchableOpacity>
 				</Layout>
 			</ListItem>
@@ -89,6 +92,24 @@ const styles = StyleSheet.create({
 		paddingRight: 20,
 		paddingLeft: 10,
 		color: '#00E096'
+	},
+	gravatar: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: 40,
+		maxWidth: 40,
+		height: '100%',
+		width: '100%',
+		borderRadius: 100
+		// backgroundColor: 'inherit'
+	},
+	gravatarContainer: {
+		flexBasis: 50,
+		flex: 0,
+		marginLeft: 10,
+		// backgroundColor: 'inherit',
+		justifyContent: 'center',
+		alignItems: 'flex-end'
 	}
 });
 const mapStateToProps = (state, props) => {

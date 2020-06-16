@@ -34,6 +34,14 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const { gid, name } = args;
 					const [group] = await this.repository.get({ gid, name });
 					return group;
+				},
+				memberOfGroups: async (parent, args, context) => {
+					const { user } = context;
+					const memberEntriesForUser = await this.membersRepo.memberOfGroups(user);
+					// return memberEntriesForUser;
+
+					const gids = memberEntriesForUser.map(({ gid }) => gid);
+					return gids;
 				}
 			},
 			Mutation: {
@@ -55,6 +63,7 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const allIds = parent.map(({ gid }) => gid);
 					return allIds;
 				},
+				// TODO CHANGE THIS; same as master right now incorrectly
 				memberOf: (parent, args, context) => {
 					const allIds = parent.map(({ gid }) => gid);
 					return allIds;
@@ -68,6 +77,10 @@ class GroupSchema extends GraphqlSchemaInstance {
 					);
 					const { oauth_id } = user;
 					return oauth_id;
+				},
+				gravatar: async (parent, args, context) => {
+					const gravatar = parent?.src?.gravatar?.uri;
+					return gravatar;
 				}
 			},
 			GroupMembersPayload: {
@@ -93,6 +106,16 @@ class GroupSchema extends GraphqlSchemaInstance {
 					//  ptr
 					const users = await this.usersRepo.query({ id: ids });
 					return users;
+				}
+			},
+			GroupsDataAndIds: {
+				gids: async (parent, args, context) => {
+					const gids = parent; //.map(({ gid }) => gid);
+					return gids;
+				},
+				data: async (parent, args, context) => {
+					const groups = await this.repository.query({ gid: parent });
+					return groups;
 				}
 			}
 		};

@@ -17,8 +17,8 @@ export const initialState = {
 const groupData = (group, action) => {
 	switch (action.type) {
 		case SET_GROUPS: {
-			const { gid, name, creator_oauth_id: creator } = group;
-			return { gid, name, creator };
+			const { gid, name, creator_oauth_id: creator, gravatar } = group;
+			return { gid, name, creator, gravatar };
 		}
 	}
 };
@@ -26,7 +26,8 @@ export const byId = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
 			case SET_GROUPS: {
-				const groups = action.payload.forEach(group => {
+				const newGroups = action.payload.filter(({ gid }) => !state[gid]);
+				const groups = newGroups.forEach(group => {
 					draft[group.gid] = groupData(group, action);
 				});
 				break;
@@ -40,7 +41,12 @@ export const allIds = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
 			case SET_GROUPS: {
-				draft['master'] = action.lists.master;
+				if (action.lists.master) {
+					draft['master'] = action.lists.master;
+				}
+				if (action.lists.memberOf) {
+					draft['memberOf'] = action.lists.memberOf;
+				}
 			}
 		}
 	});

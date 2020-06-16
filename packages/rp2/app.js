@@ -38,6 +38,7 @@ app.get(
 	'/gravatar',
 	express.static(path.join(__dirname, 'public', 'gravatar'))
 );
+app.get('/groups', express.static(path.join(__dirname, 'public', 'groups')));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -8,7 +8,7 @@ class ImagesRepository extends Repository {
 	constructor(api) {
 		super(api);
 		// this.createGroupIcon('firstgroup'); //nsparenyTest();
-		this.testNegSpaceGenerator();
+		this.testGroupIconScale();
 	}
 	static getNamespaces() {
 		return {
@@ -16,6 +16,8 @@ class ImagesRepository extends Repository {
 			// table: 'images'
 		};
 	}
+	dir = path.resolve(__dirname, 'tmp');
+
 	async testNegSpaceGenerator() {
 		const originalPath = path.resolve(__dirname, 'tmp', 'gCrc.png');
 		const image = await Jimp.read(originalPath);
@@ -59,7 +61,21 @@ class ImagesRepository extends Repository {
 	async saveFile(path, stream) {
 		const file = fs.createWriteStream(gravatarPath);
 	}
-	async createGroupIcon(name, sizeMultiplier = 1) {
+	async testGroupIconScale() {
+		const sizeMultiplier = 4;
+		const newGroupIcon = await this.createGroupIcon('monorift', {
+			sizeMultiplier,
+			createNewMask: true
+		});
+		console.log(newGroupIcon);
+		const image = await Jimp.read(newGroupIcon.path);
+		const negSpaceRes = await this.cropAdjacentCircleNegativeSpace(image, {
+			sizeMultiplier
+		});
+		negSpaceRes.write(path.resolve(this.dir, 'NEGRES.png'));
+		return newGroupIcon;
+	}
+	async createGroupIcon(name, { sizeMultiplier = 1, createNewMask = false }) {
 		const mockEmail = `${name}@monorift.com`;
 		const dir = path.resolve(__dirname, '../public', 'groups');
 		const uneditedDir = path.resolve(dir, 'unedited');
@@ -72,7 +88,10 @@ class ImagesRepository extends Repository {
 		});
 
 		const gravatar = await Jimp.read(src.path);
-		const transformedImage = await this.circleMask(gravatar, sizeMultiplier);
+		const transformedImage = await this.circleMask(gravatar, {
+			sizeMultiplier,
+			createNewMask
+		});
 		const finishedPath = path.resolve(dir, `${name}.png`);
 		transformedImage.write(finishedPath);
 		return {
@@ -81,30 +100,46 @@ class ImagesRepository extends Repository {
 		};
 		// const transparentImg = await this.addTransparency(src.path, resultDir);
 	}
-	async circleMask(image, sizeMultiplier = 1) {
+	async circleMask(image, { sizeMultiplier = 1, createNewMask = false }) {
 		const dir = path.resolve(__dirname, 'tmp');
+
 		const maskPath = path.resolve(dir, 'circlemask-prod.png');
-		const mask = await Jimp.read(maskPath);
-		image.mask(mask, 10, 10);
+		let mask;
+		if (createNewMask) {
+			mask = await this.createCircleMask({ sizeMultiplier, createNewMask });
+		} else {
+			mask = await Jimp.read(maskPath);
+		}
+		const scale = this.createScale(sizeMultiplier);
+
+		const maskXY = scale(10);
+		image.mask(mask, maskXY, maskXY);
 		// image.write(resPath);
-		const circleResPath = path.resolve(dir, 'gCrc.png');
+		//const circleResPath = path.resolve(dir, 'gCrc.png');
 		const circleDimensions = {
-			radius: 15 * sizeMultiplier,
-			x: 20 * sizeMultiplier,
-			w: 20 * sizeMultiplier
+			radius: scale(15),
+			x: scale(20),
+			w: scale(20)
 		};
 		// image.circle({ radius: 15 * sizeMultiplier, x: 20, w: 20 });
 		image.circle(circleDimensions);
 		return image;
 		// image.write(circleResPath);
 	}
-	async createCircleMask(sizeMultiplier) {
+	async createCircleMask({ sizeMultiplier, createNewMask }) {
 		// change to below programatic function (transparency test)
+		const { dir } = this;
 		const maskPath = path.resolve(dir, 'tsquare.png');
 
 		// create a mask with transparent background
 		// overlay onto another image with white background;
-		const mask = await Jimp.read(maskPath);
+		let mask;
+		if (createNewMask) {
+			mask = await this.createSquareMask(sizeMultiplier);
+		} else {
+			mask = await Jimp.read(maskPath);
+		}
+
 		const circleRadius = sizeMultiplier * 10;
 		const circleDimensions = {
 			radius: circleRadius,
@@ -121,20 +156,26 @@ class ImagesRepository extends Repository {
 			'#fff'
 		);
 		whitebackgroundMask.composite(mask, 0, 0);
-		newCircle.write(path.resolve(dir, 'circlemask-prod.png'));
-		return newCircle;
+		whitebackgroundMask.write(path.resolve(dir, 'circlemask-prod.png'));
+		return whitebackgroundMask;
 	}
-	async cropAdjacentCircleNegativeSpace(image) {
+	createScale(sizeMultiplier) {
+		return function(input) {
+			return input * sizeMultiplier;
+		};
+	}
+	async cropAdjacentCircleNegativeSpace(image, { sizeMultiplier }) {
 		const replaceColor = { r: 0, g: 0, b: 0, a: 0 };
-
+		// const scale = (val) => (val * sizeMultiplier);
+		const scale = this.createScale(sizeMultiplier);
 		const limits = {
 			x: {
-				min: 15,
-				max: 25
+				min: scale(15),
+				max: scale(25)
 			},
 			y: {
-				min: 5,
-				max: 15
+				min: scale(5),
+				max: scale(10)
 			}
 		};
 		const calcHalfwayPoint = ({ min, max }) => {
@@ -171,7 +212,16 @@ class ImagesRepository extends Repository {
 			// }
 		});
 		image.write(path.resolve(__dirname, 'tmp', 'negspace.png'));
+		return image;
 		console.log('done');
+	}
+	async createSquareMask(sizeMultiplier) {
+		const { dir } = this;
+		const newFilePath = path.resolve(dir, 'tsquare.png');
+		const dimension = sizeMultiplier * 20;
+		const image = await this.createImage(dimension, dimension, '#000000ff');
+		image.write(newFilePath);
+		return image;
 	}
 	async tra() {
 		try {
@@ -201,6 +251,7 @@ class ImagesRepository extends Repository {
 			console.log(e);
 		}
 	}
+
 	async addTransparency(originalPath, resultDir) {
 		const pngImg = await Jimp.read(originalPath);
 	}

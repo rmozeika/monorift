@@ -40,7 +40,7 @@ class Computations {
 		};
 	}
 	generateInverseCircle(limits, halves) {
-		const { inCircle, calcRadius } = this;
+		const { inCircle, calcRadius, scale } = this;
 		const circumcenterLeft = {
 			x: limits.x.min,
 			y: halves.y
@@ -49,7 +49,7 @@ class Computations {
 			x: limits.x.max,
 			y: halves.y
 		};
-		const radius = calcRadius(limits.x) - 4;
+		const radius = calcRadius(limits.y) - scale(1);
 		return function(x, y, idx) {
 			if (x < limits.x.min || x > limits.x.max) return false;
 			if (y < limits.y.min || y > limits.y.max) return false;

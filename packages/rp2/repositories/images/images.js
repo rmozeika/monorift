@@ -10,7 +10,7 @@ class ImagesRepository extends Repository {
 	constructor(api) {
 		super(api);
 		// this.createGroupIcon('firstgroup'); //nsparenyTest();
-		this.testGroupIconScale();
+		// this.testGroupIconScale();
 	}
 	static getNamespaces() {
 		return {
@@ -63,23 +63,55 @@ class ImagesRepository extends Repository {
 	async saveFile(path, stream) {
 		const file = fs.createWriteStream(gravatarPath);
 	}
-	async testGroupIconScale() {
-		const sizeMultiplier = 4;
-		const newGroupIcon = await this.createGroupIcon('monorift', {
+	async createGroupIcon(
+		name,
+		{ sizeMultiplier = 4, createNewMask = false } = {}
+	) {
+		const { image, ...newGroupIcon } = await this.createGroupIconBase(name, {
 			sizeMultiplier,
-			createNewMask: true
+			createNewMask
+		}).catch(e => {
+			console.trace(e);
 		});
 		console.log(newGroupIcon);
-		const image = await Jimp.read(newGroupIcon.path);
+
 		const negSpaceRes = await this.cropAdjacentCircleNegativeSpace(image, {
 			sizeMultiplier
+		}).catch(e => {
+			console.trace(e);
 		});
-		negSpaceRes.write(path.resolve(this.dir, 'NEGRES.png'));
-		return newGroupIcon;
-	}
-	async createGroupIcon(name, { sizeMultiplier = 1, createNewMask = false }) {
-		const mockEmail = `${name}@monorift.com`;
+		// try {
+		//     // const image = await Jimp.read(newGroupIcon.path);
+
+		// } catch (e) {
+		//     console.trace(e);
+		// }
+		// try {
 		const dir = path.resolve(__dirname, '../../public', 'groups');
+		const finishedPath = path.resolve(dir, `${name}.png`);
+		// } catch (e) {
+		//     console.trace(e);
+		// }
+
+		try {
+			negSpaceRes.write(finishedPath);
+			return {
+				uri: `/groups/${name}.png`,
+				path: finishedPath
+			};
+		} catch (e) {
+			console.trace(e);
+		}
+
+		// return newGroupIcon;
+	}
+	async createGroupIconBase(
+		name,
+		{ sizeMultiplier = 1, createNewMask = false }
+	) {
+		const mockEmail = `${name}@monorift.com`;
+		// const dir = path.resolve(__dirname, '../../public', 'groups');
+		const { dir } = this;
 		const uneditedDir = path.resolve(dir, 'unedited');
 		const resultDir = path.resolve(dir, 'edited');
 		// const src = await this.createGravatar(uneditedDir, name, mockEmail);
@@ -94,11 +126,12 @@ class ImagesRepository extends Repository {
 			sizeMultiplier,
 			createNewMask
 		});
-		const finishedPath = path.resolve(dir, `${name}.png`);
+		const finishedPath = path.resolve(resultDir, `${name}.png`);
 		transformedImage.write(finishedPath);
 		return {
 			uri: `/groups/${name}.png`,
-			path: finishedPath
+			path: finishedPath,
+			image: transformedImage
 		};
 		// const transparentImg = await this.addTransparency(src.path, resultDir);
 	}

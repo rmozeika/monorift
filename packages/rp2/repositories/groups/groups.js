@@ -6,7 +6,7 @@ class GroupsRepository extends Repository {
 		//this.add('mongo15');
 		this.members = this.api.repositories['members'];
 		this.images = this.api.repositories['images'];
-		// this.createAllNullGroupIcons();
+		// this.createAllGroupIcons(false);
 	}
 	static getNamespaces() {
 		return {
@@ -58,10 +58,15 @@ class GroupsRepository extends Repository {
 		const memberInsert = await this.members.insert({ gid, uid, oauth_id });
 		return memberInsert;
 	}
-	async createAllNullGroupIcons() {
+	async createAllGroupIcons(onlyNull = true) {
 		const groups = await this.query({});
 		console.log(groups);
-		const filtered = groups.filter(group => !group?.src?.gravatar?.uri);
+		let filtered;
+		if (onlyNull) {
+			filtered = groups.filter(group => !group?.src?.gravatar?.uri);
+		} else {
+			filtered = groups;
+		}
 		console.log(filtered);
 		const result = await Promise.all(
 			filtered.map(async ({ name, gid }) => {
@@ -70,7 +75,9 @@ class GroupsRepository extends Repository {
 				const updateOp = await this.update({ gid }, { src });
 				return updateOp;
 			})
-		);
+		).catch(e => {
+			console.log(e);
+		});
 		console.log(result);
 	}
 }

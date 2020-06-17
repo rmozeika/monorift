@@ -8,6 +8,7 @@ class ImagesRepository extends Repository {
 	constructor(api) {
 		super(api);
 		// this.createGroupIcon('firstgroup'); //nsparenyTest();
+		this.testNegSpaceGenerator();
 	}
 	static getNamespaces() {
 		return {
@@ -15,10 +16,15 @@ class ImagesRepository extends Repository {
 			// table: 'images'
 		};
 	}
-	async createGravatar(dir, filename, email) {
+	async testNegSpaceGenerator() {
+		const originalPath = path.resolve(__dirname, 'tmp', 'gCrc.png');
+		const image = await Jimp.read(originalPath);
+		const resultImage = await this.cropAdjacentCircleNegativeSpace(image);
+	}
+	async createGravatar(dir, filename, email, { size = '40' }) {
 		const gravatarUrl = gravatar.url(
 			email,
-			{ s: '40', r: 'x', d: 'retro' },
+			{ s: size, r: 'x', d: 'retro' },
 			false
 		);
 		// const gravatarPath = path.resolve(
@@ -53,14 +59,20 @@ class ImagesRepository extends Repository {
 	async saveFile(path, stream) {
 		const file = fs.createWriteStream(gravatarPath);
 	}
-	async createGroupIcon(name) {
+	async createGroupIcon(name, sizeMultiplier = 1) {
 		const mockEmail = `${name}@monorift.com`;
 		const dir = path.resolve(__dirname, '../public', 'groups');
 		const uneditedDir = path.resolve(dir, 'unedited');
 		const resultDir = path.resolve(dir, 'edited');
-		const src = await this.createGravatar(uneditedDir, name, mockEmail);
+		// const src = await this.createGravatar(uneditedDir, name, mockEmail);
+		// change size back possibly
+		const gravatarSize = 40 * sizeMultiplier;
+		const src = await this.createGravatar(uneditedDir, name, mockEmail, {
+			size: gravatarSize
+		});
+
 		const gravatar = await Jimp.read(src.path);
-		const transformedImage = await this.circleMask(gravatar);
+		const transformedImage = await this.circleMask(gravatar, sizeMultiplier);
 		const finishedPath = path.resolve(dir, `${name}.png`);
 		transformedImage.write(finishedPath);
 		return {
@@ -69,29 +81,97 @@ class ImagesRepository extends Repository {
 		};
 		// const transparentImg = await this.addTransparency(src.path, resultDir);
 	}
-	async circleMask(image) {
+	async circleMask(image, sizeMultiplier = 1) {
 		const dir = path.resolve(__dirname, 'tmp');
 		const maskPath = path.resolve(dir, 'circlemask-prod.png');
 		const mask = await Jimp.read(maskPath);
 		image.mask(mask, 10, 10);
 		// image.write(resPath);
 		const circleResPath = path.resolve(dir, 'gCrc.png');
-		image.circle({ radius: 15, x: 20, w: 20 });
+		const circleDimensions = {
+			radius: 15 * sizeMultiplier,
+			x: 20 * sizeMultiplier,
+			w: 20 * sizeMultiplier
+		};
+		// image.circle({ radius: 15 * sizeMultiplier, x: 20, w: 20 });
+		image.circle(circleDimensions);
 		return image;
 		// image.write(circleResPath);
 	}
-	async createCircleMask() {
+	async createCircleMask(sizeMultiplier) {
 		// change to below programatic function (transparency test)
 		const maskPath = path.resolve(dir, 'tsquare.png');
 
+		// create a mask with transparent background
+		// overlay onto another image with white background;
 		const mask = await Jimp.read(maskPath);
-		mask.circle({ radius: 10, x: 10, y: 10 });
-		const circlePath = path.resolve(dir, 'circlemask.png');
-		mask.write(circlePath);
-		const newCircle = await this.createImage(20, 20, '#fff');
-		newCircle.composite(circleMask, 0, 0);
+		const circleRadius = sizeMultiplier * 10;
+		const circleDimensions = {
+			radius: circleRadius,
+			x: circleRadius,
+			y: circleRadius
+		};
+		mask.circle(circleDimensions);
+		// mask.circle({ radius: 10, x: 10, y: 10 });
+		// const circlePath = path.resolve(dir, 'circlemask.png');
+		// mask.write(circlePath);
+		const whitebackgroundMask = await this.createImage(
+			circleRadius * 2,
+			circleRadius * 2,
+			'#fff'
+		);
+		whitebackgroundMask.composite(mask, 0, 0);
 		newCircle.write(path.resolve(dir, 'circlemask-prod.png'));
 		return newCircle;
+	}
+	async cropAdjacentCircleNegativeSpace(image) {
+		const replaceColor = { r: 0, g: 0, b: 0, a: 0 };
+
+		const limits = {
+			x: {
+				min: 15,
+				max: 25
+			},
+			y: {
+				min: 5,
+				max: 15
+			}
+		};
+		const calcHalfwayPoint = ({ min, max }) => {
+			const diff = max - min;
+			const half = diff / 2;
+			const point = min + half;
+			return point;
+		};
+		const halves = {
+			x: calcHalfwayPoint(limits.x),
+			y: calcHalfwayPoint(limits.y)
+		};
+
+		image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
+			if (x < limits.x.min || x > limits.x.max) return;
+			if (y < limits.y.min || y > limits.y.max) return;
+			const xHalfwayDistance = Math.abs(x - halves.x);
+			const yHalfwayDistance = Math.abs(y - halves.y);
+			if (yHalfwayDistance < xHalfwayDistance) {
+				return;
+			}
+			const thisColor = {
+				r: image.bitmap.data[idx + 0],
+				g: image.bitmap.data[idx + 1],
+				b: image.bitmap.data[idx + 2],
+				a: image.bitmap.data[idx + 3]
+			};
+
+			// if(colorDistance(targetColor, thisColor) <= threshold) {
+			image.bitmap.data[idx + 0] = replaceColor.r;
+			image.bitmap.data[idx + 1] = replaceColor.g;
+			image.bitmap.data[idx + 2] = replaceColor.b;
+			image.bitmap.data[idx + 3] = replaceColor.a;
+			// }
+		});
+		image.write(path.resolve(__dirname, 'tmp', 'negspace.png'));
+		console.log('done');
 	}
 	async tra() {
 		try {

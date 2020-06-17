@@ -1,9 +1,11 @@
-const Repository = require('./repository.js');
+const Repository = require('../repository.js');
 const Jimp = require('jimp');
 const gravatar = require('gravatar');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+
+const Computations = require('./computations');
 class ImagesRepository extends Repository {
 	constructor(api) {
 		super(api);
@@ -47,7 +49,7 @@ class ImagesRepository extends Repository {
 		};
 	}
 	async createUserGravatar(email, oauth_id, username) {
-		const dir = path.resolve(__dirname, '../public', 'gravatar');
+		const dir = path.resolve(__dirname, '../../public', 'gravatar');
 		const gravatarSrc = await this.createGravatar(dir, oauth_id, username);
 		return gravatarSrc;
 	}
@@ -77,7 +79,7 @@ class ImagesRepository extends Repository {
 	}
 	async createGroupIcon(name, { sizeMultiplier = 1, createNewMask = false }) {
 		const mockEmail = `${name}@monorift.com`;
-		const dir = path.resolve(__dirname, '../public', 'groups');
+		const dir = path.resolve(__dirname, '../../public', 'groups');
 		const uneditedDir = path.resolve(dir, 'unedited');
 		const resultDir = path.resolve(dir, 'edited');
 		// const src = await this.createGravatar(uneditedDir, name, mockEmail);
@@ -164,39 +166,60 @@ class ImagesRepository extends Repository {
 			return input * sizeMultiplier;
 		};
 	}
+	createComp(scale) {
+		return new Computations(scale);
+	}
 	async cropAdjacentCircleNegativeSpace(image, { sizeMultiplier }) {
 		const replaceColor = { r: 0, g: 0, b: 0, a: 0 };
 		// const scale = (val) => (val * sizeMultiplier);
 		const scale = this.createScale(sizeMultiplier);
-		const limits = {
+		const comp = this.createComp(sizeMultiplier);
+		const baseLimits = {
 			x: {
-				min: scale(15),
-				max: scale(25)
+				min: 15,
+				max: 25
 			},
 			y: {
-				min: scale(5),
-				max: scale(10)
+				min: 5,
+				max: 10
 			}
 		};
-		const calcHalfwayPoint = ({ min, max }) => {
-			const diff = max - min;
-			const half = diff / 2;
-			const point = min + half;
-			return point;
-		};
-		const halves = {
-			x: calcHalfwayPoint(limits.x),
-			y: calcHalfwayPoint(limits.y)
-		};
+		const { limits, halves } = comp.negSpaceLimitsAndHalves(baseLimits);
+		// const limits = {
+		// 	x: {
+		// 		min: scale(15),
+		// 		max: scale(25)
+		// 	},
+		// 	y: {
+		// 		min: scale(5),
+		// 		max: scale(10)
+		// 	}
+		// };
+		// const calcHalfwayPoint = ({ min, max }) => {
+		// 	const diff = max - min;
+		// 	const half = diff / 2;
+		// 	const point = min + half;
+		// 	return point;
+		// };
+		// const halves = {
+		// 	x: calcHalfwayPoint(limits.x),
+		// 	y: calcHalfwayPoint(limits.y)
+		// };
+		// diagnolLinesCheck: type function
+		const diagnolLinesCheck = comp.generateDiagnolLinesCheck(limits, halves);
+		const inverseCircleCheck = comp.generateInverseCircle(limits, halves);
 
 		image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
-			if (x < limits.x.min || x > limits.x.max) return;
-			if (y < limits.y.min || y > limits.y.max) return;
-			const xHalfwayDistance = Math.abs(x - halves.x);
-			const yHalfwayDistance = Math.abs(y - halves.y);
-			if (yHalfwayDistance < xHalfwayDistance) {
-				return;
-			}
+			// const proceed = diagnolLinesCheck(x, y, idx);
+			const proceed = inverseCircleCheck(x, y, idx);
+			if (!proceed) return;
+			// if (x < limits.x.min || x > limits.x.max) return;
+			// if (y < limits.y.min || y > limits.y.max) return;
+			// const xHalfwayDistance = Math.abs(x - halves.x);
+			// const yHalfwayDistance = Math.abs(y - halves.y);
+			// if (yHalfwayDistance < xHalfwayDistance) {
+			// 	return;
+			// }
 			const thisColor = {
 				r: image.bitmap.data[idx + 0],
 				g: image.bitmap.data[idx + 1],
@@ -215,6 +238,19 @@ class ImagesRepository extends Repository {
 		return image;
 		console.log('done');
 	}
+	// REMOVE / NOW IN COMPUTATIONS
+	generateDiagnolLinesCheck(limits, halves) {
+		return function(x, y, idx) {
+			if (x < limits.x.min || x > limits.x.max) return false;
+			if (y < limits.y.min || y > limits.y.max) return false;
+			const xHalfwayDistance = Math.abs(x - halves.x);
+			const yHalfwayDistance = Math.abs(y - halves.y);
+			if (yHalfwayDistance < xHalfwayDistance) {
+				return false;
+			}
+			return true;
+		};
+	}
 	async createSquareMask(sizeMultiplier) {
 		const { dir } = this;
 		const newFilePath = path.resolve(dir, 'tsquare.png');
@@ -222,6 +258,16 @@ class ImagesRepository extends Repository {
 		const image = await this.createImage(dimension, dimension, '#000000ff');
 		image.write(newFilePath);
 		return image;
+	}
+	createImage(height, width, color) {
+		return new Promise((resolve, reject) => {
+			new Jimp(height, width, color, (err, image) => {
+				if (err) {
+					return reject(err);
+				}
+				resolve(image);
+			});
+		});
 	}
 	async tra() {
 		try {
@@ -269,16 +315,6 @@ class ImagesRepository extends Repository {
 			// image.blit
 		});
 		// #00000000
-	}
-	createImage(height, width, color) {
-		return new Promise((resolve, reject) => {
-			new Jimp(height, width, color, (err, image) => {
-				if (err) {
-					return reject(err);
-				}
-				resolve(image);
-			});
-		});
 	}
 
 	async tra1() {

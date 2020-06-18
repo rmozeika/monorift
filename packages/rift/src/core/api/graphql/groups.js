@@ -79,6 +79,36 @@ export const ALL_GROUPS = gql`
 		}
 	}
 `;
+
+export const JOIN = gql`
+	mutation Join($gid: Int!) {
+		join(gid: $gid) {
+			success
+			payload {
+				members {
+					uids
+				}
+				group {
+					gid
+					name
+				}
+			}
+			error
+		}
+	}
+`;
+export async function join(gid = 1) {
+	try {
+		const res = await client.mutation({
+			mutation: JOIN,
+			variables: { gid }
+		});
+		return groupMembersData(res);
+	} catch (e) {
+		console.error(e);
+		return e;
+	}
+}
 export async function getGroupMembersIds(gid = 1) {
 	try {
 		const res = await client.query({

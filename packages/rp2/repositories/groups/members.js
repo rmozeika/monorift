@@ -23,26 +23,21 @@ class MembersRepository extends Repository {
 		const members = await this.query({ gid });
 		return members;
 	}
-	async add({ gid, uid, oauth_id }) {
-		let userOAuthId = oauth_id;
-		if (!oauth_id) {
-			let [foundId] = await this.api.repositories.users.query(
-				{ id: uid },
-				'oauth_id'
-			);
-			userOAuthId = foundId.oauth_id;
+	async add(gid, { id, oauth_id }) {
+		let status = { success: true, error: null };
+		try {
+			let userOAuthId = oauth_id;
+			if (!oauth_id) {
+				let [foundId] = await this.api.repositories.users.query({ id }, 'oauth_id');
+				userOAuthId = foundId.oauth_id;
+			}
+			const row = { uid: id, gid, oauth_id };
+			const insertOp = await this.insert(row);
+			return status;
+		} catch (e) {
+			console.trace(e);
+			return { success: false, error: e };
 		}
-		const insertOp = await this.insert({ uid, gid, oauth_id: userOAuthId });
-		console.log(insertOp);
-	}
-	testAdd() {
-		Promise.all([
-			this.add({ gid: 1, uid: 9401 }),
-			this.add({ gid: 1, uid: 9419 }),
-			this.add({ gid: 1, uid: 9409 })
-		]).then(result => {
-			console.log(result);
-		});
 	}
 }
 

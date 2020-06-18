@@ -36,6 +36,11 @@ type CreateGroupPayload {
 	success: Boolean
 	error: String
 }
+type JoinGroupPayload {
+	payload: GroupMembersPayload
+	success: Boolean
+	error: String
+}
 
 type GroupsDataAndIds {
 	data: [Group]
@@ -51,4 +56,5 @@ extend type Query {
 
 extend type Mutation {
 	createGroup(name: String!): CreateGroupPayload
+	join(gid: Int!): JoinGroupPayload
 }

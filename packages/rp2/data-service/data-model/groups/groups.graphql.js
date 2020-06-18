@@ -12,7 +12,7 @@ class GroupSchema extends GraphqlSchemaInstance {
 		return 'groups';
 	}
 	setExtraRepos() {
-		this.membersRepo = this.api.repositories.members;
+		this.members = this.api.repositories.members;
 		this.usersRepo = this.api.repositories.users;
 	}
 	createResolvers() {
@@ -37,7 +37,7 @@ class GroupSchema extends GraphqlSchemaInstance {
 				},
 				memberOfGroups: async (parent, args, context) => {
 					const { user } = context;
-					const memberEntriesForUser = await this.membersRepo.memberOfGroups(user);
+					const memberEntriesForUser = await this.members.memberOfGroups(user);
 					// return memberEntriesForUser;
 
 					const gids = memberEntriesForUser.map(({ gid }) => gid);
@@ -49,6 +49,12 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const { name } = args;
 					const { user } = context;
 					const group = await this.repository.create(name, user);
+					return group;
+				},
+				join: async (parent, args, context) => {
+					const { gid } = args;
+					const { user } = context;
+					const group = await this.members.add(gid, user);
 					return group;
 				}
 			},
@@ -88,9 +94,20 @@ class GroupSchema extends GraphqlSchemaInstance {
 					return parent;
 				},
 				members: async (parent, args, context) => {
-					const members = await this.membersRepo.groupMembers(parent.gid);
+					const members = await this.members.groupMembers(parent.gid);
 					return members;
 				}
+			},
+			JoinGroupPayload: {
+				payload: async (parent, args, context) => {
+					const { gid } = args;
+					const [group] = await this.repository.get({ gid });
+					return group;
+				}
+				// group: async (parent, args, context) => {
+				// 	const group = await this.repository.get({ gid: args.gid });
+				// 	return group;
+				// }
 			},
 			Members: {
 				uids: async (parent, args, context) => {

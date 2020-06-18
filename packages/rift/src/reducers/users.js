@@ -59,16 +59,16 @@ export const queued = (state = [], action) => {
 		switch (action.type) {
 			case ADD_CALL: {
 				const { user } = action.payload;
-				const { oauth_id } = user;
-				draft[oauth_id] = {
+				const { id } = user;
+				draft[id] = {
 					...action.payload.user
 				};
 				break;
 			}
 			case REMOVE_CALL:
 				const { user } = action.payload;
-				const { oauth_id } = user;
-				delete draft[oauth_id];
+				const { id } = user;
+				delete draft[id];
 				// draft.filter(user => user.username !== action.payload.user.username);
 				break;
 			default:
@@ -146,25 +146,14 @@ export const byId = (state = {}, action) => {
 		switch (action.type) {
 			case SET_USERS: {
 				const users = action.payload.forEach(user => {
-					draft[user.oauth_id] = userData(user, action);
+					draft[user.id] = userData(user, action);
 				});
 
-				// const users = action.payload.forEach(({ status, online, ...user }) => {
-				// 	draft[user.oauth_id] = {
-				// 		...user,
-				// 		isFriend: status == 'P' || status == 'A' || status == 'S',
-				// 		friendStatus: status,
-				// 		online,
-				// 		checked: false,
-				// 		calling: false,
-				// 		connected: false
-				// 	};
-				// }, {});
 				break;
 			}
 			case LOGIN.SUCCESS: {
 				const user = action.payload;
-				draft[user.oauth_id] = userData(user, action);
+				draft[user.id] = userData(user, action);
 			}
 			case UPDATE_USER: {
 				const { payload, id } = action;
@@ -205,10 +194,10 @@ export const byId = (state = {}, action) => {
 				break;
 			}
 			case ADD_CALL:
-				draft[action.payload.user.oauth_id].checked = true;
+				draft[action.payload.user.id].checked = true;
 				break;
 			case REMOVE_CALL:
-				draft[action.payload.user.oauth_id].checked = false;
+				draft[action.payload.user.id].checked = false;
 				break;
 			default:
 				return draft;
@@ -222,13 +211,13 @@ export const allIds = (state = {}, action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
 			case SET_USERS: {
-				const ids = action.payload.map(user => user.oauth_id);
+				const ids = action.payload.map(user => user.id);
 
 				const addedFriends = action.payload.filter(user =>
 					isFriendFromStatus(user.status)
 				);
 				draft['master'] = ids;
-				draft['friends'].all = addedFriends.map(friend => friend.oauth_id);
+				draft['friends'].all = addedFriends.map(friend => friend.id);
 				break;
 				// CHANGE THIS! MERGE THIS WITH ONLIN
 			}
@@ -246,60 +235,7 @@ export const allIds = (state = {}, action) => {
 				draft.master.push(action.id);
 				break;
 			}
-			// case SET_ONLINE_USERS: {
-			// 	state.master.forEach(oauth_id => {
-			// 		const isOnline = action.payload.some(
-			// 			onlineUser => oauth_id == onlineUser.oauth_id
-			// 		);
-			// 		let isFriend =
-			// 			state.friends.all.length > 0 &&
-			// 			state.friends.all.some(friend => oauth_id == friend);
 
-			// 		const listKey = isFriend ? 'friends' : 'nonFriends';
-			// 		const listToPushTo = draft[listKey];
-			// 		if (isOnline) {
-			// 			draft[listKey].online.push(oauth_id);
-			// 			return;
-			// 		}
-			// 		draft[listKey].offline.push(oauth_id);
-			// 	});
-			// 	break;
-			// }
-
-			// can remove now
-			// case ADD_ONLINE_USER: {
-			// 	let isFriend =
-			// 		state.friends.all.length > 0 &&
-			// 		state.friends.all.some(friend => action.id == friend);
-			// 	const listKey = isFriend ? 'friends' : 'nonFriends';
-			// 	const newOfflineUsers = state[listKey].offline.filter(
-			// 		oauth_id => oauth_id !== action.id
-			// 	);
-			// 	draft[listKey].offline = newOfflineUsers;
-			// 	const doNotUpdate = draft[listKey].online.some(oauth_id => oauth_id =>
-			// 		oauth_id !== action.id
-			// 	);
-			// 	if (doNotUpdate) break;
-			// 	draft[listKey].online.push(action.id);
-			// 	break;
-			// }
-			// case REMOVE_ONLINE_USER: {
-			// 	let isFriend =
-			// 		state.friends.all.length > 0 &&
-			// 		state.friends.all.some(friend => action.id == friend);
-			// 	const listKey = isFriend ? 'friends' : 'nonFriends';
-			// 	const newOnlineUsers = state[listKey].online.filter(
-			// 		oauth_id => oauth_id !== action.id
-			// 	);
-			// 	draft[listKey].online = newOnlineUsers;
-			// 	const doNotUpdate = draft[listKey].online.some(oauth_id => oauth_id =>
-			// 		oauth_id !== action.id
-			// 	);
-			// 	if (doNotUpdate) break;
-			// 	draft[listKey].offline.push(action.id);
-			// 	break;
-			// }
-			// return { ...state, ...listOf };
 			default:
 				return draft;
 		}

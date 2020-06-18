@@ -17,7 +17,7 @@ export const initialState = {
 const groupData = (group, action) => {
 	switch (action.type) {
 		case SET_GROUPS: {
-			const { gid, name, creator_oauth_id: creator, gravatar } = group;
+			const { gid, name, creator, gravatar } = group;
 			return { gid, name, creator, gravatar };
 		}
 	}

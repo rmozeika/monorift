@@ -30,7 +30,7 @@ class CallItem extends SocketItem {
 					try {
 						const getAsync = util.promisify(redis.get).bind(redis);
 						// if (user.id) return user;
-						const id = await getAsync(`call:${user.oauth_id}`);
+						const id = await getAsync(`call:${user.id}`);
 						return { username: user.username, id };
 					} catch (e) {
 						console.error(e);
@@ -53,7 +53,7 @@ class CallItem extends SocketItem {
 					from: {
 						id: socket.id,
 						username: user.username,
-						oauth_id: user.oauth_id
+						id: user.id
 					}
 				});
 				return emitted;
@@ -83,7 +83,7 @@ class Call extends Socket {
 		this.createDefaultListeners();
 
 		logUser(user, socket);
-		this.redis.set(`call:${user.oauth_id}`, socket.id);
+		this.redis.set(`call:${user.id}`, socket.id);
 
 		this.createSocketItem(socket, user);
 	}

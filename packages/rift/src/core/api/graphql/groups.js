@@ -40,7 +40,7 @@ export const GROUPS = gql`
 			data {
 				gid
 				name
-				creator_oauth_id
+				creator
 				gravatar
 			}
 			lists {
@@ -57,7 +57,8 @@ export const GROUPS_MEMBER_OF = gql`
 			data {
 				gid
 				name
-				creator_oauth_id
+				# creator_oauth_id
+				creator
 				gravatar
 			}
 		}
@@ -71,7 +72,7 @@ export const ALL_GROUPS = gql`
 				gid
 				name
 				gravatar
-				creator_oauth_id
+				creator
 			}
 			lists {
 				master

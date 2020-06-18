@@ -72,69 +72,74 @@ function* iceConnectionStateChange(conn, id) {
 function* addTrackListener(conn, id) {
 	const chan = eventChannel(emit => {
 		const onTrack = e => {
-			// CHANGE THIS select from store;
-			// const { mediaStreamConstraints } = this.props;
-			// const mediaStreamConstraints = { audio: true, video: false };
-			console.log('ONTRACK called', e);
-			console.log('on track ID', e.track.id);
-			if (e.streams?.[0]) {
-				const stream = e.streams[0];
-				emit(e.track);
-				return;
-			}
-
-			if (mediaStreamConstraints.video && e.track.kind == 'video') {
-				if (!videoRef?.current) {
+			try {
+				// CHANGE THIS select from store;
+				// const { mediaStreamConstraints } = this.props;
+				// const mediaStreamConstraints = { audio: true, video: false };
+				console.log('ONTRACK called', e);
+				console.log('on track ID', e.track.id);
+				if (e.streams?.[0]) {
+					const stream = e.streams[0];
+					emit(e.track);
 					return;
 				}
+
+				if (mediaStreamConstraints.video && e.track.kind == 'video') {
+					if (!videoRef?.current) {
+						return;
+					}
+					if (e.streams?.[0]) {
+						videoRef.current.srcObject = e.streams[0];
+						videoRef.current.muted = true;
+					} else {
+						// CHANGE THIS!!!
+						let inboundStream;
+						if (!inboundStream) {
+							inboundStream = new MediaStream();
+							videoRef.current.srcObject = inboundStream;
+						}
+						inboundStream.addTrack(e.track);
+					}
+					// if (videoRef.current.srcObject !== null) {
+					// 	return;
+					// }
+					// videoRef.current.srcObject = e.streams[0];
+					// return;
+					return;
+				}
+				// if (!audioRef?.current) {
+				// 	return;
+				// }
 				if (e.streams?.[0]) {
-					videoRef.current.srcObject = e.streams[0];
-					videoRef.current.muted = true;
+					const stream = e.streams[0];
+					emit(e.track);
+					// audioRef.current.srcObject = e.streams[0];
+					// if (!inboundStream) {
+					// 	inboundStream = new MediaStream();
+					// 	audioTag.srcObject = inboundStream;
+					// }
+					// inboundStream.addTrack(e.track);
+					// const source = audioCtx.createMediaElementSource(audioTag);
+
+					// source.connect(audioCtx.destination);
+
+					// audioTag.play();
+					// return;
+					// this.visualize(analyser);
+					// if (1 == '1') return;
+					// var source = audioCtx.createMediaStreamSource(stream);
+					// source.connect(audioCtx.destination);
+					// audioRef.current.play();
 				} else {
-					// CHANGE THIS!!!
-					let inboundStream;
 					if (!inboundStream) {
 						inboundStream = new MediaStream();
 						videoRef.current.srcObject = inboundStream;
 					}
 					inboundStream.addTrack(e.track);
 				}
-				// if (videoRef.current.srcObject !== null) {
-				// 	return;
-				// }
-				// videoRef.current.srcObject = e.streams[0];
-				// return;
-				return;
-			}
-			// if (!audioRef?.current) {
-			// 	return;
-			// }
-			if (e.streams?.[0]) {
-				const stream = e.streams[0];
-				emit(e.track);
-				// audioRef.current.srcObject = e.streams[0];
-				// if (!inboundStream) {
-				// 	inboundStream = new MediaStream();
-				// 	audioTag.srcObject = inboundStream;
-				// }
-				// inboundStream.addTrack(e.track);
-				// const source = audioCtx.createMediaElementSource(audioTag);
-
-				// source.connect(audioCtx.destination);
-
-				// audioTag.play();
-				// return;
-				// this.visualize(analyser);
-				// if (1 == '1') return;
-				// var source = audioCtx.createMediaStreamSource(stream);
-				// source.connect(audioCtx.destination);
-				// audioRef.current.play();
-			} else {
-				if (!inboundStream) {
-					inboundStream = new MediaStream();
-					videoRef.current.srcObject = inboundStream;
-				}
-				inboundStream.addTrack(e.track);
+			} catch (e) {
+				console.error(e);
+				debugger; // error
 			}
 		};
 		conn.ontrack = onTrack;

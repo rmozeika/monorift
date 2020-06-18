@@ -1,5 +1,14 @@
 const Repository = require('./repository.js');
-
+// friendship status
+// A = accepted
+// S = SENT
+// P = PENDING
+const friendStatus = {
+	accepted: 'A',
+	sent: 'S',
+	pending: 'P',
+	rejected: 'R'
+};
 class FriendsRepository extends Repository {
 	constructor(api) {
 		super(api);

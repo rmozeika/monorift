@@ -85,7 +85,7 @@ function* respondFriendRequestSaga(action) {
 			});
 			// const friendStatuKey = didAccept ? 'A' : 'R';
 			// yield put(
-			// 	Actions.updateUser(friend.oauth_id, {
+			// 	Actions.updateUser(friend.id, {
 			// 		friendStatus: friendStatuKey,
 			// 		isFriend: didAccept
 			// 	})
@@ -176,10 +176,10 @@ function* socketListener() {
 				const { id, data, user } = message;
 				yield put(Actions.updateUser(id, data, user));
 				if (data.online == true) {
-					const user = { username: message.username, oauth_id: id };
+					const user = { username: message.username, id: id };
 					yield put(Actions.addOnlineUser(user));
 				} else if (message.online == false) {
-					const user = { username: message.username, oauth_id: id };
+					const user = { username: message.username, id: id };
 					yield put(Actions.removeOnlineUser(user));
 				}
 			} catch (e) {
@@ -202,10 +202,10 @@ function* socketMessageSaga(socketChannel) {
 			const { id, data, user } = message;
 			yield put(Actions.updateUser(id, data, user));
 			if (data.online == true) {
-				const user = { username: message.username, oauth_id: id };
+				const user = { username: message.username, id: id };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { username: message.username, oauth_id: id };
+				const user = { username: message.username, id: id };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {

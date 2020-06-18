@@ -9,9 +9,9 @@ export const setUsers = users => ({
 });
 
 export const UPDATE_USER = 'UPDATE_USER';
-export const updateUser = (oauth_id, data, user = {}) => ({
+export const updateUser = (id, data, user = {}) => ({
 	type: UPDATE_USER,
-	id: oauth_id || user.oauth_id,
+	id: id || user.id,
 	payload: {
 		data,
 		user
@@ -55,12 +55,12 @@ export const ADD_ONLINE_USER = 'ADD_ONLINE_USER';
 export const REMOVE_ONLINE_USER = 'REMOVE_ONLINE_USER';
 export const addOnlineUser = user => ({
 	type: ADD_ONLINE_USER,
-	id: user.oauth_id,
+	id: user.id,
 	payload: user
 });
 export const removeOnlineUser = user => ({
 	type: REMOVE_ONLINE_USER,
-	id: user.oauth_id,
+	id: user.id,
 	payload: user
 });
 

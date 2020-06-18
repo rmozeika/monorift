@@ -92,7 +92,8 @@ class UserModel {
 			src,
 			mocked,
 			guest,
-			bit_id: bit_id || id
+			bit_id: bit_id || id,
+			gravatar: src?.gravatar?.uri
 		};
 	}
 	static pgId(data) {

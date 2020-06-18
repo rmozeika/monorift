@@ -25,13 +25,17 @@ import {
 import Gravatar from '@components/users/Gravatar';
 import UpdateTempUsername from '@components/users/UpdateTempUsername';
 import { originLink } from '../../core/utils';
+interface User {
+	// displayName?: string;
+	gravatar?: string;
+	username?: string;
+	id?: number;
+}
 
 interface ProfileProps {
 	loggedIn: boolean;
-	// user: User;
-	username: string;
+	user: User;
 	alert?: string | null;
-	id?: string;
 }
 
 type ProfilePopoverProps = ProfileProps & ThemedComponentProps;
@@ -99,14 +103,15 @@ class ProfilePopover extends React.Component<
 					// square={true}
 					isScrolling={false}
 					imageStyles={styles.gravatar}
-					id={this.props.id}
+					uri={this.props.user.gravatar}
+					id={this.props.user.id}
 				/>
 				<Layout style={styles.userIconContainer}>
 					{this.props.alert && this.renderAlertIcon({ style: styles.userIcons })}
 					{this.renderProfileIcon({ style: styles.userIcons })}
 				</Layout>
 
-				<Text style={styles.myUsername}>{this.props.username}</Text>
+				<Text style={styles.myUsername}>{this.props.user.username}</Text>
 			</TouchableOpacity>
 		);
 	};

@@ -72,7 +72,7 @@ export const filteredMembers = createCachedSelector(
 	[getSearchFilter, getMembersDataByOnlineCached],
 	(filter, users) => {
 		if (filter == '' || filter == undefined) {
-			return users.map(({ oauth_id }) => oauth_id);
+			return users.map(({ id }) => id);
 		}
 
 		const filteredGroups = filterByName(members, filter);

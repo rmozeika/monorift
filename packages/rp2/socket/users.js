@@ -12,8 +12,8 @@ class UserItem extends SocketItem {
 		this.subscriber.on('pmessage', this.psub);
 		this.subscriber.on('message', this.sub);
 
-		// this.subscriber.subscribe(`${this.user.oauth_id}:friend_request`);
-		this.subscriber.psubscribe(`${this.user.oauth_id}:*`);
+		// this.subscriber.subscribe(`${this.user.id}:friend_request`);
+		this.subscriber.psubscribe(`${this.user.id}:*`);
 		this.subscriber.subscribe('new_user');
 
 		this.logConnection();
@@ -42,7 +42,7 @@ class UserItem extends SocketItem {
 		}
 	}
 	psub = (pattern, chan, message) => {
-		const channel = chan.replace(`${this.user.oauth_id}:`, '');
+		const channel = chan.replace(`${this.user.id}:`, '');
 		if (channel == 'friend_request') {
 			const [id, friendStatus] = message.split(':');
 			const isFriend = ['P', 'A', 'S'].some(key => key == friendStatus);
@@ -68,7 +68,7 @@ class UserItem extends SocketItem {
 			redis.setbit('online_bit', user.id, 1);
 			redis.set(user.username, socket.id);
 			socket.broadcast.emit('message', {
-				id: user.oauth_id,
+				id: user.id,
 				data: {
 					online: true
 				},
@@ -91,7 +91,7 @@ class UserItem extends SocketItem {
 				console.log('broadcast user online', user.username);
 
 				socket.broadcast.emit('message', {
-					id: user.oauth_id,
+					id: user.id,
 					data: {
 						online: true
 					},
@@ -115,15 +115,15 @@ class UserItem extends SocketItem {
 	async onDisconnect() {
 		this.subscriber.punsubscribe();
 		const { user = {}, redis } = this;
-		const { oauth_id, username } = user;
+		const { id, username } = user;
 		if (user.id) {
 			redis.setbit('online_bit', user.id, 0);
 		}
-		if (oauth_id) {
+		if (id) {
 			console.log('broadcast user offline', username);
 			try {
 				this.socket.broadcast.emit('message', {
-					id: user.oauth_id,
+					id: user.id,
 					data: {
 						online: false
 					},

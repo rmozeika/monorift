@@ -24,6 +24,7 @@ const CREATE_GUEST = gql`
 	mutation($username: String!, $password: String!) {
 		createGuest(input: { username: $username, password: $password }) {
 			user {
+				id
 				oauth_id
 				username
 				online

@@ -2,6 +2,9 @@
 import * as React from 'react';
 import { Icon, Layout, Text } from '@ui-kitten/components';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import Gravatar from '@components/users/Gravatar';
+
 const iconsMap = {
 	['Friends']: 'friends',
 	['Users']: 'users',
@@ -12,7 +15,7 @@ const iconsMap = {
 const color = '#F7F9FC';
 const activeColor = 'rgb(0, 122, 255)';
 const tabColor = 'rgb(21, 26, 48)'; //'#1A2138';
-const size = 18;
+const size = 22;
 function TabBar({ state, descriptors, navigation }) {
 	const focusedOptions = descriptors[state.routes[state.index].key].options;
 
@@ -66,7 +69,28 @@ function TabBar({ state, descriptors, navigation }) {
 					}
 				};
 				const currentStyles = byFocusedStyles[isFocused];
+				const TabIcon = () => {
+					if (route.params.gravatar) {
+						return (
+							<Gravatar
+								style={styles.gravatarContainer}
+								uri={route.params.gravatar}
+								// id={id}
+								imageStyles={styles.gravatar}
+								isScrolling={false}
+							/>
+						);
+					}
 
+					return (
+						<Icon
+							color={currentStyles.color}
+							size={size}
+							style={{}}
+							name={iconName || 'notch'}
+						/>
+					);
+				};
 				return (
 					<TouchableOpacity
 						accessibilityRole="button"
@@ -77,12 +101,13 @@ function TabBar({ state, descriptors, navigation }) {
 						onLongPress={onLongPress}
 						style={currentStyles.tab}
 					>
-						<Icon
+						{/* <Icon
 							color={currentStyles.color}
 							size={size}
 							style={{}}
 							name={iconName}
-						/>
+						/> */}
+						<TabIcon />
 						<Text style={currentStyles.label}>{label}</Text>
 					</TouchableOpacity>
 				);
@@ -116,6 +141,25 @@ const styles = StyleSheet.create({
 	activeLabel: {
 		...textStyle,
 		color: activeColor
+	},
+	gravatar: {
+		minWidth: 20,
+		minHeight: 20,
+		maxHeight: 26,
+		maxWidth: 26,
+		height: '100%',
+		width: '100%',
+		borderRadius: 0
+		// backgroundColor: 'inherit'
+	},
+	gravatarContainer: {
+		flexBasis: 30,
+		flex: 0,
+		minWidth: 30,
+		// marginLeft: 10,
+		// backgroundColor: 'inherit',
+		justifyContent: 'center'
+		// alignItems: 'flex-end'
 	}
 });
 export default TabBar;

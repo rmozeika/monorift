@@ -27,8 +27,8 @@ class GroupsTab extends React.PureComponent {
 	getItemLayout(data, index) {
 		return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
 	}
-	goToMembers = ({ name, gid }) => {
-		this.props.addTab({ name, gid, listType: gid, group: true });
+	goToMembers = ({ name, gid, gravatar }) => {
+		this.props.addTab({ name, gid, listType: gid, group: true, gravatar });
 	};
 	renderItem = ({ item: group, index, ...restProps }) => {
 		// IF REACTIVATE PROFILE

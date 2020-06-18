@@ -9,8 +9,7 @@ const Computations = require('./computations');
 class ImagesRepository extends Repository {
 	constructor(api) {
 		super(api);
-		// this.createGroupIcon('firstgroup'); //nsparenyTest();
-		// this.testGroupIconScale();
+		// this.createGroupIcon('croptest', { altPath: path.resolve(__dirname, 'tmp', 'croptest.png') }); //nsparenyTest();
 	}
 	static getNamespaces() {
 		return {
@@ -20,23 +19,12 @@ class ImagesRepository extends Repository {
 	}
 	dir = path.resolve(__dirname, 'tmp');
 
-	async testNegSpaceGenerator() {
-		const originalPath = path.resolve(__dirname, 'tmp', 'gCrc.png');
-		const image = await Jimp.read(originalPath);
-		const resultImage = await this.cropAdjacentCircleNegativeSpace(image);
-	}
 	async createGravatar(dir, filename, email, { size = '40' }) {
 		const gravatarUrl = gravatar.url(
 			email,
 			{ s: size, r: 'x', d: 'retro' },
 			false
 		);
-		// const gravatarPath = path.resolve(
-		// 	__dirname,
-		// 	'../../public',
-		// 	'gravatar',
-		// 	`${filename}.png`
-		// );
 		const gravatarPath = path.resolve(dir, `${filename}.png`);
 
 		const file = fs.createWriteStream(gravatarPath);
@@ -65,7 +53,7 @@ class ImagesRepository extends Repository {
 	}
 	async createGroupIcon(
 		name,
-		{ sizeMultiplier = 4, createNewMask = false } = {}
+		{ sizeMultiplier = 4, createNewMask = false, altPath } = {}
 	) {
 		const { image, ...newGroupIcon } = await this.createGroupIconBase(name, {
 			sizeMultiplier,
@@ -80,21 +68,14 @@ class ImagesRepository extends Repository {
 		}).catch(e => {
 			console.trace(e);
 		});
-		// try {
-		//     // const image = await Jimp.read(newGroupIcon.path);
 
-		// } catch (e) {
-		//     console.trace(e);
-		// }
-		// try {
 		const dir = path.resolve(__dirname, '../../public', 'groups');
-		const finishedPath = path.resolve(dir, `${name}.png`);
-		// } catch (e) {
-		//     console.trace(e);
-		// }
+		const finishedPath = altPath || path.resolve(dir, `${name}.png`);
 
+		this.cropGroupImageBorders(negSpaceRes, { sizeMultiplier });
 		try {
 			negSpaceRes.write(finishedPath);
+
 			return {
 				uri: `/groups/${name}.png`,
 				path: finishedPath
@@ -102,8 +83,6 @@ class ImagesRepository extends Repository {
 		} catch (e) {
 			console.trace(e);
 		}
-
-		// return newGroupIcon;
 	}
 	async createGroupIconBase(
 		name,
@@ -133,7 +112,6 @@ class ImagesRepository extends Repository {
 			path: finishedPath,
 			image: transformedImage
 		};
-		// const transparentImg = await this.addTransparency(src.path, resultDir);
 	}
 	async circleMask(image, { sizeMultiplier = 1, createNewMask = false }) {
 		const dir = path.resolve(__dirname, 'tmp');
@@ -149,17 +127,15 @@ class ImagesRepository extends Repository {
 
 		const maskXY = scale(10);
 		image.mask(mask, maskXY, maskXY);
-		// image.write(resPath);
-		//const circleResPath = path.resolve(dir, 'gCrc.png');
+
 		const circleDimensions = {
 			radius: scale(15),
 			x: scale(20),
 			w: scale(20)
 		};
-		// image.circle({ radius: 15 * sizeMultiplier, x: 20, w: 20 });
+
 		image.circle(circleDimensions);
 		return image;
-		// image.write(circleResPath);
 	}
 	async createCircleMask({ sizeMultiplier, createNewMask }) {
 		// change to below programatic function (transparency test)
@@ -218,27 +194,7 @@ class ImagesRepository extends Repository {
 			}
 		};
 		const { limits, halves } = comp.negSpaceLimitsAndHalves(baseLimits);
-		// const limits = {
-		// 	x: {
-		// 		min: scale(15),
-		// 		max: scale(25)
-		// 	},
-		// 	y: {
-		// 		min: scale(5),
-		// 		max: scale(10)
-		// 	}
-		// };
-		// const calcHalfwayPoint = ({ min, max }) => {
-		// 	const diff = max - min;
-		// 	const half = diff / 2;
-		// 	const point = min + half;
-		// 	return point;
-		// };
-		// const halves = {
-		// 	x: calcHalfwayPoint(limits.x),
-		// 	y: calcHalfwayPoint(limits.y)
-		// };
-		// diagnolLinesCheck: type function
+
 		const diagnolLinesCheck = comp.generateDiagnolLinesCheck(limits, halves);
 		const inverseCircleCheck = comp.generateInverseCircle(limits, halves);
 
@@ -246,13 +202,7 @@ class ImagesRepository extends Repository {
 			// const proceed = diagnolLinesCheck(x, y, idx);
 			const proceed = inverseCircleCheck(x, y, idx);
 			if (!proceed) return;
-			// if (x < limits.x.min || x > limits.x.max) return;
-			// if (y < limits.y.min || y > limits.y.max) return;
-			// const xHalfwayDistance = Math.abs(x - halves.x);
-			// const yHalfwayDistance = Math.abs(y - halves.y);
-			// if (yHalfwayDistance < xHalfwayDistance) {
-			// 	return;
-			// }
+
 			const thisColor = {
 				r: image.bitmap.data[idx + 0],
 				g: image.bitmap.data[idx + 1],
@@ -270,6 +220,13 @@ class ImagesRepository extends Repository {
 		image.write(path.resolve(__dirname, 'tmp', 'negspace.png'));
 		return image;
 		console.log('done');
+	}
+	async cropGroupImageBorders(image, { sizeMultiplier }) {
+		const scale = this.createScale(sizeMultiplier);
+		const xyStartpoints = scale(5);
+		const widthHeight = scale(30);
+		image.crop(xyStartpoints, xyStartpoints, widthHeight, widthHeight);
+		return image;
 	}
 	// REMOVE / NOW IN COMPUTATIONS
 	generateDiagnolLinesCheck(limits, halves) {
@@ -301,71 +258,6 @@ class ImagesRepository extends Repository {
 				resolve(image);
 			});
 		});
-	}
-	async tra() {
-		try {
-			const dir = path.resolve(__dirname, 'tmp');
-			const maskPath = path.resolve(dir, 'tsquare.png');
-			const gtarPath = path.resolve(dir, 'base.png');
-			const resPath = path.resolve(dir, 'res15.png');
-
-			const mask = await Jimp.read(maskPath);
-
-			const gtar = await Jimp.read(gtarPath);
-			// gtar.circle({ radius: 5, x: 10, y: 10 });
-			// gtar.write(path.resolve(dir, 'circle1.png'));
-			mask.circle({ radius: 10, x: 10, y: 10 });
-			const circlePath = path.resolve(dir, 'circlemask.png');
-			mask.write(circlePath);
-			const circleMask = await Jimp.read(circlePath);
-			const newCircle = await this.createImage(20, 20, '#fff');
-			newCircle.composite(circleMask, 0, 0);
-			newCircle.write(path.resolve(dir, 'circlemask-prod.png'));
-			gtar.mask(newCircle, 10, 10);
-			gtar.write(resPath);
-			const circleResPath = path.resolve(dir, 'gCrc.png');
-			gtar.circle({ radius: 15, x: 20, w: 20 });
-			gtar.write(circleResPath);
-		} catch (e) {
-			console.log(e);
-		}
-	}
-
-	async addTransparency(originalPath, resultDir) {
-		const pngImg = await Jimp.read(originalPath);
-	}
-	async transparenyTest() {
-		const dir = path.resolve(__dirname, 'tmp');
-		const newFilePath = path.resolve(dir, 'tsquare.png');
-		const gtarPath = path.resolve(dir, 'base.png');
-		const resPath = path.resolve(dir, 'res.png');
-		new Jimp(20, 20, '#000000ff', async (err, image) => {
-			image.write(newFilePath);
-			const gtar = await Jimp.read(gtarPath);
-			gtar.mask(image, 10, 10);
-			gtar.write(resPath);
-
-			// image.blit
-		});
-		// #00000000
-	}
-
-	async tra1() {
-		const dir = path.resolve(__dirname, 'tmp');
-		const maskPath = path.resolve(dir, 'circle2.png');
-		const gtarPath = path.resolve(dir, 'base.png');
-		const resPath = path.resolve(dir, 'res2.png');
-		const mask = await Jimp.read(maskPath);
-
-		const gtar = await Jimp.read(gtarPath);
-		gtar.mask(mask, 10, 10);
-		gtar.write(resPath);
-	}
-	async blur() {
-		const dir = path.resolve(__dirname, 'tmp');
-		const newFilePath = path.resolve(dir, 'tsquare.png');
-		const gtarPath = path.resolve(dir, 'base.png');
-		const resPath = path.resolve(dir, 'res.png');
 	}
 }
 function promiseGet(url) {

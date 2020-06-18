@@ -21,9 +21,9 @@ class GroupItem extends React.PureComponent {
 	};
 	onClick = () => {
 		this.fetchGroupMembers();
-		const { name, gid } = this.props.group;
+		const { name, gid, gravatar } = this.props.group;
 		// this.props.addTab({ name, gid, listType: gid, group: true });
-		this.props.goToMembers({ name, gid });
+		this.props.goToMembers({ name, gid, gravatar });
 		// this.props.navigation.navigate(name);
 	};
 	render() {

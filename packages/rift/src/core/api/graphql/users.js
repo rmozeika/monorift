@@ -132,7 +132,6 @@ export async function getUserById(id = 9391) {
 		});
 		console.log(res);
 		const user = parseUser(res);
-		debugger; //remove
 		return user;
 	} catch (e) {
 		console.error(e);

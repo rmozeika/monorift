@@ -226,7 +226,9 @@ class UserRepository extends Repository {
 	async existingUser(id, username) {
 		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
 	}
+	// should be using UserModel for consistency
 	getPublicUser({ _id, socket_id, ...user }) {
+		user.id = user.id || user.bit_id;
 		return user;
 	}
 

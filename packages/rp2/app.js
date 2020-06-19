@@ -128,9 +128,8 @@ function onAuthorizeFail(data, message, error, accept) {
 }
 app.io.on('connection', async socket => {
 	const usersRepo = api.repositories.users;
-	const { oauth_id } = await api.repositories.auth.userFromSocket(socket);
-	const userData = oauth_id ? await usersRepo.findById(oauth_id) : false;
-	const user = usersRepo.getPublicUser(userData);
+	const { id } = await api.repositories.auth.userFromSocket(socket);
+	const user = id ? await usersRepo.getUserById(id) : false;
 
 	socket.on('check_auth', async ack => {
 		if (user) {

@@ -31,7 +31,7 @@ class FriendsRepository extends Repository {
 			friend
 		] = await this.api.repositories.users.getUserColumnsByUsername(
 			[username, friendUsername],
-			['oauth_id', 'id']
+			['oauth_id', 'id'] // do not need oauth_id
 		);
 		const accepted = await this.postgresInstance
 			.knex('friendship')
@@ -133,8 +133,8 @@ class FriendsRepository extends Repository {
 		}
 		return this.api.redisAsync(
 			'publish',
-			`${to.oauth_id}:friend_request`,
-			`${from.oauth_id}:${status}`
+			`${to.id}:friend_request`,
+			`${from.id}:${status}`
 		);
 	}
 }

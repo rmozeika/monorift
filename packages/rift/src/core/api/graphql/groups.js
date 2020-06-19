@@ -28,7 +28,7 @@ export const GROUP_MEMBERS_ONLY_IDS = gql`
 				gravatar
 			}
 			members {
-				oauth_ids
+				uids
 			}
 		}
 	}
@@ -127,7 +127,7 @@ export function groupMembersData(raw) {
 	return {
 		gid: group.gid,
 		group,
-		members: members.oauth_ids
+		members: members.uids
 	};
 }
 // export async function getGroupMembers(gid = 1) {

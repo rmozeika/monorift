@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import produce from 'immer';
-import { SET_GROUPS, SET_GROUP_MEMBERS } from '@actions';
+import { SET_GROUPS, SET_GROUP_MEMBERS, ADD_MEMBER } from '@actions';
 export const initialState = {
 	byId: {},
 	allIds: {
@@ -47,6 +47,7 @@ export const allIds = (state = {}, action) => {
 				if (action.lists.memberOf) {
 					draft['memberOf'] = action.lists.memberOf;
 				}
+				break;
 			}
 		}
 	});
@@ -67,6 +68,14 @@ export const members = (state = {}, action) => {
 			case SET_GROUP_MEMBERS: {
 				const { gid, members } = action;
 				draft[gid] = members;
+				break;
+			}
+			case ADD_MEMBER: {
+				const { gid, id } = action;
+				const existing = state[gid] || [];
+				if (existing.some(uid => uid == id)) break;
+				draft[gid] = [...existing, id];
+				break;
 			}
 		}
 	});

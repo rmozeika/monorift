@@ -4,12 +4,18 @@ import { connect } from 'react-redux';
 import { StyleSheet, Linking, Platform } from 'react-native';
 import UsersList from '../users/UsersList.native';
 import SearchBar from '@components/users/SearchBar';
-
+import * as Actions from '@actions';
 import CallActions from '@components/buttons/CallActions';
 import GroupActionBar from '@components/groups/GroupActionBar';
 class GroupView extends React.Component {
 	constructor(props) {
 		super(props);
+		// const { listType, group } = props.route.params;
+		this.watchGroup();
+	}
+	watchGroup() {
+		const { gid = 6 } = this.props.route.params;
+		this.props.watchGroup(gid);
 	}
 	close = () => {
 		const { key } = this.props.route.params;
@@ -33,5 +39,12 @@ const styles = StyleSheet.create({
 		backgroundColor: '#101426'
 	}
 });
-
-export default GroupView;
+const mapStateToProps = (state, ownProps) => {
+	return {};
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+	return {
+		watchGroup: gid => dispatch(Actions.watchGroup(gid))
+	};
+};
+export default connect(mapStateToProps, mapDispatchToProps)(GroupView);

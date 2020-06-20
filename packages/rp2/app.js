@@ -21,6 +21,10 @@ const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 const graphqlHTTP = require('express-graphql');
 const GraphqlService = require('./data-service/graphql-service');
+
+const { execute, subscribe } = require('graphql');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
+
 console.log('VERSION', '0.6.2');
 const { ApolloServer, gql } = require('apollo-server-express');
 
@@ -76,6 +80,17 @@ const setFurtherRoutes = async () => {
 	const gqlConfig = await graphqlService.createSchemas();
 	// const server = new ApolloServer(userSchema.serverConfig);
 	const server = new ApolloServer(gqlConfig);
+	app.gql = server;
+	// exports.GqlSub = () => {
+	// 	new SubscriptionServer({
+	// 		execute,
+	// 		subscribe,
+	// 		schema: gqlConfig,
+	// 	}, {
+	// 		server: server,
+	// 		path: '/subscriptions',
+	// 	});
+	// };
 	server.applyMiddleware({ app });
 	app.use('/profile', express.static(path.join(__dirname, 'site')));
 

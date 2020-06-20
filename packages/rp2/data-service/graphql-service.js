@@ -13,7 +13,13 @@ class GraphqlService {
 	};
 	schemas = {};
 	instances = {};
-	context = async ({ req, res }) => {
+	context = async ({ req, res, connection }) => {
+		if (connection) {
+			const user = await this.api.repositories.auth.parseBearer(
+				connection.context?.authorization
+			);
+			return { user };
+		}
 		console.log(this);
 		const user = await this.api.repositories.auth.graphqlToken(req);
 		return { user, res };

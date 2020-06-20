@@ -100,6 +100,7 @@ function TabBar({ state, descriptors, navigation }) {
 						onPress={onPress}
 						onLongPress={onLongPress}
 						style={currentStyles.tab}
+						key={route.key}
 					>
 						{/* <Icon
 							color={currentStyles.color}

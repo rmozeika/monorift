@@ -178,3 +178,29 @@ export function myGroupsData(raw) {
 
 	return { data, lists: { memberOf: gids } };
 }
+const SUB_JOIN = gql`
+	subscription MemberJoined($gid: Int!) {
+		memberJoined(gid: $gid) {
+			gid
+			id
+		}
+	}
+`;
+export function watchGroupMembers(gid) {
+	try {
+		const res = client.subscribe({
+			query: SUB_JOIN,
+			variables: {
+				gid
+			}
+		});
+		return res;
+		debugger; //remove
+
+		// return myGroupsData(res);
+	} catch (e) {
+		debugger; //error
+		console.error(e);
+		return e;
+	}
+}

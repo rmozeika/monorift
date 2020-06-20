@@ -53,6 +53,7 @@
 		"robertmozeika-site": "^0.0.91",
 		"serve-favicon": "~2.4.5",
 		"socket.io": "^2.3.0",
+		"subscriptions-transport-ws": "^0.9.16",
 		"tail": "^2.0.3",
 		"validator": "^13.0.0",
 		"webpack": "^4.41.0",

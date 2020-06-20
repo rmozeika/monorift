@@ -16,3 +16,14 @@ export const setGroupMembers = (gid, members) => ({
 	members,
 	gid
 });
+export const WATCH_GROUP = 'WATCH_GROUP';
+export const watchGroup = gid => ({
+	type: WATCH_GROUP,
+	gid
+});
+export const ADD_MEMBER = 'ADD_MEMBER';
+export const addMember = ({ gid, id }) => ({
+	type: ADD_MEMBER,
+	gid,
+	id
+});

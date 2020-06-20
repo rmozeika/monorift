@@ -37,6 +37,11 @@ class AuthRepository extends Repository {
 			httpOnly: true
 		});
 	}
+	async parseBearer(authHeader) {
+		const token = authHeader && authHeader.split(' ')[1];
+		const user = await this.parseToken(token);
+		return user;
+	}
 	authenticateToken(req, res, next) {
 		const authHeader = req.headers['authorization'];
 		const token = authHeader && authHeader.split(' ')[1];

@@ -46,6 +46,9 @@ type GroupsDataAndIds {
 	data: [Group]
 	gids: [Int]
 }
+extend type Subscription {
+	memberJoined(gid: Int!): Member
+}
 
 extend type Query {
 	group(name: String, gid: Int): Group

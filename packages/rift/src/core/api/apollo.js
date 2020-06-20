@@ -1,12 +1,31 @@
 // import ApolloClient, { gql } from 'apollo-clienr';
-import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client';
-
+import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
 // or you can use `import gql from 'graphql-tag';` instead
+import { WebSocketLink } from '@apollo/link-ws';
 
+const wsLink = new WebSocketLink({
+	uri: `wss://monorift.com/graphql`,
+	options: {
+		reconnect: true
+	}
+});
+const httpLink = new HttpLink({
+	uri: 'https://monorift.com/graphql'
+});
+const splitLink = split(
+	({ query }) => {
+		const definition = getMainDefinition(query);
+		return (
+			definition.kind === 'OperationDefinition' &&
+			definition.operation === 'subscription'
+		);
+	},
+	wsLink,
+	httpLink
+);
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
-	link: new HttpLink({
-		uri: 'https://monorift.com/graphql'
-	})
+	link: splitLink
 });
 export default client;

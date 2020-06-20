@@ -1,5 +1,7 @@
 const GraphqlSchemaInstance = require('../GraphqlSchema');
+const { PubSub, withFilter } = require('apollo-server');
 
+const pubsub = new PubSub();
 class GroupSchema extends GraphqlSchemaInstance {
 	repoName = 'groups';
 	constructor(api) {
@@ -11,12 +13,29 @@ class GroupSchema extends GraphqlSchemaInstance {
 	static getRepoName() {
 		return 'groups';
 	}
+	events = {
+		MEMBER_JOINED: 'MEMBER_JOINED'
+	};
+	// static get events() {
+
+	// }
 	setExtraRepos() {
 		this.members = this.api.repositories.members;
 		this.usersRepo = this.api.repositories.users;
 	}
 	createResolvers() {
 		this.resolvers = {
+			Subscription: {
+				memberJoined: {
+					// Additional event labels can be passed to asyncIterator creation
+					subscribe: withFilter(
+						() => pubsub.asyncIterator([this.events.MEMBER_JOINED]),
+						(payload, variables) => {
+							return payload.memberJoined.gid == variables.gid;
+						}
+					)
+				}
+			},
 			Query: {
 				group: async (parent, args, context) => {
 					const { gid, name } = args;
@@ -55,6 +74,12 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const { gid } = args;
 					const { user } = context;
 					const group = await this.members.add(gid, user);
+					const { MEMBER_JOINED } = this.events;
+					const payload = {
+						memberJoined: { gid, id: user.id }
+					};
+					pubsub.publish(MEMBER_JOINED, payload);
+
 					return group;
 				}
 			},

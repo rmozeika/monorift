@@ -195,8 +195,6 @@ export function watchGroupMembers(gid) {
 			}
 		});
 		return res;
-		debugger; //remove
-
 		// return myGroupsData(res);
 	} catch (e) {
 		debugger; //error

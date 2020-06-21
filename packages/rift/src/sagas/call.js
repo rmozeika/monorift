@@ -232,7 +232,8 @@ function* gotMessageSaga({ message, constraints, from }) {
 		// let users = yield call(getUsers, user);
 		// for (let i = 0; i < users.length; i++) {
 		// 	const conn_id = users[i].id;
-		yield call(addTracks, conn_id, stream);
+
+		//yield call(addTracks, conn_id, stream);
 		// }
 	} else if (message.type == 'candidate') {
 		console.log('GOT_MESSAGE', 'candidate');

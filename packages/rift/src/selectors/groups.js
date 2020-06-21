@@ -8,7 +8,7 @@ import createCachedSelector from 're-reselect';
 import { resultCheckMemoize } from './utils';
 import shallowEqual from 'fbjs/lib/shallowEqual';
 
-import { getUsers, getSearchFilter, filterByName } from './users';
+import { getUsers, getSearchFilter, filterByUsername } from './users';
 
 export const getGroups = state => state.groups.byId;
 // export const getSearchFilter = state => {
@@ -75,8 +75,8 @@ export const filteredMembers = createCachedSelector(
 			return users.map(({ id }) => id);
 		}
 
-		const filteredGroups = filterByName(members, filter);
-		return filteredGroups;
+		const filteredUsers = filterByUsername(users, filter);
+		return filteredUsers;
 	}
 )(listTypeCacheKey);
 

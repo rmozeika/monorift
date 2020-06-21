@@ -80,6 +80,8 @@ function* addTrackListener(conn, id) {
 				console.log('on track ID', e.track.id);
 				if (e.streams?.[0]) {
 					const stream = e.streams[0];
+					debugger; //remove
+
 					emit(e.track);
 					return;
 				}
@@ -89,16 +91,18 @@ function* addTrackListener(conn, id) {
 						return;
 					}
 					if (e.streams?.[0]) {
-						videoRef.current.srcObject = e.streams[0];
-						videoRef.current.muted = true;
-					} else {
-						// CHANGE THIS!!!
-						let inboundStream;
-						if (!inboundStream) {
-							inboundStream = new MediaStream();
-							videoRef.current.srcObject = inboundStream;
-						}
-						inboundStream.addTrack(e.track);
+						debugger; //remove
+						emit(e.track);
+						// 	videoRef.current.srcObject = e.streams[0];
+						// 	videoRef.current.muted = true;
+						// } else {
+						// 	// CHANGE THIS!!!
+						// 	let inboundStream;
+						// 	if (!inboundStream) {
+						// 		inboundStream = new MediaStream();
+						// 		videoRef.current.srcObject = inboundStream;
+						// 	}
+						// 	inboundStream.addTrack(e.track);
 					}
 					// if (videoRef.current.srcObject !== null) {
 					// 	return;
@@ -111,8 +115,11 @@ function* addTrackListener(conn, id) {
 				// 	return;
 				// }
 				if (e.streams?.[0]) {
+					debugger; //remove
+
 					const stream = e.streams[0];
 					emit(e.track);
+					return;
 					// audioRef.current.srcObject = e.streams[0];
 					// if (!inboundStream) {
 					// 	inboundStream = new MediaStream();
@@ -131,11 +138,11 @@ function* addTrackListener(conn, id) {
 					// source.connect(audioCtx.destination);
 					// audioRef.current.play();
 				} else {
-					if (!inboundStream) {
-						inboundStream = new MediaStream();
-						videoRef.current.srcObject = inboundStream;
-					}
-					inboundStream.addTrack(e.track);
+					// if (!inboundStream) {
+					// 	inboundStream = new MediaStream();
+					// 	videoRef.current.srcObject = inboundStream;
+					// }
+					// inboundStream.addTrack(e.track);
 				}
 			} catch (e) {
 				console.error(e);
@@ -173,8 +180,9 @@ function* watchMultiPeer() {
 
 function* handlePeerAction(conn, payload) {
 	try {
-		console.log('got action!');
 		const { method, args } = payload;
+		console.log('PEER_ACTION', method);
+		console.log(args);
 		let result;
 		if (args.length > 0) {
 			result = yield conn[method].apply(conn, args);

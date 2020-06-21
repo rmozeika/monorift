@@ -73,14 +73,15 @@ class GroupSchema extends GraphqlSchemaInstance {
 				join: async (parent, args, context) => {
 					const { gid } = args;
 					const { user } = context;
-					const group = await this.members.add(gid, user);
+					const op = await this.members.add(gid, user);
+					if (op.success === false) return op;
 					const { MEMBER_JOINED } = this.events;
 					const payload = {
 						memberJoined: { gid, id: user.id }
 					};
 					pubsub.publish(MEMBER_JOINED, payload);
 
-					return group;
+					return op;
 				}
 			},
 			GroupsPayload: {

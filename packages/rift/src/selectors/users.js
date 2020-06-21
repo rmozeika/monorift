@@ -87,7 +87,7 @@ export const getUsersByOnlineCached = createCachedSelector(
 )((state, props) => props.route.params.listType);
 
 // USED
-const filterByUsername = (users, filter) => {
+export const filterByUsername = (users, filter) => {
 	const filterRegex = new RegExp(filter, 'i');
 
 	const filteredIds = [];

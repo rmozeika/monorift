@@ -17,6 +17,8 @@ export const CallActions = ({ incomingCall, answer, reject }) => {
 		<Layout style={styles.container}>
 			{incomingCall.map(({ id, username }) => (
 				<IncomingCall
+					//key={id.toString()}
+					key={id}
 					name={username}
 					answer={() => answer(id)}
 					reject={() => reject(id)}

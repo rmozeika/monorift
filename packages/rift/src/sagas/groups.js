@@ -43,23 +43,14 @@ function* myGroups() {
 		console.warn(err);
 	}
 }
-function* graphqlSubscriber(sub, { type, gid }) {
-	channel = yield call(createGqlChannel, sub);
+function* graphqlSubscriber(sub, handler, { type, gid }) {
+	channel = yield call(createGqlChannel, sub, handler);
 	try {
 		//yield sub;
 		while (true) {
 			const event = yield take(channel);
 			const { id } = event;
-			// const { gid, id } = yield call(GqlGroups.getGroupsMemberOf);
 			yield put(Actions.addMember({ gid, id }));
-			// const hSub = sub.subscribe(event => {
-			// 	emit(event.data.memberJoined);
-			// 	debugger; //remove
-			// 	// console.log('subscribe JOIN', x);
-			//   });
-			/////const { gid } = yield takeLatest(WATCH_GROUP);
-			////sub.refetch(gid);
-			//   const sub = GqlGroups.watchGroupMembers(gid, handler);
 		}
 	} finally {
 		if (yield cancelled()) {
@@ -67,36 +58,14 @@ function* graphqlSubscriber(sub, { type, gid }) {
 		}
 	}
 }
-const createGqlChannel = sub =>
+const createGqlChannel = (sub, handler) =>
 	eventChannel(emit => {
 		console.log('created user socket event channel');
-		// const handler = (msg, secondArg) => {
-		// 	debugger; //remove
-		// 	// let msg = { message: data }; //from: this._id };
-		// 	// if (secondArg) {
-		// 	// 	const { constraints, users, from } = secondArg;
-		// 	// 	msg = { ...msg, ...secondArg };
-		// 	// }
-		// 	console.log('USER SOCKET MESSAGE', msg);
-		// 	emit(msg);
-		// };
-		// debugger; //remove
-		// const sub = GqlGroups.watchGroupMembers(gid, handler);
+
 		const hSub = sub.subscribe(event => {
-			emit(event.data.memberJoined);
-			debugger; //remove
-			// console.log('subscribe JOIN', x);
+			const data = handler(event);
+			emit(data);
 		});
-
-		// const onCandidateHandler = candidate => {
-		// 	put({ type: ADD_CANDIDATE, candidate });
-		// };
-		// socket.on('message', handler);
-		// socket.on('broadcast', handler);
-		// socket.on('disconnect', reason => {
-		// 	socket.connect();
-		// });
-
 		const onClose = () => {
 			try {
 				console.log(sub);
@@ -107,66 +76,55 @@ const createGqlChannel = sub =>
 				// sub.complete();
 			} catch (e) {
 				console.log(e);
-				debugger; //remove
+				debugger; // error
 			}
 		};
 		return onClose;
 	});
 function* watchMembers() {
 	let channel;
-	let subs = {};
+	let subs = {
+		// CHANGE TO MEMBERS
+		[Actions.WATCH_GROUP]: {
+			task: null,
+			sub: null,
+			createSub: ({ gid }) => GqlGroups.watchGroupMembers(gid),
+			handler: event => event.data.memberJoined
+		}
+	};
 	try {
 		while (true) {
 			// will extend to multiple actions
-			const { type, gid } = yield take(Actions.WATCH_GROUP);
-			if (subs[type]?.task) {
+			const types = Object.keys(subs);
+			const action = yield take(types);
+			const { type, gid } = action;
+			if (subs[type]?.task !== null) {
 				yield cancel(subs[type].task);
 			}
-			subs[type] = {};
-			subs[type].sub = GqlGroups.watchGroupMembers(gid);
-			subs[type].task = yield fork(graphqlSubscriber, subs[type].sub, { gid });
+			const { sub, createSub, handler, task } = subs[type];
+			// subs[type] = {};
+			subs[type].sub = createSub(action); //GqlGroups.watchGroupMembers(gid);
+			subs[type].task = yield fork(graphqlSubscriber, subs[type].sub, handler, {
+				gid
+			});
 		}
-		// sub = createdSub;
-		debugger; //remove
-		const subscriber = yield fork(graphqlSubscriber, subs[type], { gid });
-		// subs[type] = GqlGroups.watchGroupMembers(gid);
-		// 	// sub = createdSub;
-		// 	debugger; //remove
-		// 	const subscriber = yield fork(graphqlSubscriber, subs[type], { gid });
-		if (!subs[type]) {
-			subs[type] = GqlGroups.watchGroupMembers(gid);
-			// sub = createdSub;
-			debugger; //remove
-			const subscriber = yield fork(graphqlSubscriber, subs[type], { gid });
-		} else {
-			subs[type].refetch({ gid });
-		}
-		// const sub = GqlGroups.watchGroupMembers(gid);
-		// const subscriber = yield call(graphqlSubscriber, sub, { gid });
-		// while (true) {
-		// 	debugger; //remove
-		// 	sub.refetch({ gid });
-
-		// }
-
-		// channel = yield call(createGqlChannel, gid);
-		// const event = yield take(channel);
-		// const { id } = event;
-		// // const { gid, id } = yield call(GqlGroups.getGroupsMemberOf);
-		// yield put(Actions.addMember({ gid, id }));
 	} catch (e) {
 		debugger; //error
 		console.warn('WATCH_MEMBERS', e);
 	} finally {
 		if (yield cancelled()) {
-			// cancel subscriber
-			// debugger; //remove
-			// try {
-			// 	channel.close();
-			// } catch (e) {
-			// 	console.error(e);
-			// 	debugger; //error
-			// }
+			const subTypes = Object.keys(subs);
+			// shouldn't be cancelled
+			for (let i; i < subTypes.length; i++) {
+				const type = subTypes[i];
+				const sub = subs[type];
+				yield cancel(sub.task);
+				// delete
+			}
+			// Object.keys(subs).forEach(type => {
+			// 	const sub = subs[type];
+			// 	yield cancel(sub.task);
+			// });
 		}
 	}
 }

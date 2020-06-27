@@ -27,8 +27,8 @@ class GroupsTab extends React.PureComponent {
 	getItemLayout(data, index) {
 		return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
 	}
-	goToMembers = ({ name, gid }) => {
-		this.props.addTab({ name, gid, listType: gid, group: true });
+	goToMembers = ({ name, gid, gravatar }) => {
+		this.props.addTab({ name, gid, listType: gid, group: true, gravatar });
 	};
 	renderItem = ({ item: group, index, ...restProps }) => {
 		// IF REACTIVATE PROFILE
@@ -103,8 +103,11 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
+	const { listType } = ownProps.route.params;
+	const FETCH_ACTION =
+		listType == 'memberOf' ? Actions.FETCH_MY_GROUPS : Actions.FETCH_GROUPS;
 	return {
-		fetchGroups: () => dispatch({ type: Actions.FETCH_GROUPS }),
+		fetchGroups: () => dispatch({ type: FETCH_ACTION }),
 		fetchGroupMembers: gid => dispatch(Actions.fetchGroupMembers(gid))
 	};
 };

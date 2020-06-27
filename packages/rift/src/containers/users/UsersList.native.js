@@ -19,7 +19,7 @@ class UsersList extends React.PureComponent {
 	};
 
 	_keyExtractor = item => {
-		return item;
+		return item.toString();
 	};
 	renderItem = ({ item: user, index, ...restProps }) => {
 		// IF REACTIVATE PROFILE

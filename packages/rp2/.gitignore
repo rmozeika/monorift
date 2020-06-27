@@ -7,3 +7,8 @@ data
 conf.js
 local.conf
 /repositories/tmp
+/repositories/images/tmp
+!packages/rp2/images/tmp/edited/.gitalive
+!packages/rp2/images/tmp/edited/.gitalive
+!packages/rp2/images/tmp/circlemask-prod.png
+

@@ -159,7 +159,7 @@ function* startCallSaga({ id, payload }) {
 		// R
 		let users = yield call(getUsers, user);
 		for (let i = 0; i < users.length; i++) {
-			const conn_id = users[i].oauth_id;
+			const conn_id = users[i].id;
 			yield call(addTracks, conn_id, stream);
 		}
 		yield put(sendOffer({ id, user, constraints }));
@@ -171,7 +171,7 @@ function* startCallSaga({ id, payload }) {
 
 function* getUsers(user) {
 	let users;
-	const userId = user?.oauth_id || user?.id;
+	const userId = user?.id || user?.id;
 	if (userId) {
 		users = [user];
 	} else {
@@ -184,7 +184,7 @@ function* sendOfferSaga({ constraints, offerOptions, id = false, user }) {
 	console.log('Sending offer');
 	let users = yield call(getUsers, user);
 	for (let i = 0; i < users.length; i++) {
-		const conn_id = users[i].oauth_id;
+		const conn_id = users[i].id;
 		yield put(Actions.addConnection(conn_id, constraints));
 		yield put(Actions.peerAction(conn_id, 'createOffer', offerOptions));
 		const { payload: offer } = yield take('PEER_ACTION_DONE');
@@ -201,7 +201,7 @@ function* getUserMediaStream(constraints) {
 
 function* gotMessageSaga({ message, constraints, from }) {
 	console.log('GOT_MESSAGE', message);
-	const conn_id = from.oauth_id;
+	const conn_id = from.id;
 	if (message.type == 'offer') {
 		yield put(
 			Actions.peerAction(
@@ -224,15 +224,16 @@ function* gotMessageSaga({ message, constraints, from }) {
 				new RTCSessionDescription(message)
 			)
 		);
-		yield put(Actions.setCallActive(from.oauth_id, true));
+		yield put(Actions.setCallActive(from.id, true));
 		console.log('ADDED TRACK');
 		console.log('set remote desc');
 		// GETUSERMEDIA AFTER
 		const stream = yield call(getUserMediaStream, constraints);
 		// let users = yield call(getUsers, user);
 		// for (let i = 0; i < users.length; i++) {
-		// 	const conn_id = users[i].oauth_id;
-		yield call(addTracks, conn_id, stream);
+		// 	const conn_id = users[i].id;
+
+		//yield call(addTracks, conn_id, stream);
 		// }
 	} else if (message.type == 'candidate') {
 		console.log('GOT_MESSAGE', 'candidate');
@@ -248,7 +249,7 @@ function* answerCallSaga({ payload: answered, id, from }) {
 		// CHANGE THIS
 		return; // reject call action
 	}
-	const conn_id = id || from.oauth_id;
+	const conn_id = id || from.id;
 	yield put(Actions.peerAction(conn_id, 'createAnswer'));
 
 	const { payload: answer } = yield take('PEER_ACTION_DONE');
@@ -265,7 +266,7 @@ function* sendCandidateSaga(action) {
 	console.log(candidateToSend);
 	const activeConnections = yield select(CallSelectors.activeConnections);
 	const users = activeConnections.map(({ id }) => {
-		return { oauth_id: id };
+		return { id: id };
 	});
 	socket.emit('message', candidateToSend, { users });
 }

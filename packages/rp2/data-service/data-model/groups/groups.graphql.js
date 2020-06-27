@@ -1,5 +1,7 @@
 const GraphqlSchemaInstance = require('../GraphqlSchema');
+const { PubSub, withFilter } = require('apollo-server');
 
+const pubsub = new PubSub();
 class GroupSchema extends GraphqlSchemaInstance {
 	repoName = 'groups';
 	constructor(api) {
@@ -11,12 +13,45 @@ class GroupSchema extends GraphqlSchemaInstance {
 	static getRepoName() {
 		return 'groups';
 	}
+	events = {
+		MEMBER_UPDATE: 'MEMBER_UPDATE'
+		// MEMBER_LEFT: 'MEMBER_LEFT'
+	};
+	enumTypes = {
+		MEMBER_UPDATE: {
+			JOINED: 'JOINED',
+			LEFT: 'LEFT'
+		}
+	};
+	// static get events() {
+
+	// }
 	setExtraRepos() {
-		this.membersRepo = this.api.repositories.members;
+		this.members = this.api.repositories.members;
 		this.usersRepo = this.api.repositories.users;
 	}
 	createResolvers() {
 		this.resolvers = {
+			Subscription: {
+				members: {
+					// Additional event labels can be passed to asyncIterator creation
+					subscribe: withFilter(
+						() => pubsub.asyncIterator([this.events.MEMBER_UPDATE]),
+						(payload, variables) => {
+							return payload.members.gid == variables.gid;
+						}
+					)
+				}
+				// memberLeft: {
+				// 	// Additional event labels can be passed to asyncIterator creation
+				// 	subscribe: withFilter(
+				// 		() => pubsub.asyncIterator([this.events.MEMBER_LEFT]),
+				// 		(payload, variables) => {
+				// 			return payload.memberLeft.gid == variables.gid;
+				// 		}
+				// 	)
+				// }
+			},
 			Query: {
 				group: async (parent, args, context) => {
 					const { gid, name } = args;
@@ -34,6 +69,14 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const { gid, name } = args;
 					const [group] = await this.repository.get({ gid, name });
 					return group;
+				},
+				memberOfGroups: async (parent, args, context) => {
+					const { user } = context;
+					const memberEntriesForUser = await this.members.memberOfGroups(user);
+					// return memberEntriesForUser;
+
+					const gids = memberEntriesForUser.map(({ gid }) => gid);
+					return gids;
 				}
 			},
 			Mutation: {
@@ -42,6 +85,39 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const { user } = context;
 					const group = await this.repository.create(name, user);
 					return group;
+				},
+				join: async (parent, args, context) => {
+					const { gid } = args;
+					const { user } = context;
+					const op = await this.members.add(gid, user);
+					if (op.success === false) return op;
+					const { MEMBER_UPDATE } = this.events;
+					const { JOINED } = this.enumTypes[MEMBER_UPDATE];
+					const payload = {
+						members: {
+							update: JOINED,
+							gid,
+							uid: user.id
+						}
+					};
+					pubsub.publish(MEMBER_UPDATE, payload);
+
+					return op;
+				},
+				leave: async (parent, args, context) => {
+					const { gid } = args;
+					const { user } = context;
+					const op = await this.members.remove(gid, user);
+					if (op.success === false) return op;
+					const { MEMBER_UPDATE } = this.events;
+					const { LEFT } = this.enumTypes[MEMBER_UPDATE];
+
+					const payload = {
+						members: { update: LEFT, gid, uid: user.id }
+					};
+					pubsub.publish(MEMBER_UPDATE, payload);
+
+					return op;
 				}
 			},
 			GroupsPayload: {
@@ -55,6 +131,7 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const allIds = parent.map(({ gid }) => gid);
 					return allIds;
 				},
+				// TODO CHANGE THIS; same as master right now incorrectly
 				memberOf: (parent, args, context) => {
 					const allIds = parent.map(({ gid }) => gid);
 					return allIds;
@@ -68,6 +145,16 @@ class GroupSchema extends GraphqlSchemaInstance {
 					);
 					const { oauth_id } = user;
 					return oauth_id;
+				},
+				gravatar: async (parent, args, context) => {
+					const gravatar = parent?.src?.gravatar?.uri;
+					return gravatar;
+				},
+				memberOf: async ({ gid }, args, context, info) => {
+					console.log(info);
+					const { user } = context;
+					const isMember = await this.members.isMemberOfGroup(gid, user);
+					return isMember;
 				}
 			},
 			GroupMembersPayload: {
@@ -75,9 +162,20 @@ class GroupSchema extends GraphqlSchemaInstance {
 					return parent;
 				},
 				members: async (parent, args, context) => {
-					const members = await this.membersRepo.groupMembers(parent.gid);
+					const members = await this.members.groupMembers(parent.gid);
 					return members;
 				}
+			},
+			JoinGroupPayload: {
+				payload: async (parent, args, context) => {
+					const { gid } = args;
+					const [group] = await this.repository.get({ gid });
+					return group;
+				}
+				// group: async (parent, args, context) => {
+				// 	const group = await this.repository.get({ gid: args.gid });
+				// 	return group;
+				// }
 			},
 			Members: {
 				uids: async (parent, args, context) => {
@@ -93,6 +191,20 @@ class GroupSchema extends GraphqlSchemaInstance {
 					//  ptr
 					const users = await this.usersRepo.query({ id: ids });
 					return users;
+				}
+			},
+			GroupsDataAndIds: {
+				gids: async (parent, args, context) => {
+					// const { gids } = parent; //.map(({ gid }) => gid);
+					return parent;
+				},
+				data: async (parent, args, context) => {
+					const groups = await this.repository.query({ gid: parent });
+					// const mappedGroups = memberOf
+					// 	? groups.map(data => ({ ...data, memberOf }))
+					// 	: groups;
+
+					return groups;
 				}
 			}
 		};

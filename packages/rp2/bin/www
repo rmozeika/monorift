@@ -6,7 +6,7 @@
 
 var app = require('../app');
 var siteApp = require('../site/app');
-
+const { GqlSub } = app;
 var debug = require('debug')('rs2:server');
 var http = require('http');
 const { remote } = require('../config');
@@ -25,6 +25,14 @@ app.set('port', port);
 var server = http.createServer(app);
 app.io.attach(server);
 
+const addGqlHandlers = () => {
+  if (!app.gql) {
+    setTimeout(addGqlHandlers, 500);
+    return;
+  }
+  app.gql.installSubscriptionHandlers(server);
+};
+addGqlHandlers();
 if (remote !== 'false') {
   var sitePort = normalizePort('7070');
   siteApp.set('port', sitePort);

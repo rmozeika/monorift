@@ -75,11 +75,11 @@ export const getUsersByOnlineCached = createCachedSelector(
 		const offlineUsers = [];
 		console.log('RAN USER SELECTOR: MAIN');
 
-		users.forEach(({ oauth_id, online }) => {
+		users.forEach(({ id, online }) => {
 			if (online) {
-				onlineUsers.push(oauth_id);
+				onlineUsers.push(id);
 			} else {
-				offlineUsers.push(oauth_id);
+				offlineUsers.push(id);
 			}
 		});
 		return onlineUsers.concat(offlineUsers);
@@ -87,13 +87,13 @@ export const getUsersByOnlineCached = createCachedSelector(
 )((state, props) => props.route.params.listType);
 
 // USED
-const filterByUsername = (users, filter) => {
+export const filterByUsername = (users, filter) => {
 	const filterRegex = new RegExp(filter, 'i');
 
 	const filteredIds = [];
 	users.forEach(user => {
 		const matched = user.username.match(filterRegex);
-		if (matched) filteredIds.push(user.oauth_id);
+		if (matched) filteredIds.push(user.id);
 	});
 	return filteredIds;
 };
@@ -103,7 +103,7 @@ export const filteredUsersByOnline = createCachedSelector(
 	[getSearchFilter, getUsersDataByOnlineCached],
 	(filter, users) => {
 		if (filter == '' || filter == undefined) {
-			return users.map(({ oauth_id }) => oauth_id);
+			return users.map(({ id }) => id);
 		}
 		const filteredUsers = filterByUsername(users, filter);
 		// const filteredUsers =  filterUserData(users, userData, filter);

@@ -15,7 +15,7 @@ import 'isomorphic-unfetch';
 
 import * as Actions from '@actions';
 import { get, post } from '@core/api';
-import { createGuest } from '@core/api/apollo';
+import * as GqlUsers from '@core/api/graphql/users';
 
 const { AUTH } = Actions;
 import io from 'socket.io-client';
@@ -76,7 +76,11 @@ function* createGuestSaga(action) {
 	try {
 		const { username, password } = action.payload;
 		const origin = originLink('createGuest');
-		const { success, error, user } = yield call(createGuest, username, password);
+		const { success, error, user } = yield call(
+			GqlUsers.createGuest,
+			username,
+			password
+		);
 
 		// yield post({
 		// 	method: 'POST',

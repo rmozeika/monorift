@@ -5,6 +5,8 @@ class GroupsRepository extends Repository {
 		super(api);
 		//this.add('mongo15');
 		this.members = this.api.repositories['members'];
+		this.images = this.api.repositories['images'];
+		// this.createAllGroupIcons(false);
 	}
 	static getNamespaces() {
 		return {
@@ -12,6 +14,10 @@ class GroupsRepository extends Repository {
 			table: 'groups'
 		};
 	}
+	// async testGet() {
+	// 	const result = await this.query({ name: 'generalchao'}, `src->'gravatar'->>'uri'`);
+	// 	console.log(result);
+	// }
 	async get({ gid, name } = {}) {
 		const groups = await this.query({ name, gid });
 		return groups;
@@ -37,33 +43,42 @@ class GroupsRepository extends Repository {
 		}
 	}
 	async add(name, creator) {
-		const [group] = await this.insert({ name: name, creator: creator.id }, [
+		const gravatar = await this.images.createGroupIcon(name);
+		const src = { gravatar };
+
+		const [group] = await this.insert({ name: name, creator: creator.id, src }, [
 			'gid',
 			'name',
-			'creator'
+			'creator',
+			'src'
 		]);
-
-		// .catch(e => {
-		// 	if (e) {
-		// 		status.success = false;
-		// 		status.error = e.message;
-		// 	}
-		// 	return [{}];
-		// });
-		// if (status.error) return status;
-
-		// await this.members.insert({ gid, uid: id, oauth_id }).catch(e => {
-		// 	if (e) {
-		// 		status.success = false;
-		// 		status.error = e.message;
-		// 	}
-		// 	return [{}];
-		// });
 		return group;
 	}
 	async createAdminMember({ gid, uid, oauth_id }) {
 		const memberInsert = await this.members.insert({ gid, uid, oauth_id });
 		return memberInsert;
+	}
+	async createAllGroupIcons(onlyNull = true) {
+		const groups = await this.query({});
+		console.log(groups);
+		let filtered;
+		if (onlyNull) {
+			filtered = groups.filter(group => !group?.src?.gravatar?.uri);
+		} else {
+			filtered = groups;
+		}
+		console.log(filtered);
+		const result = await Promise.all(
+			filtered.map(async ({ name, gid }) => {
+				const gravatar = await this.images.createGroupIcon(name);
+				const src = { gravatar };
+				const updateOp = await this.update({ gid }, { src });
+				return updateOp;
+			})
+		).catch(e => {
+			console.log(e);
+		});
+		console.log(result);
 	}
 }
 

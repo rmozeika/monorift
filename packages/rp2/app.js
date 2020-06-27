@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 const passport = require('./auth/auth0');
-const redis = require('redis');
 const jwtMiddleware = require('./middleware/jwt');
 const appSession = require('./middleware/session');
 const config = require('./config.js');
@@ -15,12 +14,14 @@ const { mongoConnectionString: uri, remote, debug } = config;
 const fs = require('fs');
 const webpack = require('webpack');
 var io = require('socket.io');
-const passportSocketIo = require('passport.socketio');
-const Socket = require('./socket');
 const CallSocket = require('./socket/call');
 const UsersSocket = require('./socket/users');
 const graphqlHTTP = require('express-graphql');
 const GraphqlService = require('./data-service/graphql-service');
+
+const { execute, subscribe } = require('graphql');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
+
 console.log('VERSION', '0.6.2');
 const { ApolloServer, gql } = require('apollo-server-express');
 
@@ -38,6 +39,7 @@ app.get(
 	'/gravatar',
 	express.static(path.join(__dirname, 'public', 'gravatar'))
 );
+app.get('/groups', express.static(path.join(__dirname, 'public', 'groups')));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -75,6 +77,17 @@ const setFurtherRoutes = async () => {
 	const gqlConfig = await graphqlService.createSchemas();
 	// const server = new ApolloServer(userSchema.serverConfig);
 	const server = new ApolloServer(gqlConfig);
+	app.gql = server;
+	// exports.GqlSub = () => {
+	// 	new SubscriptionServer({
+	// 		execute,
+	// 		subscribe,
+	// 		schema: gqlConfig,
+	// 	}, {
+	// 		server: server,
+	// 		path: '/subscriptions',
+	// 	});
+	// };
 	server.applyMiddleware({ app });
 	app.use('/profile', express.static(path.join(__dirname, 'site')));
 
@@ -127,9 +140,8 @@ function onAuthorizeFail(data, message, error, accept) {
 }
 app.io.on('connection', async socket => {
 	const usersRepo = api.repositories.users;
-	const { oauth_id } = await api.repositories.auth.userFromSocket(socket);
-	const userData = oauth_id ? await usersRepo.findById(oauth_id) : false;
-	const user = usersRepo.getPublicUser(userData);
+	const { id } = await api.repositories.auth.userFromSocket(socket);
+	const user = id ? await usersRepo.getUserById(id) : false;
 
 	socket.on('check_auth', async ack => {
 		if (user) {

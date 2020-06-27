@@ -8,7 +8,7 @@ import createCachedSelector from 're-reselect';
 import { resultCheckMemoize } from './utils';
 import shallowEqual from 'fbjs/lib/shallowEqual';
 
-import { getUsers, getSearchFilter, filterByName } from './users';
+import { getUsers, getSearchFilter, filterByUsername } from './users';
 
 export const getGroups = state => state.groups.byId;
 // export const getSearchFilter = state => {
@@ -53,8 +53,12 @@ export const getMembersDataByOnlineCached = createCachedSelector(
 		const onlineUsers = [];
 		const offlineUsers = [];
 		console.log('RAN USER SELECTOR: MAIN');
-
-		users.forEach(user => {
+		console.log(users);
+		users.forEach((user, index) => {
+			if (!user) {
+				console.log('no user data', index);
+				return;
+			}
 			const { online } = user;
 			if (online) {
 				onlineUsers.push(user);
@@ -72,17 +76,16 @@ export const filteredMembers = createCachedSelector(
 	[getSearchFilter, getMembersDataByOnlineCached],
 	(filter, users) => {
 		if (filter == '' || filter == undefined) {
-			return users.map(({ oauth_id }) => oauth_id);
+			return users.map(({ id }) => id);
 		}
 
-		const filteredGroups = filterByName(members, filter);
-		return filteredGroups;
+		const filteredUsers = filterByUsername(users, filter);
+		return filteredUsers;
 	}
 )(listTypeCacheKey);
 
 // FOR GROUP LIST
 //
-// CHANGE THIS to use whatever filter for visible groups
 export const getVisibleGroupGids = (state, props) => {
 	// listtype is memberOf or master
 	const listType = listTypeCacheKey(state, props);

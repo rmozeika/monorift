@@ -32,17 +32,16 @@ interface Auth {
 	username: string;
 }
 interface User {
-	displayName?: string;
-	picture?: string;
-	username?: boolean;
+	// displayName?: string;
+	gravatar?: string;
+	username?: string;
+	id?: number;
 }
 
 interface NavBarProps {
 	loggedIn: boolean;
-	// user: User;
-	username: string;
+	user: User;
 	alert?: string | null;
-	id?: string;
 }
 
 type NavProps = NavBarProps & ThemedComponentProps;
@@ -81,7 +80,8 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 	private openMenu(): void {}
 
 	private renderLeftControls(): React.ReactElement<TopNavigationActionProps> {
-		const { loggedIn, username = '', alert, id } = this.props;
+		const { loggedIn, user, alert } = this.props;
+		const { username } = user;
 		// let icon = this.renderMenuIcon;
 		// let onPress = this.openMenu;
 		const configs = {
@@ -107,9 +107,11 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 			// const togglePopover = () => {
 			return (
 				<ProfilePopover
-					username={username}
+					user={user}
+					// username={username}
 					loggedIn={loggedIn}
-					id={id}
+					// id={id}
+					// gravatar={gravatar}
 					alert={alert}
 				/>
 			);
@@ -135,9 +137,6 @@ class NavBar extends React.Component<NavProps, NavBarState> {
 
 	public render(): React.ReactNode {
 		const tabColor = 'inherhit'; //'rgb(21, 26, 48);'; //'rgb(21, 26, 48);';
-
-		const { loggedIn, username } = this.props;
-		const title = loggedIn ? `Welcome ${username}` : 'Sign in';
 		return (
 			<Layout style={[styles.container, { backgroundColor: tabColor }]}>
 				{this.renderLeftControls()}
@@ -172,10 +171,13 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
 	const { auth } = state;
+	const { username, id, gravatar } = authSelectors.getSelfUser(state);
+	const user = { username, id, gravatar };
 	return {
 		loggedIn: authSelectors.loggedIn(state),
-		username: authSelectors.getSelfUsername(state),
-		id: authSelectors.getSelfId(state),
+		user,
+		// username: authSelectors.getSelfUsername(state),
+		// id: authSelectors.getSelfId(state),
 		alert: authSelectors.getAlert(state)
 	};
 };

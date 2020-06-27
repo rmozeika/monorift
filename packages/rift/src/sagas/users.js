@@ -18,9 +18,8 @@ import * as UserSelectors from '@selectors/users';
 import 'isomorphic-unfetch';
 import io from 'socket.io-client';
 import { get, post } from '@core/api';
+import * as GqlUsers from '@core/api/graphql/users';
 
-import { getFriends, getUserById } from '@core/api/apollo';
-import { getGroupMembers } from '@core/api/graphql/groups';
 import * as Actions from '@actions';
 import { originLink } from '@core/utils';
 const socketServerURL = originLink();
@@ -42,14 +41,11 @@ function* fetchUsers() {
 
 function* fetchFriends() {
 	try {
-		const friends = yield call(getFriends);
+		const friends = yield call(GqlUsers.getFriends);
 		yield put(Actions.setUsers(data));
 	} catch (err) {
 		console.warn(err);
 	}
-}
-function* fetchGroupMembers({ gid }) {
-	const groupMembers = yield call(getGroupMembers, 1);
 }
 
 function* addFriendSaga(action) {
@@ -85,7 +81,7 @@ function* respondFriendRequestSaga(action) {
 			});
 			// const friendStatuKey = didAccept ? 'A' : 'R';
 			// yield put(
-			// 	Actions.updateUser(friend.oauth_id, {
+			// 	Actions.updateUser(friend.id, {
 			// 		friendStatus: friendStatuKey,
 			// 		isFriend: didAccept
 			// 	})
@@ -176,10 +172,10 @@ function* socketListener() {
 				const { id, data, user } = message;
 				yield put(Actions.updateUser(id, data, user));
 				if (data.online == true) {
-					const user = { username: message.username, oauth_id: id };
+					const user = { username: message.username, id: id };
 					yield put(Actions.addOnlineUser(user));
 				} else if (message.online == false) {
-					const user = { username: message.username, oauth_id: id };
+					const user = { username: message.username, id: id };
 					yield put(Actions.removeOnlineUser(user));
 				}
 			} catch (e) {
@@ -202,10 +198,10 @@ function* socketMessageSaga(socketChannel) {
 			const { id, data, user } = message;
 			yield put(Actions.updateUser(id, data, user));
 			if (data.online == true) {
-				const user = { username: message.username, oauth_id: id };
+				const user = { username: message.username, id: id };
 				yield put(Actions.addOnlineUser(user));
 			} else if (message.online == false) {
-				const user = { username: message.username, oauth_id: id };
+				const user = { username: message.username, id: id };
 				yield put(Actions.removeOnlineUser(user));
 			}
 		} catch (e) {
@@ -245,7 +241,9 @@ function* addUserSaga({ payload, id }) {
 		const user = yield select(UserSelectors.getUserById, { id });
 		console.log(user);
 		if (!user) {
-			yield put(Actions.addUser(id, { ...payload.user, ...payload.data }));
+			const fetchedUser = yield call(GqlUsers.getUserById, id);
+			// yield put(Actions.addUser(id, { ...payload.user, ...payload.data }));
+			yield put(Actions.addUser(id, fetchedUser));
 		}
 	} catch (e) {
 		console.warn(e);

@@ -13,7 +13,13 @@ class GraphqlService {
 	};
 	schemas = {};
 	instances = {};
-	context = async ({ req, res }) => {
+	context = async ({ req, res, connection, ...restProps }) => {
+		if (connection) {
+			// const user = await this.api.repositories.auth.parseBearer(
+			// 	connection.context?.authorization
+			// );
+			return connection.context;
+		}
 		console.log(this);
 		const user = await this.api.repositories.auth.graphqlToken(req);
 		return { user, res };
@@ -30,7 +36,15 @@ class GraphqlService {
 		});
 		return {
 			modules: [...createdConfig],
-			context: this.context
+			context: this.context,
+			subscriptions: {
+				onConnect: async (connectionParams, webSocket, ctx) => {
+					const user = await this.api.repositories.auth.userFromRawHeaders(
+						ctx?.request?.headers?.cookie
+					);
+					return { user };
+				}
+			}
 		};
 		//const schema = this.makeExecutable(createdConfig);
 		//return schema;

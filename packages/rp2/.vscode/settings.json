@@ -2,5 +2,7 @@
 	"workbench.colorCustomizations": {
 		"activityBar.background": "#000000"
 	},
-	"workbench.colorTheme": "Monokai Pro (Filter Octagon)"
+	"workbench.colorTheme": "Monokai Pro (Filter Octagon)",
+	"eslint.validate": ["javascript"],
+	"eslint.lintTask.enable": true
 }

@@ -25,9 +25,10 @@ export const GROUP_MEMBERS_ONLY_IDS = gql`
 				gid
 				name
 				creator
+				gravatar
 			}
 			members {
-				oauth_ids
+				uids
 			}
 		}
 	}
@@ -39,10 +40,26 @@ export const GROUPS = gql`
 			data {
 				gid
 				name
-				creator_oauth_id
+				creator
+				gravatar
 			}
 			lists {
 				master
+			}
+		}
+	}
+`;
+
+export const GROUPS_MEMBER_OF = gql`
+	{
+		memberOfGroups {
+			gids
+			data {
+				gid
+				name
+				# creator_oauth_id
+				creator
+				gravatar
 			}
 		}
 	}
@@ -54,6 +71,8 @@ export const ALL_GROUPS = gql`
 			data {
 				gid
 				name
+				gravatar
+				creator
 			}
 			lists {
 				master
@@ -61,11 +80,47 @@ export const ALL_GROUPS = gql`
 		}
 	}
 `;
-export async function getGroupMembersIds(gid = 1) {
+
+export const JOIN = gql`
+	mutation MemberJoined($gid: Int!) {
+		join(gid: $gid) {
+			payload {
+				group {
+					name
+				}
+			}
+			success
+			error
+		}
+	}
+`;
+
+export const LEAVE = gql`
+	mutation LeaveGroup($gid: Int!) {
+		leave(gid: $gid) {
+			success
+			error
+		}
+	}
+`;
+export async function join(gid) {
+	try {
+		const res = await client.mutation({
+			mutation: JOIN,
+			variables: { gid }
+		});
+		return groupMembersData(res);
+	} catch (e) {
+		console.error(e);
+		return e;
+	}
+}
+export async function getGroupMembersIds(gid) {
 	try {
 		const res = await client.query({
 			query: GROUP_MEMBERS_ONLY_IDS,
-			variables: { gid }
+			variables: { gid },
+			fetchPolicy: 'no-cache'
 		});
 		return groupMembersData(res);
 	} catch (e) {
@@ -78,7 +133,7 @@ export function groupMembersData(raw) {
 	return {
 		gid: group.gid,
 		group,
-		members: members.oauth_ids
+		members: members.uids
 	};
 }
 // export async function getGroupMembers(gid = 1) {
@@ -110,4 +165,47 @@ export function allGroupsData(raw) {
 	const { data, lists } = raw.data.groups;
 
 	return { data, lists };
+}
+
+export async function getGroupsMemberOf() {
+	try {
+		const res = await client.query({
+			query: GROUPS_MEMBER_OF
+		});
+		return myGroupsData(res);
+	} catch (e) {
+		console.error(e);
+		return e;
+	}
+}
+
+export function myGroupsData(raw) {
+	const { data, gids } = raw.data.memberOfGroups;
+
+	return { data, lists: { memberOf: gids } };
+}
+const SUB_JOIN = gql`
+	subscription MembersUpdate($gid: Int!) {
+		members(gid: $gid) {
+			gid
+			uid
+			update
+		}
+	}
+`;
+export function watchGroupMembers(gid) {
+	try {
+		const res = client.subscribe({
+			query: SUB_JOIN,
+			variables: {
+				gid
+			}
+		});
+		return res;
+		// return myGroupsData(res);
+	} catch (e) {
+		debugger; //error
+		console.error(e);
+		return e;
+	}
 }

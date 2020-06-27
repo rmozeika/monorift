@@ -25,17 +25,20 @@ const authReducer = createReducer(
 	{},
 	{
 		[LOGIN.SUCCESS]: (authState, action) => {
-			const { src, username, usingTempUsername, oauth_id } = action.payload;
+			const { src, username, usingTempUsername, oauth_id, id } = action.payload;
+			const gravatar = action.payload.gravatar || src?.gravatar?.uri;
 			// const { picture, displayName, ...restSrc } = src;
 			// if (usingTempUsername)
 			return {
 				user: {
+					id,
 					// picture,
 					username,
 					// displayName,
 					usingTempUsername,
 					oauth_id,
-					src
+					src,
+					gravatar
 				},
 				loggedIn: true,
 				checked: true,

@@ -92,8 +92,20 @@ class UserModel {
 			src,
 			mocked,
 			guest,
-			bit_id: bit_id || id
+			bit_id: bit_id || id,
+			gravatar: src?.gravatar?.uri
 		};
+	}
+	static pgId(data) {
+		let id;
+		if (typeof data == 'string') {
+			// change to oauth_id then get id from that
+			return data;
+		}
+		if (typeof data == 'number') {
+			return data;
+		}
+		return data.id || data.uid;
 	}
 	static publicData({ _id, socket_id, ...user }, includeNull = true) {
 		return user;

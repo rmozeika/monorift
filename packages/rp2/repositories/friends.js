@@ -1,5 +1,14 @@
 const Repository = require('./repository.js');
-
+// friendship status
+// A = accepted
+// S = SENT
+// P = PENDING
+const friendStatus = {
+	accepted: 'A',
+	sent: 'S',
+	pending: 'P',
+	rejected: 'R'
+};
 class FriendsRepository extends Repository {
 	constructor(api) {
 		super(api);
@@ -22,7 +31,7 @@ class FriendsRepository extends Repository {
 			friend
 		] = await this.api.repositories.users.getUserColumnsByUsername(
 			[username, friendUsername],
-			['oauth_id', 'id']
+			['oauth_id', 'id'] // do not need oauth_id
 		);
 		const accepted = await this.postgresInstance
 			.knex('friendship')
@@ -124,8 +133,8 @@ class FriendsRepository extends Repository {
 		}
 		return this.api.redisAsync(
 			'publish',
-			`${to.oauth_id}:friend_request`,
-			`${from.oauth_id}:${status}`
+			`${to.id}:friend_request`,
+			`${from.id}:${status}`
 		);
 	}
 }

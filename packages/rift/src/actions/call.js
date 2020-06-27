@@ -47,7 +47,7 @@ export const sendOffer = ({ id, user, offerOptions, constraints }) => {
 		constraints,
 		offerOptions: derivedOfferOptions,
 		user,
-		id: id || user?.oauth_id || false
+		id: id || user?.id || false
 	};
 };
 export const GOT_MESSAGE = 'GOT_MESSAGE';
@@ -118,7 +118,7 @@ export const ANSWER_INCOMING = 'ANSWER_INCOMING';
 export const answer = (id, from, answered = true) => ({
 	type: ANSWER_INCOMING,
 	payload: answered || true,
-	id: id || from.oauth_id || from.id,
+	id: id || from.id || from.id,
 	from
 });
 

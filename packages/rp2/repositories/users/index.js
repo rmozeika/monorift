@@ -16,7 +16,8 @@ const friendStatus = {
 class UserRepository extends Repository {
 	constructor(api) {
 		super(api);
-		this.findByUsername.bind(this);
+		this.findByUsername = this.findByUsername.bind(this);
+		this.modelUser = this.modelUser.bind(this);
 		//this.testQuery();
 	}
 	static getNamespaces() {
@@ -26,6 +27,11 @@ class UserRepository extends Repository {
 		};
 	}
 	Model = UserModel;
+	modelUser(data) {
+		const { Model } = this;
+		const user = new Model(data, this);
+		return user;
+	}
 	async getUsersPostgres(query = {}) {
 		console.log(this.db);
 		const users = await this.query(query);
@@ -220,7 +226,9 @@ class UserRepository extends Repository {
 	async existingUser(id, username) {
 		return this.findOne({ $or: [{ username }, { oauth_id: id }] });
 	}
+	// should be using UserModel for consistency
 	getPublicUser({ _id, socket_id, ...user }) {
+		user.id = user.id || user.bit_id;
 		return user;
 	}
 

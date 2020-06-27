@@ -82,23 +82,28 @@ export const ALL_GROUPS = gql`
 `;
 
 export const JOIN = gql`
-	mutation Join($gid: Int!) {
+	mutation MemberJoined($gid: Int!) {
 		join(gid: $gid) {
-			success
 			payload {
-				members {
-					uids
-				}
 				group {
-					gid
 					name
 				}
 			}
+			success
 			error
 		}
 	}
 `;
-export async function join(gid = 1) {
+
+export const LEAVE = gql`
+	mutation LeaveGroup($gid: Int!) {
+		leave(gid: $gid) {
+			success
+			error
+		}
+	}
+`;
+export async function join(gid) {
 	try {
 		const res = await client.mutation({
 			mutation: JOIN,
@@ -110,11 +115,12 @@ export async function join(gid = 1) {
 		return e;
 	}
 }
-export async function getGroupMembersIds(gid = 1) {
+export async function getGroupMembersIds(gid) {
 	try {
 		const res = await client.query({
 			query: GROUP_MEMBERS_ONLY_IDS,
-			variables: { gid }
+			variables: { gid },
+			fetchPolicy: 'no-cache'
 		});
 		return groupMembersData(res);
 	} catch (e) {
@@ -179,10 +185,11 @@ export function myGroupsData(raw) {
 	return { data, lists: { memberOf: gids } };
 }
 const SUB_JOIN = gql`
-	subscription MemberJoined($gid: Int!) {
-		memberJoined(gid: $gid) {
+	subscription MembersUpdate($gid: Int!) {
+		members(gid: $gid) {
 			gid
-			id
+			uid
+			update
 		}
 	}
 `;

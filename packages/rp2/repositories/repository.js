@@ -99,7 +99,24 @@ class Repository extends RepositoryBase {
 		}
 		return result;
 	}
-
+	async del(toDelete) {
+		const data = this.getDataByDb(toDelete);
+		const operation = {};
+		if (data.mongo) {
+			operation.mongo = await this._delete(data.mongo);
+		}
+		if (data.pg) {
+			operation.pg = await this.deleteRow(data.pg);
+		}
+		return operation;
+	}
+	async deleteRow(where) {
+		const result = await this.postgresInstance
+			.knex(this.table)
+			.where(where)
+			.del();
+		return result;
+	}
 	findAll(cb) {
 		return new Promise((resolve, reject) => {
 			if (cb) {

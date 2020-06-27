@@ -49,8 +49,13 @@ function* graphqlSubscriber(sub, handler, { type, gid }) {
 		//yield sub;
 		while (true) {
 			const event = yield take(channel);
-			const { id } = event;
-			yield put(Actions.addMember({ gid, id }));
+			const { uid: id, update } = event;
+			const selfId = yield select(AuthSelectors.getSelfId);
+			const self = selfId == id;
+			// if (update == 'JOINED') {
+			// 	yield put(Actions.addMember({ gid, id, self }));
+			// }
+			yield put(Actions.updateMember({ id, gid, self, update }));
 		}
 	} finally {
 		if (yield cancelled()) {
@@ -89,7 +94,7 @@ function* watchMembers() {
 			task: null,
 			sub: null,
 			createSub: ({ gid }) => GqlGroups.watchGroupMembers(gid),
-			handler: event => event.data.memberJoined
+			handler: event => event.data.members
 		}
 	};
 	try {

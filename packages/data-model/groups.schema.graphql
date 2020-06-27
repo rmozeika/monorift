@@ -4,6 +4,7 @@ type Group {
 	creator: Int
 	creator_oauth_id: String
 	gravatar: String
+	memberOf: Boolean
 }
 type Member {
 	id: Int
@@ -46,8 +47,22 @@ type GroupsDataAndIds {
 	data: [Group]
 	gids: [Int]
 }
+type LeaveGroupPayload {
+	success: Boolean
+	error: String
+}
+enum MemberUpdate {
+	JOINED
+	LEFT
+}
+type MemberSubscriptionPayload {
+	gid: Int
+	uid: Int
+	update: MemberUpdate
+}
 extend type Subscription {
-	memberJoined(gid: Int!): Member
+	members(gid: Int!): MemberSubscriptionPayload
+	# memberLeft(gid: Int!): Member
 }
 
 extend type Query {
@@ -60,4 +75,5 @@ extend type Query {
 extend type Mutation {
 	createGroup(name: String!): CreateGroupPayload
 	join(gid: Int!): JoinGroupPayload
+	leave(gid: Int!): LeaveGroupPayload
 }

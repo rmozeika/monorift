@@ -9,6 +9,9 @@ import {
 	IconRegistry,
 	Layout
 } from '@ui-kitten/components';
+
+import { ApolloProvider } from '@apollo/react-hooks';
+
 import {
 	AwesomeIconsPack
 	// FeatherIconsPack
@@ -29,6 +32,8 @@ import {
 	ThemeStore,
 	ThemeService
 } from './core/themes/index';
+
+import client from './core/api/apollo';
 
 const styles = StyleSheet.create({
 	parentView: {
@@ -72,21 +77,25 @@ class App extends React.Component<Props, State> {
 					theme={themes[this.state.theme]}
 					customMapping={content}
 				>
-					<View style={styles.parentView}>
-						<Router>
-							<Switch>
-								<Route exact path="/about">
-									<About />
-								</Route>
-								<Route exact path="/admin">
-									<Admin />
-								</Route>
-								<Route exact path="/">
-									<Navigation />
-								</Route>
-							</Switch>
-						</Router>
-					</View>
+					{/* 
+					// @ts-ignore */}
+					<ApolloProvider client={client}>
+						<View style={styles.parentView}>
+							<Router>
+								<Switch>
+									<Route exact path="/about">
+										<About />
+									</Route>
+									<Route exact path="/admin">
+										<Admin />
+									</Route>
+									<Route exact path="/">
+										<Navigation />
+									</Route>
+								</Switch>
+							</Router>
+						</View>
+					</ApolloProvider>
 				</ApplicationProvider>
 			</ThemeContext.Provider>
 		);

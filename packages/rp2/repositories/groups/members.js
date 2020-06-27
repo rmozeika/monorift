@@ -39,6 +39,22 @@ class MembersRepository extends Repository {
 			return { success: false, error: e };
 		}
 	}
+	async remove(gid, { id }) {
+		let status = { success: true, error: null };
+		try {
+			const toDelete = { uid: id, gid };
+			const insertOp = await this.del(toDelete);
+			return status;
+		} catch (e) {
+			console.trace(e);
+			return { success: false, error: e };
+		}
+	}
+	async isMemberOfGroup(gid, { id }) {
+		const uid = this.api.repositories.users.Model.pgId(user);
+		const entries = await this.query({ uid, gid }, 'uid');
+		return entries.length > 0;
+	}
 }
 
 module.exports = MembersRepository;

@@ -53,8 +53,12 @@ export const getMembersDataByOnlineCached = createCachedSelector(
 		const onlineUsers = [];
 		const offlineUsers = [];
 		console.log('RAN USER SELECTOR: MAIN');
-
-		users.forEach(user => {
+		console.log(users);
+		users.forEach((user, index) => {
+			if (!user) {
+				console.log('no user data', index);
+				return;
+			}
 			const { online } = user;
 			if (online) {
 				onlineUsers.push(user);

@@ -80,18 +80,16 @@ function* addTrackListener(conn, id) {
 				console.log('on track ID', e.track.id);
 				if (e.streams?.[0]) {
 					const stream = e.streams[0];
-					debugger; //remove
 
 					emit(e.track);
 					return;
 				}
-
+				// REMOVE THIS, above handles
 				if (mediaStreamConstraints.video && e.track.kind == 'video') {
 					if (!videoRef?.current) {
 						return;
 					}
 					if (e.streams?.[0]) {
-						debugger; //remove
 						emit(e.track);
 						// 	videoRef.current.srcObject = e.streams[0];
 						// 	videoRef.current.muted = true;
@@ -115,8 +113,6 @@ function* addTrackListener(conn, id) {
 				// 	return;
 				// }
 				if (e.streams?.[0]) {
-					debugger; //remove
-
 					const stream = e.streams[0];
 					emit(e.track);
 					return;
@@ -194,7 +190,6 @@ function* handlePeerAction(conn, payload) {
 			yield call(cleanPeer, conn);
 		}
 	} catch (e) {
-		console.log('error');
 		console.error(e);
 		debugger; //error
 	}

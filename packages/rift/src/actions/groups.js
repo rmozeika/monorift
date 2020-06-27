@@ -22,8 +22,20 @@ export const watchGroup = gid => ({
 	gid
 });
 export const ADD_MEMBER = 'ADD_MEMBER';
-export const addMember = ({ gid, id }) => ({
+export const addMember = ({ gid, id, self = false }) => ({
 	type: ADD_MEMBER,
 	gid,
-	id
+	id,
+	self
+});
+
+export const UPDATE_MEMBER = 'UPDATE_MEMBER';
+export const updateMember = ({ gid, id, uid, self = false, update }) => ({
+	type: UPDATE_MEMBER,
+	gid,
+	payload: {
+		id: id || uid,
+		update,
+		self
+	}
 });

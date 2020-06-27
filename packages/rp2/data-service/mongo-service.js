@@ -35,7 +35,11 @@ const extendMethods = [
 	},
 	{
 		name: 'delete',
-		combine: true
+		combine: true,
+		resolve: data => {
+			if (Array.isArray(data)) return 'Many';
+			return 'One';
+		}
 	},
 	{
 		name: 'findOneAndUpdate'

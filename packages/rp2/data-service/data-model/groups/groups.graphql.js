@@ -14,7 +14,14 @@ class GroupSchema extends GraphqlSchemaInstance {
 		return 'groups';
 	}
 	events = {
-		MEMBER_JOINED: 'MEMBER_JOINED'
+		MEMBER_UPDATE: 'MEMBER_UPDATE'
+		// MEMBER_LEFT: 'MEMBER_LEFT'
+	};
+	enumTypes = {
+		MEMBER_UPDATE: {
+			JOINED: 'JOINED',
+			LEFT: 'LEFT'
+		}
 	};
 	// static get events() {
 
@@ -26,15 +33,24 @@ class GroupSchema extends GraphqlSchemaInstance {
 	createResolvers() {
 		this.resolvers = {
 			Subscription: {
-				memberJoined: {
+				members: {
 					// Additional event labels can be passed to asyncIterator creation
 					subscribe: withFilter(
-						() => pubsub.asyncIterator([this.events.MEMBER_JOINED]),
+						() => pubsub.asyncIterator([this.events.MEMBER_UPDATE]),
 						(payload, variables) => {
-							return payload.memberJoined.gid == variables.gid;
+							return payload.members.gid == variables.gid;
 						}
 					)
 				}
+				// memberLeft: {
+				// 	// Additional event labels can be passed to asyncIterator creation
+				// 	subscribe: withFilter(
+				// 		() => pubsub.asyncIterator([this.events.MEMBER_LEFT]),
+				// 		(payload, variables) => {
+				// 			return payload.memberLeft.gid == variables.gid;
+				// 		}
+				// 	)
+				// }
 			},
 			Query: {
 				group: async (parent, args, context) => {
@@ -75,11 +91,31 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const { user } = context;
 					const op = await this.members.add(gid, user);
 					if (op.success === false) return op;
-					const { MEMBER_JOINED } = this.events;
+					const { MEMBER_UPDATE } = this.events;
+					const { JOINED } = this.enumTypes[MEMBER_UPDATE];
 					const payload = {
-						memberJoined: { gid, id: user.id }
+						members: {
+							update: JOINED,
+							gid,
+							uid: user.id
+						}
 					};
-					pubsub.publish(MEMBER_JOINED, payload);
+					pubsub.publish(MEMBER_UPDATE, payload);
+
+					return op;
+				},
+				leave: async (parent, args, context) => {
+					const { gid } = args;
+					const { user } = context;
+					const op = await this.members.remove(gid, user);
+					if (op.success === false) return op;
+					const { MEMBER_UPDATE } = this.events;
+					const { LEFT } = this.enumTypes[MEMBER_UPDATE];
+
+					const payload = {
+						members: { update: LEFT, gid, uid: user.id }
+					};
+					pubsub.publish(MEMBER_UPDATE, payload);
 
 					return op;
 				}
@@ -113,6 +149,12 @@ class GroupSchema extends GraphqlSchemaInstance {
 				gravatar: async (parent, args, context) => {
 					const gravatar = parent?.src?.gravatar?.uri;
 					return gravatar;
+				},
+				memberOf: async ({ gid }, args, context, info) => {
+					console.log(info);
+					const { user } = context;
+					const isMember = await this.members.isMemberOfGroup(gid, user);
+					return isMember;
 				}
 			},
 			GroupMembersPayload: {
@@ -153,11 +195,15 @@ class GroupSchema extends GraphqlSchemaInstance {
 			},
 			GroupsDataAndIds: {
 				gids: async (parent, args, context) => {
-					const gids = parent; //.map(({ gid }) => gid);
-					return gids;
+					// const { gids } = parent; //.map(({ gid }) => gid);
+					return parent;
 				},
 				data: async (parent, args, context) => {
 					const groups = await this.repository.query({ gid: parent });
+					// const mappedGroups = memberOf
+					// 	? groups.map(data => ({ ...data, memberOf }))
+					// 	: groups;
+
 					return groups;
 				}
 			}

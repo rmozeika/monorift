@@ -35,13 +35,14 @@ class MessageListener extends AsyncResource {
 		this.runInAsyncScope(this.listen, this, lastId, emitEvent);
 	}
 	// mapXReadMessage([ stream, [[ id, [type, payload ]]]]) {
-	mapMessage([stream, [[id, [type, payload]]]]) {
+	mapMessage([stream, [[id, [type, payload, fromKey, from = false]]]]) {
 		const [timeParsed] = id.match(/^[^-]*/);
 
 		return {
 			id,
 			payload,
-			time: timeParsed
+			time: timeParsed,
+			from: Number(from)
 		};
 	}
 	close() {

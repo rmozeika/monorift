@@ -29,7 +29,7 @@ class MessageSchema extends GraphqlSchemaInstance {
 	setExtraRepos() {
 		// this.members = this.api.repositories.members;
 		this.conversations = this.api.repositories.conversations;
-		this.usersRepo = this.api.repositories.users;
+		this.users = this.api.repositories.users;
 	}
 	createResolvers() {
 		this.resolvers = {
@@ -93,6 +93,13 @@ class MessageSchema extends GraphqlSchemaInstance {
 			Message: {
 				datetime: ({ time }, args, context) => {
 					return new Date(time).toISOString();
+				},
+				from: async ({ from }, args, context) => {
+					return from;
+				},
+				user: async ({ from }, args, context) => {
+					const user = await this.users.getUserById(from);
+					return user;
 				}
 			}
 		};

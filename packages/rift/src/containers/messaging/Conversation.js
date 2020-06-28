@@ -9,7 +9,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import ConversationFeed from './ConversationFeed';
 import { FEED_QUERY } from '@core/api/graphql/messages';
 function Conversation({ type, id }) {
-	const { data, fetchMore } = useQuery(FEED_QUERY, {
+	const { data, fetchMore, ...result } = useQuery(FEED_QUERY, {
 		variables: {
 			id
 			//   type: match.params.type.toUpperCase() || "TOP",

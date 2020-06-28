@@ -4,7 +4,8 @@ const Messages = require('./data-model/messages/messages.graphql.js');
 
 const { merge } = require('lodash');
 const { mergeSchemas, makeExecutableSchema } = require('graphql-tools'); // could be graphql-tools / apollo-server-express
-
+// const { buildFederatedSchema } = require('@apollo/federation');
+// const useFederation = false; // until subscription support...
 class GraphqlService {
 	constructor(api) {
 		this.api = api;
@@ -39,6 +40,8 @@ class GraphqlService {
 		});
 		return {
 			modules: [...createdConfig],
+
+			//schema: buildFederatedSchema(createdConfig),
 			context: this.context,
 			subscriptions: {
 				onConnect: async (connectionParams, webSocket, ctx) => {

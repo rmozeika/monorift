@@ -2,6 +2,8 @@ type Message {
 	payload: String
 	time: String
 	datetime: String
+	from: Int
+	user: User
 }
 
 type Page {
@@ -19,7 +21,7 @@ type FeedSubscriptionPayload {
 	lastId: String
 }
 extend type Subscription {
-	feedMessages(id: Int!, lastId: String!): FeedSubscriptionPayload
+	feedMessages(id: Int, lastId: String!): FeedSubscriptionPayload
 }
 # extend type Mutation {
 # 	# createUser(input: UserInput!): createUserPayload

@@ -1,0 +1,32 @@
+type Message {
+	payload: String
+	time: String
+	datetime: String
+}
+
+type Page {
+	messages: [Message]
+	lastId: String
+}
+
+type Feed {
+	page: Page
+	id: Int
+	# user: User
+}
+type FeedSubscriptionPayload {
+	messages: [Message]
+	lastId: String
+}
+extend type Subscription {
+	feedMessages(id: Int!, lastId: String!): FeedSubscriptionPayload
+}
+# extend type Mutation {
+# 	# createUser(input: UserInput!): createUserPayload
+# 	# updateUser(data: UserInput, input: UserInput): User
+# 	# createGuest(input: createMonoriftUserInput!): createUserPayload
+# }
+
+extend type Query {
+	feed(id: Int!): Feed
+}

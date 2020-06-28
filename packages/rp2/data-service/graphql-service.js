@@ -1,5 +1,7 @@
 const Users = require('./data-model/users/users.graphql.js');
 const Groups = require('./data-model/groups/groups.graphql.js');
+const Messages = require('./data-model/messages/messages.graphql.js');
+
 const { merge } = require('lodash');
 const { mergeSchemas, makeExecutableSchema } = require('graphql-tools'); // could be graphql-tools / apollo-server-express
 
@@ -9,7 +11,8 @@ class GraphqlService {
 	}
 	apiTypes = {
 		users: Users,
-		groups: Groups
+		groups: Groups,
+		messages: Messages
 	};
 	schemas = {};
 	instances = {};
@@ -32,7 +35,7 @@ class GraphqlService {
 		const createdConfig = await Promise.all(
 			Object.keys(this.apiTypes).map(async type => this.createApiSchema(type))
 		).catch(e => {
-			console.error(e);
+			console.trace(e.stack);
 		});
 		return {
 			modules: [...createdConfig],

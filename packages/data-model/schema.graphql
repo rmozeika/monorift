@@ -1,7 +1,8 @@
+# type User @key(fields: "id"){
 type User {
-	id: Int!
-	username: String!
-	oauth_id: String!
+	id: Int
+	username: String
+	oauth_id: String
 	online: Boolean
 	email: String
 	mongo_id: String

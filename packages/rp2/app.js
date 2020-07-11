@@ -22,7 +22,7 @@ const GraphqlService = require('./data-service/graphql-service');
 const { execute, subscribe } = require('graphql');
 const { SubscriptionServer } = require('subscriptions-transport-ws');
 
-console.log('VERSION', '0.6.2');
+console.log('VERSION', '0.7.0');
 const { ApolloServer, gql } = require('apollo-server-express');
 
 var app = express();

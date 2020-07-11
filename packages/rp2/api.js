@@ -6,7 +6,7 @@ var repositories = require('./repositories');
 var config = require('./config.js');
 
 const { redisConnectionString, redisPort } = require('./config.js');
-const redis = require('redis');
+const Redis = require('ioredis');
 const { promisify } = require('util');
 const ExpressBrute = require('express-brute');
 const BruteStore = require('express-brute-redis');
@@ -46,7 +46,7 @@ class Api {
 		// });
 	}
 	async _connectRedis() {
-		let client = redis.createClient(redisPort, redisConnectionString);
+		let client = new Redis(redisPort, redisConnectionString);
 		this.redis = client;
 	}
 	async redisAsync(cmd, ...args) {

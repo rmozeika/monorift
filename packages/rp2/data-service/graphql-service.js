@@ -1,15 +1,19 @@
 const Users = require('./data-model/users/users.graphql.js');
 const Groups = require('./data-model/groups/groups.graphql.js');
+const Messages = require('./data-model/messages/messages.graphql.js');
+
 const { merge } = require('lodash');
 const { mergeSchemas, makeExecutableSchema } = require('graphql-tools'); // could be graphql-tools / apollo-server-express
-
+// const { buildFederatedSchema } = require('@apollo/federation');
+// const useFederation = false; // until subscription support...
 class GraphqlService {
 	constructor(api) {
 		this.api = api;
 	}
 	apiTypes = {
 		users: Users,
-		groups: Groups
+		groups: Groups,
+		messages: Messages
 	};
 	schemas = {};
 	instances = {};
@@ -32,10 +36,12 @@ class GraphqlService {
 		const createdConfig = await Promise.all(
 			Object.keys(this.apiTypes).map(async type => this.createApiSchema(type))
 		).catch(e => {
-			console.error(e);
+			console.trace(e.stack);
 		});
 		return {
 			modules: [...createdConfig],
+
+			//schema: buildFederatedSchema(createdConfig),
 			context: this.context,
 			subscriptions: {
 				onConnect: async (connectionParams, webSocket, ctx) => {

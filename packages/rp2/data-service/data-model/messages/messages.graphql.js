@@ -42,7 +42,7 @@ class MessageSchema extends GraphqlSchemaInstance {
 					},
 					// Additional event labels can be passed to asyncIterator creation
 					subscribe: async (_, { id, lastId }, { user }) => {
-						const xread = await this.repository.listenForMore(id, lastId);
+						const xread = await this.repository.listenForMore(user.id, id, lastId);
 						return xread;
 					}
 					// withFilter(

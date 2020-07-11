@@ -1,7 +1,7 @@
 const Repository = require('../repository.js');
 const WorkerPool = require('./WorkerPool');
 const { on } = require('events');
-const pool = new WorkerPool(1);
+
 class MessagesRepository extends Repository {
 	constructor(api) {
 		super(api);
@@ -13,12 +13,16 @@ class MessagesRepository extends Repository {
 		//     11392,
 		//     "1593275596354-0"
 		//   );
+		this.createWorkerPool();
 	}
 	static getNamespaces() {
 		return {
 			// collection: 'messages',
 			// table: 'messages'
 		};
+	}
+	createWorkerPool() {
+		this.pool = new WorkerPool(1, this.api);
 	}
 	// async testGet() {
 	// 	const result = await this.query({ name: 'generalchao'}, `src->'gravatar'->>'uri'`);
@@ -60,17 +64,17 @@ class MessagesRepository extends Repository {
 		const { id: lastId } = messages[0];
 		return { messages: messages.reverse(), lastId };
 	}
-	async listenForMore(id, lastId) {
+	async newMessagesMetadata(id, lastId) {}
+	async listenForMore(id, from, lastId) {
+		const { pool } = this;
 		const { redis } = this.api;
 		// const tid = async_hooks.triggerAsyncId();
 
 		try {
-			pool.runTask({ id, lastId }, redis);
-			const emitter = on(pool, 'message');
-			// , (event, ...args) => {
-			//     console.log(event, args);
-			//     return event;
-			// });
+			//pool.runTask({ id, lastId }, redis);
+			//const emitter = on(pool, 'message');
+			const worker = pool.taskWorker({ id, lastId }, redis);
+			const emitter = on(worker, 'message');
 			return emitter;
 			// const messageListener = new MessageListener();
 			// messageListener.init();

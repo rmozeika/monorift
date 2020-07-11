@@ -6,12 +6,13 @@ const MessageListener = require('./MessageListener');
 const kTaskInfo = Symbol('kTaskInfo');
 const kWorkerFreedEvent = Symbol('kWorkerFreedEvent');
 class WorkerPool extends EventEmitter {
-	constructor(numThreads) {
+	constructor(numThreads, api) {
 		super();
 		this.numThreads = numThreads;
 		this.workers = [];
 		this.freeWorkers = [];
-
+		this.api = api;
+		this.redis = api.redis;
 		for (let i = 0; i < numThreads; i++) this.addNewWorker();
 	}
 
@@ -41,8 +42,25 @@ class WorkerPool extends EventEmitter {
 		this.freeWorkers.push(worker);
 		this.emit(kWorkerFreedEvent);
 	}
+	taskWorker(task, redis, callback) {
+		const [createdTaskWorker] = this.workers.filter(worker => {
+			if (worker[kTaskInfo]) {
+				return worker[kTaskInfo].id == task.id;
+			}
+			return false;
+		});
 
-	runTask(task, redis, callback) {
+		if (createdTaskWorker) return createdTaskWorker;
+		this.runTask(task, callback);
+		const [newTaskWorker] = this.workers.filter(worker => {
+			if (worker[kTaskInfo]) {
+				return worker[kTaskInfo].id == task.id;
+			}
+			return false;
+		});
+		return newTaskWorker;
+	}
+	runTask(task, callback) {
 		if (this.freeWorkers.length === 0) {
 			// No free threads, wait until a worker thread becomes free.
 			this.once(kWorkerFreedEvent, () => this.runTask(task, callback));
@@ -50,6 +68,7 @@ class WorkerPool extends EventEmitter {
 		}
 
 		const worker = this.freeWorkers.pop();
+		const { redis } = this;
 		worker[kTaskInfo] = new MessageListener(task, redis);
 		worker[kTaskInfo].init(task, result => {
 			worker.postMessage(result);

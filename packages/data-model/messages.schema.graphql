@@ -20,8 +20,12 @@ type FeedSubscriptionPayload {
 	messages: [Message]
 	lastId: String
 }
+type MessageNotificationsPayload {
+	from: [Int]
+}
 extend type Subscription {
 	feedMessages(id: Int, lastId: String!): FeedSubscriptionPayload
+	messageNotifications(lastId: String!): MessageNotificationsPayload
 }
 # extend type Mutation {
 # 	# createUser(input: UserInput!): createUserPayload

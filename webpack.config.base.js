@@ -3,6 +3,7 @@ var path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const src = path.join(__dirname, './packages/rift/src');
 const publicDir = path.resolve(__dirname, 'packages', 'rp2', 'public');
+const Config = require('./packages/rp2/config.js');
 
 module.exports = {
 	context: path.resolve(__dirname),
@@ -144,6 +145,9 @@ module.exports = {
 			// 'react-native-screens': 'react-native-screens/src/screens.web.js'
 		}
 		// extensions: ['.ts', '.tsx', '.js']
+	},
+	externals: {
+		Config: Config
 	},
 	plugins: [
 		new HtmlWebPackPlugin({

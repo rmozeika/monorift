@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import IncomingCall from '../talk/IncomingCall';
+import IncomingCall from '../IncomingCall';
 import AnswerReject from '@containers/talk/HOC/AnswerReject';
 import {
 	Layout,

@@ -153,6 +153,7 @@ function createIconsMap() {
 		search: IconProvider('search'),
 		ellipsis: IconProvider('ellipsis-h'),
 		notch: IconProvider('circle-notch'),
+		video: IconProvider('video'),
 		// activity: FeatherIconProvider('activity')
 		activity: FeatherIconProvider('smartphone'),
 		x: FeatherIconProvider('x'),

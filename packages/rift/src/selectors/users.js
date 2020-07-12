@@ -19,7 +19,11 @@ export const filterUsers = (users, filter) => {
 	const filterRegex = new RegExp(filter, 'i');
 	return users.filter(user => user.match(filterRegex));
 };
-export const queuedUsers = state => state.users.checked;
+export const queuedUsers = state => state.users.queued;
+export const queuedUsersList = createSelector(queuedUsers, (usersById = {}) => {
+	const users = Object.keys(usersById).map(id => usersById[id]);
+	return users || [];
+});
 export const getUserById = (state, props) => state.users.byId[props.id];
 export const getUser = createCachedSelector([getUserById], users => {
 	return users;

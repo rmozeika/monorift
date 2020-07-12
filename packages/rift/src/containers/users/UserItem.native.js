@@ -4,10 +4,10 @@ import { ListItem, Icon, Layout, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import { getUser } from '@selectors/users';
-import AddToCallButton from '@components/buttons/AddToCall';
-import AddRemoveFriendButton from '@components/buttons/AddRemoveFriend';
+import AddToCallButton from '@components/talk/buttons/AddToCall';
+import AddRemoveFriendButton from '@components/friends/buttons/AddRemoveFriend';
 import Gravatar from '@components/users/Gravatar';
-import QuickCall from '@components/buttons/QuickCall';
+import QuickCall from '@components/talk/buttons/QuickCall';
 import { listItemStyleBase } from '@core/themes/styles/listItem';
 
 class UserItem extends React.Component {

@@ -9,7 +9,7 @@ import {
 	withStyles
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-
+const VideoIcon = () => <Icon name={'video'} size={22} color={'white'} />;
 export const VideoCallSelected = ({ queued, startConnection }) => {
 	// const mobile = useSelector(state => state.view.mobile);
 	return (
@@ -19,9 +19,12 @@ export const VideoCallSelected = ({ queued, startConnection }) => {
 					// key={id}
 					// name={username}
 					style={styles.button}
-					status={'primary'}
+					status={'success'}
 					onPress={startConnection.video}
-				/>
+					// accessoryLeft={VideoIcon}
+				>
+					<Text>Video Call</Text>
+				</Button>
 			)}
 		</Layout>
 	);
@@ -45,11 +48,11 @@ const styles = StyleSheet.create({
 		bottom: 0
 	},
 	button: {
-		margin: 15,
-		height: '100%',
-		margin: 0,
-		flexGrow: 1,
-		borderRadius: 0
+		marginRight: 5
+		// height: '100%',
+		// margin: 0,
+		// flexGrow: 1,
+		// borderRadius: 0
 	},
 	buttonRow: {
 		display: 'flex',
@@ -63,4 +66,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default AnswerReject(VideoCallSelected);
+export default ConnectionAdapter(VideoCallSelected);

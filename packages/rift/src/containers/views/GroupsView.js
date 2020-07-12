@@ -5,7 +5,7 @@ import { StyleSheet, Linking, Platform } from 'react-native';
 import GroupList from '../groups/GroupsList';
 import SearchBar from '@components/users/SearchBar';
 
-import CallActions from '@components/buttons/CallActions';
+import CallActions from '@components/talk/buttons/CallActions';
 
 class GroupsView extends React.Component {
 	constructor(props) {

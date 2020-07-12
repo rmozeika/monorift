@@ -10,7 +10,7 @@ import {
 } from '@ui-kitten/components';
 import { originLink } from '../../core/utils';
 import CreateGuest from './CreateGuest';
-import AuthIcons from '@components/buttons/AuthIcons';
+import AuthIcons from '@components/icons/AuthIcons';
 
 const signIn = () => {
 	Linking.openURL(originLink('login')).catch(err => {

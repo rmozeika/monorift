@@ -5,7 +5,7 @@ import { StyleSheet, Linking, Platform } from 'react-native';
 import UsersList from '../users/UsersList.native';
 import SearchBar from '@components/users/SearchBar';
 
-import CallActions from '@components/buttons/CallActions';
+import CallActions from '@components/talk/buttons/CallActions';
 
 class UsersView extends React.Component {
 	constructor(props) {

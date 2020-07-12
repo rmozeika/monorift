@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import { Dimensions } from 'react-native';
-import { queuedUsers } from '@selectors/users';
+import { queuedUsersList } from '@selectors/users';
 export default function withConnectionAdapter(WrappedComponent) {
 	class ConnectionAdapter extends React.Component {
 		constructor(props) {
@@ -44,7 +44,8 @@ export default function withConnectionAdapter(WrappedComponent) {
 		};
 		render() {
 			const { props, getSize, state } = this;
-			const { height, width, queued } = state;
+			const { queued } = props;
+			const { height, width } = state;
 			return (
 				<WrappedComponent
 					getSize={getSize}
@@ -67,7 +68,7 @@ export default function withConnectionAdapter(WrappedComponent) {
 		};
 	};
 	const mapStateToProps = (state, ownProps) => {
-		const queued = queuedUsers(state);
+		const queued = queuedUsersList(state);
 		return {
 			queued
 		};

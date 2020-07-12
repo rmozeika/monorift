@@ -22,6 +22,7 @@ import 'isomorphic-unfetch';
 
 import * as Actions from '@actions';
 import * as CallSelectors from '@selectors/call';
+import * as UserSelectors from '@selectors/users';
 let mediaStreamConstraints = {
 	audio: true,
 	video: false
@@ -39,19 +40,12 @@ const {
 } = Actions;
 
 import io from 'socket.io-client';
+import { queuedUsers } from '../selectors/users';
 const onError = e => {
 	console.log(e);
 	debugger; //error
 };
-const selectMe = state => {
-	const { username } = state.auth.user;
-	return username;
-};
-const selectCheckedUsers = state => {
-	const { queued } = state.users;
 
-	return queued;
-};
 const nsp = 'call';
 const socketServerURL = originLink(nsp); //`http://localhost:8080/${nsp}`;
 
@@ -175,7 +169,7 @@ function* getUsers(user) {
 	if (userId) {
 		users = [user];
 	} else {
-		const checked = yield select(selectCheckedUsers);
+		const checked = yield select(queuedUsers);
 		users = Object.keys(checked).map(id => checked[id]);
 	}
 	return users;

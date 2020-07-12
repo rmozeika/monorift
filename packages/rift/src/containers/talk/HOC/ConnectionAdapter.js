@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import { Dimensions } from 'react-native';
-
+import { queuedUsers } from '@selectors/users';
 export default function withConnectionAdapter(WrappedComponent) {
 	class ConnectionAdapter extends React.Component {
 		constructor(props) {
@@ -44,13 +44,14 @@ export default function withConnectionAdapter(WrappedComponent) {
 		};
 		render() {
 			const { props, getSize, state } = this;
-			const { height, width } = state;
+			const { height, width, queued } = state;
 			return (
 				<WrappedComponent
 					getSize={getSize}
 					videoHeight={height}
 					videoWidth={width}
 					startConnection={this.startConnection}
+					queued={queued}
 					// call={this.call}
 					// videoCall={this.videoCall}
 					{...props}
@@ -66,7 +67,10 @@ export default function withConnectionAdapter(WrappedComponent) {
 		};
 	};
 	const mapStateToProps = (state, ownProps) => {
-		return {};
+		const queued = queuedUsers(state);
+		return {
+			queued
+		};
 	};
 	return connect(mapStateToProps, mapDispatchToProps)(ConnectionAdapter);
 }

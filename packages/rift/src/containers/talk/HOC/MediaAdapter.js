@@ -13,10 +13,6 @@ export default function withMediaAdapter(WrappedComponent) {
 	class MediaAdapter extends React.Component {
 		constructor(props) {
 			super(props);
-			this.startConnection = {
-				audio: this.call.bind(this),
-				video: this.videoCall.bind(this)
-			};
 			this.state = {
 				height: null,
 				width: null
@@ -43,9 +39,8 @@ export default function withMediaAdapter(WrappedComponent) {
 	};
 	const mapStateToProps = (state, ownProps) => {
 		const { call } = state;
-		const { constraints } = call;
 		return {
-			mediaStreamConstraints: constraints.mediaStream
+			// mediaStreamConstraints: constraints.mediaStream
 		};
 	};
 	return connect(mapStateToProps, mapDispatchToProps)(MediaAdapter);

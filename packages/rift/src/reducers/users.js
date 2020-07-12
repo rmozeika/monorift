@@ -9,7 +9,7 @@ import {
 	SET_SEARCH_FILTER,
 	UPDATE_USER,
 	CALL_ACTIVE,
-	END_CALL,
+	END_CONNECTION,
 	ADD_CONNECTION,
 	ANSWER_INCOMING,
 	ADD_USER,
@@ -188,7 +188,7 @@ export const byId = (state = {}, action) => {
 				draft[action.id].connected = action.payload;
 				break;
 			}
-			case END_CALL: {
+			case END_CONNECTION: {
 				draft[action.id].connected = false;
 				draft[action.id].calling = false;
 				break;

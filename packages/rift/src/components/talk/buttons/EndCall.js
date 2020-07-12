@@ -6,23 +6,26 @@ import {
 	Text,
 	Button,
 	styled,
-	withStyles
+	withStyles,
+	Icon
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-export const VideoCallSelected = ({ queued, startConnection }) => {
+import { endCall } from '../../../actions';
+const HangupIcon = () => <Icon size={22} color="white" name="phone-slash" />;
+export const EndCall = ({ active, endCall }) => {
 	// const mobile = useSelector(state => state.view.mobile);
 	return (
 		<Layout style={styles.container}>
-			{queued.length > 0 && (
+			{active.length > -1 && (
 				<Button
 					// key={id}
 					// name={username}
 					style={styles.button}
-					status={'success'}
-					onPress={startConnection.video}
-					// accessoryLeft={VideoIcon}
+					status={'danger'}
+					onPress={() => endCall()}
+					accessoryLeft={HangupIcon}
 				>
-					<Text>Video Call</Text>
+					{/* <Text>Video Call</Text> */}
 				</Button>
 			)}
 		</Layout>
@@ -47,7 +50,8 @@ const styles = StyleSheet.create({
 		bottom: 0
 	},
 	button: {
-		marginRight: 5
+		marginRight: 5,
+		borderRadius: 100
 		// height: '100%',
 		// margin: 0,
 		// flexGrow: 1,
@@ -65,4 +69,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default ConnectionAdapter(VideoCallSelected);
+export default ConnectionAdapter(EndCall);

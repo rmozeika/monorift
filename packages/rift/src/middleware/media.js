@@ -1,5 +1,6 @@
 import * as Actions from '../actions';
 import { AudioElement, AppAudioContext } from './media-elements/audio';
+import { result } from 'lodash';
 class MediaInstance {
 	//videoPlayer = null;
 	#element = null;
@@ -39,24 +40,68 @@ class MediaInstance {
 		if (!this.initialized) {
 			this.initInboundStream();
 		}
-		this.inboundStream.addTrack(track);
+		try {
+			this.inboundStream.addTrack(track);
+		} catch (e) {
+			// TODO HANDLE THIS, already added for sender
+			console.error('Error adding track');
+			console.trace(e);
+		}
+
 		this.storeTrack(id, track);
 		if (this.element?.play) {
 			this.element.play();
 		}
 	}
-	endTrack = id => {
-		console.log('instance: end track', id);
-		const track_id = this.tracks[id].id;
-		const track = this.inboundStream.getTrackById(track_id);
-		track.stop();
-		this.inboundStream.removeTrack(track);
-		delete this.tracks[id];
-		this.endSendingTrack();
+	getTrackByUserId = user_id => {
+		return this.tracks[user_id];
+	};
+	endTracks(id) {
+		let user_ids = [];
+		if (id && Array.isArray(id)) {
+			user_ids = id;
+		} else if (id) {
+			user_ids.push(id);
+		}
+		// else {
+		// 	user_ids = Object.keys(this.tracks);
+		// }
+
+		const track_ids = user_ids.map(user_id => {
+			const track = this.getTrackByUserId(user_id); //.id);
+
+			return { user_id, track_id: track?.id || false };
+		});
+		track_ids.forEach(({ user_id, track_id }) =>
+			this.endTrack(user_id, track_id)
+		);
+		return track_ids;
+	}
+	endTrack = (id, track_id) => {
+		try {
+			if (!this.tracks[id]) return;
+			delete this.tracks[id];
+			if (!track_id) return;
+
+			console.log(
+				'instance: end track',
+				`user_id: ${id}`,
+				`track_id: ${track_id}`
+			);
+			// const track_id = this.tracks[id].id;
+			const track = this.inboundStream.getTrackById(track_id);
+			track.stop();
+			this.inboundStream.removeTrack(track);
+			this.endSendingTrack();
+		} catch (e) {
+			console.error('Error removing track for user', id);
+			console.trace(e);
+		}
 	};
 	endSendingTrack = () => {
+		// CHANGE THIS only end tracks for tracks by id
 		// Don't end if active with another connection
-		if (Object.keys(this.tracks).length < 1) {
+		if (Object.keys(this.tracks).length < 1 && this.userMediaStream !== null) {
 			this.userMediaStream.getTracks().forEach(track => track.stop());
 			this.userMediaStream = null;
 		}
@@ -144,6 +189,15 @@ class VideoInstance extends MediaInstance {
 		}
 	}
 }
+
+const MethodTypes = {
+	addTrack: Symbol('addTrack'),
+	endTracks: Symbol('endTracks'),
+	endTrack: Symbol('endTrack'),
+	getUserMedia: Symbol('getUserMedia'),
+	setVideoPlayer: Symbol('setVideoPlayer'),
+	addElementSource: Symbol('addElementSource')
+};
 // class AdvancedAudio extends Audio
 class MediaController {
 	audioTag = new AudioElement();
@@ -158,6 +212,7 @@ class MediaController {
 		audio: null, //this.#audioInstance,
 		video: null // this.#videoInstance
 	};
+	#avUserMediaStream = null;
 	//#audioProxy = this.createMediaProxy(this.#audioInstance);
 	#proxies = this.mediaProxier(this.#mediaInstances);
 	tracks = {};
@@ -180,51 +235,95 @@ class MediaController {
 		this.#proxies = this.mediaProxier(this.#mediaInstances);
 		window.instances = this.#mediaInstances;
 		window.interfaces = this.mediaInterface;
+		window.MediaController = this;
 		this.videoPlayer = null;
 	}
 	mediaProxier(obj) {
 		const controller = this;
 		let handler = {
 			get(target, propKey, receiver) {
+				const typeSymbol = MethodTypes[propKey];
 				const controllerMethod =
-					controller[propKey] || controller.defaultInstanceMethod;
-
+					controller[typeSymbol] || controller.defaultInstanceMethod;
+				const parseResult = controller[propKey];
 				//const instanceType =  'audio'; //this[propKey]
 				// const origMethod = target[instanceType][propKey];
 				return function(...args) {
-					const instanceType = controllerMethod.apply(controller, args);
-					const instance = target[instanceType];
-					const origMethod = instance[propKey];
+					// const results = controllerMethods.map(controllerMethod => {
+					const instanceTypes = controllerMethod.apply(controller, args);
+					const results = instanceTypes.map(instanceType => {
+						const instance = target[instanceType];
+						const origMethod = instance[propKey];
 
-					// const instanceType = 'audio';
-					let result = origMethod.apply(instance, args);
-					try {
-						console.log(
-							propKey + JSON.stringify(args) + ' -> ' + JSON.stringify(result)
-						);
-					} catch (e) {
-						console.log('caught error while logging: ignore');
+						// const instanceType = 'audio';
+						let result = origMethod.apply(instance, args);
+						try {
+							console.log(
+								propKey + JSON.stringify(args) + ' -> ' + JSON.stringify(result)
+							);
+						} catch (e) {
+							console.log('caught error while logging: ignore');
+						}
+
+						return result;
+					});
+
+					let isAsync =
+						parseResult?.then ||
+						results.some(result => {
+							return result?.then;
+						});
+
+					const onComplete = operationResults => {
+						if (parseResult && operationResults) {
+							return parseResult(operationResults);
+							//return parsed;
+						}
+						return operationResults;
+					};
+					const singleUnitResult = resultArr => {
+						if (resultArr.length === 1) {
+							return resultArr[0];
+						}
+						return resultArr;
+					};
+					let operationsComplete = result;
+					if (isAsync) {
+						let asyncOperation = async () => {
+							operationsComplete = await Promise.all(results);
+							const operationsParsed = await onComplete(operationsComplete);
+							return singleUnitResult(operationsParsed);
+						};
+						return asyncOperation();
 					}
-
-					return result;
+					let operationsParsed = onComplete(operationsComplete);
+					return singleUnitResult(operationsParsed);
 				};
 			}
 		};
 		return new Proxy(obj, handler);
 	}
-
-	defaultInstanceMethod() {
-		return 'audio';
+	allInstanceTypes = ['audio', 'video'];
+	defaultInstanceMethod(propKey) {
+		return ['audio'];
 	}
-	storeTrack(id, track) {
-		this.tracks[id] = track.kind || 'audio';
-	}
+	storeTrack = (id, track) => {
+		const type = track.kind || 'audio';
+		if (!this.tracks[id]) this.tracks[id] = { video: false, audio: false };
+		this.tracks[id][type] = track.id;
+	};
+	removeTrack = ({ track_id, user_id }) => {
+		const { audio, video } = this.tracks[id];
+		if (audio == track_id) this.track[id].audio = false;
+		if (video == track_id) this.track[id].video = false;
+		if (!audio && !video) delete this.tracks[id];
+	};
 	// Runs this controller method before passing to instance
 	// return 'audio' or 'video' to specify which instance to run on
-	addTrack(id, track) {
+	[MethodTypes.addTrack](id, track) {
 		console.log(track.kind, 'add track', id);
 		this.storeTrack(id, track);
-		return track.kind;
+		return [track.kind];
 		// if (track.kind == 'audio' && this.audioInstance) {
 		// 	this.audioInstance.addTrack(id, track);
 		// 	return;
@@ -236,27 +335,49 @@ class MediaController {
 		// this.storeTrack(id, track);
 		// this.audioTag.play();
 	}
-	endTrack(id) {
+	[MethodTypes.endTracks](ids) {
+		return this.allInstanceTypes;
+	}
+	endTracks = tracks => {
+		this.tracks.forEach(this.removeTrack);
+		if (!Object.keys(this.tracks).length < 1) {
+			this.#avUserMediaStream = null;
+		}
+	};
+	[MethodTypes.endTrack](id) {
 		console.log('end track', id);
 		const type = this.tracks[id];
 		delete this.tracks[id];
 		console.log('end track type', type);
-		return type;
+		return [type];
 		// TODO: delete from both types if both
 	}
-	getUserMedia(constraints) {
-		if (constraints.video) return 'video';
-		return 'audio';
+	getUserMedia = streams => {
+		if (streams.length < 2) return streams[0];
+		const tracksByStream = streams.map(stream => {
+			return stream.getTracks();
+		});
+		const tracksMasterlist = tracksByStream.flat();
+		this.#avUserMediaStream = new MediaStream(tracksMasterlist);
+		return this.#avUserMediaStream;
+	};
+	[MethodTypes.getUserMedia](constraints) {
+		const types = [];
+		if (constraints.video) types.push('video');
+		if (constraints.audio) types.push('audio');
+		return types;
 	}
-	setVideoPlayer(ref) {
-		return 'video';
+	[MethodTypes.setVideoPlayer](ref) {
+		return ['video'];
 	}
-	addElementSource(source) {
+	[MethodTypes.addElementSource](source) {
 		const type = source.tagName.toLowercase();
 		console.log(type);
-		return type;
+		return [type];
 	}
 }
+
+class InstanceTypes {}
 const audioMiddleware = store => {
 	const mediaController = new MediaController();
 	// const { proxiedInstances } = MediaController;
@@ -273,8 +394,8 @@ const audioMiddleware = store => {
 				mediaInterface.addTrack(action.id, action.track);
 				break;
 			}
-			case Actions.END_CALL: {
-				mediaInterface.endTrack(action.id);
+			case Actions.END_CONNECTION: {
+				mediaInterface.endTracks(action.id);
 				next(action); // let other reducers accept action
 				break;
 			}

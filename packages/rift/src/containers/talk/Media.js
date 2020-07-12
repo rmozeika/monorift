@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import * as Actions from '@actions';
 import MediaControls from '@components/talk/MediaControls';
 import CallControls from '@components/talk/CallControls';
+import EndCallButton from '@components/talk/buttons/EndCall';
 
 import VideoPlayer from '@components/talk/VideoPlayer';
 
@@ -58,7 +59,13 @@ export class Media extends React.Component {
 				<Layout style={styles.row}>
 					<audio style={audioStyle} id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>
+				{/* <Layout style={styles.container} > */}
+				<Layout style={styles.permanentButtons}>
+					<EndCallButton />
+				</Layout>
+				{/* </Layout> */}
 				<CallControls />
+
 				<MediaControls />
 			</Layout>
 		);
@@ -71,6 +78,17 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		// height: '100%',
 		justifyContent: 'space-between'
+	},
+	// container: {
+
+	// },
+	permanentButtons: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyItems: 'center',
+		flexBasis: '100%',
+		position: 'fixed',
+		bottom: 10
 	},
 	row: {
 		width: '100%',

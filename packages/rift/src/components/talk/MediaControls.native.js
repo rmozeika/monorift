@@ -7,7 +7,7 @@ import {
 	ButtonGroup
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import withConnectionAdapter from '@containers/talk/HOC/ConnectionAdapter';
+import withMediaAdapter from '@containers/talk/HOC/MediaAdapter';
 
 class MediaControls extends React.Component {
 	constructor(props) {

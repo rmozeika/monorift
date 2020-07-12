@@ -19,7 +19,8 @@ export const mapConnections = state => {
 		return connections[id];
 	});
 };
-export const activeConnections = state => {
+export const activeConnections = state => state.call.connections;
+export const activeConnectionsList = state => {
 	// const { connections } = state.call;
 	// const active = Object.keys(connections)
 	const connections = mapConnections(state);

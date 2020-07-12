@@ -190,7 +190,10 @@ class VideoInstance extends MediaInstance {
 	}
 }
 
-const MethodTypes = {
+// Called before each corresponding method
+// Returns which instance type to run on e.g. ['audio] or ['audio', 'video'] or ['video']
+// Runs any logic to be executed before
+const BeforeMediaAction = {
 	addTrack: Symbol('addTrack'),
 	endTracks: Symbol('endTracks'),
 	endTrack: Symbol('endTrack'),
@@ -198,27 +201,20 @@ const MethodTypes = {
 	setVideoPlayer: Symbol('setVideoPlayer'),
 	addElementSource: Symbol('addElementSource')
 };
-// class AdvancedAudio extends Audio
 class MediaController {
 	audioTag = new AudioElement();
 	#audioInstance = null;
 
-	#videoInstance = null; //new VideoInstance(null);
-	// #mediaInstances = {
-	// 	audio: this.#audioInstance,
-	// 	video: this.#videoInstance
-	// }
+	#videoInstance = null;
+
 	#mediaInstances = {
 		audio: null, //this.#audioInstance,
 		video: null // this.#videoInstance
 	};
 	#avUserMediaStream = null;
-	//#audioProxy = this.createMediaProxy(this.#audioInstance);
 	#proxies = this.mediaProxier(this.#mediaInstances);
 	tracks = {};
-	// get audioProxy() {
-	// 	return this.#audioProxy;
-	// }
+
 	get mediaInterface() {
 		return this.#proxies;
 	}
@@ -238,11 +234,30 @@ class MediaController {
 		window.MediaController = this;
 		this.videoPlayer = null;
 	}
+	//	Controller houses proxy for interaction with AudioInstance and VideoInstance
+	//  Maintains communal state for both media types
+	//
+	// e.g. USER CALLS: mediaInterface.getUserMedia(action.constraints);
+	//
+	// Operations automatically executed as follows:
+	//
+	// 1. Proxy automatically calls MediaController[MediaTypes.getUserMedia] resolves to MediaController[Symbol('getUserMedia)])
+	//
+	//		Returns which instance type to run on e.g. ['audio] or ['audio', 'video'] or ['video']
+	//  	Symbols as method names so matching method name can be separated into pre, post commands of same name
+	//		Run any pre operation logic here
+	//
+	// 2. Calls method directly on corresponding media instances (AudioInstance, VideoInstance, or both)
+	// 	e.g. AudioInstance.getUserMedia(args) & VideoInstance.getUserMedia(args) returned from media types in previous step
+
+	// 3. Post operation logic run to maintain state within the controller
+	//	e.g. MediaController.getUserMedia(args);
+
 	mediaProxier(obj) {
 		const controller = this;
 		let handler = {
 			get(target, propKey, receiver) {
-				const typeSymbol = MethodTypes[propKey];
+				const typeSymbol = BeforeMediaAction[propKey];
 				const controllerMethod =
 					controller[typeSymbol] || controller.defaultInstanceMethod;
 				const parseResult = controller[propKey];
@@ -320,7 +335,7 @@ class MediaController {
 	};
 	// Runs this controller method before passing to instance
 	// return 'audio' or 'video' to specify which instance to run on
-	[MethodTypes.addTrack](id, track) {
+	[BeforeMediaAction.addTrack](id, track) {
 		console.log(track.kind, 'add track', id);
 		this.storeTrack(id, track);
 		return [track.kind];
@@ -335,16 +350,20 @@ class MediaController {
 		// this.storeTrack(id, track);
 		// this.audioTag.play();
 	}
-	[MethodTypes.endTracks](ids) {
+	[BeforeMediaAction.endTracks](ids) {
 		return this.allInstanceTypes;
 	}
+	get tracksList() {
+		return Object.keys(this.tracks).map(key => this.tracks[key]);
+	}
 	endTracks = tracks => {
-		this.tracks.forEach(this.removeTrack);
-		if (!Object.keys(this.tracks).length < 1) {
+		const { tracksList } = this;
+		tracksList.forEach(this.removeTrack);
+		if (tracksList.length < 1) {
 			this.#avUserMediaStream = null;
 		}
 	};
-	[MethodTypes.endTrack](id) {
+	[BeforeMediaAction.endTrack](id) {
 		console.log('end track', id);
 		const type = this.tracks[id];
 		delete this.tracks[id];
@@ -361,23 +380,22 @@ class MediaController {
 		this.#avUserMediaStream = new MediaStream(tracksMasterlist);
 		return this.#avUserMediaStream;
 	};
-	[MethodTypes.getUserMedia](constraints) {
+	[BeforeMediaAction.getUserMedia](constraints) {
 		const types = [];
 		if (constraints.video) types.push('video');
 		if (constraints.audio) types.push('audio');
 		return types;
 	}
-	[MethodTypes.setVideoPlayer](ref) {
+	[BeforeMediaAction.setVideoPlayer](ref) {
 		return ['video'];
 	}
-	[MethodTypes.addElementSource](source) {
+	[BeforeMediaAction.addElementSource](source) {
 		const type = source.tagName.toLowercase();
 		console.log(type);
 		return [type];
 	}
 }
 
-class InstanceTypes {}
 const audioMiddleware = store => {
 	const mediaController = new MediaController();
 	// const { proxiedInstances } = MediaController;

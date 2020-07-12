@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import IncomingCall from '../talk/IncomingCall';
-import AnswerReject from '@containers/talk/HOC/AnswerReject';
+import ConnectionAdapter from '@containers/talk/HOC/ConnectionAdapter';
 import {
 	Layout,
 	Text,
@@ -10,29 +9,33 @@ import {
 	withStyles
 } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-
-export const CallActions = ({ incomingCall, answer, reject }) => {
+export const VideoCallSelected = ({ queued, startConnection }) => {
 	// const mobile = useSelector(state => state.view.mobile);
 	return (
 		<Layout style={styles.container}>
-			{incomingCall.map(({ id, username }) => (
-				<IncomingCall
-					//key={id.toString()}
-					key={id}
-					name={username}
-					answer={() => answer(id)}
-					reject={() => reject(id)}
-				/>
-			))}
+			{queued.length > 0 && (
+				<Button
+					// key={id}
+					// name={username}
+					style={styles.button}
+					status={'success'}
+					onPress={startConnection.video}
+					// accessoryLeft={VideoIcon}
+				>
+					<Text>Video Call</Text>
+				</Button>
+			)}
 		</Layout>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		position: 'absolute',
-		width: '100%',
-		bottom: 0
+		// position: 'absolute',
+		// width: '100%',
+		// bottom: 0
+		margin: 0,
+		padding: 0
 	},
 	userActionContainer: {
 		display: 'flex',
@@ -44,11 +47,11 @@ const styles = StyleSheet.create({
 		bottom: 0
 	},
 	button: {
-		margin: 15,
-		height: '100%',
-		margin: 0,
-		flexGrow: 1,
-		borderRadius: 0
+		marginRight: 5
+		// height: '100%',
+		// margin: 0,
+		// flexGrow: 1,
+		// borderRadius: 0
 	},
 	buttonRow: {
 		display: 'flex',
@@ -62,4 +65,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default AnswerReject(CallActions);
+export default ConnectionAdapter(VideoCallSelected);

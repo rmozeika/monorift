@@ -7,9 +7,9 @@ import * as UserSelectors from '@selectors/users';
 import * as GroupSelectors from '@selectors/groups';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import ConversationFeed from './ConversationFeed';
-import { FEED_QUERY } from '@core/api/graphql/messages';
+import { FEED_QUERY, FEED_SUBSCRIPTION } from '@core/api/graphql/messages';
 function Conversation({ type, id }) {
-	const { data, fetchMore, ...result } = useQuery(FEED_QUERY, {
+	const { subscribeToMore, data, fetchMore, ...result } = useQuery(FEED_QUERY, {
 		variables: {
 			id
 			//   type: match.params.type.toUpperCase() || "TOP",
@@ -33,6 +33,12 @@ function Conversation({ type, id }) {
 							feed: [...prev.feed, ...fetchMoreResult.feed]
 						});
 					}
+				})
+			}
+			subscribeToNewMessages={() =>
+				subscribeToMore({
+					document: FEED_SUBSCRIPTION,
+					variables: { lastId: id }
 				})
 			}
 		/>

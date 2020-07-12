@@ -22,6 +22,7 @@ import 'isomorphic-unfetch';
 
 import * as Actions from '@actions';
 import * as CallSelectors from '@selectors/call';
+import * as UserSelectors from '@selectors/users';
 let mediaStreamConstraints = {
 	audio: true,
 	video: false
@@ -34,24 +35,18 @@ const {
 	ANSWER_INCOMING,
 	START_CALL,
 	END_CALL,
+	END_CONNECTION,
 	setConstraints,
 	sendOffer
 } = Actions;
 
 import io from 'socket.io-client';
+import { queuedUsers } from '../selectors/users';
 const onError = e => {
 	console.log(e);
 	debugger; //error
 };
-const selectMe = state => {
-	const { username } = state.auth.user;
-	return username;
-};
-const selectCheckedUsers = state => {
-	const { queued } = state.users;
 
-	return queued;
-};
 const nsp = 'call';
 const socketServerURL = originLink(nsp); //`http://localhost:8080/${nsp}`;
 
@@ -175,7 +170,7 @@ function* getUsers(user) {
 	if (userId) {
 		users = [user];
 	} else {
-		const checked = yield select(selectCheckedUsers);
+		const checked = yield select(queuedUsers);
 		users = Object.keys(checked).map(id => checked[id]);
 	}
 	return users;
@@ -241,6 +236,8 @@ function* gotMessageSaga({ message, constraints, from }) {
 			...message.candidate
 		});
 		yield put(Actions.peerAction(conn_id, 'addIceCandidate', altCandid));
+	} else if (message.type == END_CONNECTION) {
+		yield put(Actions.endCall(conn_id, { emit: false }));
 	}
 }
 
@@ -264,14 +261,43 @@ function* sendCandidateSaga(action) {
 	const { payload } = action;
 	const candidateToSend = { type: 'candidate', candidate: payload };
 	console.log(candidateToSend);
-	const activeConnections = yield select(CallSelectors.activeConnections);
+	const activeConnections = yield select(CallSelectors.activeConnectionsList);
 	const users = activeConnections.map(({ id }) => {
 		return { id: id };
 	});
 	socket.emit('message', candidateToSend, { users });
 }
 
-function* endCallSaga({ id }) {
+function* endCallSaga({ id, emit }) {
+	let user_ids = [];
+	const activeConnections = yield select(CallSelectors.activeConnections);
+	if (id && Array.isArray(id)) {
+		user_ids = id;
+	} else if (id) {
+		if (!activeConnections[id]) return;
+		user_ids.push(id);
+	} else {
+		user_ids = Object.keys(activeConnections).map(conn_id => conn_id);
+	}
+	for (i = 0; i < user_ids.length; i++) {
+		yield put(Actions.endConnection(user_ids[i]));
+	}
+	if (emit) {
+		socket.emit(
+			'message',
+			{ type: END_CONNECTION },
+			{
+				users: user_ids.map(user_id => ({
+					id: user_id
+				}))
+			}
+		);
+	}
+
+	// if (id) {}
+	//yield put(Actions.peerAction(id, 'close'));
+}
+function* endUserConnectionSaga({ id }) {
 	yield put(Actions.peerAction(id, 'close'));
 }
 function* rootSaga() {
@@ -282,7 +308,8 @@ function* rootSaga() {
 		takeEvery(GOT_MESSAGE, gotMessageSaga),
 		takeEvery(START_CALL, startCallSaga),
 		takeLatest(ANSWER_INCOMING, answerCallSaga),
-		takeLatest(END_CALL, endCallSaga)
+		takeLatest(END_CALL, endCallSaga),
+		takeLatest(END_CONNECTION, endUserConnectionSaga)
 	]);
 }
 

@@ -123,7 +123,15 @@ export const answer = (id, from, answered = true) => ({
 });
 
 export const END_CALL = 'END_CALL';
-export const endCall = id => ({
+export const endCall = (id, { emit = true } = {}) => ({
 	type: END_CALL,
+	id,
+	emit
+	// ids
+});
+
+export const END_CONNECTION = 'END_CONNECTION';
+export const endConnection = id => ({
+	type: END_CONNECTION,
 	id
 });

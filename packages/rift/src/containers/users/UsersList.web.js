@@ -16,7 +16,7 @@ import UserItem from './UserItem.web';
 // import YourProfile from './YourProfile';
 import SearchBar from '@components/users/SearchBar';
 import EmptyFriendsPrompt from '@components/users/EmptyFriendsPrompt';
-import CallActions from '@components/buttons/CallActions';
+import CallActions from '@components/talk/buttons/CallActions';
 import UpdateTempUsername from '@components/users/UpdateTempUsername';
 
 class UsersList extends React.PureComponent {

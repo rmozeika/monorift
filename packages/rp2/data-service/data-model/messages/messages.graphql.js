@@ -51,6 +51,17 @@ class MessageSchema extends GraphqlSchemaInstance {
 					// 		return payload.id == variables.id;
 					// 	}
 					// )
+				},
+				messageNotifications: {
+					resolve: result => {
+						if (Array.isArray(result)) [result] = result;
+						console.log(result);
+						return result;
+					},
+					subscribe: async (_, { id, lastId }, { user }) => {
+						const xread = await this.repository.listenForMore(user.id, id, lastId);
+						return xread;
+					}
 				}
 			},
 			Query: {

@@ -16,7 +16,6 @@ export const VideoCallSelected = ({ queued, startConnection }) => {
 		<Layout style={styles.container}>
 			{queued.length > 0 && (
 				<Button
-					//key={id.toString()}
 					// key={id}
 					// name={username}
 					style={styles.button}
@@ -64,4 +63,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default AnswerReject(CallActions);
+export default AnswerReject(VideoCallSelected);

@@ -264,9 +264,9 @@ class MediaController {
 				//const instanceType =  'audio'; //this[propKey]
 				// const origMethod = target[instanceType][propKey];
 				return function(...args) {
-					// const results = controllerMethods.map(controllerMethod => {
+					// const resultTasks = controllerMethods.map(controllerMethod => {
 					const instanceTypes = controllerMethod.apply(controller, args);
-					const results = instanceTypes.map(instanceType => {
+					const resultTasks = instanceTypes.map(instanceType => {
 						const instance = target[instanceType];
 						const origMethod = instance[propKey];
 
@@ -285,7 +285,7 @@ class MediaController {
 
 					let isAsync =
 						parseResult?.then ||
-						results.some(result => {
+						resultTasks.some(result => {
 							return result?.then;
 						});
 
@@ -296,16 +296,16 @@ class MediaController {
 						}
 						return operationResults;
 					};
-					const singleUnitResult = resultArr => {
+					const singleUnitResult = (resultArr = []) => {
 						if (resultArr.length === 1) {
 							return resultArr[0];
 						}
 						return resultArr;
 					};
-					let operationsComplete = result;
+					let operationsComplete = resultTasks;
 					if (isAsync) {
 						let asyncOperation = async () => {
-							operationsComplete = await Promise.all(results);
+							operationsComplete = await Promise.all(resultTasks);
 							const operationsParsed = await onComplete(operationsComplete);
 							return singleUnitResult(operationsParsed);
 						};
@@ -328,10 +328,10 @@ class MediaController {
 		this.tracks[id][type] = track.id;
 	};
 	removeTrack = ({ track_id, user_id }) => {
-		const { audio, video } = this.tracks[id];
-		if (audio == track_id) this.track[id].audio = false;
-		if (video == track_id) this.track[id].video = false;
-		if (!audio && !video) delete this.tracks[id];
+		const { audio, video } = this.tracks[user_id];
+		if (audio == track_id) this.tracks[user_id].audio = false;
+		if (video == track_id) this.tracks[user_id].video = false;
+		if (!audio && !video) delete this.tracks[user_id];
 	};
 	// Runs this controller method before passing to instance
 	// return 'audio' or 'video' to specify which instance to run on
@@ -356,9 +356,9 @@ class MediaController {
 	get tracksList() {
 		return Object.keys(this.tracks).map(key => this.tracks[key]);
 	}
-	endTracks = tracks => {
+	endTracks = tracksToEnd => {
 		const { tracksList } = this;
-		tracksList.forEach(this.removeTrack);
+		tracksToEnd.flat().forEach(this.removeTrack);
 		if (tracksList.length < 1) {
 			this.#avUserMediaStream = null;
 		}

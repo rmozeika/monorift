@@ -54,7 +54,7 @@ input UserInput {
 
 input createMonoriftUserInput {
 	username: String!
-	password: String!
+	password: String
 }
 
 type createUserPayload {
@@ -85,10 +85,18 @@ type FriendsList {
 	users: [User]
 }
 
+type convertGuestPayload {
+	user: User
+	error: String
+	success: Boolean
+	savedPassword: Boolean
+}
+
 extend type Mutation {
 	createUser(input: UserInput!): createUserPayload
 	updateUser(data: UserInput, input: UserInput): User
 	createGuest(input: createMonoriftUserInput!): createUserPayload
+	convertGuest(password: String!): convertGuestPayload
 }
 
 extend type Query {

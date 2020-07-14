@@ -15,7 +15,10 @@ const {
 const extendMethods = [
 	{
 		name: 'update',
-		combine: true
+		combine: true,
+		resolve: data => {
+			return 'Many';
+		}
 	},
 	{
 		name: 'find',

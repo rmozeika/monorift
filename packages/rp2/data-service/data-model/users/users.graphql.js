@@ -1,4 +1,5 @@
 const GraphqlSchemaInstance = require('../GraphqlSchema');
+const { update } = require('lodash');
 
 class UserSchema extends GraphqlSchemaInstance {
 	repoName = 'users';
@@ -10,7 +11,10 @@ class UserSchema extends GraphqlSchemaInstance {
 	static getRepoName() {
 		return 'users';
 	}
-
+	setExtraRepos() {
+		this.members = this.api.repositories.members;
+		this.auth = this.api.repositories.auth;
+	}
 	createContext() {
 		this.context = async ({ req, res }) => {
 			const user = await this.api.repositories.auth.graphqlToken(req);
@@ -57,6 +61,13 @@ class UserSchema extends GraphqlSchemaInstance {
 						member1_id: user.id
 					});
 					return friends;
+				},
+				generateToken: async (parent, { id, username, opts }, context) => {
+					const { res } = context;
+					const { admin = false } = context.user;
+					if (!admin) return '';
+					this.repository.query({ id, username });
+					const token = this.auth.createJWT(user);
 				}
 			},
 
@@ -84,13 +95,28 @@ class UserSchema extends GraphqlSchemaInstance {
 					return user;
 				},
 				createGuest: async (parent, args, context) => {
-					const { res } = context;
-					const { username, password } = args.input;
-					const op = await this.repository.createGuest(username, password);
-					if (op.error) return op;
-					const token = this.api.repositories.auth.initJWT(res, op.user);
+					try {
+						const { res } = context;
+						const { username, password } = args.input;
+						const op = await this.repository.createGuest(username, password);
+						if (op.error) return op;
+						const token = await this.api.repositories.auth.initJWT(res, op.user);
 
-					return op;
+						return op;
+					} catch (e) {
+						console.trace(e);
+						console.log('error');
+					}
+				},
+				convertGuest: async (parent, { password }, { user, res }) => {
+					const op = await this.api.repositories.auth.convertGuest({
+						id: user.id,
+						password
+					});
+					if (op.error) return op;
+					const [updatedUser] = await this.repository.query({ id: user.id });
+					const token = await this.api.repositories.auth.initJWT(res, updatedUser);
+					return { ...op, user: updatedUser };
 				}
 			},
 

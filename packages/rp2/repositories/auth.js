@@ -5,6 +5,9 @@ const cookie = require('cookie');
 const bcrypt = require('bcrypt');
 const collection = 'users.auth';
 // UNUSED
+const {
+	validateUsernamePassword
+} = require('../data-service/data-model/users/validation.js');
 class AuthRepository extends Repository {
 	constructor(api) {
 		super(api);
@@ -100,9 +103,61 @@ class AuthRepository extends Repository {
 		return await this.parseToken(token);
 	}
 	async storeAuth(id, password) {
-		const salt = await bcrypt.genSalt();
-		const hashedPassword = await bcrypt.hash(password, salt);
-		this.insertOne({ id, hash: hashedPassword });
+		try {
+			const salt = await bcrypt.genSalt();
+			const hashedPassword = await bcrypt.hash(password, salt);
+			const insertOp = await this.insertOne({ id, hash: hashedPassword });
+			return { success: true };
+		} catch (e) {
+			return { error: e, success: false };
+		}
+	}
+	async validateAuth({ id, password, username = false }) {
+		const authEntryExists = await this.findOne({ id });
+		if (authEntryExists)
+			return {
+				savedPassword: false,
+				error:
+					'Authentication data already exists for user, try a different username',
+				success: false
+			};
+		//return new Error({ error: 'Authentication data already exists for user, try a different username', success: false });
+		//const { username, password, error: validationError } =
+		const validated = validateUsernamePassword(username, password);
+		if (!password)
+			return {
+				success: true,
+				message: 'signed up without password',
+				savedPassword: false,
+				username: validated.username,
+				password: validated.password
+			};
+
+		const { error: validationError } = validated;
+		if (validationError)
+			return { error: validationError, success: false, savedPassword: false }; //return new Error({ error: error, success: false });
+		return validated; //{ id, password, username };
+	}
+	async convertGuest({ id, password }) {
+		try {
+			const validated = await this.validateAuth({ id, password });
+			if (validated.success == false || validated.error) return validated;
+			let { success, error } = await this.storeAuth(id, validated.password).catch(
+				e => {
+					return { error: e, success: false, savedPassword: false };
+				}
+			);
+			if (error || success == false) return { success, error };
+			const opResult = await this.api.repositories.users
+				.update({ id }, { guest: false })
+				.catch(e => {
+					return { error: e, success: false, savedPassword: true };
+				});
+
+			return { success: true, error: null, ...opResult };
+		} catch (e) {
+			return { error: e, success: false, savedPassword: true };
+		}
 	}
 	async simpleAuth(username, password) {
 		username = username.toLowerCase();

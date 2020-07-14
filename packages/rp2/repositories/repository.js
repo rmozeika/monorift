@@ -44,12 +44,16 @@ class Repository extends RepositoryBase {
 		}
 		return result;
 	}
-	async update(toUpdate, doc, opts = {}) {
+	async update(toUpdate, docx, opts = {}) {
+		const srcData = { filter: toUpdate, doc: docx };
+		if (toUpdate.doc) srcData.doc = toUpdate.doc;
+		if (toUpdate.filter) srcData.filter = toUpdate.filter;
+		const { doc } = toUpdate;
 		const operations = {};
-		const filter = this.getDataByDb(toUpdate);
-		const data = this.getDataByDb(doc);
+		const filter = this.getDataByDb(srcData.filter);
+		const data = this.getDataByDb(srcData.doc);
 		if (filter.mongo && data.mongo) {
-			const mongoOp = await this.update({
+			const mongoOp = await this._update({
 				filter: filter.mongo,
 				doc: { $set: data.mongo },
 				opts

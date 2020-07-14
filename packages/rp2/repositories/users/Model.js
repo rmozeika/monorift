@@ -38,20 +38,21 @@ class UserModel {
 		isNewUser
 	) {
 		this.repo = repo;
-
+		this.auth = this.repo.api.repositories.auth;
 		this.username = username.toLowerCase();
 
 		this.usingTempUsername = usingTempUsername;
 		this.src = src;
 		this.mocked = mocked;
-		this.guest = guest;
 		// if (oauth_id) {
 		// 	this.checkUsernameExists();
 		// }
 		this.password = password;
+		this.guest = guest;
 		if (isNewUser !== false) {
 			this.oauth_id = oauth_id || `monorift|${username}`;
 			this.email = email || `${username}@monorift.com`;
+			this.guest = !!password;
 		}
 	}
 	async initFields() {
@@ -111,22 +112,32 @@ class UserModel {
 		return user;
 	}
 	static convertToMongo(user, includeNull = false) {
-		const mongoData = {};
-		this.mongoFields.forEach(key => {
-			const val = user[key] || null;
-			if (includeNull || (val !== null && val !== undefined)) {
-				mongoData[key] = val;
-			}
-			return;
-		});
+		//const mongoData = {};
+		// this.mongoFields.forEach(key => {
+		// 	const val = user[key] || null;
+		// 	if (includeNull || (val !== null && val !== undefined)) {
+		// 		mongoData[key] = val;
+		// 	}
+		// 	return;
+		// });
+		try {
+			const mappedData = this.convertWithMappings(
+				this.mongoMappings,
+				user,
+				includeNull
+			);
+			return mappedData;
+		} catch (e) {
+			console.trace(e);
+		}
 		// Object.entries(user).forEach(([key, value])=> {
 		// 	if (this.mongoFields.indexOf(key)) {
 		// 		mongoData[key] = value;
 		// 	}
 		// });
-		return mongoData;
+		//return mongoData;
 	}
-	static convertToPg(user, includeNull = false) {
+	static convertToPg(user = {}, includeNull = false) {
 		const { pgMappings } = this;
 		const pgData = {};
 		Object.entries(pgMappings).forEach(([key, value]) => {
@@ -143,6 +154,26 @@ class UserModel {
 		});
 		return pgData;
 	}
+	static convertWithMappings(mappings, user = {}, includeNull = false) {
+		try {
+			const data = {};
+			Object.entries(mappings).forEach(([key, value]) => {
+				let resultValue;
+				if (typeof value == 'function') {
+					resultValue = value(user);
+					return;
+				} else {
+					resultValue = user[value];
+				}
+				if (includeNull || (resultValue !== null && resultValue !== undefined)) {
+					data[key] = resultValue;
+				}
+			});
+			return data;
+		} catch (e) {
+			console.trace(e);
+		}
+	}
 	static get pgMappings() {
 		return {
 			id: 'bit_id',
@@ -154,6 +185,21 @@ class UserModel {
 			gravatar: base => {
 				return base?.src?.gravatar?.uri;
 			},
+			guest: 'guest',
+			mocked: 'mocked'
+		};
+	}
+	static get mongoMappings() {
+		return {
+			bit_id: 'id',
+			username: 'username',
+			// mongo_id: '_id',
+			src: 'src',
+			email: 'email',
+			oauth_id: 'oauth_id',
+			// gravatar: base => {
+			// 	return base?.src?.gravatar?.uri;
+			// },
 			guest: 'guest',
 			mocked: 'mocked'
 		};
@@ -207,10 +253,10 @@ class UserModel {
 			const updateBitOp = await this.repo.updateByOAuthId(this.oauth_id, {
 				bit_id: this.bit_id
 			});
-			await this.handlePassword();
-			return this.data;
+			const { success, error } = await this.handlePassword();
+			return { data: this.data, success, error };
 		} catch (e) {
-			throw new Error(e);
+			return { success: false, error: e };
 		}
 	}
 	async generateOAuthId() {
@@ -244,15 +290,38 @@ class UserModel {
 	}
 	async handlePassword() {
 		if (this.password || this.isMonoriftProviderUser()) {
-			const { username, error } = validateUsernamePassword(
-				this.username,
-				this.password
-			);
-			if (error) return new Error({ error: error, success: false });
-			const authData = await this.repo.api.repositories.auth.storeAuth(
-				this.bit_id,
-				this.password
-			);
+			// const authEntryExists = await this.auth.findOne({ username });
+			// if (authEntryExists) return { error: 'Authentication data already exists for user, try a different username', success: false };
+			// //return new Error({ error: 'Authentication data already exists for user, try a different username', success: false });
+			// if (!this.password) return { success: true, message: 'signed up without password' };
+			// const { error: validationError } = validateUsernamePassword(
+			// 	this.username,
+			// 	this.password
+			// );
+			// if (validationError) return { error: validationError, success: false }; //return new Error({ error: error, success: false });
+			// const { error: validationError } = validateUsernamePassword(
+			// 	this.username,
+			// 	this.password
+			// );
+			const {
+				error: validationError,
+				username,
+				password
+			} = await this.auth.validateAuth({
+				id: this.id,
+				password: this.password,
+				username: this.username
+			});
+			this.username = username;
+			this.password = password;
+			if (validationError) return { error: validationError, success: false }; //return new Error({ error: error, success: false });
+			if (!password) return { success: true, error: null };
+			const { success, error } = await this.repo.api.repositories.auth
+				.storeAuth(this.bit_id, this.password)
+				.catch(e => {
+					return { error: e, success: false };
+				});
+			return { success, error };
 		}
 	}
 	async createGravatar() {

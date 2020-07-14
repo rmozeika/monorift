@@ -37,8 +37,8 @@ class GroupSchema extends GraphqlSchemaInstance {
 					// Additional event labels can be passed to asyncIterator creation
 					subscribe: withFilter(
 						() => pubsub.asyncIterator([this.events.MEMBER_UPDATE]),
-						(payload, variables) => {
-							return payload.members.gid == variables.gid;
+						(payload, vals) => {
+							return payload.members.gid == vals.gid;
 						}
 					)
 				}
@@ -46,8 +46,8 @@ class GroupSchema extends GraphqlSchemaInstance {
 				// 	// Additional event labels can be passed to asyncIterator creation
 				// 	subscribe: withFilter(
 				// 		() => pubsub.asyncIterator([this.events.MEMBER_LEFT]),
-				// 		(payload, variables) => {
-				// 			return payload.memberLeft.gid == variables.gid;
+				// 		(payload, vals) => {
+				// 			return payload.memberLeft.gid == vals.gid;
 				// 		}
 				// 	)
 				// }

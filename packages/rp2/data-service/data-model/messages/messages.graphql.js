@@ -9,11 +9,6 @@ class MessageSchema extends GraphqlSchemaInstance {
 	constructor(api) {
 		super(api);
 	}
-
-	setExtraRepos() {
-		this.conversations = this.api.repositories.conversations;
-		this.users = this.api.repositories.users;
-	}
 	createResolvers() {
 		this.resolvers = {
 			Subscription: {

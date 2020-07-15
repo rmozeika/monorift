@@ -13,9 +13,6 @@ class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
 		this.repository = api.repositories[this.repoName];
-		//super();
-		this.setExtraRepos();
-		console.log(this.setExtraRepos);
 		const {
 			repoName = 'users',
 			repoNames = ['users', 'auth'],
@@ -26,27 +23,20 @@ class GraphqlSchemaInstance {
 			repos: repoNames,
 			path
 		};
-		// this.createRootQuery();
+		this.setExtraRepos();
 	}
 
 	async createSchema() {
 		await this.createTypeDefs();
 		this.createResolvers();
-		//this.createContext();
 		await this.createDirectiveResolvers();
 		this.schema = {
 			typeDefs: this.typeDefs,
 			resolvers: this.resolvers
-			// context: this.context,
-			// directiveResolvers: this.directiveResolvers
 		};
 		if (this.schema) {
 			return this.schema;
 		}
-		// this.serverConfig = {
-		// 	schema: this.schema,
-		// 	//context:
-		// }
 		const eSchema = makeExecutableSchema(this.schema);
 		return eSchema;
 		return this.serverConfig;
@@ -59,7 +49,6 @@ class GraphqlSchemaInstance {
 		return;
 	}
 	async createDirectiveResolvers() {}
-	// unused
 	async createRootQuery() {
 		this.serverConfig = await this.createSchema();
 		this.serverConfig = {
@@ -68,15 +57,10 @@ class GraphqlSchemaInstance {
 			directiveResolvers: this.directiveResolvers,
 			context: this.context
 		};
-		// const apolloSchema = makeExecutableSchema(this.serverConfig);
-		// this.RootQuery = apolloSchema;
 	}
 	get schemas() {
 		return this._schemas;
 	}
-	// setRepositories() {
-
-	// }
 	setExtraRepos = () => {
 		const { repos } = this.metadata;
 		repos.forEach(this.setExtraRepo);

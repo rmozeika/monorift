@@ -40,7 +40,12 @@ type GravatarSrc {
 	path: String
 	url: String
 }
-
+input UserQueryInput {
+	id: Int
+	username: String
+	oauth_id: String
+	email: String
+}
 input UserInput {
 	id: Int
 	username: String
@@ -91,6 +96,9 @@ type convertGuestPayload {
 	success: Boolean
 	savedPassword: Boolean
 }
+input TokenOptions {
+	saveToReq: Boolean
+}
 
 extend type Mutation {
 	createUser(input: UserInput!): createUserPayload
@@ -106,4 +114,5 @@ extend type Query {
 	allUsers: [User]
 	friends: FriendsList
 	getFriendsForUser(input: UserInput): UserWithFriends
+	generateToken(input: UserQueryInput!, opts: TokenOptions): String
 }

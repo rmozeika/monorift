@@ -12,9 +12,20 @@ if (remote == 'false') {
 class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
-		// Get repoName name from subclass;
-		this.repoName = this.constructor.getRepoName(); //this.repoName || 'users';
 		this.repository = api.repositories[this.repoName];
+		//super();
+		this.setExtraRepos();
+		console.log(this.setExtraRepos);
+		const {
+			repoName = 'users',
+			repoNames = ['users', 'auth'],
+			path = ''
+		} = this.constructor;
+		this.metadata = {
+			name: repoName,
+			repos: repoNames,
+			path
+		};
 		// this.createRootQuery();
 	}
 
@@ -63,6 +74,16 @@ class GraphqlSchemaInstance {
 	get schemas() {
 		return this._schemas;
 	}
+	// setRepositories() {
+
+	// }
+	setExtraRepos = () => {
+		const { repos } = this.metadata;
+		repos.forEach(this.setExtraRepo);
+	};
+	setExtraRepo = name => {
+		this[name] = this.api.repositories[name];
+	};
 	_schemas = {};
 }
 

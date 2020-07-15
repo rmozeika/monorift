@@ -3,19 +3,16 @@ const { PubSub, withFilter } = require('apollo-server');
 
 const pubsub = new PubSub();
 class GroupSchema extends GraphqlSchemaInstance {
-	repoName = 'groups';
+	static repoName = 'groups';
+	static repoNames = ['members', 'auth', 'users'];
+	static path = './data-model/schema.groups.graphql';
+
 	constructor(api) {
 		super(api);
-		this.setExtraRepos();
-		// this.api = api;
-		// this.repository = api.repositories[repo];
 	}
-	static getRepoName() {
-		return 'groups';
-	}
+
 	events = {
 		MEMBER_UPDATE: 'MEMBER_UPDATE'
-		// MEMBER_LEFT: 'MEMBER_LEFT'
 	};
 	enumTypes = {
 		MEMBER_UPDATE: {
@@ -23,18 +20,11 @@ class GroupSchema extends GraphqlSchemaInstance {
 			LEFT: 'LEFT'
 		}
 	};
-	// static get events() {
 
-	// }
-	setExtraRepos() {
-		this.members = this.api.repositories.members;
-		this.usersRepo = this.api.repositories.users;
-	}
 	createResolvers() {
 		this.resolvers = {
 			Subscription: {
 				members: {
-					// Additional event labels can be passed to asyncIterator creation
 					subscribe: withFilter(
 						() => pubsub.asyncIterator([this.events.MEMBER_UPDATE]),
 						(payload, vals) => {
@@ -42,28 +32,17 @@ class GroupSchema extends GraphqlSchemaInstance {
 						}
 					)
 				}
-				// memberLeft: {
-				// 	// Additional event labels can be passed to asyncIterator creation
-				// 	subscribe: withFilter(
-				// 		() => pubsub.asyncIterator([this.events.MEMBER_LEFT]),
-				// 		(payload, vals) => {
-				// 			return payload.memberLeft.gid == vals.gid;
-				// 		}
-				// 	)
-				// }
 			},
 			Query: {
 				group: async (parent, args, context) => {
 					const { gid, name } = args;
 					const [group] = await this.repository.get({ gid, name });
 					return group;
-					// return repository.findById(id);
 				},
 				groups: async (parent, args, context) => {
 					const { gid, name } = args;
 					const groups = await this.repository.get();
 					return groups;
-					// return repository.findById(id);
 				},
 				groupMembers: async (parent, args, context) => {
 					const { gid, name } = args;
@@ -73,8 +52,6 @@ class GroupSchema extends GraphqlSchemaInstance {
 				memberOfGroups: async (parent, args, context) => {
 					const { user } = context;
 					const memberEntriesForUser = await this.members.memberOfGroups(user);
-					// return memberEntriesForUser;
-
 					const gids = memberEntriesForUser.map(({ gid }) => gid);
 					return gids;
 				}
@@ -131,7 +108,6 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const allIds = parent.map(({ gid }) => gid);
 					return allIds;
 				},
-				// TODO CHANGE THIS; same as master right now incorrectly
 				memberOf: (parent, args, context) => {
 					const allIds = parent.map(({ gid }) => gid);
 					return allIds;
@@ -139,10 +115,7 @@ class GroupSchema extends GraphqlSchemaInstance {
 			},
 			Group: {
 				creator_oauth_id: async (parent, args, context) => {
-					const [user] = await this.usersRepo.query(
-						{ id: parent.creator },
-						'oauth_id'
-					);
+					const [user] = await this.users.query({ id: parent.creator }, 'oauth_id');
 					const { oauth_id } = user;
 					return oauth_id;
 				},
@@ -172,10 +145,6 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const [group] = await this.repository.get({ gid });
 					return group;
 				}
-				// group: async (parent, args, context) => {
-				// 	const group = await this.repository.get({ gid: args.gid });
-				// 	return group;
-				// }
 			},
 			Members: {
 				uids: async (parent, args, context) => {
@@ -188,22 +157,16 @@ class GroupSchema extends GraphqlSchemaInstance {
 				},
 				users: async (parent, args, context) => {
 					const ids = parent.map(({ uid }) => uid);
-					//  ptr
-					const users = await this.usersRepo.query({ id: ids });
+					const users = await this.users.query({ id: ids });
 					return users;
 				}
 			},
 			GroupsDataAndIds: {
 				gids: async (parent, args, context) => {
-					// const { gids } = parent; //.map(({ gid }) => gid);
 					return parent;
 				},
 				data: async (parent, args, context) => {
 					const groups = await this.repository.query({ gid: parent });
-					// const mappedGroups = memberOf
-					// 	? groups.map(data => ({ ...data, memberOf }))
-					// 	: groups;
-
 					return groups;
 				}
 			}

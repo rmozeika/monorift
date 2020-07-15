@@ -2,22 +2,16 @@ const GraphqlSchemaInstance = require('../GraphqlSchema');
 const { update } = require('lodash');
 
 class UserSchema extends GraphqlSchemaInstance {
-	repoName = 'users';
+	static repoName = 'users';
+	static repoNames = ['members', 'auth', 'friends'];
+	static path = './data-model/schema.graphql';
 	constructor(api) {
 		super(api);
-		// this.api = api;
-		// this.repository = api.repositories[repo];
 	}
-	static getRepoName() {
-		return 'users';
-	}
-	setExtraRepos() {
-		this.members = this.api.repositories.members;
-		this.auth = this.api.repositories.auth;
-	}
+
 	createContext() {
 		this.context = async ({ req, res }) => {
-			const user = await this.api.repositories.auth.graphqlToken(req);
+			const user = await this.auth.graphqlToken(req);
 			return { user, res };
 		};
 	}
@@ -27,7 +21,6 @@ class UserSchema extends GraphqlSchemaInstance {
 				user: (parent, args) => {
 					const { id } = args;
 					return this.repository.getUserById(id);
-					// return repository.findById(id);
 				},
 				userById: async (parent, args, context) => {
 					const { id } = args;
@@ -39,11 +32,7 @@ class UserSchema extends GraphqlSchemaInstance {
 					const { input = {} } = args;
 					return this.repository.getUsersPostgres(input);
 				},
-				// publicUsers: (parent, args, context) => {
-				// 	return this.repository.getUsersPostgres(input);
-				// },
 				allUsers: (parent, args, context) => {
-					// if ()
 					return repository.getUsersPostgres();
 				},
 				getFriendsForUser: async (parent, args) => {
@@ -62,12 +51,15 @@ class UserSchema extends GraphqlSchemaInstance {
 					});
 					return friends;
 				},
-				generateToken: async (parent, { id, username, opts }, context) => {
+				generateToken: async (parent, { input, opts }, context) => {
 					const { res } = context;
+					const { saveToReq = false } = opts;
 					const { admin = false } = context.user;
 					if (!admin) return '';
-					this.repository.query({ id, username });
+					this.repository.query(input);
 					const token = this.auth.createJWT(user);
+					if (saveToReq) this.auth.saveJWTCookie(res, token);
+					return token;
 				}
 			},
 
@@ -78,7 +70,6 @@ class UserSchema extends GraphqlSchemaInstance {
 					return user;
 				},
 				updateUser: async (parent, args, context) => {
-					if (!context.user) return; // 'not signed in';
 					let query;
 					if (context.user.admin === true) {
 						const { input = {}, data } = args;
@@ -86,7 +77,6 @@ class UserSchema extends GraphqlSchemaInstance {
 							query = input;
 						}
 					}
-					// update self if not admin
 					if (!query) {
 						query = context.user.id;
 					}
@@ -100,7 +90,7 @@ class UserSchema extends GraphqlSchemaInstance {
 						const { username, password } = args.input;
 						const op = await this.repository.createGuest(username, password);
 						if (op.error) return op;
-						const token = await this.api.repositories.auth.initJWT(res, op.user);
+						const token = await this.auth.initJWT(res, op.user);
 
 						return op;
 					} catch (e) {
@@ -109,13 +99,13 @@ class UserSchema extends GraphqlSchemaInstance {
 					}
 				},
 				convertGuest: async (parent, { password }, { user, res }) => {
-					const op = await this.api.repositories.auth.convertGuest({
+					const op = await this.auth.convertGuest({
 						id: user.id,
 						password
 					});
 					if (op.error) return op;
 					const [updatedUser] = await this.repository.query({ id: user.id });
-					const token = await this.api.repositories.auth.initJWT(res, updatedUser);
+					const token = await this.auth.initJWT(res, updatedUser);
 					return { ...op, user: updatedUser };
 				}
 			},
@@ -123,7 +113,6 @@ class UserSchema extends GraphqlSchemaInstance {
 			UserWithFriends: {
 				friends: async (parent, args, context) => {
 					const { id, admin } = context.user;
-					// const { id } = parent;
 					const users = await this.api.repositories.friends.query({
 						member1_id: id || parent.id
 					});
@@ -136,14 +125,8 @@ class UserSchema extends GraphqlSchemaInstance {
 					return output;
 				},
 				users: async (parent, args, context) => {
-					// const { member2_id: id } = parent;
-					// const user = await this.repository.getUserById(id);
-					// const users = await this.repository.query({ id });
-					// const [ user ] = users;
-					// console.log(user);
 					const ids = parent.map(({ member2_id }) => member2_id);
 					const users = await this.repository.query({ id: ids });
-					//  ptr
 					return users;
 				}
 			},

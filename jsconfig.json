@@ -11,7 +11,7 @@
 			"@selectors": ["packages/rift/src/selectors/index.js"],
 			"@actions/*": ["packages/rift/src/actions/*"],
 			"@actions": ["packages/rift/src/actions/index.js"],
-			"@core": ["packages/rift/src/core/*"]
+			"@core/*": ["./packages/rift/src/core/*"]
 		}
 	}
 }

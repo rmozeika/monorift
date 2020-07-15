@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
 		"jsx": "react",
-		//   "target": "es2017",
+		"target": "esnext",
 		// //   "allowSyntheticDefaultImports": false,
-		"baseUrl": "/Users/Bobby/Development/monorift/.",
+		"baseUrl": "/Users/Bobby/Development/monorift",
 		"paths": {
 			"@components/*": ["packages/rift/src/components/*"],
 			"@selectors/*": ["packages/rift/src/selectors/*"],
@@ -11,8 +11,11 @@
 			"@containers/*": ["packages/rift/src/containers/*"],
 			"@actions/*": ["packages/rift/src/actions/*"],
 			"@actions": ["packages/rift/src/actions/index.js"],
-			"@core": ["packages/rift/src/core/*"]
+			"@core/*": ["./packages/rift/src/actions/core/*"],
+			"core/*": ["src/theme/*"]
 		}
-	}
+	},
+	"include": ["./packages/rift/src/**/*"],
+	"moduleResolution": "node"
 	// "exclude": ["node_modules", "dist"]
 }

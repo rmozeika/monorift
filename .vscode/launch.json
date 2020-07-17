@@ -55,9 +55,9 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "cli add",
+			"name": "cli open",
 			"program": "${workspaceFolder}/cli.js",
-			"args": ["add", "2", "viewjs", "cropperjs"]
+			"args": ["open", "src"]
 		},
 		{
 			"type": "node",

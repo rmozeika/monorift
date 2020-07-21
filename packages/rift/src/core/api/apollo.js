@@ -24,8 +24,11 @@ const splitLink = split(
 	wsLink,
 	httpLink
 );
-const client = new ApolloClient({
+const createdClient = new ApolloClient({
 	cache: new InMemoryCache(),
 	link: splitLink
 });
+
+export const client = createdClient;
+
 export default client;

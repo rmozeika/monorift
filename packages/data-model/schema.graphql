@@ -99,6 +99,19 @@ type convertGuestPayload {
 input TokenOptions {
 	saveToReq: Boolean
 }
+directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION
+
+enum Role {
+	ADMIN
+	REVIEWER
+	USER
+	UNKNOWN
+}
+
+type TokenPayload @auth(requires: USER) {
+	token: String
+	message: String
+}
 
 extend type Mutation {
 	createUser(input: UserInput!): createUserPayload
@@ -114,5 +127,5 @@ extend type Query {
 	allUsers: [User]
 	friends: FriendsList
 	getFriendsForUser(input: UserInput): UserWithFriends
-	generateToken(input: UserQueryInput!, opts: TokenOptions): String
+	generateToken(input: UserQueryInput!, opts: TokenOptions): TokenPayload
 }

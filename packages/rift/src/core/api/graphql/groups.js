@@ -1,4 +1,9 @@
-import client from '../apollo';
+import { client } from '@core/api/apollo';
+import { isMobile } from '@selectors/view';
+// import otherClient from '../apollo';
+// console.log(client, otherClient);
+console.log(client.query);
+debugger; //remove
 import { gql } from '@apollo/client';
 // export const GROUP_MEMBERS = gql`
 // 	query($gid: Int!) {
@@ -17,7 +22,7 @@ import { gql } from '@apollo/client';
 // 		}
 // 	}
 // `;
-
+//const client = instance;
 export const GROUP_MEMBERS_ONLY_IDS = gql`
 	query($gid: Int) {
 		groupMembers(gid: $gid) {
@@ -168,6 +173,8 @@ export function allGroupsData(raw) {
 }
 
 export async function getGroupsMemberOf() {
+	console.log(client);
+	console.log(client.query);
 	try {
 		const res = await client.query({
 			query: GROUPS_MEMBER_OF

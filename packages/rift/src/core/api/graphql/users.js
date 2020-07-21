@@ -1,5 +1,7 @@
 import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client';
-import client from '../apollo';
+import { client } from '../apollo';
+console.log(client);
+debugger; //remove
 const GET_FRIENDS = gql`
 	{
 		friends {

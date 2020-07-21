@@ -8,7 +8,8 @@ if (remote == 'false') {
 } else {
 	getRawSchema = require('../../../data-model');
 }
-
+var { Source, parse } = require('graphql'); // CommonJS
+console.log(Source);
 class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
@@ -42,10 +43,19 @@ class GraphqlSchemaInstance {
 		return this.serverConfig;
 	}
 	async createTypeDefs() {
-		const rawSchema = await getRawSchema(this.repoName);
+		const rawSchema = await getRawSchema(this.metadata.name);
 		this.typeDefs = gql`
 			${rawSchema}
 		`;
+		let src;
+		try {
+			src = new Source(rawSchema, 'raw');
+			const parsed = parse(src);
+			console.log(parsed);
+		} catch (e) {
+			console.error(e);
+		}
+
 		return;
 	}
 	async createDirectiveResolvers() {}

@@ -1,6 +1,7 @@
 const Users = require('./data-model/users/users.graphql.js');
 const Groups = require('./data-model/groups/groups.graphql.js');
 const Messages = require('./data-model/messages/messages.graphql.js');
+var { Source, Parser } = require('graphql'); // CommonJS
 
 const { merge } = require('lodash');
 const { mergeSchemas, makeExecutableSchema } = require('graphql-tools'); // could be graphql-tools / apollo-server-express

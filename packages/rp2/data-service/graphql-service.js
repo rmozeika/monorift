@@ -23,11 +23,15 @@ class GraphqlService {
 			// const user = await this.api.repositories.auth.parseBearer(
 			// 	connection.context?.authorization
 			// );
-			return connection.context;
+			const ctx = { admin: this.api.repositories.auth.graphqlAdmin(req) };
+			return { ...ctx, ...connection.context };
 		}
 		console.log(this);
-		const user = await this.api.repositories.auth.graphqlToken(req);
-		return { user, res };
+		const ctx = await this.api.repositories.auth.graphqlAuthContext(req, res);
+
+		return ctx;
+		// const user = await this.api.repositories.auth.graphqlToken(req);
+		// return { ...ctx, user, res };
 	};
 	async createSchemas() {
 		const { api } = this;
@@ -51,6 +55,9 @@ class GraphqlService {
 					);
 					return { user };
 				}
+			},
+			playground: {
+				'request.credentials': 'include'
 			}
 		};
 		//const schema = this.makeExecutable(createdConfig);

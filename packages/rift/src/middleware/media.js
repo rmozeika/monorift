@@ -4,14 +4,28 @@ import { result } from 'lodash';
 class MediaInstance {
 	//videoPlayer = null;
 	#element = null;
+	#elements = [];
 	inboundStream = new MediaStream();
 	initialized = false;
 	tracks = {};
 	userMediaStream = null;
 	constructor(element, type) {
 		this.#element = element;
+		this.#elements = [element];
 		this.addTrack = this.addTrack.bind(this);
 		this.type = type;
+		this.state = {
+			players: {
+				default: {
+					stream: this.inboundStream, //new MediaStream(),
+					element: this.#element,
+					user_id: false,
+					active: false,
+					initialized: false
+				}
+			},
+			ids: []
+		};
 		// this.data = {
 		// 	videoPlayer: null,
 		// 	inboundStream: new MediaStream(),
@@ -20,28 +34,43 @@ class MediaInstance {
 		// 	userMediaStream: null
 		// };
 	}
+	set player({ id, config }) {
+		console.log('set player', id, config);
+		this.state.players[id] = { ...this.state.players[id], ...config };
+	};
 	get element() {
 		return this.#element;
 	}
 	set element(element) {
 		this.#element = element;
 	}
-	initInboundStream = () => {
-		if (this.element) {
-			this.element.srcObject = this.inboundStream;
+	initInboundStream = (id, player) => {
+		const { element, stream } = player;
+		if (element) {
+			element.srcObject = stream;
 			// this.addElementSource(this.element);
-			this.initialized = true;
+			//initialized = true;
+			this.player = { id, config: { element, initialized: true } };
+			if (element?.play) {
+				element.play();
+			}
 		}
 	};
 	storeTrack = (id, track) => {
 		this.tracks[id] = track;
 	};
+	addTrackToStream(player_id, track) {
+		this.state.players[player_id].stream.addTrack(track);
+
+	}
 	addTrack(id, track) {
-		if (!this.initialized) {
-			this.initInboundStream();
-		}
+		const { id: player_id, player } = this.attachPlayer(id, track);
+		if (!player.initialized) {
+			this.initInboundStream(player_id, player);
+		}	
 		try {
-			this.inboundStream.addTrack(track);
+			this.addTrackToStream(player_id, track);
+			// player.stream.addTrack(track);
 		} catch (e) {
 			// TODO HANDLE THIS, already added for sender
 			console.error('Error adding track');
@@ -49,8 +78,8 @@ class MediaInstance {
 		}
 
 		this.storeTrack(id, track);
-		if (this.element?.play) {
-			this.element.play();
+		if (player.element?.play) {
+			player.element.play();
 		}
 	}
 	getTrackByUserId = user_id => {
@@ -137,6 +166,62 @@ class MediaInstance {
 	log(method, result) {
 		console.log(this.type, method, result);
 	}
+	createPlayer({element = false, user_id, track}) {
+		return { 
+			element: element || this.createNewElement(),
+			//user_id,
+			stream: new MediaStream(),
+			initialized: false,
+			active: false,
+			//track,
+
+		};
+	}
+	getPlayerKey = (user_id) => {
+		const key = (this.state.players[user_id]) ? user_id : 'default';
+		return key;
+	}
+	getAvailablePlayer = (user_id) => {
+		//let player;
+		const existingIdx = this.state.ids.indexOf(user_id);
+		if (existingIdx > 0) {
+			const id = this.getPlayerKey(user_id);
+			return { id, player: this.state.players[id] };
+		}
+		if (this.state.ids.length == 0) {
+			return {id: 'default', player: this.state.players.default};
+		}
+		//  else {
+			// const freeIndex = this.state.ids.find(idx => {
+			// 	return !this.state.players[idx].active;
+			// });
+			// if (freeIndex) player = this.state.player
+		const player = this.createPlayer({});
+		//this.player()
+		//this.state.players[user_id]  = player;
+
+		//}
+		return  { id: user_id, player} ;
+	}
+	
+	attachPlayer(user_id, track) {
+		const { id, player } = this.getAvailablePlayer(user_id, track);
+		if (id !== 'default') {
+			this.state.players[user_id] = player;
+		}
+		this.state.ids.push(user_id);
+		// this.state.players[user_id] = player;
+		this.state.players[id].user_id = user_id; 
+		return {id, player: this.state.players[id] };
+		
+
+
+		
+		// this.state.push({
+		// 	user_id,
+		// 	element: 
+		// })
+	}
 }
 class AudioInstance extends MediaInstance {
 	constructor(element) {
@@ -170,6 +255,9 @@ class AudioInstance extends MediaInstance {
 		}
 		return dest;
 	}
+	createNewElement() {
+		return new AudioElement();
+	}
 }
 
 class VideoInstance extends MediaInstance {
@@ -180,15 +268,44 @@ class VideoInstance extends MediaInstance {
 		if (constraints.video.width) constraints.video.facingMode = 'user';
 		super.getUserMedia(constraints);
 	}
-	setVideoPlayer(element, id) {
-		if (!id) {
-			this.element = element.current;
-			if (Object.keys(this.tracks).length > 0) {
-				this.initInboundStream();
-			}
-		}
+	addTrack(id, track) {
+		super.addTrack(id, track);
+	}
+	createNewElement() {
+		const element = document.createElement('video');
+
+		// if (myVideo.canPlayType('video/mp4')) {
+		//   myVideo.setAttribute('src','videofile.mp4');
+		// } else if (myVideo.canPlayType('video/webm')) {
+		//   myVideo.setAttribute('src','videofile.webm');
+		// }
+		
+		// myVideo.width = 480;
+		// myVideo.height = 320;
+		return element;
+	}
+	setVideoPlayer(element, containerRef) {
+		// if (!id) {
+			// if (Object.keys(this.tracks).length > 0) {
+			const player_ids = this.state.ids;
+			player_ids.forEach(user_id => {
+				const id = this.getPlayerKey(user_id);
+				if (id == 'default') {
+					this.state.players.default.element = element.current;
+				} else {
+					this.appendVideoPlayer(this.state.players[id].element, containerRef);
+
+				}
+				this.initInboundStream(id, this.state.players[id]);
+			});
+				
+		// }
+	}
+	appendVideoPlayer(element, containerRef) {
+		containerRef.appendChild(element);
 	}
 }
+
 
 // Called before each corresponding method
 // Returns which instance type to run on e.g. ['audio] or ['audio', 'video'] or ['video']
@@ -425,7 +542,7 @@ const audioMiddleware = store => {
 				// break;
 			}
 			case Actions.SET_VIDEO_PLAYER: {
-				mediaInterface.setVideoPlayer(action.ref);
+				mediaInterface.setVideoPlayer(action.ref, action.containerRef);
 				break;
 			}
 			default:

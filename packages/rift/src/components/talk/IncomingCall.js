@@ -12,7 +12,7 @@ import {
 // TODO: add this to config
 let animationsEnabled = true;
 
-const IncomingCall = ({ name, derivedHeight, answer, reject }) => {
+const IncomingCall = ({ users, derivedHeight, answer, reject }) => {
 	const [fadeAnim] = React.useState(new Animated.Value(1));
 	const [colorAnim] = React.useState(new Animated.Value(0));
 
@@ -82,7 +82,7 @@ const IncomingCall = ({ name, derivedHeight, answer, reject }) => {
 			key: 'button-reject'
 		}
 	];
-	const msg = `from ${name}`;
+	const msg = `from ${users.map(user => user.username)}`;
 	return (
 		<Layout style={[styles.userActionContainer, { height: derivedHeight }]}>
 			<Animated.View // Special animatable View

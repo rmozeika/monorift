@@ -1,9 +1,10 @@
 var Repository = require('./repository.js');
-const { JWT_SECRET } = require('../config.js');
+const { JWT_SECRET, CALL_SECRET, ADMIN_SECRET } = require('../config.js');
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie');
 const bcrypt = require('bcrypt');
 const collection = 'users.auth';
+const crypto = require('crypto');
 // UNUSED
 const {
 	validateUsernamePassword
@@ -11,6 +12,7 @@ const {
 class AuthRepository extends Repository {
 	constructor(api) {
 		super(api);
+		this.callSignature('fdasfda');
 	}
 	static getNamespaces() {
 		return {
@@ -64,6 +66,16 @@ class AuthRepository extends Repository {
 		const token = authHeader && authHeader.split(' ')[1];
 		return token;
 	}
+	graphqlSecret(req) {
+		return req.cookies.secret || req.headers.secret;
+	}
+	graphqlAdmin(req, user) {
+		if (user.admin) return true;
+		const secret = this.graphqlSecret(req);
+		if (!secret) return false;
+		if (secret === ADMIN_SECRET) return true;
+		return false;
+	}
 	graphqlToken(req) {
 		return new Promise((resolve, reject) => {
 			let token = req.cookies.token || this.getTokenFromHeader(req);
@@ -78,6 +90,11 @@ class AuthRepository extends Repository {
 				resolve(user);
 			});
 		});
+	}
+	async graphqlAuthContext(req, res) {
+		const user = await this.graphqlToken(req);
+		const admin = this.graphqlAdmin(req, user);
+		return { user, admin, res };
 	}
 	parseToken(token) {
 		return new Promise((resolve, reject) => {
@@ -182,6 +199,45 @@ class AuthRepository extends Repository {
 		// const user = this.api.repositories.users.findById(req.user.id);
 		if (req.user.admin !== true) return res.send(403);
 		next();
+	}
+	genKeypair() {
+		const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+			modulusLength: 2048
+		});
+		this.keys = { privateKey, publicKey };
+		return { privateKey, publicKey };
+	}
+	verifyCall(message) {
+		const call_id = message.call_id || this.genCallId(message);
+		// const signature
+		const { publicKey } = this.keys;
+		const verify = crypto.createVerify('sha1');
+		verify.update(call_id);
+		verify.end();
+		const { signature } = message;
+		const verified = verify.verify(publicKey, signature, 'hex');
+		return verified;
+	}
+
+	genCallId({ initiator, time }) {
+		
+		return `${initiator}/${time}`;
+	}
+	callSignature(id, time ) {
+		if (!time) time = new Date().getTime();
+		const { privateKey, publicKey } = this.keys || this.genKeypair();
+		if (!privateKey) this.genKeypair();
+		const sign = crypto.createSign('sha1');
+		const call_id = this.genCallId({ initiator: id, time });
+		sign.update(call_id);
+		sign.end();
+		const signature = sign.sign(privateKey, 'hex');
+		// this.verifyCall({ initiator: id, signature, time });
+		return { initiator: id, signature, time, call_id };
+		// const hash = crypto.createHmac('sha256', CALL_SECRET)
+		//            .update('I love cupcakes')
+		//            .digest('hex');
+		// return hash;
 	}
 }
 

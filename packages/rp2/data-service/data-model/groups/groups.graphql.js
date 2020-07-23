@@ -54,6 +54,10 @@ class GroupSchema extends GraphqlSchemaInstance {
 					const memberEntriesForUser = await this.members.memberOfGroups(user);
 					const gids = memberEntriesForUser.map(({ gid }) => gid);
 					return gids;
+				},
+				callSignature: async (parent, args, { user }) => {
+					const genCallSignature = this.auth.callSignature(user.id);
+					return genCallSignature;
 				}
 			},
 			Mutation: {

@@ -1,6 +1,6 @@
 const GraphqlSchemaInstance = require('../GraphqlSchema');
 const { update } = require('lodash');
-
+const { ADMIN_SECRET } = require('../../../config.js');
 class UserSchema extends GraphqlSchemaInstance {
 	static repoName = 'users';
 	static repoNames = ['members', 'auth', 'friends'];
@@ -52,14 +52,14 @@ class UserSchema extends GraphqlSchemaInstance {
 					return friends;
 				},
 				generateToken: async (parent, { input, opts }, context) => {
-					const { res } = context;
+					const { res, admin = false } = context;
 					const { saveToReq = false } = opts;
-					const { admin = false } = context.user;
+					// const { admin = false } = context?.user;
 					if (!admin) return '';
-					this.repository.query(input);
+					const [user] = await this.repository.query(input);
 					const token = this.auth.createJWT(user);
 					if (saveToReq) this.auth.saveJWTCookie(res, token);
-					return token;
+					return { token, message: 'created token for ' + user.username };
 				}
 			},
 

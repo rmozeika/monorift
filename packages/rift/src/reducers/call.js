@@ -15,6 +15,7 @@ import {
 	ANSWER_INCOMING,
 	END_CALL
 } from '@actions';
+import { update } from 'lodash';
 
 export const initialState = {
 	connections: {
@@ -48,7 +49,10 @@ export const initialState = {
 	// 	// }
 	// },
 
-	candidate: {}
+	candidate: {},
+	calls: {
+
+	}
 	// constraints: {
 	// 	mediaStream: { audio: true, video: false },
 	// 	offerOptions: { offerToReceiveVideo: true, offerToReceiveAudio: true }
@@ -88,16 +92,38 @@ export const candidate = (state = {}, action = {}) => {
 // 			return state;
 // 	}
 // };
-
+const calls = (state = {}, action) => {
+	switch (action.type) {
+		case INCOMING_CONNECTION:
+		case ADD_CONNECTION: {
+			const { opts,  id } = action;
+			const { call_id = false, offer_sent = false, constraints } = opts;
+			if (!call_id) break;
+			const call = state[call_id] || { constraints, connected: false };
+			//const userExists = call.users.some(user => user == id);
+			// if (!userExists) {
+			// 	call.users = call.users.concat([id]);
+			// }
+			return { ...state, [call_id]: call };
+		}
+		default: {
+			return state;
+		}
+	}
+};
 const connection = (state = {}, action) => {
 	switch (action.type) {
 		case ADD_CONNECTION: {
+			const { opts } = action;
+			const { call_id, offer_sent, constraints } = opts;
 			return {
 				id: action.id,
 				// status: 'started',
 				active: false,
 				incoming: false,
-				constraints: action.constraints
+				constraints,
+				call_id,
+				offer_sent
 			};
 		}
 		case CALL_ACTIVE:
@@ -108,20 +134,25 @@ const connection = (state = {}, action) => {
 			};
 		}
 		case INCOMING_CONNECTION: {
+			const { opts, id } = action;
+			const { call_id, offer_sent,  constraints } = opts;
 			return {
 				...state,
-				id: action.id,
+				id,
 				active: false,
 				incoming: true,
-				constraints: action.constraints
+				constraints,
+				call_id,
+				offer_sent
+
 			};
 		}
 		case ANSWER_INCOMING: {
 			return {
 				...state,
-				id: action.id,
+				//id: action.id,
 				active: true,
-				incoming: true
+				incoming: false
 			};
 		}
 		default:
@@ -133,12 +164,35 @@ export const connections = (state = {}, action) => {
 		case ADD_CONNECTION:
 		case EDIT_CONNECTION:
 		case CALL_ACTIVE:
-		case INCOMING_CONNECTION:
-		case ANSWER_INCOMING:
+		case INCOMING_CONNECTION: {
 			return {
 				...state,
 				[action.id]: connection(state[action.id], action)
 			};
+		}
+		case ANSWER_INCOMING: {
+			const { users } = action;
+			if (users) {
+				users.forEach(({id}) => {
+					state[id] = connection(state[id], action);
+				});
+				return state;
+			}
+			return {
+				...state,
+				[action.id]: connection(state[action.id], action)
+			};
+			// let toUpdate;
+			// if (state[action.id]) {
+			// 	toUpdate.push(action.id)
+			// } else {
+			// 	toUpdate = state.filter((conn => action.id == conn.call_id));
+			// }
+			
+
+		}
+			
+			
 		// case CALL_ACTIVE: {
 		// 	const { user_id, active } = action.payload;
 		// 	return Object.assign({}, state, { active: action.payload });
@@ -165,6 +219,7 @@ export const connections = (state = {}, action) => {
 const callReducer = combineReducers({
 	candidate,
 	// constraints,
-	connections
+	connections,
+	calls
 });
 export default callReducer;

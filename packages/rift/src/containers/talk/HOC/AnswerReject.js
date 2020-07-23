@@ -9,22 +9,31 @@ function withAnswerReject(WrappedComponent) {
 		constructor(props) {
 			super(props);
 		}
+		callById(id) {
+			const { incomingCall } = this.props;
+			const [call] = incomingCall.filter(({ call_id }) => call_id == id);
+			const { users } = call;
+			return users;
+		}
 		answer = id => {
 			const { answer, incomingCall } = this.props;
 			// const { from } = incomingCall;
 			// answer(true, from);
 			// CHANGE THIS
 			// this.props.navigation.navigate('Talk');
-			const user = incomingCall.find(conn => conn.id == id);
-			answer(id, user, true);
+			// const [call] = incomingCall.filter(({ call_id }) => call_id == id);
+			// const { users } = call;
+			const users = this.callById(id);
+			answer(id, users, true);
 		};
 		reject = id => {
 			const { answer, incomingCall } = this.props;
 			// const { from } = incomingCall;
 
 			// answer(false, from);
-			const user = incomingCall.find(conn => conn.id == id);
-			answer(user.id, user, true);
+			// const [users] = incomingCall.filter(({ call_id }) => call_id == id);
+			const users = this.callById(id);
+			answer(id, users, false);
 		};
 		render() {
 			const { incomingCall, answer, ...restProps } = this.props;
@@ -40,7 +49,7 @@ function withAnswerReject(WrappedComponent) {
 	}
 	const mapStateToProps = (state, ownProps) => {
 		return {
-			incomingCall: CallSelectors.incomingConnections(state)
+			incomingCall: CallSelectors.incomingConnectionsList(state)
 		};
 	};
 	const mapDispatchToProps = (dispatch, ownProps) => {

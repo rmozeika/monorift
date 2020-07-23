@@ -18,6 +18,7 @@ class Adapter extends React.PureComponent {
 		this.selfRef = selfRef;
 		this.audioFileRef = React.createRef();
 		this.canvasRef = React.createRef();
+		this.videoContainerRef = React.createRef();
 		window.audioFileRef = this.audioFileRef;
 		window.videoRef = this.videoRef;
 
@@ -60,6 +61,7 @@ class Adapter extends React.PureComponent {
 							// startConnection={this.props.startConnection}
 							videoRef={this.videoRef}
 							audioRef={this.audioRef}
+							videoContainerRef={this.videoContainerRef}
 						/>
 					</Layout>
 					{/* <StreamAudioFile fileCall={this.fileCall} audioFileRef={this.audioFileRef} /> */}

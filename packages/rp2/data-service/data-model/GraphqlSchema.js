@@ -13,7 +13,7 @@ console.log(Source);
 class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
-		this.repository = api.repositories[this.repoName];
+		
 		const {
 			repoName = 'users',
 			repoNames = ['users', 'auth'],
@@ -24,6 +24,7 @@ class GraphqlSchemaInstance {
 			repos: repoNames,
 			path
 		};
+		this.repository = api.repositories[repoName];
 		this.setExtraRepos();
 	}
 

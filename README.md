@@ -1,5 +1,5 @@
 # monorift
-[link](https://monorift.com)
+[https://monorift.com](https://monorift.com)
 
 WebRTC communication application. Full Stack (MERN) with native support
 

@@ -2,7 +2,7 @@
 
 WebRTC communication application. Full Stack (MERN) with native support
 
-Looking for a good code sample? See my custom redux middleware for webrtc audio/video. integration utilizing advanced javascript techniques such as javascript proxies and class techniques. [source](https://github.com/rmozeika/monorift/blob/master/packages/rift/src/middleware/media.js)
+# Looking for a good code sample? See my custom redux middleware for webrtc audio/video. integration utilizing advanced javascript techniques such as javascript proxies and class techniques. [source](https://github.com/rmozeika/monorift/blob/master/packages/rift/src/middleware/media.js)
 
 React component library [packages/rift/src](https://github.com/rmozeika/monorift/tree/master/packages/rift/src)
 

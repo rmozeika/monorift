@@ -26,7 +26,6 @@ class GraphqlService {
 			const ctx = { admin: this.api.repositories.auth.graphqlAdmin(req) };
 			return { ...ctx, ...connection.context };
 		}
-		console.log(this);
 		const ctx = await this.api.repositories.auth.graphqlAuthContext(req, res);
 
 		return ctx;

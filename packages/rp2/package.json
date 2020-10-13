@@ -14,7 +14,7 @@
 		"apollo-server": "^2.14.1",
 		"apollo-server-express": "^2.14.1",
 		"babel-eslint": "^10.1.0",
-		"bcrypt": "^4.0.1",
+		"bcrypt": "^5.0.0",
 		"body-parser": "~1.18.2",
 		"chalk": "^4.0.0",
 		"code-parser": "^1.0.0",

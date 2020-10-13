@@ -71,7 +71,8 @@ class UserRepository extends Repository {
 				const userModel = new UserModel(user, this);
 				const userData = await userModel;
 				console.log(userData);
-				const insertUserOp = await userModel.insert();
+				const { success, error, data } = await userModel.insert();
+				if (error || success == false) return resolve({ success, error });
 				console.log(userModel.data);
 				resolve(userModel.data);
 				// const userData = await new UserModel(user, this);
@@ -289,7 +290,6 @@ class UserRepository extends Repository {
 	// }
 	async getUserById(id) {
 		const users = await this.query({ id: id });
-		console.log(users);
 		const [user] = users;
 		return user;
 	}

@@ -151,6 +151,7 @@ function* addTrackListener(conn, id) {
 
 	while (true) {
 		const track = yield take(chan);
+		console.log('addTrack sender', id, track);
 		yield put(Actions.addTrack(id, track));
 	}
 }
@@ -167,6 +168,7 @@ function* watchMultiPeer() {
 			yield spawn(addTrackListener, connections[conn_id], conn_id);
 			yield spawn(iceConnectionStateChange, connections[conn_id], conn_id);
 		}
+		console.log(conn_id, payload.method, payload?.args);
 		yield call(handlePeerAction, connections[conn_id], payload);
 		if (payload.method === 'close') {
 			delete connections[conn_id];

@@ -58,19 +58,18 @@ export const queued = (state = [], action) => {
 	const resultProduce = produce(state, draft => {
 		switch (action.type) {
 			case ADD_CALL: {
+				const { id } = action;
 				const { user } = action.payload;
-				const { id } = user;
 				draft[id] = {
 					...action.payload.user
 				};
 				break;
 			}
-			case REMOVE_CALL:
-				const { user } = action.payload;
-				const { id } = user;
+			case REMOVE_CALL: {
+				const { id } = action;
 				delete draft[id];
-				// draft.filter(user => user.username !== action.payload.user.username);
 				break;
+			}
 			default:
 				return draft;
 		}
@@ -185,6 +184,12 @@ export const byId = (state = {}, action) => {
 				break;
 			}
 			case ANSWER_INCOMING: {
+				if (action.users) {
+					action.users.forEach(user => {
+						draft[user.id].connected = action.payload;
+					});
+					break;
+				}
 				draft[action.id].connected = action.payload;
 				break;
 			}
@@ -194,10 +199,10 @@ export const byId = (state = {}, action) => {
 				break;
 			}
 			case ADD_CALL:
-				draft[action.payload.user.id].checked = true;
+				draft[action.id].checked = true;
 				break;
 			case REMOVE_CALL:
-				draft[action.payload.user.id].checked = false;
+				draft[action.id].checked = false;
 				break;
 			default:
 				return draft;

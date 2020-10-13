@@ -33,7 +33,7 @@ export const startCall = ({
 });
 export const SEND_OFFER = 'SEND_OFFER';
 //probably remove other than user
-export const sendOffer = ({ id, user, offerOptions, constraints }) => {
+export const sendOffer = ({ users, offerOptions, constraints }) => {
 	const offerVideo = { offerToReceiveVideo: true, offerToReceiveAudio: true };
 	const offerAudio = { offerToReceiveVideo: false, offerToReceiveAudio: true };
 	const videoEnabled = constraints.video;
@@ -46,8 +46,8 @@ export const sendOffer = ({ id, user, offerOptions, constraints }) => {
 		type: SEND_OFFER,
 		constraints,
 		offerOptions: derivedOfferOptions,
-		user,
-		id: id || user?.id || false
+		users,
+		// id: id || user?.id || false
 	};
 };
 export const GOT_MESSAGE = 'GOT_MESSAGE';
@@ -69,10 +69,15 @@ export const setConstraints = ({ mediaStream, optionalOfferOptions = {} }) => {
 	};
 };
 export const ADD_CONNECTION = 'ADD_CONNECTION';
-export const addConnection = (user_id, constraints) => ({
+export const addConnection = (user_id, constraints, { call_id = false, offer_sent = false, ...opts }) => ({
 	type: ADD_CONNECTION,
 	id: user_id,
-	constraints
+	opts: {
+		constraints,
+		call_id: call_id || id,
+		offer_sent,
+		...opts
+	}
 });
 
 export const EDIT_CONNECTION = 'EDIT_CONNECTION';
@@ -81,6 +86,30 @@ export const editConnection = (user_id, data) => ({
 	payload: data,
 	id: user_id
 });
+export const INCOMING_CONNECTION = 'INCOMING_CONNECTION';
+export const setIncomingConnection = (id, constraints, { call_id, offer_sent = true }) => ({
+	type: INCOMING_CONNECTION,
+	// payload: from,
+	id,
+	// constraints,
+	opts: {
+		constraints,
+		call_id: call_id || id,
+		offer_sent
+	}
+
+	// socket_id:
+});
+
+export const ANSWER_INCOMING = 'ANSWER_INCOMING';
+export const answer = (id, users, from, answered = true) => ({
+	type: ANSWER_INCOMING,
+	payload: answered || true,
+	id: id || from.id || from.id,
+	users,
+	from
+});
+
 export const CALL_ACTIVE = 'CALL_ACTIVE';
 export const setCallActive = (user_id, active) => ({
 	type: CALL_ACTIVE,
@@ -94,33 +123,19 @@ export const setCallActive = (user_id, active) => ({
 // });
 
 export const ADD_CALL = 'ADD_CALL';
-export const addToCall = user => ({
+export const addToCall = ({id, ...user}) => ({
 	type: ADD_CALL,
+	id: id || user.id,
 	payload: { user }
 });
 
 export const REMOVE_CALL = 'REMOVE_CALL';
-export const removeFromCall = user => ({
+export const removeFromCall = ({ user, id }) => ({
 	type: REMOVE_CALL,
+	id: id || user.id,
 	payload: { user }
 });
 
-export const INCOMING_CONNECTION = 'INCOMING_CONNECTION';
-export const setIncomingConnection = (id, constraints) => ({
-	type: INCOMING_CONNECTION,
-	// payload: from,
-	id,
-	constraints
-	// socket_id:
-});
-
-export const ANSWER_INCOMING = 'ANSWER_INCOMING';
-export const answer = (id, from, answered = true) => ({
-	type: ANSWER_INCOMING,
-	payload: answered || true,
-	id: id || from.id || from.id,
-	from
-});
 
 export const END_CALL = 'END_CALL';
 export const endCall = (id, { emit = true } = {}) => ({

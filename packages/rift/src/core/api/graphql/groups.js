@@ -1,5 +1,11 @@
-import client from '../apollo';
 import { gql } from '@apollo/client';
+
+import { client } from '@core/api/apollo';
+import { isMobile } from '@selectors/view';
+// import otherClient from '../apollo';
+// console.log(client, otherClient);
+console.log(client.query);
+
 // export const GROUP_MEMBERS = gql`
 // 	query($gid: Int!) {
 // 		groupMembers(gid: $gid) {
@@ -17,7 +23,7 @@ import { gql } from '@apollo/client';
 // 		}
 // 	}
 // `;
-
+//const client = instance;
 export const GROUP_MEMBERS_ONLY_IDS = gql`
 	query($gid: Int) {
 		groupMembers(gid: $gid) {
@@ -94,7 +100,28 @@ export const JOIN = gql`
 		}
 	}
 `;
-
+export const CALL_SIGNATURE = gql`
+	{
+		callSignature {
+			signature
+			call_id
+			initiator
+			time
+		}
+	}
+`;
+export async function genCallSignature() {
+	try {
+		const res = await client.query({ query: CALL_SIGNATURE });
+		debugger; //remove
+		return res.data.callSignature;
+	} catch (e) {
+		console.error(e);
+		debugger; //error
+		throw e;
+		//return { signature, initiator, time };
+	}
+}
 export const LEAVE = gql`
 	mutation LeaveGroup($gid: Int!) {
 		leave(gid: $gid) {
@@ -168,6 +195,8 @@ export function allGroupsData(raw) {
 }
 
 export async function getGroupsMemberOf() {
+	console.log(client);
+	console.log(client.query);
 	try {
 		const res = await client.query({
 			query: GROUPS_MEMBER_OF

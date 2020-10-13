@@ -1,5 +1,7 @@
 import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client';
-import client from '../apollo';
+import { client } from '../apollo';
+console.log(client);
+
 const GET_FRIENDS = gql`
 	{
 		friends {
@@ -108,6 +110,8 @@ export async function getFriendsForId(id = 11392) {
 
 export async function createGuest(username, password) {
 	try {
+		
+
 		const res = await client.mutate({
 			mutation: CREATE_GUEST,
 			variables: {
@@ -117,6 +121,7 @@ export async function createGuest(username, password) {
 				//   }
 			}
 		});
+		
 		return res.data.createGuest;
 	} catch (e) {
 		console.error(e);

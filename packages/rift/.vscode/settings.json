@@ -1,4 +1,7 @@
 {
 	// "workbench.colorTheme": "Monokai Pro (Filter Octagon)"
-	"workbench.colorTheme": "Atom One Dark"
+	"workbench.colorTheme": "Atom One Dark",
+	"jumpToAliasFile.alias": {
+		"react-native": "react-native-web"
+	}
 }

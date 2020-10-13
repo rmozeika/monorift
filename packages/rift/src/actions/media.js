@@ -26,7 +26,8 @@ export const PAUSE_MEDIA = 'MEDIA/PAUSE';
 export const pauseMedia = () => ({ type: PAUSE_MEDIA });
 
 export const SET_VIDEO_PLAYER = 'VIDEO/SET_PLAYER';
-export const setVideoPlayer = ref => ({
+export const setVideoPlayer = (ref, containerRef) => ({
 	type: SET_VIDEO_PLAYER,
-	ref
+	ref,
+	containerRef
 });

@@ -15,13 +15,13 @@ export const CallActions = ({ incomingCall, answer, reject }) => {
 	// const mobile = useSelector(state => state.view.mobile);
 	return (
 		<Layout style={styles.container}>
-			{incomingCall.map(({ id, username }) => (
+			{incomingCall.map(({ call_id, users }) => (
 				<IncomingCall
 					//key={id.toString()}
-					key={id}
-					name={username}
-					answer={() => answer(id)}
-					reject={() => reject(id)}
+					key={call_id}
+					users={users}
+					answer={() => answer(call_id)}
+					reject={() => reject(call_id)}
 				/>
 			))}
 		</Layout>

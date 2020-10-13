@@ -19,7 +19,7 @@ exports.mongoUser = env.mongoUser;
 exports.mongoPassword = env.mongoPassword;
 exports.redisConnectionString = env.redisConnectionString;
 exports.redisPort = env.redisPort || 6379;
-
+exports.ADMIN_SECRET = env.ADMIN_SECRET;
 exports.sessionSecret = env.sessionSecret;
 exports.auth0Config = {
 	clientID,

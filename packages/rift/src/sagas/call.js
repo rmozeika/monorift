@@ -13,7 +13,8 @@ import {
 	select,
 	fork,
 	cancel,
-	cancelled
+	cancelled,
+	spawn
 } from 'redux-saga/effects';
 import { eventChannel, runSaga } from 'redux-saga';
 import { originLink } from '../core/utils';
@@ -23,6 +24,8 @@ import 'isomorphic-unfetch';
 import * as Actions from '@actions';
 import * as CallSelectors from '@selectors/call';
 import * as UserSelectors from '@selectors/users';
+import * as GqlGroups from '@core/api/graphql/groups';
+
 let mediaStreamConstraints = {
 	audio: true,
 	video: false
@@ -81,15 +84,6 @@ const createSocketChannel = socket =>
 			console.log('disconnected');
 			socket.connect();
 		});
-		const oldOnMsg = (msg, secondArg) => {
-			if (msg.type == 'candidate') {
-				onCandidateHandler(msg.candidate);
-			}
-			if (msg.type == 'offer') {
-				put({ type: GOT_MESSAGE, msg }, constraints);
-			}
-		};
-
 		return () => {
 			//socket.off('login', handler);
 		};
@@ -99,9 +93,9 @@ function* socketListener() {
 	const socketChannel = yield call(createSocketChannel, socket);
 	console.log('created call socket channel');
 	while (true) {
-		const { message, constraints, users, from } = yield take(socketChannel);
+		const { message, constraints, users, from, signature, call_id } = yield take(socketChannel);
 		try {
-			yield put({ type: GOT_MESSAGE, message, constraints, users, from });
+			yield put({ type: GOT_MESSAGE, message, opts: { call_id, constraints, users, from, signature }});
 		} catch (e) {
 			console.log('Call Saga Error', e);
 		} finally {
@@ -157,7 +151,7 @@ function* startCallSaga({ id, payload }) {
 			const conn_id = users[i].id;
 			yield call(addTracks, conn_id, stream);
 		}
-		yield put(sendOffer({ id, user, constraints }));
+		yield put(sendOffer({ id, users, constraints }));
 	} catch (err) {
 		console.log(err);
 		debugger; //error
@@ -171,22 +165,54 @@ function* getUsers(user) {
 		users = [user];
 	} else {
 		const checked = yield select(queuedUsers);
-		users = Object.keys(checked).map(id => checked[id]);
+		users = Object.keys(checked).map(id => ({ id, ...checked[id] }));
 	}
 	return users;
 }
-function* sendOfferSaga({ constraints, offerOptions, id = false, user }) {
-	console.log('Sending offer');
-	let users = yield call(getUsers, user);
-	for (let i = 0; i < users.length; i++) {
-		const conn_id = users[i].id;
-		yield put(Actions.addConnection(conn_id, constraints));
-		yield put(Actions.peerAction(conn_id, 'createOffer', offerOptions));
-		const { payload: offer } = yield take('PEER_ACTION_DONE');
-		yield put(Actions.peerAction(conn_id, 'setLocalDescription', offer));
-		yield take('PEER_ACTION_DONE');
-		socket.emit('message', offer, { constraints, users: [users[i]] });
+function* sendOfferSaga({ constraints, offerOptions, users }) {
+	try {
+		console.log('Sending offer');
+		// const usersAndSelf = users.push()
+		let signature;
+		let call_id;
+		for (let i = 0; i < users.length; i++) {
+			const user = users[i];
+			const conn_id = users[i].id;
+			yield put(Actions.peerAction(conn_id, 'createOffer', offerOptions));
+			const { payload: offer } = yield take('PEER_ACTION_DONE');
+			yield put(Actions.peerAction(conn_id, 'setLocalDescription', offer));
+			yield take('PEER_ACTION_DONE');
+			const existingConnection = yield select(CallSelectors.connectionById, user);
+			if (!existingConnection) {
+				if (!signature) {
+					signature = yield call(GqlGroups.genCallSignature);
+					debugger; //remove
+					call_id = signature.call_id;
+				}
+				if (!call_id) call_id = signature.call_id;
+				
+				yield put(Actions.addConnection(conn_id, constraints, { offer_sent: true, call_id, signature}));
+	
+			} else {
+				yield put(Actions.editConnection(conn_id, { offer_sent: true }));
+			}
+			socket.emit('message', offer, { constraints, users, signature, call_id });
+
+			yield put(Actions.removeFromCall({ id: conn_id }));
+		}
+	} catch (e) {
+		debugger; //remove
+		console.log(e);
+		console.log('error', e);
+		debugger; //remove
 	}
+	
+}
+function* sendOffersForCall({ call_id }) {
+	const users = yield select(CallSelectors.connectionsByCallId, { call_id, onlyNeedsOffer: true });
+	const call_metadata = yield select(CallSelectors.callById, { call_id });
+	const constraints = call_metadata?.constraints;
+	yield put(sendOffer({ users, constraints }));
 }
 function* getUserMediaStream(constraints) {
 	console.log('START', 'getting usermedia');
@@ -194,10 +220,15 @@ function* getUserMediaStream(constraints) {
 	return stream;
 }
 
-function* gotMessageSaga({ message, constraints, from }) {
-	console.log('GOT_MESSAGE', message);
+function* gotMessageSaga({ message, opts }) {
+	const { constraints, from, users, call_id, signature } = opts;
+	console.log('GOT_MESSAGE', message, opts);
 	const conn_id = from.id;
 	if (message.type == 'offer') {
+		const existing = yield select(CallSelectors.connectionById, from);
+		if (existing?.active == true) return;
+		if (existing && existing?.incoming && existing?.call_id == call_id) return;
+		yield put(Actions.setIncomingConnection(conn_id, constraints, { call_id, signature }));
 		yield put(
 			Actions.peerAction(
 				conn_id,
@@ -209,7 +240,15 @@ function* gotMessageSaga({ message, constraints, from }) {
 		const stream = yield call(getUserMediaStream, constraints);
 		yield call(addTracks, conn_id, stream);
 		console.log('GOT_MESSAGE', 'setting remote desc');
-		yield put(Actions.setIncomingConnection(conn_id, constraints));
+		for (i = 0; i < users.length; i++) {
+			const user = users[i];
+			const existingConnection = select(CallSelectors.connectionById, user);
+			if (existingConnection) {
+				yield put(Actions.editConnection(user.id, { call_id, signature }));
+				return;
+			} 
+			yield put(Actions.addConnection(user.id, constraints, { call_id, signature }));
+		}
 	} else if (message.type === 'answer') {
 		console.log('GOT_MESSAGE', 'answer: setting remote desc');
 		yield put(
@@ -224,12 +263,7 @@ function* gotMessageSaga({ message, constraints, from }) {
 		console.log('set remote desc');
 		// GETUSERMEDIA AFTER
 		const stream = yield call(getUserMediaStream, constraints);
-		// let users = yield call(getUsers, user);
-		// for (let i = 0; i < users.length; i++) {
-		// 	const conn_id = users[i].id;
-
-		//yield call(addTracks, conn_id, stream);
-		// }
+		
 	} else if (message.type == 'candidate') {
 		console.log('GOT_MESSAGE', 'candidate');
 		const altCandid = new RTCIceCandidate({
@@ -241,21 +275,35 @@ function* gotMessageSaga({ message, constraints, from }) {
 	}
 }
 
-function* answerCallSaga({ payload: answered, id, from }) {
+function* answerCallSaga({ payload: answered, id: call_id, users, from }) {
+	
 	if (!answered) {
 		// CHANGE THIS
 		return; // reject call action
 	}
-	const conn_id = id || from.id;
+	yield call(sendOffersForCall, { call_id });
+	const recipients = users; //yield select(CallSelectors.connectionsByCallId, { call_id });
+	for (let i = 0; i < recipients.length; i++) {
+		const recipient = recipients[i];
+		const { incoming, offer_sent } = recipient;
+		// if () {
+		// 	yield 
+		// }
+		if (incoming) {
+			yield spawn(answerCallForUser, recipients[i] );
+		}
+	}
+	
+}
+function* answerCallForUser({ id, constraints }) {
+	const conn_id = id;
 	yield put(Actions.peerAction(conn_id, 'createAnswer'));
-
 	const { payload: answer } = yield take('PEER_ACTION_DONE');
 	console.log('GOT_MESSAGE', 'setting local desc');
 	yield put(Actions.peerAction(conn_id, 'setLocalDescription', answer));
 	console.log('GOT_MESSAGE', 'sending answer');
-	socket.emit('message', answer, { users: [from] });
+	socket.emit('message', answer, { constraints, users: [{ id: conn_id }]});
 }
-
 function* sendCandidateSaga(action) {
 	console.log('sending candidate');
 	const { payload } = action;

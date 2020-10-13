@@ -1,13 +1,18 @@
 var Repository = require('./repository.js');
-const { JWT_SECRET } = require('../config.js');
+const { JWT_SECRET, CALL_SECRET, ADMIN_SECRET } = require('../config.js');
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie');
 const bcrypt = require('bcrypt');
 const collection = 'users.auth';
+const crypto = require('crypto');
 // UNUSED
+const {
+	validateUsernamePassword
+} = require('../data-service/data-model/users/validation.js');
 class AuthRepository extends Repository {
 	constructor(api) {
 		super(api);
+		this.callSignature('fdasfda');
 	}
 	static getNamespaces() {
 		return {
@@ -61,6 +66,16 @@ class AuthRepository extends Repository {
 		const token = authHeader && authHeader.split(' ')[1];
 		return token;
 	}
+	graphqlSecret(req) {
+		return req.cookies.secret || req.headers.secret;
+	}
+	graphqlAdmin(req, user) {
+		if (user.admin) return true;
+		const secret = this.graphqlSecret(req);
+		if (!secret) return false;
+		if (secret === ADMIN_SECRET) return true;
+		return false;
+	}
 	graphqlToken(req) {
 		return new Promise((resolve, reject) => {
 			let token = req.cookies.token || this.getTokenFromHeader(req);
@@ -75,6 +90,11 @@ class AuthRepository extends Repository {
 				resolve(user);
 			});
 		});
+	}
+	async graphqlAuthContext(req, res) {
+		const user = await this.graphqlToken(req);
+		const admin = this.graphqlAdmin(req, user);
+		return { user, admin, res };
 	}
 	parseToken(token) {
 		return new Promise((resolve, reject) => {
@@ -100,9 +120,61 @@ class AuthRepository extends Repository {
 		return await this.parseToken(token);
 	}
 	async storeAuth(id, password) {
-		const salt = await bcrypt.genSalt();
-		const hashedPassword = await bcrypt.hash(password, salt);
-		this.insertOne({ id, hash: hashedPassword });
+		try {
+			const salt = await bcrypt.genSalt();
+			const hashedPassword = await bcrypt.hash(password, salt);
+			const insertOp = await this.insertOne({ id, hash: hashedPassword });
+			return { success: true };
+		} catch (e) {
+			return { error: e, success: false };
+		}
+	}
+	async validateAuth({ id, password, username = false }) {
+		const authEntryExists = await this.findOne({ id });
+		if (authEntryExists)
+			return {
+				savedPassword: false,
+				error:
+					'Authentication data already exists for user, try a different username',
+				success: false
+			};
+		//return new Error({ error: 'Authentication data already exists for user, try a different username', success: false });
+		//const { username, password, error: validationError } =
+		const validated = validateUsernamePassword(username, password);
+		if (!password)
+			return {
+				success: true,
+				message: 'signed up without password',
+				savedPassword: false,
+				username: validated.username,
+				password: validated.password
+			};
+
+		const { error: validationError } = validated;
+		if (validationError)
+			return { error: validationError, success: false, savedPassword: false }; //return new Error({ error: error, success: false });
+		return validated; //{ id, password, username };
+	}
+	async convertGuest({ id, password }) {
+		try {
+			const validated = await this.validateAuth({ id, password });
+			if (validated.success == false || validated.error) return validated;
+			let { success, error } = await this.storeAuth(id, validated.password).catch(
+				e => {
+					return { error: e, success: false, savedPassword: false };
+				}
+			);
+			if (error || success == false) return { success, error };
+			const opResult = await this.api.repositories.users
+				.update({ id }, { guest: false })
+				.catch(e => {
+					return { error: e, success: false, savedPassword: true };
+				});
+
+			return { success: true, error: null, ...opResult };
+		} catch (e) {
+			return { error: e, success: false, savedPassword: true };
+		}
 	}
 	async simpleAuth(username, password) {
 		username = username.toLowerCase();
@@ -127,6 +199,45 @@ class AuthRepository extends Repository {
 		// const user = this.api.repositories.users.findById(req.user.id);
 		if (req.user.admin !== true) return res.send(403);
 		next();
+	}
+	genKeypair() {
+		const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+			modulusLength: 2048
+		});
+		this.keys = { privateKey, publicKey };
+		return { privateKey, publicKey };
+	}
+	verifyCall(message) {
+		const call_id = message.call_id || this.genCallId(message);
+		// const signature
+		const { publicKey } = this.keys;
+		const verify = crypto.createVerify('sha1');
+		verify.update(call_id);
+		verify.end();
+		const { signature } = message;
+		const verified = verify.verify(publicKey, signature, 'hex');
+		return verified;
+	}
+
+	genCallId({ initiator, time }) {
+		
+		return `${initiator}/${time}`;
+	}
+	callSignature(id, time ) {
+		if (!time) time = new Date().getTime();
+		const { privateKey, publicKey } = this.keys || this.genKeypair();
+		if (!privateKey) this.genKeypair();
+		const sign = crypto.createSign('sha1');
+		const call_id = this.genCallId({ initiator: id, time });
+		sign.update(call_id);
+		sign.end();
+		const signature = sign.sign(privateKey, 'hex');
+		// this.verifyCall({ initiator: id, signature, time });
+		return { initiator: id, signature, time, call_id };
+		// const hash = crypto.createHmac('sha256', CALL_SECRET)
+		//            .update('I love cupcakes')
+		//            .digest('hex');
+		// return hash;
 	}
 }
 

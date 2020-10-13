@@ -8,6 +8,7 @@ const { exec, execFile, spawn } = require('child_process');
 const execa = util.promisify(require('child_process').exec);
 const execFileAsync = util.promisify(execFile);
 const transferFiles = require('./scripts/xfer-files.js');
+const paths = require('./scripts/directories');
 
 let args = process.argv.slice(2);
 if (args.length == 0) {
@@ -124,6 +125,22 @@ const argInterface = {
 					}
 					console.log(stdout);
 				});
+			}
+		},
+		open: {
+			func: async ([type, pkg, ...packagesToAdd]) => {
+				let pathToOpen;
+				switch (pkg) {
+					case 'dir': {
+						pathToOpen = await 'main';
+					}
+					case 'src':
+					default: {
+						pathToOpen = paths[pkg];
+					}
+				}
+				const op = await execa('code .', { cwd: pathToOpen });
+				return op;
 			}
 		},
 		build: {
@@ -321,5 +338,6 @@ async function run() {
 	const { func } = cmd;
 	const asynctask = await func([...args]);
 	console.log('done');
+	process.exit();
 }
 run();

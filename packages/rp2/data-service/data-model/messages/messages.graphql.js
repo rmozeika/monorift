@@ -3,33 +3,11 @@ const { PubSub, withFilter } = require('apollo-server');
 
 const pubsub = new PubSub();
 class MessageSchema extends GraphqlSchemaInstance {
-	repoName = 'messages';
+	static repoName = 'messages';
+	static path = './data-model/schema.messages.graphql';
+	static repoNames = ['auth', 'users', 'conversations'];
 	constructor(api) {
 		super(api);
-		this.setExtraRepos();
-		// this.api = api;
-		// this.repository = api.repositories[repo];
-	}
-	static getRepoName() {
-		return 'messages';
-	}
-	// events = {
-	// 	MEMBER_UPDATE: 'MEMBER_UPDATE'
-	// 	// MEMBER_LEFT: 'MEMBER_LEFT'
-	// };
-	// enumTypes = {
-	// 	MEMBER_UPDATE: {
-	// 		JOINED: 'JOINED',
-	// 		LEFT: 'LEFT'
-	// 	}
-	// };
-	// static get events() {
-
-	// }
-	setExtraRepos() {
-		// this.members = this.api.repositories.members;
-		this.conversations = this.api.repositories.conversations;
-		this.users = this.api.repositories.users;
 	}
 	createResolvers() {
 		this.resolvers = {
@@ -40,17 +18,10 @@ class MessageSchema extends GraphqlSchemaInstance {
 						console.log(result);
 						return result;
 					},
-					// Additional event labels can be passed to asyncIterator creation
 					subscribe: async (_, { id, lastId }, { user }) => {
 						const xread = await this.repository.listenForMore(user.id, id, lastId);
 						return xread;
 					}
-					// withFilter(
-					// 	() => pubsub.asyncIterator([this.events.MEMBER_UPDATE]),
-					// 	(payload, variables) => {
-					// 		return payload.id == variables.id;
-					// 	}
-					// )
 				},
 				messageNotifications: {
 					resolve: result => {
@@ -70,17 +41,8 @@ class MessageSchema extends GraphqlSchemaInstance {
 					return { id };
 					const feed = await this.conversations.get({ id });
 					return feed;
-					// return repository.findById(id);
 				}
 			},
-			// Mutation: {
-			// 	// createMessage: async (parent, args, context) => {
-			// 	// 	const { name } = args;
-			// 	// 	const { user } = context;
-			// 	// 	const message = await this.repository.create(name, user);
-			// 	// 	return message;
-			// 	// }
-			// },
 			Feed: {
 				page: async (parent, args, context) => {
 					const { user } = context;
@@ -89,18 +51,6 @@ class MessageSchema extends GraphqlSchemaInstance {
 					return page;
 				}
 			},
-			// Page: {
-			//     messages: async (parent, args, context) => {
-			//         return { }
-			//     }
-
-			// }
-			// MessagesPayload: {
-			// 	data: parent => parent,
-			// 	lists: async (parent, args, context) => {
-			// 		return parent;
-			// 	}
-			// },
 			Message: {
 				datetime: ({ time }, args, context) => {
 					return new Date(time).toISOString();

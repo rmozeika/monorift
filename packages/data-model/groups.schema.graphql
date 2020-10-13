@@ -65,11 +65,19 @@ extend type Subscription {
 	# memberLeft(gid: Int!): Member
 }
 
+type Signature {
+	initiator: String
+	signature: String
+	call_id: String
+	time: String	
+}
+
 extend type Query {
 	group(name: String, gid: Int): Group
 	groups(creator: Int): GroupsPayload
 	groupMembers(name: String, gid: Int): GroupMembersPayload
 	memberOfGroups: GroupsDataAndIds
+	callSignature: Signature
 }
 
 extend type Mutation {

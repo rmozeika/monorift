@@ -40,7 +40,12 @@ type GravatarSrc {
 	path: String
 	url: String
 }
-
+input UserQueryInput {
+	id: Int
+	username: String
+	oauth_id: String
+	email: String
+}
 input UserInput {
 	id: Int
 	username: String
@@ -54,7 +59,7 @@ input UserInput {
 
 input createMonoriftUserInput {
 	username: String!
-	password: String!
+	password: String
 }
 
 type createUserPayload {
@@ -85,10 +90,34 @@ type FriendsList {
 	users: [User]
 }
 
+type convertGuestPayload {
+	user: User
+	error: String
+	success: Boolean
+	savedPassword: Boolean
+}
+input TokenOptions {
+	saveToReq: Boolean
+}
+directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION
+
+enum Role {
+	ADMIN
+	REVIEWER
+	USER
+	UNKNOWN
+}
+
+type TokenPayload @auth(requires: USER) {
+	token: String
+	message: String
+}
+
 extend type Mutation {
 	createUser(input: UserInput!): createUserPayload
 	updateUser(data: UserInput, input: UserInput): User
 	createGuest(input: createMonoriftUserInput!): createUserPayload
+	convertGuest(password: String!): convertGuestPayload
 }
 
 extend type Query {
@@ -98,4 +127,5 @@ extend type Query {
 	allUsers: [User]
 	friends: FriendsList
 	getFriendsForUser(input: UserInput): UserWithFriends
+	generateToken(input: UserQueryInput!, opts: TokenOptions): TokenPayload
 }

@@ -8,47 +8,57 @@ if (remote == 'false') {
 } else {
 	getRawSchema = require('../../../data-model');
 }
+var { Source, parse } = require('graphql'); // CommonJS
 
 class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
-		// Get repoName name from subclass;
-		this.repoName = this.constructor.getRepoName(); //this.repoName || 'users';
-		this.repository = api.repositories[this.repoName];
-		// this.createRootQuery();
+
+		const {
+			repoName = 'users',
+			repoNames = ['users', 'auth'],
+			path = ''
+		} = this.constructor;
+		this.metadata = {
+			name: repoName,
+			repos: repoNames,
+			path
+		};
+		this.repository = api.repositories[repoName];
+		this.setExtraRepos();
 	}
 
 	async createSchema() {
 		await this.createTypeDefs();
 		this.createResolvers();
-		//this.createContext();
 		await this.createDirectiveResolvers();
 		this.schema = {
 			typeDefs: this.typeDefs,
 			resolvers: this.resolvers
-			// context: this.context,
-			// directiveResolvers: this.directiveResolvers
 		};
 		if (this.schema) {
 			return this.schema;
 		}
-		// this.serverConfig = {
-		// 	schema: this.schema,
-		// 	//context:
-		// }
 		const eSchema = makeExecutableSchema(this.schema);
 		return eSchema;
 		return this.serverConfig;
 	}
 	async createTypeDefs() {
-		const rawSchema = await getRawSchema(this.repoName);
+		const rawSchema = await getRawSchema(this.metadata.name);
 		this.typeDefs = gql`
 			${rawSchema}
 		`;
+		let src;
+		try {
+			src = new Source(rawSchema, 'raw');
+			const parsed = parse(src);
+		} catch (e) {
+			console.error(e);
+		}
+
 		return;
 	}
 	async createDirectiveResolvers() {}
-	// unused
 	async createRootQuery() {
 		this.serverConfig = await this.createSchema();
 		this.serverConfig = {
@@ -57,12 +67,17 @@ class GraphqlSchemaInstance {
 			directiveResolvers: this.directiveResolvers,
 			context: this.context
 		};
-		// const apolloSchema = makeExecutableSchema(this.serverConfig);
-		// this.RootQuery = apolloSchema;
 	}
 	get schemas() {
 		return this._schemas;
 	}
+	setExtraRepos = () => {
+		const { repos } = this.metadata;
+		repos.forEach(this.setExtraRepo);
+	};
+	setExtraRepo = name => {
+		this[name] = this.api.repositories[name];
+	};
 	_schemas = {};
 }
 

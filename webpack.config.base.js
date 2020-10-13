@@ -4,7 +4,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const src = path.join(__dirname, './packages/rift/src');
 const publicDir = path.resolve(__dirname, 'packages', 'rp2', 'public');
 const Config = require('./packages/rp2/config.js');
-
+const cacheBust = false;
 module.exports = {
 	context: path.resolve(__dirname),
 	entry: [path.join(src, 'index.js')],
@@ -54,7 +54,9 @@ module.exports = {
 				loader: require.resolve('url-loader'),
 				options: {
 					limit: 10000,
-					name: 'static/media/[name].[hash:8].[ext]'
+					name: cacheBust
+						? 'static/media/[name].[hash:8].[ext]'
+						: 'static/media/[name].[ext]'
 				}
 			},
 			{
@@ -149,6 +151,9 @@ module.exports = {
 	externals: {
 		Config: Config
 	},
+	watchOptions: {
+		ignored: ['/node_modules']
+	},
 	plugins: [
 		new HtmlWebPackPlugin({
 			template: __dirname + '/packages/rift/public/index.html',
@@ -158,6 +163,9 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'dist.web'),
 		publicPath: '/',
-		filename: '[name].bundle.js?ver[hash:6]'
+		//filename: '[name].bundle.js?ver[hash:6]',
+		filename: cacheBust
+			? '[name].bundle.js?ver[hash:6]'
+			: '[hash].[name].bundle.js'
 	}
 };

@@ -1,23 +1,39 @@
 import * as React from 'react';
-import { Layout, Button, ButtonGroup } from '@ui-kitten/components';
+import { Layout, Button, ButtonGroup, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, findNodeHandle } from 'react-native';
 import * as Actions from '@actions';
+// import { f } from 'react-native';
 
 export class VideoPlayer extends React.Component {
 	constructor(props) {
 		super(props);
+		//this.container
 		//this.setVideoPlayer();
 	}
+	setNativeProps = (nativeProps) => {
+		this._root.setNativeProps(nativeProps);
+	}
+	setRefs = () => {
+		this.props.setVideoPlayer(this.props.videoRef, this._root);
+	}
+	setContainerRef = (component) => {
+		this._root = component;
+	}
 	componentDidMount() {
-		this.props.setVideoPlayer(this.props.videoRef);
+		console.log(this.props.containerRef);
+		//const comp =findNodeHandle(this._root);
+		const container_dom = findNodeHandle(this.props.containerRef.current);
+		this.props.setVideoPlayer(this.props.videoRef, container_dom);
 	}
 	render() {
-		const { videoRef } = this.props;
+		const { videoRef, containerRef } = this.props;
 		return (
-			<Layout style={styles.row}>
+			<View ref={this.setContainerRef} style={styles.row}>
 				<video style={videoStyle} autoPlay playsInline ref={videoRef} />
-			</Layout>
+				<Layout ref={containerRef}><Text>Extra videos</Text></Layout>
+				<Button onPress={this.setRefs}>setRefs</Button>
+			</View>
 		);
 	}
 }
@@ -52,7 +68,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
 	return {
-		setVideoPlayer: ref => dispatch(Actions.setVideoPlayer(ref))
+		setVideoPlayer: (ref, containerRef) => dispatch(Actions.setVideoPlayer(ref, containerRef))
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(VideoPlayer);

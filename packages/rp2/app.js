@@ -75,19 +75,8 @@ const setupDefaultRoute = () => {
 const setFurtherRoutes = async () => {
 	const graphqlService = new GraphqlService(api);
 	const gqlConfig = await graphqlService.createSchemas();
-	// const server = new ApolloServer(userSchema.serverConfig);
 	const server = new ApolloServer(gqlConfig);
 	app.gql = server;
-	// exports.GqlSub = () => {
-	// 	new SubscriptionServer({
-	// 		execute,
-	// 		subscribe,
-	// 		schema: gqlConfig,
-	// 	}, {
-	// 		server: server,
-	// 		path: '/subscriptions',
-	// 	});
-	// };
 	server.applyMiddleware({ app });
 	app.use('/profile', express.static(path.join(__dirname, 'site')));
 

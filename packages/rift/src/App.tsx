@@ -10,7 +10,7 @@ import {
 	Layout
 } from '@ui-kitten/components';
 
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 
 import {
 	AwesomeIconsPack
@@ -33,7 +33,7 @@ import {
 	ThemeService
 } from './core/themes/index';
 
-import client from './core/api/apollo';
+import { client } from './core/api/apollo';
 
 const styles = StyleSheet.create({
 	parentView: {

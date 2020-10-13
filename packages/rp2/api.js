@@ -23,7 +23,6 @@ class Api {
 			await this._connectRedis();
 			this._initBruteProtection();
 			this._registerRoutes();
-			// this._createRootUser();
 		} catch (e) {
 			console.error(e);
 		}
@@ -40,10 +39,8 @@ class Api {
 		});
 	}
 	async _connectPostgres() {
-		// return new Promise((resolve, reject) => {
 		this.postgresInstance = new PostgresService();
 		await this.postgresInstance.connectToServer();
-		// });
 	}
 	async _connectRedis() {
 		let client = new Redis(redisPort, redisConnectionString);

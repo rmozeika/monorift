@@ -45,7 +45,7 @@ export class Media extends React.Component {
 	// 	this.setState({ audioControlsHidden: false });
 	// };
 	render() {
-		const { videoRef, audioRef } = this.props;
+		const { videoRef, audioRef, videoContainerRef } = this.props;
 		// REMOVE
 		const { audioControlsHidden = true } = this.state;
 		// TODO
@@ -55,7 +55,7 @@ export class Media extends React.Component {
 			: { margin: 'auto' };
 		return (
 			<Layout style={styles.container}>
-				<VideoPlayer videoRef={videoRef} />
+				<VideoPlayer containerRef={videoContainerRef} videoRef={videoRef} />
 				<Layout style={styles.row}>
 					<audio style={audioStyle} id={`audio-1`} controls ref={audioRef}></audio>
 				</Layout>

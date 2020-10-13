@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as Actions from '@actions';
 import * as UserSelectors from '@selectors/users';
 import * as GroupSelectors from '@selectors/groups';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import Message from './Message';
 
 function ConversationFeed({ messages }) {

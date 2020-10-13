@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@ui-kitten/components';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import {
 	JOIN,
 	GROUPS_MEMBER_OF,

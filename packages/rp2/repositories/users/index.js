@@ -290,7 +290,6 @@ class UserRepository extends Repository {
 	// }
 	async getUserById(id) {
 		const users = await this.query({ id: id });
-		console.log(users);
 		const [user] = users;
 		return user;
 	}

@@ -1,4 +1,18 @@
 {
 	"git.ignoreLimitWarning": true,
-	"workbench.colorTheme": "Atom One Dark"
+	"workbench.colorTheme": "Atom One Dark",
+	"jumpToAliasFile.alias": {
+		"@babel/runtime": "/Users/Bobby/Development/monorift/node_modules/@babel/runtime",
+		"react": "/Users/Bobby/Development/monorift/node_modules/react",
+		"react-native": "react-native-web",
+		"react-native-web": "/Users/Bobby/Development/monorift/node_modules/react-native-web",
+		"react-native-svg": "react-native-svg-web",
+		"@src": "/Users/Bobby/Development/monorift/src",
+		"@components": "/Users/Bobby/Development/monorift/packages/rift/src/components",
+		"@containers": "/Users/Bobby/Development/monorift/packages/rift/src/containers",
+		"@selectors": "/Users/Bobby/Development/monorift/packages/rift/src/selectors",
+		"@reducers": "/Users/Bobby/Development/monorift/packages/rift/src/reducers",
+		"@actions": "/Users/Bobby/Development/monorift/packages/rift/src/actions/index.js",
+		"@core": "/Users/Bobby/Development/monorift/packages/rift/src/core"
+	}
 }

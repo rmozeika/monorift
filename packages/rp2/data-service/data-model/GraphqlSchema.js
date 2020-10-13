@@ -9,11 +9,11 @@ if (remote == 'false') {
 	getRawSchema = require('../../../data-model');
 }
 var { Source, parse } = require('graphql'); // CommonJS
-console.log(Source);
+
 class GraphqlSchemaInstance {
 	constructor(api) {
 		this.api = api;
-		
+
 		const {
 			repoName = 'users',
 			repoNames = ['users', 'auth'],
@@ -52,7 +52,6 @@ class GraphqlSchemaInstance {
 		try {
 			src = new Source(rawSchema, 'raw');
 			const parsed = parse(src);
-			console.log(parsed);
 		} catch (e) {
 			console.error(e);
 		}

@@ -10,7 +10,7 @@ import {
 	Layout
 } from '@ui-kitten/components';
 
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 
 import {
 	AwesomeIconsPack

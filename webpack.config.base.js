@@ -54,7 +54,9 @@ module.exports = {
 				loader: require.resolve('url-loader'),
 				options: {
 					limit: 10000,
-					name: (cacheBust) ? 'static/media/[name].[hash:8].[ext]' : 'static/media/[name].[ext]'
+					name: cacheBust
+						? 'static/media/[name].[hash:8].[ext]'
+						: 'static/media/[name].[ext]'
 				}
 			},
 			{
@@ -150,8 +152,8 @@ module.exports = {
 		Config: Config
 	},
 	watchOptions: {
-		ignored: /node_modules/
-	  },
+		ignored: ['/node_modules']
+	},
 	plugins: [
 		new HtmlWebPackPlugin({
 			template: __dirname + '/packages/rift/public/index.html',
@@ -162,7 +164,8 @@ module.exports = {
 		path: path.join(__dirname, 'dist.web'),
 		publicPath: '/',
 		//filename: '[name].bundle.js?ver[hash:6]',
-		filename: (cacheBust) ? '[name].bundle.js?ver[hash:6]' : '[contentHash].[name].bundle.js'
-
+		filename: cacheBust
+			? '[name].bundle.js?ver[hash:6]'
+			: '[hash].[name].bundle.js'
 	}
 };

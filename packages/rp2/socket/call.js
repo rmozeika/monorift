@@ -3,8 +3,7 @@ const nameSpace = '/call';
 const util = require('util');
 const chalk = require('chalk');
 
-const verbose = true;
-
+const verbose = false;
 
 class CallItem extends SocketItem {
 	constructor(user, ...args) {
@@ -14,12 +13,12 @@ class CallItem extends SocketItem {
 	usersMulticallList = (users, target) => {
 		const { id, username } = this.user;
 		let list = users.filter(user => {
-			return user.id !== target.id; 
+			return user.id !== target.id;
 		});
 		//if (!users.some(usr => id === usr.id)) list.push({ id, username });
 		return list.map(({ user }) => user);
-	}
-	socketIds = async (users) => {
+	};
+	socketIds = async users => {
 		const { redis } = this;
 		const users_socket_ids = await Promise.all(
 			users.map(async user => {
@@ -34,7 +33,7 @@ class CallItem extends SocketItem {
 			})
 		);
 		return users_socket_ids;
-	}
+	};
 	async onMessage(msg, opts) {
 		const { socket, redis, user } = this;
 		if (verbose) {
@@ -42,8 +41,7 @@ class CallItem extends SocketItem {
 			// console.log(chalk.blue(util.inspect(msg.type)));
 			if (opts && opts.users)
 				console.log('TO: ', chalk.green(util.inspect(opts.users[0])));
-			// console.log('TYPE: ', msg.type);
-			// if (opts && opts.users) console.log('TO: ', opts.users[0]);
+
 			console.log('CALL_MESSAGE', util.inspect(msg));
 			if (opts) console.log('EXTRA_ARG', util.inspect(opts));
 		}
@@ -68,7 +66,7 @@ class CallItem extends SocketItem {
 				const startCall = await this.callInitiate(users_socket_ids, msg, opts);
 				return;
 			}
-			
+
 			const actions = users_socket_ids.map(async targetUser => {
 				// const callList = this.usersMulticallList(users, target); //usersMulticall(from, users, targetUser.id);
 				const emitted = await socket.to(targetUser.id).emit('message', msg, {
@@ -96,10 +94,9 @@ class CallItem extends SocketItem {
 			username: user.username,
 			id: user.id
 		};
-		
+
 		// if signature = this.genCallSignature();
 		const actions = users.map(async targetUser => {
-
 			const callList = this.usersMulticallList(users, targetUser); //usersMulticall(from, users, targetUser.id);
 			const emitted = await socket.to(targetUser.id).emit('message', msg, {
 				users: callList,
@@ -113,9 +110,11 @@ class CallItem extends SocketItem {
 		});
 		const result = await Promise.all(actions);
 		return result;
-	}
+	};
 	async genCallSignature(users) {
-		const genCallSignature = this.api.repositories.auth.callSignature(this.user.id);
+		const genCallSignature = this.api.repositories.auth.callSignature(
+			this.user.id
+		);
 		return genCallSignature;
 	}
 }

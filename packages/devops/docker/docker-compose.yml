@@ -52,6 +52,7 @@ services:
   #network_mode: host
   image: mongo:4.2.2
   container_name: 'mongo'
+  restart: always
   env_file:
    - ../../../private/mongodb.env
   volumes:
@@ -71,6 +72,7 @@ services:
  redis-svc:
   image: redis:6.0-rc
   container_name: 'redis'
+  restart: always
   expose:
    - 6379
   labels:

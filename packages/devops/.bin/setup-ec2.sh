@@ -1,7 +1,7 @@
 # yum install git
 #sudo yum install epel-release -y
 #copy ssh creds
-
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 
 rsync -v -e ssh .ssh/rmozeika_github ec2-user@aws:/home/ec2-user/working/rmozeika_github
 rsync  --recursive -v -e ssh /Users/Bobby/Development/monorift/packages/devops/data/ ec2-user@aws:/home/ec2-user/monorift/packages/devops/data/

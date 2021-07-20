@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.0.91",
 	"dependencies": {
-		"react-native": "0.61.2",
+		"react-native": "0.62.3",
 		"webpack": "^5.0.0-beta.22"
 	},
 	"bin": {
